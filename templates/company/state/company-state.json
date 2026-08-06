@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "companyId": "your-company",
+  "hypothesis": "One sentence — subject to evidence",
+  "journeyPhase": 1,
+  "loopStage": 1,
+  "gateStatus": "open",
+  "autonomyPosture": "strict",
+  "readyForHumanEyes": {
+    "status": "unknown",
+    "checkedAt": null,
+    "happyPath": ""
+  },
+  "scores": {
+    "problemEvidence": null,
+    "willingnessToPay": null,
+    "completion": null,
+    "traceCompleteness": null,
+    "notes": "Fill scores honestly. Engineering green is not PMF."
+  },
+  "founderApprovals": [],
+  "openQuestions": [
+    "What is our written thesis and at least three customer-group candidates?",
+    "What evidence would make us advance, iterate, hold, or kill?",
+    "When is the next weekly where-do-we-stand check-in?"
+  ],
+  "lastAction": "instance_created",
+  "lastWeeklySnapshotAt": null,
+  "createdAt": "YYYY-MM-DDT00:00:00.000Z",
+  "updatedAt": "YYYY-MM-DDT00:00:00.000Z"
+}
