@@ -8,3 +8,6 @@ This repository is the **portable Bootstrap OS template** only.
 4. Hard company-control rules for founders live in [`company-os/ai-instructions.md`](company-os/ai-instructions.md) — paste that block into *their* `AGENTS.md`.
 
 See [README.md](README.md#template-change-policy).
+
+5. Optional MCP lives under [`mcp/`](mcp/). Markdown remains source of truth. Do not require MCP for install. Hosted MCP (pirin.ai) is future opt-in with the same tool names; company state stays private by default.
+

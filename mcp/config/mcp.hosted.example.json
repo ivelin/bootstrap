@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "bootstrap-os": {
+      "url": "https://mcp.pirin.ai/bootstrap-os",
+      "_comment": "Placeholder until hosted MCP ships. Tool names match local server."
+    }
+  }
+}

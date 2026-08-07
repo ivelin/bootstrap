@@ -1,0 +1,39 @@
+{
+  "name": "@pirin/bootstrap-os-mcp",
+  "version": "0.1.0",
+  "description": "Optional local MCP server for Bootstrap OS — process tools over local company state. Markdown remains source of truth.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "bootstrap-os-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "config"
+  ],
+  "keywords": [
+    "mcp",
+    "bootstrap-os",
+    "company-os",
+    "pirin",
+    "founders"
+  ]
+}
