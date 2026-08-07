@@ -11,3 +11,5 @@ See [README.md](README.md#template-change-policy).
 
 5. Optional MCP lives under [`mcp/`](mcp/). Markdown remains source of truth. Do not require MCP for install. Hosted MCP (pirin.ai) is future opt-in with the same tool names; company state stays private by default.
 
+6. Maintainer roadmap and dogfood gates live in [`ROADMAP.md`](ROADMAP.md). Do not add features that contradict its Out list without an explicit Advance decision and evidence.
+

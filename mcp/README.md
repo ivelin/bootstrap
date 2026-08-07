@@ -126,3 +126,7 @@ Hosted URL is a **placeholder** until pirin.ai ships it. Local tool names will s
 ---
 
 *You supply the insight. AI supplies the speed. MCP is optional furniture.*
+
+## Roadmap
+
+High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROADMAP.md).
