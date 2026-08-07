@@ -13,3 +13,5 @@ See [README.md](README.md#template-change-policy).
 
 6. Maintainer roadmap and dogfood gates live in [`ROADMAP.md`](ROADMAP.md). Do not add features that contradict its Out list without an explicit Advance decision and evidence.
 
+7. **Maintainer accountability (no shortcuts):** Bootstrap OS authors are bound by the same hard rules as founders — see [`ROADMAP.md`](ROADMAP.md) §5a. Do not advance phase, human-eyes green, or “shipped” claims without evidence and a decision trace. Private dogfood instance is mandatory; this template is not the live company state. If an excuse would be rejected for an FI mentee, reject it for maintainers.
+

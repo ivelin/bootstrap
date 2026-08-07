@@ -1,7 +1,7 @@
 # Bootstrap OS — maintainer roadmap
 
 **Audience:** Maintainers (Pirin / template owners) and serious contributors.  
-**Doctrine:** Same rigor we demand of founders. Dogfood or it is not real.  
+**Doctrine:** Same rigor we demand of founders. **No shortcuts.** Dogfood or it is not real. If we would reject a mentee’s excuse, we reject our own.  
 **Not:** A feature wishlist. Kitchen-sink ideas die here first.
 
 | | |
@@ -74,8 +74,9 @@
 2. AI never advances journey phase without founder approval.  
 3. Human-eyes green ≠ demand, PMF, or willingness to pay.  
 4. No leaderboard, no auto-memory as product core.  
-5. Dogfood with the same gates we demand of founders.  
-6. Ship only work that strengthens **P1–P6** (§2a).
+5. Dogfood with the same gates we demand of founders — **no maintainer exceptions**.  
+6. Ship only work that strengthens **P1–P6** (§2a).  
+7. **No shortcuts** — see §5a maintainer rule book (mirrors founder hard rules).
 
 
 ---
@@ -93,9 +94,12 @@ Update this block when reality changes. Do not invent progress.
 | **Gate** | Do not market MCP as required. Do not ship hosted until local export + dogfood ledger exist or are explicitly killed |
 | **Open questions** | Will non-technical mentees use local MCP, or only markdown + later hosted read path? Does ledger reduce thrash in a real FI cohort? Can “Claude rooms / project setup” collapse into a 90‑min Bootstrap install without tool thrash? |
 | **Last roadmap review** | 2026-08-07 (evidence scan: Gmail FI/mentees, X, public LinkedIn) |
+| **Last weekly control-plane snapshot** | **Missing** — must complete in private dogfood instance (not chat) within 7 days of this note or fail the week |
+| **Stage 7 write-back this week** | **Missing** until decision trace exists outside this template repo |
+| **Maintainer autonomy posture** | **Strict** — same as we prescribe early solo founders |
 
 **Where are we in one sentence:**  
-We pursue only P1–P6 (control plane, gates, human-eyes, harness-agnostic state, sparse evidence, teachable install). Optional MCP is a delivery path for P1–P4/P5 — not a goal in itself. Hosted/social stay out until evidence appears.
+We pursue only P1–P6 (control plane, gates, human-eyes, harness-agnostic state, sparse evidence, teachable install). Optional MCP is a delivery path for P1–P4/P5 — not a goal in itself. Hosted/social stay out until evidence appears. **We are currently below our own bar on weekly snapshot + stage 7 — fix before claiming dogfood.**
 
 ---
 
@@ -256,6 +260,76 @@ Green human-eyes ≠ demand for MCP. Markdown remains the floor.
 
 ---
 
+
+### 5a. Maintainer rule book — same hard rules as founders (no shortcuts)
+
+We teach [`company-os/ai-instructions.md`](company-os/ai-instructions.md). We are bound by the same spirit. **Maintainer privilege is not a gate exemption.**
+
+#### Hard rules (apply to Bootstrap OS / Pirin delivery of it)
+
+| # | Rule | Shortcut we refuse |
+|---|------|--------------------|
+| M1 | **Never advance** journey phase, “shipped,” or human-eyes **green** without evidence + explicit maintainer decision trace | “It’s basically done” / PR merged = product proof |
+| M2 | **Label claims** honestly: outside facts / company signals / assumed capability / needs real-world proof | Treating OH bookings or stars as PMF |
+| M3 | **Weekly control-plane snapshot** in the *private dogfood instance* (not only this ROADMAP prose) | Updating marketing copy instead of state |
+| M4 | **Stage 7 write-back** after real work (MCP, workshops, cohort) — personas/hypotheses/scores/open questions | “We’ll remember from Slack/Grok chat” |
+| M5 | **Standing deny list:** no silent live-send to mentees as “required MCP”; no fake bot staff; no secret dumps of founder PII into public template | Shipping to founders to “learn in prod” without cold path |
+| M6 | **Ready for human eyes** before asking non-maintainers to depend on MCP/install paths | “Works on my machine” demos as green |
+| M7 | **Harness switch** only after snapshot + stage 7 for the week | Thrashing tools mid-week without write-back (hypocrisy vs mentees) |
+| M8 | **Template policy:** no product thesis/market from Pirin or mentees into `company-os/` without approval-gated portable edit | “While we’re here” template pollution |
+| M9 | **Evidence over narrative** in ROADMAP §1 and §8 | Roadmap theater without instance files |
+| M10 | If unsure whether a founder excuse is valid, **apply the same test to ourselves** | “We’re the authors so we know” |
+
+#### Fail the week (automatic)
+
+Any of these = **no Advance** on roadmap phases that week:
+
+- No private-instance snapshot (phase, loop stage, posture, human-eyes, open questions, lastAction)
+- No stage 7 note after meaningful product or teaching work
+- Claimed human-eyes green without cold-path artifact
+- Merged user-facing “you should use X” without mapping to **P1–P6**
+- Public promise of hosted/leaderboard/auto-memory without §2 Out list change + evidence
+
+#### PR / merge gate (dogfood CI for humans)
+
+Before merge to `main` for product behavior (MCP, install docs that change founder path):
+
+| Check | Pass? |
+|-------|-------|
+| Maps to **P1–P6** or explicit kill of old behavior | ☐ |
+| Does not require MCP for markdown-only path | ☐ |
+| State/template write boundaries respected | ☐ |
+| Human-eyes impact considered (cold install notes if user-facing) | ☐ |
+| Decision trace if phase/posture/scope Advance | ☐ |
+| Author would accept this bar from an FI mentee | ☐ |
+
+#### Private dogfood instance (mandatory location)
+
+| | |
+|--|--|
+| **Where** | Pirin (or maintainer) **company repo / drive** — **not** this template’s `company-os/` |
+| **Minimum files** | `company/state/company-state.json`, `docs/company-os/applied-here.md`, `company/traces/` |
+| **Public** | Only §1 summary + §8 evidence log in this ROADMAP (no PII, no mentee secrets) |
+| **Cadence** | Snapshot at least weekly; OH capture rows after Bootstrap-related sessions |
+
+Until the private instance exists and has a non-empty `lastWeeklySnapshotAt`, we **do not** claim dogfood is running — we claim intent. Intent is not evidence.
+
+#### Hypocrisy test (use in review)
+
+> “Would we tell a Founder Institute mentee this excuse is unacceptable?”  
+> If yes, it is unacceptable for us.
+
+Examples of excuses that **fail**:
+
+- “Too busy teaching the OS to run the OS”
+- “The PR is the documentation”
+- “We’ll add state after the launch”
+- “Mentors don’t need Ready for human eyes”
+- “Stars mean we can skip kill criteria”
+
+
+---
+
 ## 6. Success / kill for the *product* (not vanity)
 
 | Signal | Counts as evidence | Does not count |
@@ -272,14 +346,17 @@ Green human-eyes ≠ demand for MCP. Markdown remains the floor.
 
 ## 7. Near-term checklist
 
-- [ ] **P1/P6:** Run next FI/workshop with markdown-only install; record 2‑min “Where are we?” y/n  
-- [ ] **P2/P5:** Dogfood instance outside template; log thesis/phase decisions as traces  
-- [ ] **P3:** Cold-path notes for human-eyes (product demos mentees share)  
-- [ ] **P4:** Confirm state survives one intentional harness switch in dogfood  
-- [ ] **B as delivery of P1–P4:** Merge Phase B only after cold-path notes or “maintainers-only alpha”  
+- [ ] **No shortcuts:** Create private dogfood instance (state + applied-here + traces) — fail week until done  
+- [ ] **M3:** First real `lastWeeklySnapshotAt` in private state; reflect summary in §1  
+- [ ] **M4:** Stage 7 decision trace for this MCP/roadmap work  
+- [ ] **P1/P6:** Next FI/workshop markdown-only; record 2‑min “Where are we?” y/n  
+- [ ] **P2/P5:** Log thesis/phase decisions as traces in dogfood instance  
+- [ ] **P3/M6:** Cold-path notes before any “try MCP” ask to non-maintainers  
+- [ ] **P4:** One intentional harness switch; state still answers P1  
+- [ ] **B as delivery of P1–P4:** Merge Phase B only after cold-path notes or explicit “maintainers-only alpha” trace  
 - [ ] **P5 schema:** event types only (`milestone`, `decision`, `evidence`, `gate`, `score_snapshot`)  
-- [ ] Start OH capture rows (confusion type + P1 y/n)  
-- [ ] Refuse work that does not map to **P1–P6**  
+- [ ] OH capture rows (confusion type + P1 y/n)  
+- [ ] Refuse work that does not map to **P1–P6** or fails hypocrisy test  
 - [ ] Next roadmap review: after Phase B human-eyes check or ≤ 14 days  
 
 ---
