@@ -151,7 +151,7 @@ export function buildNextEvidenceView(state: CompanyState): NextEvidenceView {
   // Mode selection: help agents choose gather vs work vs writeback vs founder
   let mode: NextEvidenceView["agentFocus"]["mode"] = "do_work_toward_evidence";
   let modePlain =
-    "Do the work that produces solid evidence for the current stage and phase — then record it.";
+    "Do the work that produces solid evidence for the current stage and phase — then record it. Motion without evidence is not progress.";
 
   if (stage === 7) {
     mode = "stage7_writeback";
@@ -174,6 +174,7 @@ export function buildNextEvidenceView(state: CompanyState): NextEvidenceView {
     ...pg.doNotCountAsEvidence.map((x) => `Do not treat as evidence: ${x}`),
     "Do not advance journey phase without founder Advance/Iterate/Hold/Kill",
     "Do not invent metrics or conversations",
+    "Busy is not progress — agent runtime, chat volume, and feature count are not evidence",
     eyesBlocked
       ? "Do not draft 'please try my link' to mentors/users until human-eyes green or override+trace"
       : "Do not claim human-eyes green means demand",

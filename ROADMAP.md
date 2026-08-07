@@ -2,6 +2,7 @@
 
 **Audience:** Maintainers (Pirin / template owners) and serious contributors.  
 **Doctrine:** Same rigor we demand of founders. **No shortcuts.** Dogfood or it is not real. If we would reject a mentee’s excuse, we reject our own.  
+**Process vs ideas:** **Flexible on ideas and execution. Stringent on process.** Busy is not progress. Activity without evidence, gates, or stage-7 write-back is wishful thinking — refuse it for ourselves and for founders.  
 **Not:** A feature wishlist. Kitchen-sink ideas die here first.
 
 | | |
@@ -213,6 +214,7 @@ Each phase needs **Advance / Iterate / Hold / Kill** with evidence. No phase aut
 | `bootstrap_agent_focus` | **What to do now**: gather evidence / do work toward evidence / stage-7 write-back / blocked on founder |
 
 Agents should start sessions with focus → do work → record when ready (`log_decision` / state). Never invent evidence. Never self-advance phase.
+**Busy ≠ progress:** tool output and agent runtime are not evidence. `bootstrap_next_evidence` exists to make the *required proof* visible so founders cannot hide in activity.
 
 ### Phase B — Thin local MCP (gates + state) — *current thin slice*
 
@@ -318,6 +320,7 @@ Any of these = **no Advance** on roadmap phases that week:
 - Claimed human-eyes green without cold-path artifact
 - Merged user-facing “you should use X” without mapping to **P1–P6**
 - Public promise of hosted/leaderboard/auto-memory without §2 Out list change + evidence
+- **Activity theater:** narrative of busyness (PRs, agent hours, chats) without labeled evidence or control-plane movement
 
 #### PR / merge gate (dogfood CI for humans)
 

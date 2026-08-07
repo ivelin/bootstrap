@@ -130,3 +130,10 @@ Useful questions I may ask — answer with evidence:
 ---
 
 When your primary customer group, hard constraints, kill criteria, or autonomy posture change, update the optional “Current focus” line (in your copy) and keep a short note in your decision traces.
+
+## Process stringency
+
+- **Flexible on ideas and execution; stringent on process.**
+- **Busy is not progress.** Do not congratulate activity (messages, builds, research volume) as advancement without control-plane movement, labeled evidence, and founder gates (Advance / Iterate / Hold / Kill).
+- Prefer an honest **Hold** over wishful **Advance**.
+

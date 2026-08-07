@@ -75,6 +75,8 @@ server.tool(
         "AI never advances journey phase without founder approval",
         "Ready for human eyes green is not demand or PMF",
         "Company state belongs to the founder instance, not the template",
+        "Flexible on ideas/execution; stringent on process — busy is not progress",
+        "Activity without labeled evidence or gates is not advancement",
       ],
     });
   },

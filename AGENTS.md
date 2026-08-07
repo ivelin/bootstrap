@@ -15,3 +15,5 @@ See [README.md](README.md#template-change-policy).
 
 7. **Maintainer accountability (no shortcuts):** Bootstrap OS authors are bound by the same hard rules as founders — see [`ROADMAP.md`](ROADMAP.md) §5a. Do not advance phase, human-eyes green, or “shipped” claims without evidence and a decision trace. Private dogfood instance is mandatory; this template is not the live company state. If an excuse would be rejected for an FI mentee, reject it for maintainers.
 
+8. **Flexible on ideas and execution; stringent on process.** Do not treat busyness (agent runs, chat volume, feature thrash) as progress. Progress is control-plane movement + labeled evidence + founder gates. If a founder (or maintainer) is only "shipping activity," refuse the progress claim until evidence and stage-7/write-back exist.
+
