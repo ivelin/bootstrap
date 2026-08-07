@@ -67,6 +67,7 @@
 | **Chat project “rooms” / memory tools** | Session context. Useful; **not** company evidence unless promoted into ledger deliberately. |
 | **Pirin intensive / OH** | Human distribution and coaching of the OS — not a substitute for the portable pack. |
 | **Investor data room products** | Export may *feed* diligence later; OS is not DocSend/cap-table. |
+| **Monthly supporter updates / investor-update SaaS** | **Synthesis of the same board** (bullets from weekly evidence) is in-scope under P5. Email delivery, lists, and analytics are not. |
 
 ### Non-negotiables (high conviction)
 
@@ -140,7 +141,7 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 | **P2** | **Founder gates on strategy** — Advance / Iterate / Hold / Kill; AI cannot advance phase alone | Non-tech founders need judgment scaffolding when experiments are cheap | Mentor-forced thesis rethink → better path (MicDots email); multi-idea only with boards+gates (dogfood claim) | Decision traces on thesis/phase changes in dogfood + mentee instances | **A** rules; **B** `founderApprovedPhaseChange` |
 | **P3** | **Ready for human eyes** — cold happy path before “please try my link” | Stops burned early-adopter favors; keeps founder on vision | Repeated mentor/public gut-punch narrative; checklist already in OS v2.8 | Refuse external-ask tool + cold-path notes; mentee demos that don’t fail strangers | **A** checklist; **B** status + policy tools |
 | **P4** | **Harness-agnostic partner** — same scoreboard when Cursor/Claude/Grok/OpenClaw change | Field thrash is real; wrappers pollute sessions | FI “bootstrap with agents” demand without single-stack loyalty; builder friction with harness pollution (X) | Same state file works after tool switch in dogfood + 1 mentee | **A** files; **B** MCP as adapter not runtime |
-| **P5** | **Sparse evidence memory** — explicit milestones, labeled claims, thesis-change traces (not auto-chat memory) | Claude rooms help setup; *learning* still dies without write-back | MicDots: rooms + pilot feedback still needed a spine for “what changed and why” | Phase C ledger: 1–3 entries/week dogfood; OH export usable in under 5 min | **C** (after B or parallel markdown ledger) |
+| **P5** | **Sparse evidence memory + clean rollup** — explicit milestones/traces; optional structured export for founder *and* supporters (same board, not a second narrative) | Learning dies without write-back; monthly/mentor updates are a chore when invented from chat | MicDots-class traces; mentor OH prep; founder demand for honest “where we are” shared outward | Ledger 1–3 entries/week; **one synthesis tool**: bullets only from gathered weekly evidence — wins / challenges / asks / phase+gate — no prose salad | **C** (after B or parallel markdown ledger) |
 | **P6** | **Teachable 0–1 install** — 90‑min get-running + OH script, not a platform tour | Distribution and trust via FI/workshops | Luma Bootstrap OS series; packed FI OH calendar Jul–Aug 2026 | Run 90‑min on markdown-only; measure P1 success rate | **A** (+ intensive); no MCP required |
 
 ### Explicitly not elevated (evidence too weak or counter)
@@ -156,6 +157,23 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 
 > Ship work only if it strengthens **P1–P6**.  
 > Phase B MCP is justified solely as a better delivery of **P1–P4** (and later **P5**), not as a product category of its own.
+
+
+### P5 export shape (only if ledger/stage-7 is real)
+
+**Job:** Same visibility the founder wants for themselves — **clean “where we are”** — shareable as structured bullets. Not a newsletter product.
+
+| | |
+|--|--|
+| **Input** | Control plane + **explicit** weekly evidence only (ledger / stage-7 / decision traces). No chat scrape. |
+| **Output** | Structured response (markdown): phase + loop + human-eyes; **1–3** achievements; **1–3** challenges; **1–3** asks; real metrics if present; next gate. Empty sections stay empty. |
+| **Audience** | Founder first; optional paste to team / mentors / advisors / investors |
+| **Tool name (when built)** | e.g. `bootstrap_synthesize_update` — synthesis only, **no send** |
+| **IS** | Projection of the control plane; chore compressor; noise filter |
+| **IS NOT** | Email SaaS, CRM, open-rate tracking, AI fluff essay, second status system, auto-send |
+| **Gate** | Refuse to invent bullets not backed by labeled evidence. Prefer short + true over full + vibe. |
+| **Kill if** | Dogfood doesn’t use it for 3 real rollups, or it grows send/audience features |
+
 
 
 ---
@@ -200,7 +218,7 @@ Each phase needs **Advance / Iterate / Hold / Kill** with evidence. No phase aut
 
 | | |
 |--|--|
-| **Ship** | Append-only ledger (milestones, decisions, evidence labels, gate events); `list_timeline`; `export_data_room` |
+| **Ship** | Append-only ledger (milestones, decisions, evidence labels, gate events); `list_timeline`; **`bootstrap_synthesize_update`** (structured bullets only); optional full export pack |
 | **Done means** | Weekly stage-7 writes 1–3 ledger entries; export usable for mentor OH brief without chat dig |
 | **Dogfood** | 4 consecutive weekly snapshots for Bootstrap OS itself live only in ledger + state |
 | **Kill if** | Ledger unused after 4 dogfood weeks → do not build hosted on top of fiction |
