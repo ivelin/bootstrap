@@ -28,21 +28,20 @@ Update this block when reality changes. Do not invent progress.
 | **Last roadmap review** | 2026-08-07 (evidence scan: Gmail FI/mentees, X, public LinkedIn) |
 
 **Where are we in one sentence:**  
-Process pack is portable and real; optional local MCP (gates + thin state) is the next thin slice; evidence ledger + export are the next *high-impact* slice; hosted and social features are not on the critical path.
+We pursue only P1–P6 (control plane, gates, human-eyes, harness-agnostic state, sparse evidence, teachable install). Optional MCP is a delivery path for P1–P4/P5 — not a goal in itself. Hosted/social stay out until evidence appears.
 
 ---
 
 ## 2. High-impact scope only
 
-### In (prove these)
+### In (prove these) — maps to §2a
 
-| Capability | Why it is high impact | Success evidence (not narrative) |
-|------------|----------------------|----------------------------------|
-| **Markdown OS** | Zero-deps process; offline; ownership | Founder can install templates + answer “Where are we?” without Node |
-| **Gates as tools (MCP)** | Policy survives harness hopping | Phase advance blocked without founder flag; external ask blocked if human-eyes ≠ green |
-| **Sparse evidence ledger** | Memory without chat noise | Only explicit milestones / decisions / labeled evidence / gate results |
-| **Export pack** | Diligence / mentor OH prep without scramble | One command or folder: timeline + decisions + scores + human-eyes |
-| **Harness-agnostic state** | Stops tool thrash | Same control plane after switching Cursor ↔ Claude ↔ Grok ↔ local agent |
+| Capability | Pursue # | Success evidence (not narrative) |
+|------------|----------|----------------------------------|
+| **Markdown OS** | P1, P6 | Install templates; answer “Where are we?” without Node |
+| **Gates as tools (MCP optional)** | P2, P3, P4 | Phase advance blocked without founder flag; external ask blocked if human-eyes ≠ green |
+| **Sparse evidence ledger + export** | P5 | Explicit milestones only; mentor brief in under 5 min |
+| **Harness-agnostic state** | P4 | Same control plane after tool switch |
 
 ### Out (explicit kill / defer)
 
@@ -56,6 +55,37 @@ Process pack is portable and real; optional local MCP (gates + thin state) is th
 | Investor-readiness score theater | Harms trust |
 | Requiring MCP for install | Breaks non-technical floor |
 | Multiplayer company harness (QM-class) as day-one | Wrong segment (1–n, not 0–1) |
+
+
+---
+
+## 2a. Pursue — strong evidence only
+
+These are the **only** benefits we actively invest in. Each row must keep a live evidence link. If evidence dies, demote to Hold/Kill.
+
+| # | Benefit (what founders get) | Why pursue | Strongest evidence we have | How we prove it next | Phase |
+|---|----------------------------|------------|----------------------------|----------------------|-------|
+| **P1** | **Honest control plane** — answer “Where are we?” in under 2 minutes (phase + loop + posture + human-eyes + open questions) | Stops chat-log theater; baseline of any real OS | Public teaching claim + FI OH demand for bootstrap/status guidance; success metric already in §6 | OH capture: y/n could answer from *written state* pre/post | **A** (markdown) always; **B** tools optional |
+| **P2** | **Founder gates on strategy** — Advance / Iterate / Hold / Kill; AI cannot advance phase alone | Non-tech founders need judgment scaffolding when experiments are cheap | Mentor-forced thesis rethink → better path (MicDots email); multi-idea only with boards+gates (dogfood claim) | Decision traces on thesis/phase changes in dogfood + mentee instances | **A** rules; **B** `founderApprovedPhaseChange` |
+| **P3** | **Ready for human eyes** — cold happy path before “please try my link” | Stops burned early-adopter favors; keeps founder on vision | Repeated mentor/public gut-punch narrative; checklist already in OS v2.8 | Refuse external-ask tool + cold-path notes; mentee demos that don’t fail strangers | **A** checklist; **B** status + policy tools |
+| **P4** | **Harness-agnostic partner** — same scoreboard when Cursor/Claude/Grok/OpenClaw change | Field thrash is real; wrappers pollute sessions | FI “bootstrap with agents” demand without single-stack loyalty; builder friction with harness pollution (X) | Same state file works after tool switch in dogfood + 1 mentee | **A** files; **B** MCP as adapter not runtime |
+| **P5** | **Sparse evidence memory** — explicit milestones, labeled claims, thesis-change traces (not auto-chat memory) | Claude rooms help setup; *learning* still dies without write-back | MicDots: rooms + pilot feedback still needed a spine for “what changed and why” | Phase C ledger: 1–3 entries/week dogfood; OH export usable in under 5 min | **C** (after B or parallel markdown ledger) |
+| **P6** | **Teachable 0–1 install** — 90‑min get-running + OH script, not a platform tour | Distribution and trust via FI/workshops | Luma Bootstrap OS series; packed FI OH calendar Jul–Aug 2026 | Run 90‑min on markdown-only; measure P1 success rate | **A** (+ intensive); no MCP required |
+
+### Explicitly not elevated (evidence too weak or counter)
+
+| Benefit idea | Verdict |
+|--------------|---------|
+| Local MCP as *required* install for non-tech | Demand not found — **optional only** |
+| Hosted MCP / social leaderboard / investor discovery | Not found — **Out** |
+| Auto skill/memory ingestion | Contradicts P4–P5 — **Out** |
+| Day-one multiplayer harness (QM-class) | Wrong segment — **Out** for Bootstrap |
+
+### Investment rule
+
+> Ship work only if it strengthens **P1–P6**.  
+> Phase B MCP is justified solely as a better delivery of **P1–P4** (and later **P5**), not as a product category of its own.
+
 
 ---
 
@@ -175,11 +205,14 @@ Green human-eyes ≠ demand for MCP. Markdown remains the floor.
 
 ## 7. Near-term checklist
 
-- [ ] Merge Phase B only after cold-path notes exist (or explicit “maintainers-only alpha”)  
-- [ ] Pirin dogfood: filled instance **outside** this template repo (per template policy)  
-- [ ] Phase C schema design: event types only (`milestone`, `decision`, `evidence`, `gate`, `score_snapshot`) — no kitchen sink  
-- [ ] Start OH capture rows (even in markdown) for next FI sessions  
-- [ ] Refuse PRs that add Out-list features without Advance evidence  
+- [ ] **P1/P6:** Run next FI/workshop with markdown-only install; record 2‑min “Where are we?” y/n  
+- [ ] **P2/P5:** Dogfood instance outside template; log thesis/phase decisions as traces  
+- [ ] **P3:** Cold-path notes for human-eyes (product demos mentees share)  
+- [ ] **P4:** Confirm state survives one intentional harness switch in dogfood  
+- [ ] **B as delivery of P1–P4:** Merge Phase B only after cold-path notes or “maintainers-only alpha”  
+- [ ] **P5 schema:** event types only (`milestone`, `decision`, `evidence`, `gate`, `score_snapshot`)  
+- [ ] Start OH capture rows (confusion type + P1 y/n)  
+- [ ] Refuse work that does not map to **P1–P6**  
 - [ ] Next roadmap review: after Phase B human-eyes check or ≤ 14 days  
 
 ---
