@@ -24,6 +24,7 @@ import {
   whereAreWePlain,
   writeState,
 } from "./state.js";
+import { buildNextEvidenceView, buildStatusView } from "./guidance.js";
 
 function text(payload: unknown) {
   const body = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
@@ -143,12 +144,47 @@ server.tool(
 
 server.tool(
   "bootstrap_where_are_we",
-  "Plain-language control-plane snapshot for 'Where are we?' — phase, loop stage, posture, human-eyes, open questions, scores.",
+  "Clear company status: plain-language + structured control plane (two clocks, human-eyes, open questions, scores). Prefer this for 'where are we?'.",
   {},
   async () => {
     try {
       const state = readState();
-      return text(whereAreWePlain(state));
+      const plain = whereAreWePlain(state);
+      return text(buildStatusView(state, plain));
+    } catch (e) {
+      return err(e instanceof Error ? e.message : String(e));
+    }
+  },
+);
+
+server.tool(
+  "bootstrap_next_evidence",
+  "What evidence is needed to advance the slow journey phase and to progress the fast loop stage — plus agent focus (gather evidence vs do work vs stage-7 write-back). Does not advance phases.",
+  {},
+  async () => {
+    try {
+      return text(buildNextEvidenceView(readState()));
+    } catch (e) {
+      return err(e instanceof Error ? e.message : String(e));
+    }
+  },
+);
+
+server.tool(
+  "bootstrap_agent_focus",
+  "Short work order for founder agents: mode + do-now / do-not based on current phase, loop stage, and human-eyes. Use when starting a session.",
+  {},
+  async () => {
+    try {
+      const v = buildNextEvidenceView(readState());
+      return text({
+        plain: [v.agentFocus.modePlain, "", "Do now:", ...v.agentFocus.doNow.map((x) => `- ${x}`), "", "Do not:", ...v.agentFocus.doNotDo.slice(0, 8).map((x) => `- ${x}`)].join("\n"),
+        ...v.agentFocus,
+        slowClock: { phase: v.slowClock.currentPhase, name: v.slowClock.currentName, exitSignal: v.slowClock.exitSignal },
+        fastClock: { stage: v.fastClock.currentStage, name: v.fastClock.currentName, completeWhen: v.fastClock.completeWhen },
+        humanEyes: v.humanEyes.status,
+        howToRecordWhenReady: v.howToRecordWhenReady,
+      });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));
     }

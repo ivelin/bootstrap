@@ -132,3 +132,12 @@ Hosted URL is a **placeholder** until pirin.ai ships it. Local tool names will s
 ## Roadmap
 
 High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROADMAP.md).
+
+
+### Guidance tools (status + next evidence)
+
+| Tool | Purpose |
+|------|--------|
+| `bootstrap_where_are_we` | Company status visibility |
+| `bootstrap_next_evidence` | What evidence unlocks next phase/stage |
+| `bootstrap_agent_focus` | What the agent should do now |

@@ -203,11 +203,22 @@ Each phase needs **Advance / Iterate / Hold / Kill** with evidence. No phase aut
 | **Status** | **Advance candidate** — treat as shipped process baseline (v2.8 docs) |
 | **From field** | FI demand for “Bootstrap with AI Agents” OH; Luma series (90‑min → reliable → scale). Teach Phase A first. |
 
+
+### Status + next-evidence (MCP guidance — locked design)
+
+| Tool | Job |
+|------|-----|
+| `bootstrap_where_are_we` | Clear **where we are** (slow + fast clocks, human-eyes, questions) |
+| `bootstrap_next_evidence` | **What evidence** is needed to consider journey Advance and to complete current loop stage; label hints; do-not-count list |
+| `bootstrap_agent_focus` | **What to do now**: gather evidence / do work toward evidence / stage-7 write-back / blocked on founder |
+
+Agents should start sessions with focus → do work → record when ready (`log_decision` / state). Never invent evidence. Never self-advance phase.
+
 ### Phase B — Thin local MCP (gates + state) — *current thin slice*
 
 | | |
 |--|--|
-| **Ship** | [PR #1](https://github.com/ivelin/bootstrap/pull/1): stdio MCP, policy tools, thin `company-state.json`, no template writes |
+| **Ship** | [PR #1](https://github.com/ivelin/bootstrap/pull/1): stdio MCP, policy tools, thin `company-state.json`, **status + next-evidence + agent-focus**, no template writes |
 | **Done means** | Non-maintainer cold path: clone → `mcp` build → point at *instance* state → `bootstrap_where_are_we` + blocked phase advance without approval |
 | **Dogfood** | Pirin / Bootstrap maintainer instance uses MCP weekly for “Where are we?” on *this* product |
 | **Kill if** | Cold install fails repeatedly for target mentees *and* markdown-only already covers them → keep markdown, archive MCP |
