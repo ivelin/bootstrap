@@ -12,6 +12,13 @@ import {
 } from "./constants.js";
 import { listOsDocs, readOsDoc } from "./docs.js";
 import {
+  initCompany,
+  listCompanies,
+  requireActiveContext,
+  resolveDataRoot,
+  useCompany,
+} from "./companies.js";
+import {
   resolveInstanceRoot,
   resolveOsRoot,
   resolveStatePath,
@@ -38,6 +45,17 @@ function err(message: string) {
   };
 }
 
+function activeScopeNote() {
+  const ctx = requireActiveContext();
+  return {
+    activeCompanyId: ctx.companyId,
+    instanceRoot: ctx.instanceRoot,
+    resolveMode: ctx.mode,
+    isolation:
+      "State and traces are per company only. Never copy evidence or phase across companyId.",
+  };
+}
+
 const server = new McpServer({
   name: "bootstrap-os",
   version: MCP_VERSION,
@@ -45,28 +63,37 @@ const server = new McpServer({
 
 server.tool(
   "bootstrap_os_info",
-  "Bootstrap OS + MCP modes, versions, and resolved local paths. Does not require company state.",
+  "Bootstrap OS + MCP modes, versions, multi-company data root, and active company paths.",
   {},
   async () => {
+    const ctx = requireActiveContext();
     return text({
       osVersion: OS_VERSION,
       mcpVersion: MCP_VERSION,
+      connectorModel:
+        "One MCP connector, many isolated company instances (like Supabase/Vercel multi-project). Not one blended board.",
       modes: {
         markdownOnly:
           "Use company-os/*.md and templates/ with no MCP. Full ownership, offline.",
-        localMcp:
-          "Run this stdio server; agents call tools; state stays on disk under BOOTSTRAP_INSTANCE_ROOT.",
+        localMcpMultiCompany:
+          "One stdio server; bootstrap_init_company / list / use_company; state under BOOTSTRAP_DATA_ROOT/instances/<id>.",
+        localMcpSingleEnv:
+          "Optional BOOTSTRAP_INSTANCE_ROOT pins one company (backward compatible).",
         hostedMcpFuture:
-          "Same tool names via https://mcp.pirin.ai/bootstrap-os (or successor). Opt-in; private by default. Not required.",
+          "Same tool names + company scope via https://mcp.pirin.ai/bootstrap-os (placeholder). Opt-in; private by default.",
       },
       paths: {
         osRoot: resolveOsRoot(),
-        instanceRoot: resolveInstanceRoot(),
+        dataRoot: resolveDataRoot(),
+        activeCompanyId: ctx.companyId,
+        instanceRoot: ctx.instanceRoot,
         statePath: resolveStatePath(),
         tracesDir: resolveTracesDir(),
+        resolveMode: ctx.mode,
       },
       env: {
         BOOTSTRAP_OS_ROOT: process.env.BOOTSTRAP_OS_ROOT ?? null,
+        BOOTSTRAP_DATA_ROOT: process.env.BOOTSTRAP_DATA_ROOT ?? null,
         BOOTSTRAP_INSTANCE_ROOT: process.env.BOOTSTRAP_INSTANCE_ROOT ?? null,
         BOOTSTRAP_STATE_PATH: process.env.BOOTSTRAP_STATE_PATH ?? null,
         BOOTSTRAP_TRACES_DIR: process.env.BOOTSTRAP_TRACES_DIR ?? null,
@@ -74,11 +101,87 @@ server.tool(
       hardRules: [
         "AI never advances journey phase without founder approval",
         "Ready for human eyes green is not demand or PMF",
-        "Company state belongs to the founder instance, not the template",
+        "Company state is isolated per companyId — no cross-tenant bleed",
+        "One connector, many instances; product repos need not import full Bootstrap tree",
         "Flexible on ideas/execution; stringent on process — busy is not progress",
         "Activity without labeled evidence or gates is not advancement",
       ],
     });
+  },
+);
+
+server.tool(
+  "bootstrap_list_companies",
+  "List registered company instances on this machine (isolated control planes). Shows which is active.",
+  {},
+  async () => text(listCompanies()),
+);
+
+server.tool(
+  "bootstrap_init_company",
+  "Create an isolated company instance (state + traces) under the data root, or return existing. Activates it by default. Does not import Bootstrap into product repos.",
+  {
+    companyId: z
+      .string()
+      .describe("Stable id/slug, e.g. pirin, zk0, tokbox"),
+    displayName: z.string().optional().describe("Human label"),
+    hypothesis: z.string().optional().describe("One-sentence thesis (subject to evidence)"),
+    instanceRoot: z
+      .string()
+      .optional()
+      .describe("Optional custom path; default $BOOTSTRAP_DATA_ROOT/instances/<id>"),
+    activate: z
+      .boolean()
+      .optional()
+      .describe("Set as active company (default true)"),
+  },
+  async (input) => {
+    try {
+      const result = initCompany(input);
+      return text({
+        ok: true,
+        ...result,
+        note: result.created
+          ? "Isolated instance created. Call bootstrap_where_are_we on this company."
+          : "Company already existed; registry left intact.",
+        list: listCompanies(),
+      });
+    } catch (e) {
+      return err(e instanceof Error ? e.message : String(e));
+    }
+  },
+);
+
+server.tool(
+  "bootstrap_use_company",
+  "Switch active company for this MCP session (and persist as registry default). All subsequent state tools use only that instance.",
+  {
+    companyId: z.string().describe("Registered company id"),
+  },
+  async ({ companyId }) => {
+    try {
+      const result = useCompany(companyId);
+      let snapshot: unknown = null;
+      try {
+        snapshot = {
+          companyId: readState().companyId,
+          journeyPhase: readState().journeyPhase,
+          loopStage: readState().loopStage,
+          readyForHumanEyes: readState().readyForHumanEyes?.status,
+        };
+      } catch {
+        snapshot = "state not readable";
+      }
+      return text({
+        ok: true,
+        ...result,
+        scope: activeScopeNote(),
+        snapshot,
+        note: "Active company switched. Evidence and phase for other companies are not visible to mutating tools.",
+      });
+    } catch (e) {
+      return err(e instanceof Error ? e.message : String(e));
+    }
   },
 );
 
@@ -133,11 +236,15 @@ server.tool(
 
 server.tool(
   "bootstrap_get_state",
-  "Read the founder's durable company-state.json (instance path, not template by default when BOOTSTRAP_INSTANCE_ROOT is set).",
+  "Read active company's company-state.json only (isolated).",
   {},
   async () => {
     try {
-      return text({ path: resolveStatePath(), state: readState() });
+      return text({
+        scope: activeScopeNote(),
+        path: resolveStatePath(),
+        state: readState(),
+      });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));
     }
@@ -146,13 +253,16 @@ server.tool(
 
 server.tool(
   "bootstrap_where_are_we",
-  "Clear company status: plain-language + structured control plane (two clocks, human-eyes, open questions, scores). Prefer this for 'where are we?'.",
+  "Clear status for the ACTIVE company only: plain + structured two clocks, human-eyes, questions, scores.",
   {},
   async () => {
     try {
       const state = readState();
       const plain = whereAreWePlain(state);
-      return text(buildStatusView(state, plain));
+      return text({
+        scope: activeScopeNote(),
+        ...buildStatusView(state, plain),
+      });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));
     }
@@ -161,11 +271,14 @@ server.tool(
 
 server.tool(
   "bootstrap_next_evidence",
-  "What evidence is needed to advance the slow journey phase and to progress the fast loop stage — plus agent focus (gather evidence vs do work vs stage-7 write-back). Does not advance phases.",
+  "Evidence needed for active company to advance slow phase / fast stage + agent focus. Does not advance phases.",
   {},
   async () => {
     try {
-      return text(buildNextEvidenceView(readState()));
+      return text({
+        scope: activeScopeNote(),
+        ...buildNextEvidenceView(readState()),
+      });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));
     }
@@ -174,16 +287,33 @@ server.tool(
 
 server.tool(
   "bootstrap_agent_focus",
-  "Short work order for founder agents: mode + do-now / do-not based on current phase, loop stage, and human-eyes. Use when starting a session.",
+  "Short work order for active company: gather evidence vs do work vs stage-7.",
   {},
   async () => {
     try {
       const v = buildNextEvidenceView(readState());
       return text({
-        plain: [v.agentFocus.modePlain, "", "Do now:", ...v.agentFocus.doNow.map((x) => `- ${x}`), "", "Do not:", ...v.agentFocus.doNotDo.slice(0, 8).map((x) => `- ${x}`)].join("\n"),
+        scope: activeScopeNote(),
+        plain: [
+          v.agentFocus.modePlain,
+          "",
+          "Do now:",
+          ...v.agentFocus.doNow.map((x) => `- ${x}`),
+          "",
+          "Do not:",
+          ...v.agentFocus.doNotDo.slice(0, 8).map((x) => `- ${x}`),
+        ].join("\n"),
         ...v.agentFocus,
-        slowClock: { phase: v.slowClock.currentPhase, name: v.slowClock.currentName, exitSignal: v.slowClock.exitSignal },
-        fastClock: { stage: v.fastClock.currentStage, name: v.fastClock.currentName, completeWhen: v.fastClock.completeWhen },
+        slowClock: {
+          phase: v.slowClock.currentPhase,
+          name: v.slowClock.currentName,
+          exitSignal: v.slowClock.exitSignal,
+        },
+        fastClock: {
+          stage: v.fastClock.currentStage,
+          name: v.fastClock.currentName,
+          completeWhen: v.fastClock.completeWhen,
+        },
         humanEyes: v.humanEyes.status,
         howToRecordWhenReady: v.howToRecordWhenReady,
       });
@@ -195,9 +325,9 @@ server.tool(
 
 server.tool(
   "bootstrap_update_state",
-  "Patch company state fields. Journey phase changes require founderApprovedPhaseChange=true after explicit founder decision. Does not rewrite OS blueprint files.",
+  "Patch ACTIVE company state only. Journey phase changes require founderApprovedPhaseChange=true.",
   {
-    companyId: z.string().optional(),
+    companyId: z.string().optional().describe("Ignored if set; active company wins (isolation)"),
     hypothesis: z.string().optional(),
     journeyPhase: z.number().int().min(1).max(9).optional(),
     loopStage: z.number().int().min(1).max(7).optional(),
@@ -214,13 +344,20 @@ server.tool(
   },
   async (args) => {
     try {
-      const { founderApprovedPhaseChange, scores, ...rest } = args;
+      const { founderApprovedPhaseChange, scores, companyId: _ignore, ...rest } = args;
+      void _ignore;
       const patch: Record<string, unknown> = { ...rest };
       if (scores) patch.scores = scores;
       const { state, warnings } = patchState(patch as never, {
         allowPhaseAdvance: Boolean(founderApprovedPhaseChange),
       });
-      return text({ ok: true, warnings, state, path: resolveStatePath() });
+      return text({
+        ok: true,
+        scope: activeScopeNote(),
+        warnings,
+        state,
+        path: resolveStatePath(),
+      });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));
     }
@@ -229,7 +366,7 @@ server.tool(
 
 server.tool(
   "bootstrap_set_ready_for_human_eyes",
-  "Update Ready for human eyes ship gate (unknown | blocked | green). Green is not demand/PMF. Prefer blockers when blocked.",
+  "Update Ready for human eyes on ACTIVE company only. Green is not demand/PMF.",
   {
     status: z.enum(["unknown", "blocked", "green"]),
     happyPath: z.string().optional(),
@@ -256,9 +393,6 @@ server.tool(
         notes.push(
           "Green: cold URL + happy path only. Not demand, not PMF, not willingness to pay.",
         );
-        notes.push(
-          "You may draft external product-test asks only now (or with founder override + decision trace).",
-        );
       }
       if (status === "blocked") {
         notes.push(
@@ -267,6 +401,7 @@ server.tool(
       }
       return text({
         ok: true,
+        scope: activeScopeNote(),
         notes,
         state: state.readyForHumanEyes,
         path: resolveStatePath(),
@@ -279,7 +414,7 @@ server.tool(
 
 server.tool(
   "bootstrap_ready_checklist",
-  "Return the portable Ready for human eyes checklist markdown plus current status from state if available.",
+  "Portable Ready for human eyes checklist + ACTIVE company status.",
   {},
   async () => {
     try {
@@ -290,7 +425,7 @@ server.tool(
       } catch {
         current = "state not loaded";
       }
-      return text({ current, checklist });
+      return text({ scope: activeScopeNote(), current, checklist });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));
     }
@@ -299,7 +434,7 @@ server.tool(
 
 server.tool(
   "bootstrap_log_decision",
-  "Append a founder-readable decision trace markdown under company/traces (or BOOTSTRAP_TRACES_DIR).",
+  "Append decision trace under ACTIVE company traces only.",
   {
     title: z.string(),
     decision: z.string(),
@@ -317,7 +452,7 @@ server.tool(
         state.lastAction = `decision:${input.title}`;
         writeState(state);
       }
-      return text({ ok: true, file });
+      return text({ ok: true, scope: activeScopeNote(), file });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));
     }
@@ -326,7 +461,7 @@ server.tool(
 
 server.tool(
   "bootstrap_refuse_external_ask_if_not_green",
-  "Policy helper: given intent to ask outsiders to try a product link, return allow/deny with plain-language blockers.",
+  "Policy helper for ACTIVE company: allow/deny external product-test asks.",
   {
     intent: z.string().describe("What the agent wants to draft, e.g. mentor beta email"),
     founderOverride: z
@@ -341,6 +476,7 @@ server.tool(
       if (status === "green") {
         return text({
           allow: true,
+          scope: activeScopeNote(),
           reason: "Ready for human eyes is green. Still not demand/PMF.",
           intent,
         });
@@ -348,6 +484,7 @@ server.tool(
       if (founderOverride) {
         return text({
           allow: true,
+          scope: activeScopeNote(),
           reason:
             "Founder override claimed. Require decision trace (why, risks, what not to judge).",
           intent,
@@ -356,11 +493,12 @@ server.tool(
       }
       return text({
         allow: false,
+        scope: activeScopeNote(),
         reason: "Ready for human eyes is not green.",
         status,
         blockers: state.readyForHumanEyes?.blockers ?? [],
         nextSteps: [
-          "Run cold URL + happy path (sandbox browser / other device / synthetic cold user)",
+          "Run cold URL + happy path",
           "Call bootstrap_set_ready_for_human_eyes with blocked or green",
           "Or founder override + bootstrap_log_decision",
         ],

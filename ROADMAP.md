@@ -184,7 +184,7 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 | Mode | Status | Rule |
 |------|--------|------|
 | **1. Markdown only** | **Default forever** | Must work with zero MCP |
-| **2. Local MCP** | **v0.1 in PR** | Optional; state on founder disk |
+| **2. Local MCP** | **v0.2 multi-company in PR** | One connector, many isolated instances under data root |
 | **3. Hosted MCP** | **Later / maybe** | Only if auth + **read-only share of export** is proven needed; same tool names; private default |
 
 MCP is **compass + logbook**, not a third harness.
@@ -204,6 +204,11 @@ Each phase needs **Advance / Iterate / Hold / Kill** with evidence. No phase aut
 | **Status** | **Advance candidate** — treat as shipped process baseline (v2.8 docs) |
 | **From field** | FI demand for “Bootstrap with AI Agents” OH; Luma series (90‑min → reliable → scale). Teach Phase A first. |
 
+
+
+### Multi-company connector (locked)
+
+One Bootstrap OS MCP process (like Supabase/Vercel multi-project). Tools: `bootstrap_list_companies`, `bootstrap_init_company`, `bootstrap_use_company`. All state tools scoped to **active** `companyId` only. Product repos do not import the full Bootstrap tree.
 
 ### Status + next-evidence (MCP guidance — locked design)
 

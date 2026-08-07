@@ -1,7 +1,7 @@
 {
   "name": "@pirin/bootstrap-os-mcp",
-  "version": "0.1.0",
-  "description": "Optional local MCP server for Bootstrap OS — process tools over local company state. Markdown remains source of truth.",
+  "version": "0.2.0",
+  "description": "Optional local MCP server for Bootstrap OS — one connector, many isolated company instances. Markdown remains source of truth.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {

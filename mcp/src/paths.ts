@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { requireActiveContext, resolveDataRoot } from "./companies.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -14,14 +15,11 @@ export function resolveOsRoot(): string {
 }
 
 /**
- * Founder's company instance root (contains company/state or docs/company-os).
- * Defaults to OS root so template demos work; set BOOTSTRAP_INSTANCE_ROOT in real use.
+ * Active company instance root (isolated control plane).
+ * Priority: bootstrap_use_company session → BOOTSTRAP_INSTANCE_ROOT → registry active → template demo.
  */
 export function resolveInstanceRoot(): string {
-  if (process.env.BOOTSTRAP_INSTANCE_ROOT) {
-    return path.resolve(process.env.BOOTSTRAP_INSTANCE_ROOT);
-  }
-  return resolveOsRoot();
+  return requireActiveContext().instanceRoot;
 }
 
 export function resolveStatePath(): string {
@@ -46,3 +44,5 @@ export function resolveTracesDir(): string {
   }
   return path.join(resolveInstanceRoot(), "company", "traces");
 }
+
+export { resolveDataRoot };

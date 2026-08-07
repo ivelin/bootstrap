@@ -17,3 +17,5 @@ See [README.md](README.md#template-change-policy).
 
 8. **Flexible on ideas and execution; stringent on process.** Do not treat busyness (agent runs, chat volume, feature thrash) as progress. Progress is control-plane movement + labeled evidence + founder gates. If a founder (or maintainer) is only "shipping activity," refuse the progress claim until evidence and stage-7/write-back exist.
 
+9. **Local MCP multi-company:** one connector under `mcp/`; instances isolated by companyId under BOOTSTRAP_DATA_ROOT. Never merge control planes across ideas. Hosted remains future-only.
+
