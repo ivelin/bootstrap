@@ -433,6 +433,96 @@ Examples of excuses that **fail**:
 
 ---
 
+
+---
+
+## 10. Exploration — automated evidence collection (not committed)
+
+**Status:** Explore only. **Do not build ambient auto-memory.** Anything automated must strengthen **P5** without violating noise policy (§0).
+
+### Principle
+
+```text
+CAPTURE (cheap, optional, noisy)
+   → PROPOSE (structured candidates, labeled)
+      → COMMIT (founder or stage-7 gate — becomes company evidence)
+         → SYNTHESIZE (where-we-are / monthly bullets from commits only)
+```
+
+Automation may **capture and propose**. It must **not** silently **commit** into the ledger that drives gates, phase advances, or supporter updates.
+
+### What “evidence” means here
+
+| Class (OS labels) | Safe to auto-capture? | Auto-commit? |
+|-------------------|----------------------|--------------|
+| **Outside facts** (public URLs, published prices, dated articles) | Yes — with URL + timestamp | No — propose only until founder accepts |
+| **Company signals** (pilot feedback, waitlist count, paid $) | Only from **declared** sources founder connected | No without confirm |
+| **Assumed capability** (demo on laptop) | Risky — often over-claimed | Never auto |
+| **Needs real-world proof** | N/A (gap marker) | N/A |
+
+### Automation tiers (high → low conviction)
+
+| Tier | What | Value | Risk | Verdict |
+|------|------|-------|------|---------|
+| **T0 Manual** | Founder/agent calls `record_milestone` / stage-7 write | Clean, sparse | Low volume | **Default forever** |
+| **T1 Action-bound** | MCP writes a **draft event** when *this* OS tool runs (phase blocked, human-eyes check, decision logged) | Perfect provenance; zero chat scrape | Low | **Pursue with Phase C** |
+| **T2 Declared metrics** | Founder pins 1–5 sources (Stripe MRR, waitlist sheet cell, “deploy URL returns 200”) · poll or on-demand fetch · store as **proposed** company signals | Real signals without narrative | Credential + staleness | **Maybe later** — thin connectors only |
+| **T3 Artifact hooks** | On explicit path watch: `ready-for-human-eyes` report file, cold-check log, export folder — propose “artifact available” | Human-eyes honesty | Path spam | **Maybe** if paths are opt-in |
+| **T4 Session digest** | End of agent session: model proposes ≤3 bullets from *this* session only; founder accepts/rejects | Low friction for non-tech | Model invents; still better than ambient | **Experiment** — accept-gate required |
+| **T5 Ambient chat/email/Slack ingest** | Always-on memory of everything | Looks helpful | **Noise factory**; contradicts OS | **Out / kill** |
+
+### What is true added value (only)
+
+1. **Don’t lose gate events** — every Advance/Iterate/Hold/Kill and human-eyes transition becomes a ledger candidate automatically (**T1**).  
+2. **Don’t invent weekly rollup** — synthesis reads **commits only**; empty beats fiction.  
+3. **Shorten stage 7** — present a **proposal list** (max N) to accept/edit/drop, not a full second brain.  
+4. **Label on the way in** — proposed events carry class + source + time; refuse unlabeled commits.
+
+### What is not worth building
+
+| Idea | Why not |
+|------|---------|
+| Auto-ingest all Claude/Cursor chats | Random noise; thrash amplifier |
+| Silent score updates from vibes | Corrupts control plane |
+| “AI noticed 47 insights this week” | Performative junk |
+| Competing with full memory SaaS | Non-job (§0) |
+| Auto-green human-eyes from one successful local run | Shortcut we forbid for mentees |
+
+### Minimal design (if/when we touch code)
+
+```text
+ledger/
+  committed.jsonl    # company truth — sparse
+  proposed.jsonl     # machine drafts — disposable
+
+Tools:
+  bootstrap_record_evidence     # explicit commit (human/agent with intent)
+  bootstrap_list_proposed       # review queue
+  bootstrap_accept_proposed     # promote to committed (+ label check)
+  bootstrap_reject_proposed
+  bootstrap_synthesize_update   # committed only
+
+T1 hooks (no new product):
+  phase change, decision log, human-eyes set, weekly snapshot → auto append proposed or committed-with-type=gate_event
+```
+
+### Dogfood kill criteria
+
+| After | Kill automation layer if |
+|-------|---------------------------|
+| 4 weeks | Proposed queue ignored or always bulk-accepted without read |
+| 4 weeks | Committed ledger grows faster than stage-7 can narrate (noise won) |
+| Anytime | Synthesis cites proposed/unlabeled items |
+
+### Fit to roadmap
+
+| Now | Phase C | Later / maybe | Never |
+|-----|---------|---------------|-------|
+| Manual + T1 gate events | proposed/committed split; synthesize from committed | T2 1–5 declared metrics; T4 session propose≤3 | T5 ambient |
+
+**One-liner:** Automate **capture of what the OS already did** and **proposals from declared sources**; never automate **judgment that something is company truth**.
+
+
 ## 9. Related
 
 - Process pack: [`company-os/`](company-os/)  
