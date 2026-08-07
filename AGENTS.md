@@ -2,10 +2,13 @@
 
 This repository is the **portable Bootstrap OS template** only.
 
-1. Prefer editing instance examples under product repos, not this template, unless the founder explicitly approved a **template** change.
-2. Never add a filled product thesis, beachhead market, or company scores into `company-os/` — those belong in consumer repos under `docs/company-os/applied-here.md` and `company/state/`.
-3. When helping a founder install the OS, copy from `templates/` and point them at `company-os/operating-system.md` + `live-runtime.md` + `ai-instructions.md`.
-4. Hard company-control rules for founders live in [`company-os/ai-instructions.md`](company-os/ai-instructions.md) — paste that block into *their* `AGENTS.md`.
+1. Prefer editing instance examples under product repos or MCP data-root instances, not this template, unless the founder explicitly approved a **template** change.
+2. Never add a filled product thesis, beachhead market, or company scores into `company-os/` — those belong in consumer instances (`docs/company-os/applied-here.md`, `company/state/`, or `BOOTSTRAP_DATA_ROOT/instances/<id>/`).
+3. When helping a founder install the OS, present **both** install paths from [README.md](README.md#how-to-install-pick-a-path):
+   - **Path A — Markdown import** into one product repo (classic).
+   - **Path B — Multi-company MCP** (one connector, many isolated instances) when they run **multiple startups** or multi-agent clients — **do not** require importing the full Bootstrap tree into every product monorepo.
+   - **Path C — Hybrid** thin product `AGENTS.md` + MCP control plane (avoid dual `company-state.json`).
+4. Hard company-control rules for founders live in [`company-os/ai-instructions.md`](company-os/ai-instructions.md) — paste that block into *their* `AGENTS.md` (or keep via MCP + short pointer).
 
 See [README.md](README.md#template-change-policy).
 
@@ -17,5 +20,4 @@ See [README.md](README.md#template-change-policy).
 
 8. **Flexible on ideas and execution; stringent on process.** Do not treat busyness (agent runs, chat volume, feature thrash) as progress. Progress is control-plane movement + labeled evidence + founder gates. If a founder (or maintainer) is only "shipping activity," refuse the progress claim until evidence and stage-7/write-back exist.
 
-9. **Local MCP multi-company:** one connector under `mcp/`; instances isolated by companyId under BOOTSTRAP_DATA_ROOT. Never merge control planes across ideas. Hosted remains future-only.
-
+9. **Local MCP multi-company:** one connector under `mcp/`; instances isolated by companyId under `BOOTSTRAP_DATA_ROOT`. Never merge control planes across ideas. Hosted remains future-only.
