@@ -1,5 +1,7 @@
 # Bootstrap OS MCP (optional)
 
+**What this is / is not:** see root [`ROADMAP.md` §0](../ROADMAP.md) — MCP is an optional tool adapter to the control plane, not a harness, memory product, or hosted social graph.
+
 **Markdown is still the product.** This package is an *optional* adapter so agents can call Bootstrap OS as tools instead of only reading docs.
 
 | Mode | Who it is for | Dependency |

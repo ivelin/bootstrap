@@ -11,6 +11,73 @@
 | **Job** | Stable **control plane** (two clocks, gates, sparse evidence) that survives tool switches |
 | **Non-job** | Harness, hosting platform, memory product, skill marketplace, investor network |
 
+
+---
+
+## 0. What Bootstrap OS is — and is not
+
+**Conviction:** Non-technical 0→1 founders thrash on harnesses, memory tools, and hosting because nothing durable owns **judgment + status + evidence**. Bootstrap OS is that layer. Everything else is optional furniture.
+
+**Evidence base (mixed, labeled):** mentor-observed FI patterns (high volume OH demand for “bootstrap with AI agents”); public positioning tested on X/LinkedIn; one multi-touch founder arc (thesis pressure → tool setup → real pilot feedback); peer confirmation of “disorganized chats + vibe prototypes”; **not** a large corpus of unsolicited “this OS fixed me” mail. Synthetic/design conviction fills gaps only where field repeatedly rhymes — and stays killable.
+
+### Bootstrap OS (the product of record)
+
+| | **IS** | **IS NOT** |
+|--|--------|------------|
+| **Job** | Portable **company control plane** for solo/near-solo 0→1: two clocks, founder gates, honest evidence labels, Ready for human eyes | A coding agent, IDE, cloud host, or “build my MVP for me” studio feature set |
+| **Source of truth** | Markdown process pack (`company-os/`) + **founder’s instance** state (thesis, scores, phase, traces) | Chat history, auto-memory, skill marketplaces, or vendor project rooms |
+| **Primary user** | Non-technical or light-technical founders who must decide Advance / Iterate / Hold / Kill | Funded multi-team orgs needing multiplayer agent admin (that’s 1–n harness territory, e.g. QM-class) |
+| **Core loop** | Prove the business (slow) while learning weekly (fast); stage 7 write-back | Infinite prototype generation without gates |
+| **Success** | Founder answers “Where are we?” in <2 minutes from written state; can switch tools without losing the board | Stars, waitlists, or “we installed twelve agents” |
+| **Teaching** | 90‑min install + OH ritual; FI-style accountability | A certification empire or content farm without dogfood |
+| **Default delivery** | **Markdown only** — zero Node required | Something you must “sign up” to think |
+
+### MCP (optional adapter — not the OS)
+
+| | **IS** | **IS NOT** |
+|--|--------|------------|
+| **Job** | Thin **tool interface** to the same process + instance state: where-are-we, gated updates, human-eyes policy, later sparse ledger/export | A new company operating system, memory product, or harness |
+| **Value** | Enforces P1–P4 (and later P5) across Cursor/Claude/Grok/etc. without re-pasting novels | Required for mentees; replacement for reading the blueprint |
+| **State** | Reads/writes **founder-owned** files (or future private store); template `company-os/` stays read-only | Multi-tenant social graph or public leaderboard backend |
+| **Local v0.1** | Stdio server in-repo; process tools + thin `company-state.json` | Hosted SaaS, auth product, or investor network |
+| **Hosted (maybe later)** | Same tool names; private by default; share **export/read** if proven | Day-one dependency; ranking; auto-ingest of all chats |
+| **Noise policy** | Explicit tools only (milestone/decision/gate) | Auto skill creation, ambient memory, “agent built 40 skills today” |
+
+### One stack picture
+
+```text
+  [ Any harness: Claude / Cursor / Grok / OpenClaw / … ]     ← changes often
+              │
+              │  optional MCP tools (same names local or future hosted)
+              ▼
+  [ Bootstrap OS control plane: gates + state + sparse evidence ]  ← stable
+              │
+              ▼
+  [ Founder instance files / ledger / export ]                 ← founder owns
+```
+
+**Stack. Don’t swap the control plane.** Swap harnesses only after weekly snapshot + stage 7.
+
+### Boundary vs adjacent things founders confuse us with
+
+| Adjacent thing | Relationship |
+|----------------|--------------|
+| **Vibe/coding agents** (Grok Build, Cursor, Lovable, …) | Build surface. OS decides *whether/when* to ship and ask humans. |
+| **Agent harnesses** (OpenClaw, Hermes, YC QM, …) | Runtime/orchestration. OS is judgment + memory spine; QM-like tools are 1–n, not day-one solo. |
+| **Chat project “rooms” / memory tools** | Session context. Useful; **not** company evidence unless promoted into ledger deliberately. |
+| **Pirin intensive / OH** | Human distribution and coaching of the OS — not a substitute for the portable pack. |
+| **Investor data room products** | Export may *feed* diligence later; OS is not DocSend/cap-table. |
+
+### Non-negotiables (high conviction)
+
+1. Markdown remains sufficient to run the OS.  
+2. AI never advances journey phase without founder approval.  
+3. Human-eyes green ≠ demand, PMF, or willingness to pay.  
+4. No leaderboard, no auto-memory as product core.  
+5. Dogfood with the same gates we demand of founders.  
+6. Ship only work that strengthens **P1–P6** (§2a).
+
+
 ---
 
 ## 1. Where we stand (control plane — dogfood)
