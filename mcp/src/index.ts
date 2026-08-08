@@ -32,6 +32,7 @@ import {
   writeState,
 } from "./state.js";
 import { buildNextEvidenceView, buildStatusView } from "./guidance.js";
+import { evaluateExternalAsk } from "./policy.js";
 
 function text(payload: unknown) {
   const body = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
@@ -473,36 +474,17 @@ server.tool(
     try {
       const state = readState();
       const status = state.readyForHumanEyes?.status ?? "unknown";
-      if (status === "green") {
-        return text({
-          allow: true,
-          scope: activeScopeNote(),
-          reason: "Ready for human eyes is green. Still not demand/PMF.",
-          intent,
-        });
-      }
-      if (founderOverride) {
-        return text({
-          allow: true,
-          scope: activeScopeNote(),
-          reason:
-            "Founder override claimed. Require decision trace (why, risks, what not to judge).",
-          intent,
-          status,
-        });
-      }
-      return text({
-        allow: false,
-        scope: activeScopeNote(),
-        reason: "Ready for human eyes is not green.",
-        status,
-        blockers: state.readyForHumanEyes?.blockers ?? [],
-        nextSteps: [
-          "Run cold URL + happy path",
-          "Call bootstrap_set_ready_for_human_eyes with blocked or green",
-          "Or founder override + bootstrap_log_decision",
-        ],
+      const decision = evaluateExternalAsk({
+        readyStatus: status,
         intent,
+        founderOverride,
+        blockers: state.readyForHumanEyes?.blockers ?? [],
+      });
+      return text({
+        ...decision,
+        scope: activeScopeNote(),
+        intent,
+        blockers: state.readyForHumanEyes?.blockers ?? [],
       });
     } catch (e) {
       return err(e instanceof Error ? e.message : String(e));

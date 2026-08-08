@@ -88,6 +88,12 @@ export function setSessionActive(companyId: string, instanceRoot: string): void 
   sessionInstanceRoot = path.resolve(instanceRoot);
 }
 
+/** Clear session active company (tests + process hygiene). */
+export function clearSession(): void {
+  sessionCompanyId = null;
+  sessionInstanceRoot = null;
+}
+
 export function getSessionActive(): {
   companyId: string | null;
   instanceRoot: string | null;

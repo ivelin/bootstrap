@@ -165,3 +165,20 @@ Placeholder until shipped. Tool names + company isolation stay stable.
 ## Roadmap
 
 High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROADMAP.md).
+
+---
+
+## CI & tests
+
+| Command | Purpose |
+|---------|---------|
+| `npm run typecheck` | Strict TypeScript |
+| `npm run build` | Emit `dist/` |
+| `npm run test:unit` | Hard-rule unit tests (phase gate, isolation, policy, markdown path) |
+| `npm run test:smoke` | Cold-path multi-company smoke |
+| `npm run ci` | Full local CI mirror |
+
+Merge gates and manual checklist: [`QA.md`](QA.md).
+
+GitHub Actions: `.github/workflows/mcp-ci.yml` (Node 20 + 22).
+

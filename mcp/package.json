@@ -1,7 +1,7 @@
 {
   "name": "@pirin/bootstrap-os-mcp",
   "version": "0.2.0",
-  "description": "Optional local MCP server for Bootstrap OS — one connector, many isolated company instances. Markdown remains source of truth.",
+  "description": "Optional local MCP server for Bootstrap OS \u2014 one connector, many isolated company instances. Markdown remains source of truth.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
@@ -11,7 +11,11 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test test/**/*.test.mjs",
+    "test:unit": "node --test test/**/*.test.mjs",
+    "test:smoke": "npm run build && node test/cold-path.smoke.mjs",
+    "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs"
   },
   "engines": {
     "node": ">=20"
