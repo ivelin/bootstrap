@@ -176,9 +176,11 @@ High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROAD
 | `npm run build` | Emit `dist/` |
 | `npm run test:unit` | Hard-rule unit tests (phase gate, isolation, policy, markdown path) |
 | `npm run test:smoke` | Cold-path multi-company smoke |
+| `npm run test:stdio` | Real stdio MCP client (M1 protocol) |
 | `npm run ci` | Full local CI mirror |
 
 Merge gates and manual checklist: [`QA.md`](QA.md).
 
 GitHub Actions: `.github/workflows/mcp-ci.yml` (Node 20 + 22).
 
+Runbooks: [`docs/COLD_PATH.md`](docs/COLD_PATH.md) · [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) · [`QA.md`](QA.md)

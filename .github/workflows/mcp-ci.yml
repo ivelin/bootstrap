@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   mcp:
-    name: typecheck · test · cold-path (Node ${{ matrix.node }})
+    name: typecheck · test · smokes (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -55,6 +55,9 @@ jobs:
 
       - name: Cold-path smoke
         run: node test/cold-path.smoke.mjs
+
+      - name: Stdio MCP client smoke (M1 protocol)
+        run: node test/stdio-mcp.client.mjs
 
       - name: Dist hygiene (no source maps required; entry exists)
         run: |
