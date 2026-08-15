@@ -2,7 +2,7 @@
 
 **Portable Company Operating System for solo founders in the 0→1 journey.**
 
-Use this repo as the **source of truth** for process and control. Point your AI agents here, install a blank instance in *your* product repo, and fill only *your* thesis, customer groups, scores, and open questions.
+Use this repo as the **source of truth** for process and control. Point your AI here and apply what fits *your* startup. Instantiate blank files in *your* product repo only when you want them — fill only *your* thesis, customer groups, scores, and open questions.
 
 | | |
 |--|--|
@@ -35,6 +35,7 @@ company-os/operating-system.md         company-os/live-runtime.md
 | [`company-os/live-runtime.md`](company-os/live-runtime.md) | **Live OS shape** — durable state + 7-stage loop + eval harness ideas |
 | [`company-os/ready-for-human-eyes.md`](company-os/ready-for-human-eyes.md) | **Ship gate checklist** — cold URL + happy path before external product-test asks |
 | [`company-os/ai-instructions.md`](company-os/ai-instructions.md) | Thin enforcement layer — paste into `AGENTS.md` / Cursor / Claude / Grok |
+| [`company-os/first-hour.md`](company-os/first-hour.md) | **Day 0** — thesis, ≥3 ICPs, first “Where are we?” (chat or instance files) |
 | [`templates/`](templates/) | Blank files to copy into *your* company repo when you instantiate |
 | [`examples/`](examples/) | Pointers to public live instances (illustration only) |
 
@@ -42,32 +43,13 @@ This repo is **template only**. Filled company state never lives here.
 
 ---
 
-## Install in your company (5 steps)
+## How to use this (pick one)
 
-1. **Read** [`company-os/operating-system.md`](company-os/operating-system.md), then [`company-os/live-runtime.md`](company-os/live-runtime.md).
-2. **Copy templates** into your product repo (suggested layout):
+Compatible paths. Start at **1**. Later rungs are opt-in — still one idea, *your* company, unless you later run several.
 
-   ```text
-   your-company/
-     docs/company-os/
-       applied-here.md          ← from templates/applied-here.md
-       instance/
-         README.md
-         thesis.md
-         scores.md
-     company/
-       README.md
-       state/company-state.json ← from templates/company/state/company-state.json
-     AGENTS.md                  ← merge company-os/ai-instructions.md
-   ```
+### 1. Point an AI at this pack (default)
 
-3. **Paste** hard rules from [`company-os/ai-instructions.md`](company-os/ai-instructions.md) into your main AI instructions (root `AGENTS.md` recommended).
-4. **Fill** thesis, ≥3 ICP candidates, journey phase, loop stage, open questions — *your* company only.
-5. **Before** any mentor/user “try my link” ask, run the [`ready-for-human-eyes`](company-os/ready-for-human-eyes.md) checklist.
-
-Start with markdown + a weekly “Where are we?” ritual. Add agent frameworks only when they reduce pain.
-
-### Point agents at this pack
+No copy, no script, no CLI, no MCP. Use what applies to *your* startup immediately.
 
 ```text
 Take the Bootstrap OS from https://github.com/ivelin/bootstrap
@@ -75,6 +57,40 @@ Take the Bootstrap OS from https://github.com/ivelin/bootstrap
 Apply process and control to MY startup only.
 Do not import any other company's product thesis or market.
 ```
+
+Then Day 0 — thesis, ≥3 customer groups, first “Where are we?”: [`company-os/first-hour.md`](company-os/first-hour.md). Chat is enough.
+
+### 2. Instantiate files (when you want them in your repo)
+
+Optional. Script or hand copy — [Install](#install-in-your-company). A future CLI that enforces the weekly loop would sit on this same rung. Still one idea, your repo.
+
+### 3. Self-hosted MCP (later — several ideas)
+
+When you run multiple ideas, a self-hosted MCP could run the bootstrap loop across them without installing markdown or a CLI per idea. Not in this repo yet.
+
+### 4. Hosted MCP (later)
+
+A hosted MCP may exist later. Nothing to connect to today.
+
+---
+
+## Install in your company
+
+Optional (path 2). From this template repo:
+
+```text
+./scripts/install-instance.sh /path/to/your-company
+```
+
+That copies `templates/` into the target and merges [`company-os/ai-instructions.md`](company-os/ai-instructions.md) into the instance `AGENTS.md`.
+
+Then do **first hour**: [`company-os/first-hour.md`](company-os/first-hour.md) (also copied to `docs/company-os/first-hour.md` in the target). Fill thesis, ≥3 ICP scorecards, first “Where are we?” — *your* company only.
+
+**Manual copy:** if you cannot run the script, use the copy map in [`templates/README.md`](templates/README.md) and paste the fenced block from [`company-os/ai-instructions.md`](company-os/ai-instructions.md) into the instance `AGENTS.md`.
+
+Start with markdown + a weekly “Where are we?” ritual. Add agent frameworks only when they reduce pain.
+
+Local CI is `./scripts/ci.sh`.
 
 ---
 
