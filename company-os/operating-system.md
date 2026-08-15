@@ -1,8 +1,8 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8  
-**Last Updated:** 2026-08-04  
+**Version:** 2.8.1  
+**Last Updated:** 2026-08-15  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -192,16 +192,19 @@ For **claims inside a report**, prefer the four labels above so “assumed capab
 
 Use AI to create realistic customer profiles and run conversations or scenarios with them.
 
-Ask:
+Seed each profile from traces **outside the thesis** when you have them. No customers yet is normal for a new idea. Use **legal** adjacent traces: public forums, reviews of the substitute or a competitor, or the founder’s own prior-domain notes (no PII, nothing taken from a former employer’s private files). Do not import another company’s market or ICP list. If truly none, write **none yet**. A persona invented only from the pitch will confirm the pitch — use it to rank, not to promote.
 
-- How painful is the problem for this person?
+Ask a **forced choice** that looks like the real decision, in the order they would face it. Also write down what they **say** (pain, substitute, objection, a yes). That is **stated** evidence. People are usually better at describing present pain than a future purchase — keep the words, do not treat a spoken yes as a sale. Do not ask a 1–5 or a dollar figure — ask a choice or a sentence, then map.
+
 - What do they currently do instead?
-- Would they pay or change their behavior?
-- What would make them trust a new solution?
+- What do they say the pain is, in their words?
+- If they must pick among this and that alternative, what do they choose?
+- After one condition changes (price, time, or the thing they already use), do they still choose you?
 - What would make them say no?
 
 Do this for **several** customer groups, not just the one you like.  
-Synthetic research is fast and cheap. It is also imperfect. Treat it as a useful **filter**, not final proof.
+Run the same few questions on a handful of real people before you trust the rank. If the rank order does not match, weigh the gap — do not throw out the words or the sim. If the sim answers are almost identical (too-tight variance) or the same prompt drifted versus the human handful, treat that synthetic pass as unusable. A new category with no prior survey in that category cannot be rescued by fine-tuning on some other survey — most Day-0 ideas are this case.  
+Synthetic research is a useful **filter**. It may rank or kill. Weigh stated, synthetic, and observed. When they disagree, observed wins. A spoken yes cannot promote a group.
 
 ### Staged trust reveal (how synthetic trust actually moves)
 
@@ -242,7 +245,7 @@ After you have a ranked synthetic research report, use the **next pack** below i
 
 ### Ranking rule
 
-Only promote a customer group to **primary focus** if both synthetic and real-world evidence support it **and** the reward/risk scorecard looks manageable for a solo founder at the current stage (see next section).  
+Only promote a customer group to **primary focus** if synthetic **and** observed evidence support it (weigh stated / synthetic / observed; observed wins a clash) **and** the reward/risk scorecard looks manageable for a solo founder at the current stage (see next section).  
 If evidence is weak, keep looking or kill the idea. Do not protect an idea just because you have already spent time on it.  
 Multi-group research is not multi-group go-to-market: **rank, demote, and hold** until promotion criteria are met.
 
@@ -511,7 +514,7 @@ When ranking groups (sometimes called ideal customer profiles), write down **bot
 
 Only promote a group to primary focus when:
 
-1. Synthetic **and** real-world evidence support a real problem, and  
+1. Synthetic **and** observed evidence support a real problem (weigh stated / synthetic / observed; observed wins a clash), and  
 2. Reward looks real, and  
 3. Risks look manageable for a solo founder **at this stage**
 
@@ -523,10 +526,17 @@ Use this for ranking and promotion. Messaging fields are optional; they do **not
 
 ```text
 Customer group:
+Seed (own customers if any; else legal adjacent traces — public forums, substitute/competitor reviews, or the founder’s prior-domain notes with no PII. Not a former employer’s private customer list. If truly none, write none yet and treat as weaker):
 Reward notes (pain, pay, reach, channel fit):
 Risk notes (reach cost, hand-holding, messiness, legal, time-to-signal):
-Synthetic evidence (date, summary, evidence labels used):
-Real evidence (date, summary):
+Forced choice (the decision in the order they would face it — not a 1–5 or a dollar; choice or sentence, then map):
+Condition changed (one of: price, time, or current alternative):
+Stated evidence (date, their words — present pain, substitute, objection, or a yes; keep it, label it stated):
+Synthetic evidence (date, who folded / who still chose you after the condition change):
+Calibration (same 3 questions on a few real people? rank order match? too-tight variance or same-prompt drift vs the human handful → unusable; yes / no / not yet):
+New category / no prior survey in this category? (yes = weaker — prior-survey calibration will not save it):
+Gap (if stated, synthetic, and observed disagree — weigh them, do not discard any):
+Observed evidence (date, time or money spent):
 Rank (1 = best test priority) / Promote? (yes / no / hold):
 Kill criteria for this group:
 
@@ -536,7 +546,7 @@ Optional — what to say (for interview and outreach tests only):
   Main objection:
   Proof they would need:
   Clear next step to offer:
-  Price or offer range to test (hypothesis only — needs real-world proof):
+  Price or offer range to test (hypothesis — stated interest is a clue; observed time or money decides):
 
 Optional — next pack (after ranking):
   Sandbox baseline path pass/fail (date):
@@ -929,9 +939,11 @@ I stay in final control of strategy, journey phase changes, and important decisi
 
 Hard rules you must follow:
 1. Never advance a journey phase without my explicit approval.
-2. Never treat an early idea or customer group as proven until both synthetic and real-world evidence support it.
+2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. When stated and observed disagree, observed wins. A spoken yes cannot promote a group.
 3. Label claims honestly: outside facts, company signals, assumed capability, or needs real-world proof.
-   Never treat simulated prices or "I would buy" as demand.
+   Also label research inputs: stated (their words) | synthetic (sim after a condition change) | observed (time or money).
+   Never treat simulated prices or a spoken “I would buy” as demand. Keep the words. They are stated evidence, not a sale.
+   Never ask a synthetic user for a Likert or a dollar; ask a choice or a sentence, then map. If synthetic variance is too tight or the same prompt drifted versus a human baseline, discard that pass. A new category with no prior survey cannot be rescued by fine-tuning.
 4. When I ask “Where are we?” or “Where do we stand?”, answer with a crisp plain-language
    company snapshot — journey and loop in everyday words, how free the AI is, gate in plain words,
    evidence, open questions, honest scores. No cryptic dumps.
@@ -997,7 +1009,7 @@ Adjust names to your domain; keep them honest. Track them over time. Prefer **st
 | Score | What it asks |
 |-------|----------------|
 | **Problem evidence** | Is the pain real and frequent for this group? |
-| **Willingness** | How often do synthetic and real people show clear willingness to act or pay? |
+| **Willingness** | How often do people show clear willingness to act or pay? Label the number **stated**, **synthetic**, or **observed**. |
 
 ### Operational performance
 
@@ -1127,6 +1139,7 @@ Every company should maintain its own list. Starter prompts:
 | 2.6 | Autonomy postures (Strict / Auto / Dangerous); standing deny list (always on); learning rituals (weekly snapshot, stage 7, scoreboard glance, coordination-tax check) |
 | 2.7 | After proof: growth pack (entry gate; message/channel experiment tracks; outcome metrics; founder promote/kill/hold; growth/ artifacts). Phase 9 pointer. No new phase; no channel-tooling folklore. |
 | 2.8 | **Ready for human eyes** ship gate before external product feedback; cold URL + happy path + console/iframe/auth evidence; fail-closed ask-for-feedback; sandbox browser / NL synthetic user as vehicle (not founder CS homework); state field + checklist. |
+| 2.8.1 | Evidence labels stated / synthetic / observed; forced-choice + one condition change; no Likert/dollar from sims; optional Grok Build workflows (path 2). |
 
 ---
 

@@ -107,6 +107,10 @@ copy_one "$ROOT/templates/traces/decisions/TEMPLATE.md"       "$TARGET/traces/de
 copy_one "$ROOT/templates/research/icps/TEMPLATE.md"          "$TARGET/research/icps/TEMPLATE.md"
 copy_one "$ROOT/templates/product/READY_FOR_HUMAN_EYES.md"    "$TARGET/product/READY_FOR_HUMAN_EYES.md"
 copy_one "$ROOT/company-os/first-hour.md"                     "$TARGET/docs/company-os/first-hour.md"
+copy_one "$ROOT/.grok/workflows/README.md"                    "$TARGET/.grok/workflows/README.md"
+copy_one "$ROOT/.grok/workflows/company-operating-loop.rhai"  "$TARGET/.grok/workflows/company-operating-loop.rhai"
+copy_one "$ROOT/.grok/workflows/ready-for-human-eyes.rhai"    "$TARGET/.grok/workflows/ready-for-human-eyes.rhai"
+copy_one "$ROOT/.grok/workflows/user-research.rhai"           "$TARGET/.grok/workflows/user-research.rhai"
 
 if [ -f "$TARGET/company/state/where-are-we.py" ]; then
   chmod +x "$TARGET/company/state/where-are-we.py" || true
