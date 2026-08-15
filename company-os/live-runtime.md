@@ -146,10 +146,10 @@ Founder gates sit between stages when strategy or spend would change.
 | | |
 |--|--|
 | **Goal** | Explore customer groups and jobs-to-be-done cheaply across **several** groups |
-| **Inputs** | Thesis, existing personas, hypotheses, prior scores, outside-facts notes |
-| **Work** | Generate/update personas; run interviews/scenarios; use [staged trust reveal](operating-system.md#staged-trust-reveal-how-synthetic-trust-actually-moves) when scoring trust or price interest; surface pains, substitutes, willingness, trust, “no” reasons |
-| **Outputs** | Ranked notes with evidence labels; score *movement* if staged; demotions; open questions; optional “what to say” drafts labeled as hypotheses |
-| **Founder gate?** | Soft — do not promote a primary group without stage 2 + real evidence later |
+| **Inputs** | Thesis; legal adjacent traces if no customers yet (public forums, substitute/competitor reviews, founder prior-domain notes with no PII — not a former employer’s private list); existing personas; hypotheses; prior scores |
+| **Work** | Seed personas from those traces (or write none yet). Run the same forced choice across several groups, in the order they would decide, then change one condition (price, time, or current alternative). Write down what they say (stated) and what they choose after the change (synthetic). Do not ask a 1–5 or a dollar — a choice or a sentence, then map. Too-tight variance or same-prompt drift versus a human handful makes the pass unusable. New category / none yet stays the weak case. Use staged trust reveal when scoring trust or price interest. |
+| **Outputs** | Ranked notes labeled stated / synthetic / observed; demotions; open questions; optional “what to say” drafts labeled as stated hypotheses |
+| **Founder gate?** | Soft — synthetic may rank or kill. Do not promote a primary group without observed evidence later (stage 2 Track B / journey phase 4). |
 
 #### 2 — Validation / concept testing
 
@@ -199,7 +199,7 @@ Founder gates sit between stages when strategy or spend would change.
 | **Inputs** | Conversations, usage, support, pilots — **prefer** after Ready for human eyes is green when the ask is “try my product link” |
 | **Work** | Capture outcomes; separate what people *said* vs *did*; link to hypotheses; if feedback was “link broken,” write stress scenario and set human-eyes **blocked** |
 | **Outputs** | Feedback store entries; contradictions vs synthetic beliefs |
-| **Founder gate?** | Yes — when real evidence overturns synthetic ranking |
+| **Founder gate?** | Yes — when **observed** evidence overturns synthetic ranking |
 
 #### 7 — Memory update & loop back
 

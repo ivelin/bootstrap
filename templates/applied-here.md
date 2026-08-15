@@ -38,8 +38,8 @@ Replace every placeholder with *your* company. Do not import another founder’s
 
 ## Customer groups (reward / risk — rank, don’t multi-GTM by default)
 
-| Rank | Group | Pain | Reach | Willingness signal | Notes |
-|------|-------|------|-------|--------------------|-------|
+| Rank | Group | Pain | Reach | Evidence (stated / synthetic / observed) | Notes |
+|------|-------|------|-------|------------------------------------------|-------|
 | 1 | | | | | |
 | 2 | | | | | |
 | 3 | | | | | |

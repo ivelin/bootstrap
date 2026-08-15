@@ -38,6 +38,8 @@ LAST SNAPSHOT      YYYY-MM-DD | missing
 | Economics | Reward vs risk | | |
 | Economics | Early revenue | | |
 
+For willingness to pay, note whether the number is **stated**, **synthetic**, or **observed**. A spoken yes is a clue. Observed time or money decides.
+
 **Rule:** Raising operational scores on a weak business hypothesis is less valuable than proving (or killing) the hypothesis.
 
 ## Open questions

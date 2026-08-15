@@ -27,6 +27,7 @@ LIVE LOOP (fast)   M / 7   [stage name]
 - **Autonomy:** Strict | Auto | Dangerous — what that means for me this week:
 - **Ready for human eyes:** unknown | blocked | green
   - If not green, do not ask mentors/users to try a product link.
+  - **Evidence mix this week:** stated / synthetic / observed (weigh them; observed wins a clash)
 
 ## Honest scores (active hypotheses / slices — not vanity)
 

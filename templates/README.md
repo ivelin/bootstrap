@@ -34,5 +34,8 @@ Also copied by the install script (lives in the OS pack, not here):
 |--------------|---------------------------|
 | `company-os/first-hour.md` | `docs/company-os/first-hour.md` |
 | fenced block in `company-os/ai-instructions.md` | merged into root `AGENTS.md` |
+| `.grok/workflows/` (README + three `.rhai`) | `.grok/workflows/` |
+
+Optional Grok Build workflows copy to `.grok/workflows/`.
 
 Then follow [`../company-os/first-hour.md`](../company-os/first-hour.md).

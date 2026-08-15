@@ -38,6 +38,7 @@ company-os/operating-system.md         company-os/live-runtime.md
 | [`company-os/first-hour.md`](company-os/first-hour.md) | **Day 0** — thesis, ≥3 ICPs, first “Where are we?” (chat or instance files) |
 | [`templates/`](templates/) | Blank files to copy into *your* company repo when you instantiate |
 | [`examples/`](examples/) | Pointers to public live instances (illustration only) |
+| [`.grok/workflows/`](.grok/workflows/) | Optional Grok Build workflows (path 2) — company-operating-loop, user-research, ready-for-human-eyes |
 
 This repo is **template only**. Filled company state never lives here.
 
@@ -62,7 +63,7 @@ Then Day 0 — thesis, ≥3 customer groups, first “Where are we?”: [`compan
 
 ### 2. Instantiate files (when you want them in your repo)
 
-Optional. Script or hand copy — [Install](#install-in-your-company). A future CLI that enforces the weekly loop would sit on this same rung. Still one idea, your repo.
+Optional. Script or hand copy — [Install](#install-in-your-company). Optional Grok Build workflows live in [`.grok/workflows/`](.grok/workflows/) (`company-operating-loop`, `user-research`, `ready-for-human-eyes`) if present — same rung, not the only front door. Still one idea, your repo.
 
 ### 3. Self-hosted MCP (later — several ideas)
 
@@ -82,7 +83,7 @@ Optional (path 2). From this template repo:
 ./scripts/install-instance.sh /path/to/your-company
 ```
 
-That copies `templates/` into the target and merges [`company-os/ai-instructions.md`](company-os/ai-instructions.md) into the instance `AGENTS.md`.
+That copies `templates/` into the target and merges [`company-os/ai-instructions.md`](company-os/ai-instructions.md) into the instance `AGENTS.md`. If present, optional Grok Build workflows also copy to `.grok/workflows/`. You can run them with `grok` by name without making install the only front door.
 
 Then do **first hour**: [`company-os/first-hour.md`](company-os/first-hour.md) (also copied to `docs/company-os/first-hour.md` in the target). Fill thesis, ≥3 ICP scorecards, first “Where are we?” — *your* company only.
 

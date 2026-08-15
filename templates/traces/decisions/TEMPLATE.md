@@ -12,7 +12,7 @@ Journey phase / loop stage:
 Autonomy posture (Strict | Auto | Dangerous):
 Decision:
 Options considered:
-Evidence used (run type: synthetic | real | mixed; claim labels if needed):
+Evidence used (stated | synthetic | observed; plus claim labels if needed):
 Choice:
 Expected outcome:
 Actual outcome (fill later):
