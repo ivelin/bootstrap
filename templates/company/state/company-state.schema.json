@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "company-state.schema.json",
+  "title": "Bootstrap OS company-state",
+  "description": "Minimum durable cursor for a company instance. Blank template only — do not fill with another founder’s market. Additional properties are allowed.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "version",
+    "companyId",
+    "journeyPhase",
+    "loopStage",
+    "gateStatus",
+    "autonomyPosture",
+    "readyForHumanEyes",
+    "openQuestions"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Instance state schema version, not the OS blueprint version."
+    },
+    "companyId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "One sentence. Subject to evidence — not gospel."
+    },
+    "journeyPhase": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9,
+      "description": "Bootstrap journey phase 1–9 (slow clock). Founder-gated."
+    },
+    "loopStage": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7,
+      "description": "Live runtime loop stage 1–7 (fast clock)."
+    },
+    "gateStatus": {
+      "type": "string",
+      "enum": ["open", "waiting", "blocked"]
+    },
+    "autonomyPosture": {
+      "type": "string",
+      "enum": ["strict", "auto", "dangerous"]
+    },
+    "readyForHumanEyes": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["unknown", "blocked", "green"]
+        },
+        "checkedAt": {
+          "type": ["string", "null"]
+        },
+        "happyPath": {
+          "type": "string"
+        },
+        "evidencePath": {
+          "type": ["string", "null"],
+          "description": "Optional path to product/READY_FOR_HUMAN_EYES.md or a report."
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "problemEvidence": { "type": ["number", "null"] },
+        "willingnessToPay": { "type": ["number", "null"] },
+        "completion": { "type": ["number", "null"] },
+        "traceCompleteness": { "type": ["number", "null"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "founderApprovals": {
+      "type": "array"
+    },
+    "openQuestions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "lastAction": {
+      "type": "string"
+    },
+    "lastWeeklySnapshotAt": {
+      "type": ["string", "null"],
+      "description": "Date of last control-plane snapshot (YYYY-MM-DD or timestamp)."
+    },
+    "createdAt": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    }
+  }
+}

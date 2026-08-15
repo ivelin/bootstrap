@@ -1,0 +1,80 @@
+# First hour (Day 0)
+
+This hour: write the thesis, name at least three customer groups, and produce one honest “Where are we?”  
+**Do not build product in this hour.**
+
+You do **not** need to copy files first. Point an AI at the Bootstrap OS and do this in chat. Paths below are for when you have instantiated a blank instance in your company repo.
+
+Full constitution: [`operating-system.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md) · live loop: [`live-runtime.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/live-runtime.md).  
+Hard rules: [`ai-instructions.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/ai-instructions.md). If you instantiated, they should already be in `AGENTS.md`.
+
+---
+
+## 1. Write the thesis (~20 minutes)
+
+Write it in the chat (or any note you keep). If you instantiated, also edit `docs/company-os/instance/thesis.md` and put the one-sentence line into `docs/company-os/applied-here.md` and `company/state/company-state.json`.
+
+You need:
+
+1. **Who** you might help (candidates — not a locked primary yet)
+2. **What pain**
+3. **How** you help (one sentence)
+4. **Why now / why you**
+5. **Contrarian edge** — what others undervalue
+6. The label: **this is a hypothesis subject to evidence**
+7. **What would kill or demote** this thesis
+
+If you cannot write a kill line, you are already protecting the idea.
+
+---
+
+## 2. At least three customer groups (~25 minutes)
+
+Name at least three groups in chat and write a **reward/risk** note for each. If you instantiated, copy `research/icps/TEMPLATE.md` to `research/icps/icp-01.md`, `icp-02.md`, `icp-03.md` (rename the titles) and fill a scorecard for each.
+
+- Rank is **test priority**, not “we will sell to all three.”
+- **Promote = hold** until synthetic **and** real evidence plus a manageable scorecard say otherwise.
+- Do not turn three research groups into three go-to-market motions.
+
+Then list the three (name only + rank) in the same place as the thesis — chat is enough; if you instantiated, also `docs/company-os/applied-here.md` and `docs/company-os/instance/thesis.md`.
+
+---
+
+## 3. First “Where are we?” (~15 minutes)
+
+Ask your AI: **“Where are we?”**  
+A good answer is a two-minute company snapshot, not a dump.
+
+If you instantiated, also copy `docs/company-os/instance/snapshots/TEMPLATE.md` to `docs/company-os/instance/snapshots/YYYY-MM-DD.md` and fill it in everyday words. Optional machine read (does **not** replace the dated snapshot):
+
+```text
+python3 company/state/where-are-we.py
+```
+
+That read uses `company/state/company-state.json` (and its schema).
+
+On Day 0 you should hear something like: journey phase **1 of 9**, loop stage **1 of 7**, gate open, autonomy **Strict**, Ready for human eyes **unknown**, three groups on **hold**, no proof.
+
+---
+
+## Done when
+
+- [ ] Thesis written and labeled a hypothesis
+- [ ] ≥3 customer groups with reward/risk notes (chat is enough; `research/icps/` if instantiated)
+- [ ] One “Where are we?” (chat is enough; dated snapshot file if instantiated)
+- [ ] Your AI is following the Bootstrap OS hard rules (pointed at this pack, or pasted into `AGENTS.md`)
+- [ ] You did **not** import another founder’s market, ICP list, or roadmap
+
+**Not** done: a deck, a repo full of features, or a favorite customer declared “the one.”
+
+---
+
+## After this hour
+
+Follow the [near-term checklist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#near-term-checklist-any-startup). Next real work is usually honest research across those groups — not a platform.
+
+If you already have a product URL and want a mentor or stranger to click it, that is a **later** gate ([portable rules](https://github.com/ivelin/bootstrap/blob/main/company-os/ready-for-human-eyes.md)). If you instantiated, fill `product/READY_FOR_HUMAN_EYES.md`. Green eyes ≠ demand.
+
+---
+
+*You supply the insight. AI supplies the speed.*
