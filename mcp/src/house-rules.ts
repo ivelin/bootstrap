@@ -1,5 +1,5 @@
 /**
- * OS 2.8.3 house-rule reminders for the optional MCP adapter.
+ * OS 2.8.5 house-rule reminders for the optional MCP adapter.
  * Constitution lives in company-os/*.md. This file must not invent a second OS.
  */
 
@@ -17,6 +17,7 @@ export const HOUSE_RULE_LINES = [
   "Do not seed a persona from a demographic one-liner. Seed from traces. Demo-only role-play is the weak case.",
   "Do not ask a synthetic user for a Likert or a naked dollar WTP; a choice or a sentence, then map.",
   "Ready for human eyes green is not demand or PMF.",
+  "Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
 ] as const;
 

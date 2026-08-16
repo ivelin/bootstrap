@@ -84,7 +84,7 @@ async function main() {
 
     const info = await call(client, "bootstrap_os_info");
     assert.equal(info.mcpVersion, "0.2.0");
-    assert.equal(info.osVersion, "2.8.3");
+    assert.equal(info.osVersion, "2.8.5");
     assert.equal(path.resolve(info.paths.dataRoot), path.resolve(dataRoot));
     assert.match(JSON.stringify(info.adoptionOrder), /Nothing to connect to today/);
     assert.match(JSON.stringify(info.houseRules), /observed wins/i);

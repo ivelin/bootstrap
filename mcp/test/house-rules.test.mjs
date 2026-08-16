@@ -9,7 +9,7 @@ import {
 } from "../dist/house-rules.js";
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
 
-describe("OS 2.8.3 house rules (adapter reminders)", () => {
+describe("OS 2.8.4 house rules (adapter reminders)", () => {
   it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert", () => {
     const blob = HOUSE_RULE_LINES.join("\n");
     assert.match(blob, /stated, synthetic, and observed/i);
@@ -20,6 +20,9 @@ describe("OS 2.8.3 house rules (adapter reminders)", () => {
     assert.match(blob, /Likert/i);
     assert.match(blob, /naked dollar WTP/i);
     assert.match(blob, /then map/i);
+    assert.match(blob, /Several ideas are allowed/);
+    assert.match(blob, /Do not hide a second idea/);
+    assert.match(blob, /Rank and kill per board/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {

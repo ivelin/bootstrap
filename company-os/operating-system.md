@@ -1,7 +1,7 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.4  
+**Version:** 2.8.5  
 **Last Updated:** 2026-08-17  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
@@ -61,7 +61,8 @@ Some principles may be useful inside larger companies. Those environments have a
    Using AI well is now normal. Real advantage comes from noticing and acting on opportunities that most people — and current AI — still undervalue or dismiss. (AI without personal agency is not an edge.)
 
 2. **Do not fall in love with your first idea.**  
-   The system exists to force an honest process: form a thesis, test it hard, learn, and be willing to change or kill it.
+   The system exists to force an honest process: form a thesis, test it hard, learn, and be willing to change or kill it.  
+   Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board. Do not blend them into one story.
 
 3. **Stay small until it works.**  
    Build the tiniest version that can prove people will pay or get clear value. Expand only after you have real proof.
@@ -1235,7 +1236,7 @@ Accuracy numbers perish with the model checkpoint. Mechanism findings last until
 - Bisbee et al., 2024, *Political Analysis*. Task: silicon sampling / prompt variance and drift. Finding: too-tight variance and same-prompt drift make a pass unusable.
 - Brand, Israeli, and Ngwe, HBS 23-062 rev. 2026, §3.3. Task: willingness-to-pay and cross-category fine-tune (laptop → tablet). Finding: direct dollar WTP from GPT was useless; fine-tune failed on a new category. They still used conjoint with prices in the profile and reported $. They did not write “never produce a dollar” or “one condition change.”
 
-Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case).
+Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused).
 
 ## Changelog (high level)
 
@@ -1255,6 +1256,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.2 | Honesty pass: label observed-wins / spoken-yes-cannot-promote as house epistemology; qualify naked dollar/Likert (mapped $ after a choice is allowed); short sources note (Bisbee 2024 + Brand 2026 §3.3 load-bearing only). |
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
 | 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack: overnight drafts after proof; insight quality before posting cadence (one lived observation, short — not a content calendar). No clocks, gates, or deny-list items removed. |
+| 2.8.5 | House rule: several ideas are allowed; each is its own thesis/instance/scorecard; do not hide a second idea to look focused; rank and kill per board. |
 
 ---
 

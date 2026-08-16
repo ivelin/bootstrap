@@ -2,13 +2,13 @@
 
 **What this is / is not:** see root [`ROADMAP.md` §0](../ROADMAP.md) — MCP is optional adapter furniture to the control plane, not a second OS, harness, memory product, or hosted service.
 
-**Markdown is the constitution.** Front door is still **path 1**: point an AI at https://github.com/ivelin/bootstrap — no install. Path 2 is optional instance files / CLI + `.grok/workflows`. **This package is path 3 only** (several ideas). Hosted MCP does not exist.
+**Markdown is the constitution.** Front door is still **path 1**: point an AI at https://github.com/ivelin/bootstrap — no install. Path 2 is optional instance files / CLI + `.grok/workflows`. **This package is path 3 only.** Several ideas are allowed. Each `companyId` is its own board. Do not hide a second idea to look focused. Rank and kill per board. Hosted MCP does not exist.
 
 | Path | Who it is for | Dependency |
 |------|----------------|------------|
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
-| **3. Local MCP (this package)** | Several ideas / many agents | Node 20+, this package, local data root |
+| **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
 | **4. Hosted MCP** | Nobody today | Does not exist. Nothing to connect to today. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
@@ -62,7 +62,7 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 | `bootstrap_log_decision` | Trace under active company |
 | `bootstrap_refuse_external_ask_if_not_green` | Fail-closed external asks |
 
-Hard rules (OS 2.8.3):
+Hard rules (OS 2.8.4):
 
 - Journey phase does **not** change unless `founderApprovedPhaseChange=true`
 - Human-eyes **green** is not demand or PMF
@@ -73,6 +73,7 @@ Hard rules (OS 2.8.3):
 - A spoken yes cannot promote a customer group
 - Do not seed a persona from a demographic one-liner (demo-only role-play is the weak case)
 - Do not ask a sim for a Likert or a naked dollar WTP — a choice or a sentence, then map
+- Several ideas are allowed — each `companyId` is its own board; do not hide a second idea to look focused; rank and kill per board
 
 ---
 

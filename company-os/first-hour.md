@@ -26,6 +26,8 @@ You need:
 
 If you cannot write a kill line, you are already protecting the idea.
 
+If you have **more than one idea**, write each as its own thesis. Do not fold the second into the first to look focused. Rank and kill per board. Path 1 (chat) is enough for one idea; optional path 3 (local MCP) keeps several ideas isolated.
+
 ---
 
 ## 2. At least three customer groups (~25 minutes)
