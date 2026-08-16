@@ -3,7 +3,7 @@
 **Goal:** On a clean machine, go from zero → working multi-company control plane in under 15 minutes.  
 **Pass criteria for gate M2:** someone who did **not** write this code completes the path and records evidence below.
 
-Markdown-only install (no Node) remains fully supported; this path is **optional** MCP.
+This is **optional path 3**. Path 1 is still point an AI at https://github.com/ivelin/bootstrap (no install). Path 2 is optional instance/CLI. Hosted MCP does not exist.
 
 ---
 
@@ -33,7 +33,7 @@ npm ci
 npm run ci
 ```
 
-Expected: typecheck, build, 17 unit tests, cold-path smoke, **stdio MCP client smoke** all pass.
+Expected: typecheck, build, unit tests (including OS 2.8.3 house rules), cold-path smoke, **stdio MCP client smoke** all pass.
 
 What `npm run ci` proves without a GUI:
 

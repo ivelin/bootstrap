@@ -183,9 +183,10 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 
 | Mode | Status | Rule |
 |------|--------|------|
-| **1. Markdown only** | **Default forever** | Must work with zero MCP |
-| **2. Local MCP** | **v0.2 multi-company in PR** | One connector, many isolated instances under data root |
-| **3. Hosted MCP** | **Later / maybe** | Only if auth + **read-only share of export** is proven needed; same tool names; private default |
+| **1. Point an AI** | **Default forever** | https://github.com/ivelin/bootstrap — no install, no MCP |
+| **2. Optional instance / CLI + workflows** | **Shipped on main** | `./scripts/install-instance.sh` + optional `.grok/workflows` |
+| **3. Local MCP** | **v0.2 optional adapter** | One connector, isolated instances; same `company-state.json` + `where-are-we.py` |
+| **4. Hosted MCP** | **Later / does not exist** | Nothing to connect to today |
 
 MCP is **compass + logbook**, not a third harness.
 
@@ -201,7 +202,7 @@ Each phase needs **Advance / Iterate / Hold / Kill** with evidence. No phase aut
 |--|--|
 | **Done means** | `company-os/` + `templates/` installable; AI instructions pasteable; Ready for human eyes checklist exists |
 | **Evidence** | Public repo; workshops/OH can teach without MCP |
-| **Status** | **Advance candidate** — treat as shipped process baseline (v2.8 docs) |
+| **Status** | **Advance candidate** — treat as shipped process baseline (v2.8.3 docs) |
 | **From field** | FI demand for “Bootstrap with AI Agents” OH; Luma series (90‑min → reliable → scale). Teach Phase A first. |
 
 

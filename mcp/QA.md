@@ -25,8 +25,10 @@ cd mcp && npm ci && npm run ci
 2. `evaluateExternalAsk` denies when human-eyes ≠ green (unless founder override).
 3. Multi-company state is isolated by `companyId` under `BOOTSTRAP_DATA_ROOT`.
 4. MCP never mutates files under `company-os/`.
-5. Markdown install path works with **zero** MCP usage.
+5. Markdown path (point-an-AI / optional install) works with **zero** MCP usage.
 6. Stdio MCP protocol serves the full tool surface to a real client.
+7. OS 2.8.3 house rules: stated / synthetic / observed (observed wins); spoken yes cannot promote; no demographic one-liner seed; no Likert / naked dollar WTP.
+8. Same state furniture: instance gets `company-state.json` + `where-are-we.py` (and schema). Hosted MCP does not exist.
 
 ## Manual (before ready-for-review)
 
@@ -45,7 +47,7 @@ cd mcp && npm ci && npm run ci
 - **State:** founder-owned disk under `BOOTSTRAP_DATA_ROOT` (default `~/.bootstrap-os`).
 - **Failure modes:** missing state file, unknown companyId, template demo mode when no instance — tools return structured errors, not silent success.
 - **Secrets:** do not put API keys in company state; traces may be shared carefully (no PII).
-- **Rollback:** markdown path remains default forever; disable MCP client config to fall back.
+- **Rollback:** path 1 (point an AI) remains the default forever; disable MCP client config to fall back. Hosted MCP does not exist.
 - **Runbooks:** [`docs/COLD_PATH.md`](docs/COLD_PATH.md), [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md)
 
 ## Exit criteria for this PR

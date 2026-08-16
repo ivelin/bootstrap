@@ -47,8 +47,20 @@ try {
   const deny = evaluateExternalAsk({ readyStatus: eyes, intent: "try my link" });
   assert.equal(deny.allow, false);
 
-  // 6. Status plain
-  assert.match(whereAreWePlain(readState()), /pirin/);
+  // 6. Status plain + 2.8.3 house rules
+  const plain = whereAreWePlain(readState());
+  assert.match(plain, /pirin/);
+  assert.match(plain, /observed wins/i);
+
+  const wherePy = path.join(
+    dataRoot,
+    "instances",
+    "pirin",
+    "company",
+    "state",
+    "where-are-we.py",
+  );
+  assert.ok(fs.existsSync(wherePy), "same state: where-are-we.py copied into instance");
 
   // 7. State files only under data root (never write company-os/)
   const osTemplate = path.join(REPO_ROOT, "company-os");

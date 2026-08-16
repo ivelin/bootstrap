@@ -138,6 +138,10 @@ export function whereAreWePlain(state: CompanyState): string {
     JSON.stringify(state.scores ?? {}, null, 2),
     "",
     "Rules reminder: AI never advances journey phase alone. Evidence beats narrative.",
+    "House rules (OS 2.8.3): stated / synthetic / observed — observed wins. Spoken yes cannot promote.",
+    "Do not seed from a demographic one-liner (demo-only role-play is the weak case).",
+    "No Likert or naked dollar WTP — choice or sentence, then map.",
+    "Same state as markdown: company-state.json + where-are-we.py. Green human-eyes ≠ demand/PMF.",
   ]
     .filter((line) => line !== null)
     .join("\n");
@@ -171,6 +175,8 @@ export function appendDecisionTrace(input: {
     "",
     "## Evidence",
     input.evidence ?? "(none recorded)",
+    "",
+    "Label: stated | synthetic | observed (observed wins). A spoken yes cannot promote.",
     "",
     "## Outcome / expected outcome",
     input.outcome ?? "(pending)",

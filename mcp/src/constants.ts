@@ -1,6 +1,6 @@
-/** Portable journey + loop labels (aligned to company-os v2.8). */
+/** Portable journey + loop labels (aligned to company-os v2.8.3). */
 
-export const OS_VERSION = "2.8";
+export const OS_VERSION = "2.8.3";
 export const MCP_VERSION = "0.2.0";
 
 export const JOURNEY_PHASES: Record<number, string> = {
@@ -30,6 +30,7 @@ export const DOC_KEYS = [
   "live-runtime",
   "ready-for-human-eyes",
   "ai-instructions",
+  "first-hour",
 ] as const;
 
 export type DocKey = (typeof DOC_KEYS)[number];
@@ -39,4 +40,5 @@ export const DOC_FILES: Record<DocKey, string> = {
   "live-runtime": "company-os/live-runtime.md",
   "ready-for-human-eyes": "company-os/ready-for-human-eyes.md",
   "ai-instructions": "company-os/ai-instructions.md",
+  "first-hour": "company-os/first-hour.md",
 };

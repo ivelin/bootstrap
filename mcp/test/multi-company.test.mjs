@@ -62,6 +62,25 @@ describe("multi-company isolation", () => {
     assert.equal(listed.activeCompanyId, "tokbox");
     const pirin = listed.companies.find((c) => c.companyId === "pirin");
     assert.equal(pirin.journeyPhase, 5);
+
+    const where = path.join(
+      dataRoot,
+      "instances",
+      "pirin",
+      "company",
+      "state",
+      "where-are-we.py",
+    );
+    const schema = path.join(
+      dataRoot,
+      "instances",
+      "pirin",
+      "company",
+      "state",
+      "company-state.schema.json",
+    );
+    assert.ok(fs.existsSync(where), "init must copy where-are-we.py");
+    assert.ok(fs.existsSync(schema), "init must copy company-state.schema.json");
   });
 
   it("useCompany fails for unknown company", () => {

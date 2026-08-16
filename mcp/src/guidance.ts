@@ -9,6 +9,7 @@ import {
   type StageGate,
 } from "./gates.js";
 import { JOURNEY_PHASES, LOOP_STAGES } from "./constants.js";
+import { HOUSE_RULE_LINES } from "./house-rules.js";
 
 export interface StatusView {
   plain: string;
@@ -113,6 +114,7 @@ export function buildStatusView(state: CompanyState, plainWhere: string): Status
       "AI never advances journey phase without founder approval",
       "Ready for human eyes green ≠ demand or PMF",
       "Evidence beats narrative — empty honest status beats fiction",
+      ...HOUSE_RULE_LINES,
     ],
   };
 }
@@ -175,6 +177,9 @@ export function buildNextEvidenceView(state: CompanyState): NextEvidenceView {
     "Do not advance journey phase without founder Advance/Iterate/Hold/Kill",
     "Do not invent metrics or conversations",
     "Busy is not progress — agent runtime, chat volume, and feature count are not evidence",
+    "Do not seed a persona from a demographic one-liner (demo-only role-play is the weak case)",
+    "Do not treat a spoken yes as promotion; observed (time or money) wins a clash",
+    "Do not ask a sim for a Likert or a naked dollar WTP — choice or sentence, then map",
     eyesBlocked
       ? "Do not draft 'please try my link' to mentors/users until human-eyes green or override+trace"
       : "Do not claim human-eyes green means demand",

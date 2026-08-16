@@ -12,8 +12,8 @@
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs",
-    "test:unit": "node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs",
+    "test": "npm run build && node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs",
+    "test:unit": "node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs",
     "test:smoke": "npm run build && node test/cold-path.smoke.mjs",
     "test:stdio": "npm run build && node test/stdio-mcp.client.mjs",
     "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs"

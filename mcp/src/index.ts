@@ -33,6 +33,7 @@ import {
 } from "./state.js";
 import { buildNextEvidenceView, buildStatusView } from "./guidance.js";
 import { evaluateExternalAsk } from "./policy.js";
+import { HOUSE_RULE_LINES } from "./house-rules.js";
 
 function text(payload: unknown) {
   const body = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
@@ -72,16 +73,22 @@ server.tool(
       osVersion: OS_VERSION,
       mcpVersion: MCP_VERSION,
       connectorModel:
-        "One MCP connector, many isolated company instances (like Supabase/Vercel multi-project). Not one blended board.",
+        "Optional path 3 adapter: one MCP connector, many isolated company instances. Not a second OS. Markdown is the constitution.",
+      adoptionOrder: {
+        path1: "Point an AI at https://github.com/ivelin/bootstrap — no install, no MCP.",
+        path2: "Optional instance files / ./scripts/install-instance.sh + optional .grok/workflows.",
+        path3: "This local MCP (optional, several ideas). Same company-state.json + where-are-we.py.",
+        path4Hosted: "Does not exist. Nothing to connect to today.",
+      },
       modes: {
         markdownOnly:
-          "Use company-os/*.md and templates/ with no MCP. Full ownership, offline.",
+          "Path 1–2. Use company-os/*.md and templates/ with no MCP. Full ownership, offline.",
         localMcpMultiCompany:
-          "One stdio server; bootstrap_init_company / list / use_company; state under BOOTSTRAP_DATA_ROOT/instances/<id>.",
+          "Path 3. One stdio server; bootstrap_init_company / list / use_company; state under BOOTSTRAP_DATA_ROOT/instances/<id>.",
         localMcpSingleEnv:
           "Optional BOOTSTRAP_INSTANCE_ROOT pins one company (backward compatible).",
         hostedMcpFuture:
-          "Same tool names + company scope via https://mcp.pirin.ai/bootstrap-os (placeholder). Opt-in; private by default.",
+          "Path 4. Does not exist. Same tool names later if ever shipped. Nothing to connect to today.",
       },
       paths: {
         osRoot: resolveOsRoot(),
@@ -106,7 +113,10 @@ server.tool(
         "One connector, many instances; product repos need not import full Bootstrap tree",
         "Flexible on ideas/execution; stringent on process — busy is not progress",
         "Activity without labeled evidence or gates is not advancement",
+        "MCP never writes company-os/ template files",
+        ...HOUSE_RULE_LINES,
       ],
+      houseRules: HOUSE_RULE_LINES,
     });
   },
 );
@@ -199,7 +209,9 @@ server.tool(
   {
     doc: z
       .enum(DOC_KEYS as unknown as [DocKey, ...DocKey[]])
-      .describe("operating-system | live-runtime | ready-for-human-eyes | ai-instructions"),
+      .describe(
+        "operating-system | live-runtime | ready-for-human-eyes | ai-instructions | first-hour",
+      ),
   },
   async ({ doc }) => {
     try {

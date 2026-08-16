@@ -1,5 +1,7 @@
 # M1 — MCP client connect checklist
 
+Optional **path 3** only. Path 1 (point an AI at the GitHub pack) stays the front door. Hosted MCP does not exist.
+
 Automated companion: `npm run test:stdio` (spawns server + official SDK client over stdio).
 
 ## Human checklist
@@ -12,5 +14,7 @@ Automated companion: `npm run test:stdio` (spawns server + official SDK client o
 6. [ ] Unapproved phase change rejected
 7. [ ] `bootstrap_refuse_external_ask_if_not_green` → `allow: false` when eyes ≠ green
 8. [ ] Second company does not inherit first company's phase
+9. [ ] `bootstrap_os_info` reports OS 2.8.3 house rules (observed wins; spoken yes cannot promote)
+10. [ ] Instance has `company-state.json` + `where-are-we.py`; `company-os/` templates unchanged
 
 Attach evidence on the PR (logs or screenshots). Keep human-eyes for MCP itself at **unknown** until cold path M2 is signed by a non-author.

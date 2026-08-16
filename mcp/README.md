@@ -1,16 +1,17 @@
-# Bootstrap OS MCP (optional)
+# Bootstrap OS MCP (optional path 3)
 
-**What this is / is not:** see root [`ROADMAP.md` §0](../ROADMAP.md) — MCP is an optional tool adapter to the control plane, not a harness, memory product, or hosted social graph.
+**What this is / is not:** see root [`ROADMAP.md` §0](../ROADMAP.md) — MCP is optional adapter furniture to the control plane, not a second OS, harness, memory product, or hosted service.
 
-**Markdown is still the product.** This package is an *optional* **one connector, many isolated companies** adapter (same idea as Supabase/Vercel multi-project MCP). Founders do **not** need to import the full Bootstrap repo into each product monorepo.
+**Markdown is the constitution.** Front door is still **path 1**: point an AI at https://github.com/ivelin/bootstrap — no install. Path 2 is optional instance files / CLI + `.grok/workflows`. **This package is path 3 only** (several ideas). Hosted MCP does not exist.
 
-| Mode | Who it is for | Dependency |
+| Path | Who it is for | Dependency |
 |------|----------------|------------|
-| **1. Repo only** | Everyone | None — copy templates, paste `ai-instructions` |
-| **2. Local MCP (multi-company)** | Founders with one or many ideas | Node 20+, this package, local data root |
-| **3. Hosted MCP (future)** | Zero-install convenience | Same tool names + company scope; private by default |
+| **1. Point an AI** | Everyone (default) | None |
+| **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
+| **3. Local MCP (this package)** | Several ideas / many agents | Node 20+, this package, local data root |
+| **4. Hosted MCP** | Nobody today | Does not exist. Nothing to connect to today. |
 
-State always belongs to **one company instance at a time**. Isolation is hard: no shared phase/evidence across `companyId`.
+Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
 ---
 
@@ -61,13 +62,17 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 | `bootstrap_log_decision` | Trace under active company |
 | `bootstrap_refuse_external_ask_if_not_green` | Fail-closed external asks |
 
-Hard rules:
+Hard rules (OS 2.8.3):
 
 - Journey phase does **not** change unless `founderApprovedPhaseChange=true`
 - Human-eyes **green** is not demand or PMF
 - Blueprint under `company-os/` is never written by MCP
 - **Busy is not progress** — activity without evidence is not advancement
 - **No cross-company writes**
+- Weigh **stated / synthetic / observed** — observed wins a clash
+- A spoken yes cannot promote a customer group
+- Do not seed a persona from a demographic one-liner (demo-only role-play is the weak case)
+- Do not ask a sim for a Likert or a naked dollar WTP — a choice or a sentence, then map
 
 ---
 
@@ -123,40 +128,33 @@ See [`config/mcp.stdio.example.json`](config/mcp.stdio.example.json).
 }
 ```
 
-### Hosted (future)
+### Hosted (does not exist)
 
-```json
-{
-  "mcpServers": {
-    "bootstrap-os": {
-      "url": "https://mcp.pirin.ai/bootstrap-os"
-    }
-  }
-}
-```
-
-Placeholder until shipped. Tool names + company isolation stay stable.
+A hosted URL is not available. Nothing to connect to today. If one ships later, tool names + company isolation stay stable. Do not treat any example URL as live.
 
 ---
 
 ## Privacy
 
-| Data | Local MCP | Hosted (planned) |
-|------|-----------|------------------|
-| Blueprint | Read from your clone | Served from template |
-| Company state | Disk under data root, **per company** | Private tenant per company |
+| Data | Local MCP (path 3) | Hosted (does not exist) |
+|------|--------------------|-------------------------|
+| Blueprint | Read from your clone | Nothing to connect to today |
+| Company state | Disk under data root, **per company** | Future-only if ever shipped |
 | Cross-tenant | **Denied** | **Denied** |
-| Leaderboards | Out of scope | Never default-on |
+| Leaderboards | Out of scope | Never |
 
 ---
 
 ## Non-goals
 
-- Replacing the open-source markdown pack
+- Replacing the open-source markdown pack or becoming the front door
 - Auto-advancing journey phases
 - Blended multi-idea scoreboard
 - Writing into `company-os/` template files
-- Hosted service in this version
+- Hosted service (does not exist)
+- Weekly market-radar jobs
+- Seeding personas from a demographic one-liner
+- Likert or naked-dollar WTP from a sim
 
 ---
 

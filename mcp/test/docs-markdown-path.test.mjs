@@ -13,7 +13,9 @@ describe("markdown install path (zero MCP required)", () => {
       "company-os/live-runtime.md",
       "company-os/ready-for-human-eyes.md",
       "company-os/ai-instructions.md",
+      "company-os/first-hour.md",
       "templates/company/state/company-state.json",
+      "templates/company/state/where-are-we.py",
       "templates/applied-here.md",
     ];
     for (const rel of required) {
@@ -48,10 +50,16 @@ describe("markdown install path (zero MCP required)", () => {
     clearSession();
     try {
       const docs = listOsDocs();
-      assert.equal(docs.length, 4);
+      assert.equal(docs.length, 5);
       const body = readOsDoc("ai-instructions");
       assert.match(body, /Hard rules/i);
+      assert.match(body, /stated, synthetic, and observed/i);
+      assert.match(body, /Likert/);
+      assert.match(body, /then map/);
       assert.ok(body.length > 200);
+      const firstHour = readOsDoc("first-hour");
+      assert.match(firstHour, /demographic one-liner/i);
+      assert.match(firstHour, /demo-only role-play is the weak case/i);
     } finally {
       clearSession();
       rmrf(dataRoot);

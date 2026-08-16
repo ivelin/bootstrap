@@ -3,10 +3,10 @@
 **Status:** Living instance — not part of the portable Bootstrap OS template.  
 **Template source:** [ivelin/bootstrap](https://github.com/ivelin/bootstrap) (`company-os/`)  
 **Read first:** [operating-system.md](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md) · [live-runtime.md](https://github.com/ivelin/bootstrap/blob/main/company-os/live-runtime.md)
-**Install path:** A (markdown in product repo) · B (MCP multi-company) · C (hybrid) — see root [README](https://github.com/ivelin/bootstrap/blob/main/README.md#how-to-install-pick-a-path)
-If you run multiple startups, keep this instance isolated under one `companyId` (MCP: `bootstrap_use_company`). Never blend phase/evidence across ideas.
 
 Replace every placeholder with *your* company. Do not import another founder’s market.
+
+Optional path 3 (local MCP, several ideas): the same `company-state.json` + `where-are-we.py` may live under `$BOOTSTRAP_DATA_ROOT/instances/<id>/`. Do not keep a second diverging copy.
 
 ---
 
@@ -74,16 +74,14 @@ Replace every placeholder with *your* company. Do not import another founder’s
 
 ## Persistent state locations
 
-| Store (OS) | Path A (in product repo) | Path B (MCP multi-company) | Status |
-|------------|--------------------------|----------------------------|--------|
-| Durable cursor + scores | `company/state/company-state.json` | `$BOOTSTRAP_DATA_ROOT/instances/<id>/company/state/…` | |
-| Thesis snapshot | `docs/company-os/instance/thesis.md` | under instance root (optional) | |
-| Scoreboard notes | `docs/company-os/instance/scores.md` | under instance root (optional) | |
-| ICP research | `research/icps/` (create when ready) | same idea, per instance | |
-| Decision traces | `traces/decisions/` or `company/traces/` | instance `company/traces/` | |
-| Ready-for-eyes evidence | `product/READY_FOR_HUMAN_EYES.md` or equivalent | per instance | |
-
-Path C: prefer MCP paths for control plane; avoid a second diverging `company-state.json` in the monorepo.
+| Store (OS) | Path in this repo | Status |
+|------------|-------------------|--------|
+| Durable cursor + scores | `company/state/company-state.json` | |
+| Thesis snapshot | `docs/company-os/instance/thesis.md` | |
+| Scoreboard notes | `docs/company-os/instance/scores.md` | |
+| ICP research | `research/icps/` (create when ready) | |
+| Decision traces | `traces/decisions/` (create when ready) | |
+| Ready-for-eyes evidence | `product/READY_FOR_HUMAN_EYES.md` or equivalent | |
 
 ---
 

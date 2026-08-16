@@ -1,7 +1,8 @@
 /**
  * Portable gate catalog — what evidence / work unlocks the next slow phase
- * or advances the fast loop. Aligned to company-os v2.8 exit signals.
+ * or advances the fast loop. Aligned to company-os v2.8.3 exit signals.
  * Static process knowledge; instance state only marks hints, not auto-pass.
+ * Constitution remains company-os/*.md — this is adapter furniture.
  */
 
 export type EvidenceLabel =
@@ -10,11 +11,16 @@ export type EvidenceLabel =
   | "assumed_capability"
   | "needs_real_world_proof";
 
+/** Research-input labels (OS 2.8.3). Distinct from claim labels above. */
+export type ResearchInputLabel = "stated" | "synthetic" | "observed";
+
 export interface EvidenceItem {
   id: string;
   plain: string;
-  /** Preferred label when this item is committed */
+  /** Preferred claim label when this item is committed */
   labelHint: EvidenceLabel;
+  /** Preferred research-input label (stated / synthetic / observed) */
+  researchInputHint?: ResearchInputLabel;
   /** How an agent should produce it */
   howToGather: string;
 }
@@ -55,13 +61,20 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
         id: "groups_ge_3",
         plain: "At least 3 distinct customer-group candidates (named, not 'everyone')",
         labelHint: "assumed_capability",
-        howToGather: "Brainstorm + kill duplicates; write one sentence pain each",
+        howToGather:
+          "Brainstorm + kill duplicates; write one sentence pain each. Do not seed a group from a demographic one-liner.",
       },
     ],
-    doNotCountAsEvidence: ["Excitement", "Idea volume", "Generic TAM screenshots without use"],
+    doNotCountAsEvidence: [
+      "Excitement",
+      "Idea volume",
+      "Generic TAM screenshots without use",
+      "A demographic one-liner treated as a persona (demo-only role-play is the weak case)",
+    ],
     agentFocus: [
       "Help founder write a falsifiable thesis",
       "List ≥3 groups with distinct pains",
+      "Seed from traces outside the pitch, or write none yet",
       "Do not jump to build or outreach",
     ],
   },
@@ -96,22 +109,35 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
     evidenceToAdvance: [
       {
         id: "synthetic_ranked",
-        plain: "Ranked customer groups with dated evidence notes (synthetic leg)",
-        labelHint: "outside_facts",
-        howToGather: "Structured synthetic interviews/scenarios; cite sources; label claims",
+        plain:
+          "Ranked customer groups with dated notes (synthetic leg). Forced choice, then map — not Likert or naked dollar WTP.",
+        labelHint: "needs_real_world_proof",
+        researchInputHint: "synthetic",
+        howToGather:
+          "Structured synthetic interviews/scenarios. Seed from traces, not a demographic one-liner. Label claims. Write stated words separately. Demo-only role-play is the weak case.",
       },
       {
         id: "promote_hold",
-        plain: "Written decision: no primary-focus promote on synthetic alone (Hold promote)",
+        plain:
+          "Written decision: no primary-focus promote on synthetic or a spoken yes (Hold promote)",
         labelHint: "assumed_capability",
-        howToGather: "bootstrap_log_decision: Hold promote until real-world leg",
+        researchInputHint: "synthetic",
+        howToGather:
+          "bootstrap_log_decision: Hold promote until observed time or money. Spoken yes cannot promote.",
       },
     ],
-    doNotCountAsEvidence: ["Single chatbot chat as 'research'", "Unlabeled market stats as demand"],
+    doNotCountAsEvidence: [
+      "Single chatbot chat as 'research'",
+      "Unlabeled market stats as demand",
+      "Persona seeded only from a demographic one-liner (demo-only role-play is the weak case)",
+      "Spoken yes / 'I would buy' as promotion",
+      "Likert 1–5 or naked dollar WTP from a sim",
+    ],
     agentFocus: [
-      "Run synthetic discovery with evidence labels",
-      "Rank groups; demote weak ones",
-      "Refuse to treat synthetic as PMF",
+      "Run synthetic discovery with claim labels + stated / synthetic / observed",
+      "Seed from traces outside the thesis; write none yet if truly none",
+      "Forced choice, then map — never Likert or naked dollar WTP",
+      "Rank groups; refuse to treat synthetic or spoken yes as PMF",
     ],
   },
   4: {
@@ -121,9 +147,12 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
     evidenceToAdvance: [
       {
         id: "real_conversations_or_tests",
-        plain: "Real conversations and/or interest tests with dated notes (company signals)",
+        plain:
+          "Real conversations and/or interest tests with dated notes. Label stated vs observed (time or money).",
         labelHint: "company_signals",
-        howToGather: "Talk to humans or run interest tests; redact PII; label company_signals",
+        researchInputHint: "observed",
+        howToGather:
+          "Talk to humans or run interest tests; redact PII. A waitlist click can be observed; a spoken yes is stated and cannot promote.",
       },
       {
         id: "demotions",
@@ -132,7 +161,12 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
         howToGather: "Decision trace per kill/demote",
       },
     ],
-    doNotCountAsEvidence: ["Friends saying 'cool idea'", "Survey of one", "Synthetic-only packs"],
+    doNotCountAsEvidence: [
+      "Friends saying 'cool idea'",
+      "Survey of one",
+      "Synthetic-only packs",
+      "Spoken yes treated as observed",
+    ],
     agentFocus: [
       "Prep scripts and capture notes",
       "Stress monetization lightly (will they pay path?)",
@@ -272,9 +306,11 @@ export const STAGE_GATES: Record<number, StageGate> = {
     evidenceThisStage: [
       {
         id: "syn_notes",
-        plain: "Dated synthetic research notes with claim labels",
-        labelHint: "outside_facts",
-        howToGather: "Run scenarios; write what evidence supports / does not establish",
+        plain: "Dated synthetic research notes with claim labels + stated / synthetic / observed",
+        labelHint: "needs_real_world_proof",
+        researchInputHint: "synthetic",
+        howToGather:
+          "Run scenarios; write what evidence supports / does not establish. No Likert or naked dollar WTP — choice or sentence, then map. Observed wins a clash with stated.",
       },
     ],
     nextStageWhen: "You have notes good enough to design a validation ask",

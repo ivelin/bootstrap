@@ -11,10 +11,10 @@ This folder is the **Bootstrap OS** blueprint and runtime shape. It is not any o
 | [`first-hour.md`](first-hour.md) | Day 0 — thesis, ≥3 customer groups, first “Where are we?” |
 
 **Blank instance files:** [`../templates/`](../templates/)  
-**Install paths (markdown vs multi-company MCP):** [`../README.md`](../README.md#how-to-install-pick-a-path)  
-**Optional MCP:** [`../mcp/README.md`](../mcp/README.md)
+**Repo overview & adopt order:** [`../README.md`](../README.md) — path 1 point-an-AI, path 2 optional install.
 
-Optional Grok Build workflows live in [`../.grok/workflows/`](../.grok/workflows/).
+Optional Grok Build workflows live in [`../.grok/workflows/`](../.grok/workflows/).  
+Optional local MCP (path 3, several ideas only): [`../mcp/README.md`](../mcp/README.md). Not required. Hosted MCP does not exist.
 
 ### Mental model
 
@@ -26,14 +26,4 @@ operating-system.md                live-runtime.md
   founder-day + skill-capture (optional)  honest scores + open questions
 ```
 
-### Where filled state lives
-
-Do **not** put filled thesis, ICPs, or product roadmaps in this folder.
-
-| Install path | Instance location |
-|--------------|-------------------|
-| **A — Markdown in product repo** | Copy from `templates/` into that product repo (`docs/company-os/`, `company/state/`) |
-| **B — Multi-company MCP** | `BOOTSTRAP_DATA_ROOT/instances/<companyId>/` via one connector — **no full pack import** into each product monorepo |
-| **C — Hybrid** | MCP owns state; product repo keeps thin `AGENTS.md` + hard rules only |
-
-Multiple startups ⇒ prefer **B or C** so process stays one clone and boards stay isolated.
+Do not put filled thesis, ICPs, or product roadmaps in this folder. Those belong in *your* company’s instance after you copy from `templates/`.

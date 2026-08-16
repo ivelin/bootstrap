@@ -50,6 +50,10 @@ describe("phase advance gate", () => {
     assert.match(plain, /pirin/i);
     assert.match(plain, /Journey: step 1 of 9/);
     assert.match(plain, /not demand or PMF/i);
+    assert.match(plain, /observed wins/i);
+    assert.match(plain, /Spoken yes cannot promote/i);
+    assert.match(plain, /demographic one-liner/i);
+    assert.match(plain, /where-are-we\.py/);
   });
 
   it("appendDecisionTrace writes under active company traces", () => {

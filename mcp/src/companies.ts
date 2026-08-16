@@ -224,7 +224,8 @@ function blankState(companyId: string, hypothesis: string): Record<string, unkno
       willingnessToPay: null,
       completion: null,
       traceCompleteness: null,
-      notes: "Fill scores honestly. Engineering green is not PMF.",
+      notes:
+        "Fill scores honestly. Engineering green is not PMF. Label willingness stated / synthetic / observed. Do not ask a sim for a Likert or naked dollar WTP — choice or sentence, then map.",
     },
     founderApprovals: [],
     openQuestions: base.openQuestions ?? [
@@ -282,6 +283,15 @@ export function initCompany(input: {
   const state = blankState(companyId, input.hypothesis ?? "");
   const statePath = path.join(stateDir, "company-state.json");
   fs.writeFileSync(statePath, JSON.stringify(state, null, 2) + "\n", "utf8");
+
+  // Same state furniture as path 2: schema + where-are-we.py. Never write company-os/.
+  for (const name of ["company-state.schema.json", "where-are-we.py"] as const) {
+    const src = path.join(osRoot(), "templates", "company", "state", name);
+    const dst = path.join(stateDir, name);
+    if (fs.existsSync(src) && !fs.existsSync(dst)) {
+      fs.copyFileSync(src, dst);
+    }
+  }
 
   const appliedSrc = path.join(osRoot(), "templates", "applied-here.md");
   const appliedDst = path.join(instanceRoot, "applied-here.md");
