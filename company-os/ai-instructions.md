@@ -1,7 +1,7 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.2** (honesty pass: house rules labeled; sources vintage; Ready for human eyes; growth pack).
+**Aligned to:** OS blueprint **v2.8.3** (demo-only role-play is the weak case; house rules labeled; sources vintage).
 
 **Use:** Paste into your main AI tool’s permanent instructions. Prefer a **root** file so every session loads it first:
 
@@ -43,6 +43,7 @@ Hard rules you must follow:
    - assumed capability (if we had this — not proof we have it)
    - needs real-world proof
    Also label research inputs: stated (their words) | synthetic (sim after a condition change) | observed (time or money).
+   Do not seed a persona from a demographic one-liner. Seed from traces of what they already do, pay for, or said in public. Demo-only role-play is the weak case.
    Never treat simulated prices or a spoken “I would buy” as demand. Keep the words. They are stated evidence, not a sale.
    Never ask a synthetic user for a Likert or a naked dollar WTP; ask a choice or a sentence, then map. A mapped figure after a choice is allowed. If synthetic variance is too tight or the same prompt drifted versus a human baseline, discard that pass. A new category with no prior survey cannot be rescued by fine-tuning.
 4. When I ask “Where are we?” or “Where do we stand?”, answer with a crisp plain-language

@@ -322,11 +322,39 @@ else
   not_ok "test_day0.sh section h must be evidence-method locks"
 fi
 if grep -q '2.8.2' company-os/operating-system.md \
-  && grep -q '2.8.2' README.md \
-  && grep -q '2.8.2' company-os/ai-instructions.md; then
-  ok "version stamp 2.8.2 on OS, README, ai-instructions"
+  && grep -q '2.8.2' README.md; then
+  ok "changelog still records 2.8.2"
 else
-  not_ok "version stamp must be 2.8.2 on OS, README, ai-instructions"
+  not_ok "OS and README must still record 2.8.2"
+fi
+
+
+# --- k) demo-only role-play house rule ---
+if grep -q 'demographic one-liner' company-os/operating-system.md \
+  && grep -q 'Demo-only role-play' company-os/operating-system.md \
+  && grep -q 'demographic one-liner' company-os/first-hour.md \
+  && grep -q 'demographic one-liner' company-os/ai-instructions.md \
+  && grep -q 'demographic one-liner' company-os/live-runtime.md; then
+  ok "demo-only role-play house rule in OS, first-hour, ai-instructions, live-runtime"
+else
+  not_ok "demo-only role-play house rule missing"
+fi
+if grep -q 'demographic one-liner' .grok/workflows/user-research.rhai \
+  && grep -q 'Demo-only role-play' .grok/workflows/user-research.rhai; then
+  ok "user-research.rhai has demo-only role-play house rule"
+else
+  not_ok "user-research.rhai must have demo-only role-play house rule"
+fi
+if ! grep -qi 'Aaru\|Simile\|Verasight\|Electric Twin' company-os/operating-system.md \
+  company-os/first-hour.md company-os/ai-instructions.md company-os/live-runtime.md; then
+  ok "no vendor names in constitution files"
+else
+  not_ok "constitution must not name Aaru/Simile/Verasight/Electric Twin"
+fi
+if grep -q '2.8.3' company-os/operating-system.md && grep -q '2.8.3' README.md; then
+  ok "version stamp 2.8.3"
+else
+  not_ok "version stamp must be 2.8.3"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
