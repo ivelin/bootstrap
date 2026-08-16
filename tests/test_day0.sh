@@ -211,14 +211,14 @@ else
   not_ok "decisions TEMPLATE must contain stated | synthetic | observed"
 fi
 
-# --- h) paper-backed evidence rules (no 1-5/dollar; variance/drift; new category) ---
+# --- h) evidence-method locks (no naked 1-5/dollar WTP; variance/drift; new category) ---
 if grep -q '1–5' company-os/first-hour.md \
   && grep -q 'then map' company-os/first-hour.md \
   && grep -q 'too uniform' company-os/first-hour.md \
   && grep -q 'New-category' company-os/first-hour.md; then
-  ok "first-hour.md has no 1-5/dollar, then map, too uniform, New-category"
+  ok "first-hour.md has no 1-5/naked-dollar, then map, too uniform, New-category"
 else
-  not_ok "first-hour.md must lock no 1-5/dollar, then map, too uniform, New-category"
+  not_ok "first-hour.md must lock no 1-5/naked-dollar, then map, too uniform, New-category"
 fi
 
 if grep -q '1–5' company-os/operating-system.md \
@@ -226,9 +226,9 @@ if grep -q '1–5' company-os/operating-system.md \
   && grep -q 'too-tight variance' company-os/operating-system.md \
   && grep -q 'unusable' company-os/operating-system.md \
   && grep -q 'new category' company-os/operating-system.md; then
-  ok "operating-system.md has no 1-5/dollar, too-tight variance, unusable, new category"
+  ok "operating-system.md has no 1-5/naked-dollar, too-tight variance, unusable, new category"
 else
-  not_ok "operating-system.md must lock no 1-5/dollar, too-tight variance, unusable, new category"
+  not_ok "operating-system.md must lock no 1-5/naked-dollar, too-tight variance, unusable, new category"
 fi
 
 if grep -q 'then map' templates/research/icps/TEMPLATE.md \
@@ -254,9 +254,9 @@ if grep -q '1–5' company-os/live-runtime.md \
   && grep -q 'Too-tight variance' company-os/live-runtime.md \
   && grep -q 'unusable' company-os/live-runtime.md \
   && grep -q 'New category' company-os/live-runtime.md; then
-  ok "live-runtime.md has no 1-5/dollar, then map, Too-tight variance, unusable, New category"
+  ok "live-runtime.md has no 1-5/naked-dollar, then map, Too-tight variance, unusable, New category"
 else
-  not_ok "live-runtime.md must lock no 1-5/dollar, then map, Too-tight variance, unusable, New category"
+  not_ok "live-runtime.md must lock no 1-5/naked-dollar, then map, Too-tight variance, unusable, New category"
 fi
 
 
@@ -299,6 +299,34 @@ if [ -f "$wf/ready-for-human-eyes.rhai" ] && ! grep -q 'npm run company-os' "$wf
   ok "ready-for-human-eyes.rhai exists and has no old cli"
 else
   not_ok "ready-for-human-eyes.rhai must exist and omit old cli"
+fi
+
+
+# --- j) honesty pass (house rules labeled; sources vintage; no paper-backed overclaim) ---
+if grep -q 'House rule' company-os/operating-system.md \
+  && grep -q 'epistemology' company-os/operating-system.md; then
+  ok "operating-system.md labels house/epistemology"
+else
+  not_ok "operating-system.md must label house/epistemology"
+fi
+if grep -q 'Bisbee' company-os/operating-system.md \
+  && grep -q 'Brand' company-os/operating-system.md \
+  && grep -q '§3.3' company-os/operating-system.md; then
+  ok "operating-system.md has Bisbee + Brand §3.3 sources note"
+else
+  not_ok "operating-system.md must cite Bisbee and Brand §3.3 as load-bearing"
+fi
+if grep -q '# --- h) evidence-method locks' tests/test_day0.sh; then
+  ok "test_day0.sh section h is evidence-method locks"
+else
+  not_ok "test_day0.sh section h must be evidence-method locks"
+fi
+if grep -q '2.8.2' company-os/operating-system.md \
+  && grep -q '2.8.2' README.md \
+  && grep -q '2.8.2' company-os/ai-instructions.md; then
+  ok "version stamp 2.8.2 on OS, README, ai-instructions"
+else
+  not_ok "version stamp must be 2.8.2 on OS, README, ai-instructions"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

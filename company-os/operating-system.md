@@ -1,7 +1,7 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.1  
+**Version:** 2.8.2  
 **Last Updated:** 2026-08-15  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
@@ -194,7 +194,7 @@ Use AI to create realistic customer profiles and run conversations or scenarios 
 
 Seed each profile from traces **outside the thesis** when you have them. No customers yet is normal for a new idea. Use **legal** adjacent traces: public forums, reviews of the substitute or a competitor, or the founder’s own prior-domain notes (no PII, nothing taken from a former employer’s private files). Do not import another company’s market or ICP list. If truly none, write **none yet**. A persona invented only from the pitch will confirm the pitch — use it to rank, not to promote.
 
-Ask a **forced choice** that looks like the real decision, in the order they would face it. Also write down what they **say** (pain, substitute, objection, a yes). That is **stated** evidence. People are usually better at describing present pain than a future purchase — keep the words, do not treat a spoken yes as a sale. Do not ask a 1–5 or a dollar figure — ask a choice or a sentence, then map.
+Ask a **forced choice** that looks like the real decision, in the order they would face it. Also write down what they **say** (pain, substitute, objection, a yes). That is **stated** evidence. People are usually better at describing present pain than a future purchase — keep the words, do not treat a spoken yes as a sale. Do not ask the sim a 1–5 or a naked dollar WTP — a choice or a sentence, then map. Mapping may still produce a dollar figure. That is not the same as asking the sim for a price.
 
 - What do they currently do instead?
 - What do they say the pain is, in their words?
@@ -204,7 +204,7 @@ Ask a **forced choice** that looks like the real decision, in the order they wou
 
 Do this for **several** customer groups, not just the one you like.  
 Run the same few questions on a handful of real people before you trust the rank. If the rank order does not match, weigh the gap — do not throw out the words or the sim. If the sim answers are almost identical (too-tight variance) or the same prompt drifted versus the human handful, treat that synthetic pass as unusable. A new category with no prior survey in that category cannot be rescued by fine-tuning on some other survey — most Day-0 ideas are this case.  
-Synthetic research is a useful **filter**. It may rank or kill. Weigh stated, synthetic, and observed. When they disagree, observed wins. A spoken yes cannot promote a group.
+Synthetic research is a useful **filter**. It may rank or kill. Weigh stated, synthetic, and observed. House rule (epistemology, not a paper): when they disagree, observed wins. A spoken yes cannot promote a group.
 
 ### Staged trust reveal (how synthetic trust actually moves)
 
@@ -529,7 +529,7 @@ Customer group:
 Seed (own customers if any; else legal adjacent traces — public forums, substitute/competitor reviews, or the founder’s prior-domain notes with no PII. Not a former employer’s private customer list. If truly none, write none yet and treat as weaker):
 Reward notes (pain, pay, reach, channel fit):
 Risk notes (reach cost, hand-holding, messiness, legal, time-to-signal):
-Forced choice (the decision in the order they would face it — not a 1–5 or a dollar; choice or sentence, then map):
+Forced choice (the decision in the order they would face it — not a 1–5 or a naked dollar WTP; choice or sentence, then map):
 Condition changed (one of: price, time, or current alternative):
 Stated evidence (date, their words — present pain, substitute, objection, or a yes; keep it, label it stated):
 Synthetic evidence (date, who folded / who still chose you after the condition change):
@@ -939,11 +939,11 @@ I stay in final control of strategy, journey phase changes, and important decisi
 
 Hard rules you must follow:
 1. Never advance a journey phase without my explicit approval.
-2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. When stated and observed disagree, observed wins. A spoken yes cannot promote a group.
+2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. House rule: when stated and observed disagree, observed wins. A spoken yes cannot promote a group.
 3. Label claims honestly: outside facts, company signals, assumed capability, or needs real-world proof.
    Also label research inputs: stated (their words) | synthetic (sim after a condition change) | observed (time or money).
    Never treat simulated prices or a spoken “I would buy” as demand. Keep the words. They are stated evidence, not a sale.
-   Never ask a synthetic user for a Likert or a dollar; ask a choice or a sentence, then map. If synthetic variance is too tight or the same prompt drifted versus a human baseline, discard that pass. A new category with no prior survey cannot be rescued by fine-tuning.
+   Never ask a synthetic user for a Likert or a naked dollar WTP; ask a choice or a sentence, then map. A mapped figure after a choice is allowed. If synthetic variance is too tight or the same prompt drifted versus a human baseline, discard that pass. A new category with no prior survey cannot be rescued by fine-tuning.
 4. When I ask “Where are we?” or “Where do we stand?”, answer with a crisp plain-language
    company snapshot — journey and loop in everyday words, how free the AI is, gate in plain words,
    evidence, open questions, honest scores. No cryptic dumps.
@@ -1125,6 +1125,17 @@ Every company should maintain its own list. Starter prompts:
 
 ---
 
+## Sources (vintage)
+
+Accuracy numbers perish with the model checkpoint. Mechanism findings last until the **same task** is re-run on a current model. “Models got better” is not enough to drop them. House rules do not expire on a checkpoint.
+
+**Load-bearing for a hard rule** (date, model/task as published):
+
+- Bisbee et al., 2024, *Political Analysis*. Task: silicon sampling / prompt variance and drift. Finding: too-tight variance and same-prompt drift make a pass unusable.
+- Brand, Israeli, and Ngwe, HBS 23-062 rev. 2026, §3.3. Task: willingness-to-pay and cross-category fine-tune (laptop → tablet). Finding: direct dollar WTP from GPT was useless; fine-tune failed on a new category. They still used conjoint with prices in the profile and reported $. They did not write “never produce a dollar” or “one condition change.”
+
+Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote.
+
 ## Changelog (high level)
 
 | Version | Notes |
@@ -1140,6 +1151,7 @@ Every company should maintain its own list. Starter prompts:
 | 2.7 | After proof: growth pack (entry gate; message/channel experiment tracks; outcome metrics; founder promote/kill/hold; growth/ artifacts). Phase 9 pointer. No new phase; no channel-tooling folklore. |
 | 2.8 | **Ready for human eyes** ship gate before external product feedback; cold URL + happy path + console/iframe/auth evidence; fail-closed ask-for-feedback; sandbox browser / NL synthetic user as vehicle (not founder CS homework); state field + checklist. |
 | 2.8.1 | Evidence labels stated / synthetic / observed; forced-choice + one condition change; no Likert/dollar from sims; optional Grok Build workflows (path 2). |
+| 2.8.2 | Honesty pass: label observed-wins / spoken-yes-cannot-promote as house epistemology; qualify naked dollar/Likert (mapped $ after a choice is allowed); short sources note (Bisbee 2024 + Brand 2026 §3.3 load-bearing only). |
 
 ---
 

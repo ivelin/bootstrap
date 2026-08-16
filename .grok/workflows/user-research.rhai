@@ -18,13 +18,13 @@ let meta = #{
 let RULES = "";
 RULES += "PUBLIC-SAFE: no real names, emails, phones, street addresses, personal zips.\n";
 RULES += "SYNTHETIC is a filter; may rank or kill; not PMF. Real jobs still required later.\n";
-RULES += "Weigh stated / synthetic / observed. Observed wins a clash. A spoken yes cannot promote.\n";
+RULES += "Weigh stated / synthetic / observed. House rule: observed wins a clash. A spoken yes cannot promote.\n";
 RULES += "Seed from legal adjacent traces (public forums, substitute/competitor reviews, founder prior-domain notes).\n";
 RULES += "  No PII. Not a former employer's private list. Do not import another company's market.\n";
 RULES += "  If none, write none yet. A thesis-only persona is weaker.\n";
 RULES += "Same forced choice for all groups, in decision order, then change ONE condition\n";
 RULES += "  (price, time, or current alternative).\n";
-RULES += "Do not ask a 1–5 or a dollar — a choice or a sentence, then map. Never ask a Likert.\n";
+RULES += "Do not ask a 1–5 or a naked dollar WTP — a choice or a sentence, then map. Mapping may still produce a dollar. Never ask a Likert.\n";
 RULES += "If sim answers are too uniform (too-tight variance) or the same prompt drifted vs a human handful,\n";
 RULES += "  that synthetic pass is unusable.\n";
 RULES += "A new category / no prior survey in this category cannot be rescued by fine-tuning on some other survey.\n";
@@ -44,7 +44,7 @@ RULES += "  - OK plain words: email, phone, partner, budget, hard to reach, few 
 RULES += "    other apps already win, people won't pay, takes too long to learn.\n";
 RULES += "  - Good: \"Keep — one person can decide fast; still unproven if they'll pay.\"\n";
 RULES += "  - Good: \"Out — too much like big software; too hard to get a first customer.\"\n";
-RULES += "pay_or_act_score (if used) is a mapped 0–1 from the forced choice — NOT a dollar or Likert from the sim.\n";
+RULES += "pay_or_act_score (if used) is a mapped 0–1 from the forced choice — NOT a naked dollar or Likert asked of the sim.\n";
 
 let DIVERSITY = "";
 DIVERSITY += "DIVERSITY SAMPLING (anti-infinite similar weak_fits):\n";
@@ -548,8 +548,8 @@ while true {
         sc_p += "willingness_stated: what they SAID (pain, substitute, objection, a yes) — label stated.\n";
         sc_p += "willingness_synthetic: what they CHOSE after one condition change — label synthetic.\n";
         sc_p += "Scores 0–1 if useful: pain, reach, risk (higher=riskier), time_to_signal (higher=faster).\n";
-        sc_p += "pay_or_act_score is a mapped 0–1 from the forced choice — NOT a dollar or Likert from the sim.\n";
-        sc_p += "Do not ask a 1–5 or a dollar. Set icp_id/icp_name. No verdict.\n";
+        sc_p += "pay_or_act_score is a mapped 0–1 from the forced choice — NOT a naked dollar or Likert asked of the sim.\n";
+        sc_p += "Do not ask a 1–5 or a naked dollar WTP. Set icp_id/icp_name. No verdict.\n";
         sc_p += RULES;
         score_jobs.push(#{
             prompt: sc_p,
@@ -608,7 +608,7 @@ while true {
         sy_p += "Run a forced choice that looks like the real decision, in the order they would face it.\n";
         sy_p += "Then change ONE condition (price, time, or current alternative).\n";
         sy_p += "Write what they said (stated) and what they chose after the change (synthetic).\n";
-        sy_p += "Never ask a 1–5 or a dollar — a choice or a sentence, then map. Never ask a Likert.\n";
+        sy_p += "Never ask a 1–5 or a naked dollar WTP — a choice or a sentence, then map. Never ask a Likert.\n";
         sy_p += "Output:\n";
         sy_p += "1) persona_sketch — who they are in plain words (not a real person)\n";
         sy_p += "2) dialogue_summaries — discovery | offer | objection (plain English)\n";

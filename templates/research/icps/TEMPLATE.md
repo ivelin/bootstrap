@@ -13,7 +13,7 @@ Customer group:
 Seed (own customers if any; else legal adjacent traces — public forums, substitute/competitor reviews, or the founder’s prior-domain notes with no PII. Not a former employer’s private customer list. If truly none, write none yet and treat as weaker):
 Reward notes (pain, pay, reach, channel fit):
 Risk notes (reach cost, hand-holding, messiness, legal, time-to-signal):
-Forced choice (the decision in the order they would face it — not a 1–5 or a dollar; choice or sentence, then map):
+Forced choice (the decision in the order they would face it — not a 1–5 or a naked dollar WTP; choice or sentence, then map):
 Condition changed (one of: price, time, or current alternative):
 Stated evidence (date, their words — present pain, substitute, objection, or a yes; keep it, label it stated):
 Synthetic evidence (date, who folded / who still chose you after the condition change):

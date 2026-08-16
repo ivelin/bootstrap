@@ -33,12 +33,12 @@ If you cannot write a kill line, you are already protecting the idea.
 Name at least three groups in chat and write a **reward/risk** note for each. If you instantiated, copy `research/icps/TEMPLATE.md` to `research/icps/icp-01.md`, `icp-02.md`, `icp-03.md` (rename the titles) and fill a scorecard for each.
 
 - Rank is **test priority**, not “we will sell to all three.”
-- **Promote = hold** until synthetic **and** observed evidence exist (weigh stated / synthetic / observed; observed wins a clash) plus a manageable scorecard.
+- **Promote = hold** until synthetic **and** observed evidence exist (weigh stated / synthetic / observed; house rule: observed wins a clash) plus a manageable scorecard.
 - Do not turn three research groups into three go-to-market motions.
 - Seed each group from whatever is **outside the pitch**, even if thin. No customers yet is normal: use **legal** adjacent traces (public forums, reviews of the substitute or a competitor, the founder’s own prior-domain notes with no PII). Do not take a former employer’s private list. Do not import another company’s ICP. If truly none, write **none yet** — a thesis-only persona is weaker, not forbidden.
 - Same **forced choice** for all three, in the order they would decide, then change **one** condition (price, time, or current alternative). Write down what they **say** too (pain, substitute, objection). That is **stated** evidence — useful, not proof.
-- Do not ask the sim a 1–5 or a dollar — a choice or a sentence, then map.
-- Weigh stated, synthetic, and observed. A spoken yes is a clue. When they disagree, **observed** wins. Synthetic may **rank or kill**. Promote stays hold until someone spends **time or money**. If the sim is too uniform or drifted versus a few real people, do not trust the rank. New-category / none-yet is the weak case.
+- Do not ask the sim a 1–5 or a naked dollar WTP — a choice or a sentence, then map. Mapping may still produce a dollar figure.
+- Weigh stated, synthetic, and observed. A spoken yes is a clue. House rule: when they disagree, **observed** wins. Synthetic may **rank or kill**. Promote stays hold until someone spends **time or money**. If the sim is too uniform or drifted versus a few real people, do not trust the rank. New-category / none-yet is the weak case.
 
 Then list the three (name only + rank) in the same place as the thesis — chat is enough; if you instantiated, also `docs/company-os/applied-here.md` and `docs/company-os/instance/thesis.md`.
 
