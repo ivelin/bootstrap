@@ -1,7 +1,7 @@
 # Live Company Runtime  
 ## Persistent state + continuous learning loop
 
-**Part of:** [Company Operating System](operating-system.md) (v2.8+)  
+**Part of:** [Company Operating System](operating-system.md) (v2.8.2+)  
 **Audience:** Solo founders implementing the OS; AI helpers; mentors  
 **Portable:** Yes — this is the *runtime shape*, not any one product  
 **Instance mapping:** Fill `templates/applied-here.md` in *your* company repo (not part of this template).  
@@ -147,7 +147,7 @@ Founder gates sit between stages when strategy or spend would change.
 |--|--|
 | **Goal** | Explore customer groups and jobs-to-be-done cheaply across **several** groups |
 | **Inputs** | Thesis; legal adjacent traces if no customers yet (public forums, substitute/competitor reviews, founder prior-domain notes with no PII — not a former employer’s private list); existing personas; hypotheses; prior scores |
-| **Work** | Seed personas from those traces (or write none yet). Run the same forced choice across several groups, in the order they would decide, then change one condition (price, time, or current alternative). Write down what they say (stated) and what they choose after the change (synthetic). Do not ask a 1–5 or a dollar — a choice or a sentence, then map. Too-tight variance or same-prompt drift versus a human handful makes the pass unusable. New category / none yet stays the weak case. Use staged trust reveal when scoring trust or price interest. |
+| **Work** | Seed personas from those traces (or write none yet). Run the same forced choice across several groups, in the order they would decide, then change one condition (price, time, or current alternative). Write down what they say (stated) and what they choose after the change (synthetic). Do not ask a 1–5 or a naked dollar WTP — a choice or a sentence, then map. Mapping may still produce a dollar figure. Too-tight variance or same-prompt drift versus a human handful makes the pass unusable. New category / none yet stays the weak case. Use staged trust reveal when scoring trust or price interest. |
 | **Outputs** | Ranked notes labeled stated / synthetic / observed; demotions; open questions; optional “what to say” drafts labeled as stated hypotheses |
 | **Founder gate?** | Soft — synthetic may rank or kill. Do not promote a primary group without observed evidence later (stage 2 Track B / journey phase 4). |
 

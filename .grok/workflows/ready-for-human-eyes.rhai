@@ -1,6 +1,6 @@
 let meta = #{
     name: "ready-for-human-eyes",
-    description: "Fail-closed ship gate: cold happy path before mentor/user product-test asks (OS v2.8.1)",
+    description: "Fail-closed ship gate: cold happy path before mentor/user product-test asks (OS v2.8.2)",
     when_to_use: "Before asking anyone external to try a product link, beta, or interactive survey; when founder says ready for beta / please test this",
     phases: [
         #{ title: "Inspect", detail: "Read company state readyForHumanEyes + checklist" },
