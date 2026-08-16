@@ -1,7 +1,7 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.2  
+**Version:** 2.8.3  
 **Last Updated:** 2026-08-15  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
@@ -192,7 +192,7 @@ For **claims inside a report**, prefer the four labels above so “assumed capab
 
 Use AI to create realistic customer profiles and run conversations or scenarios with them.
 
-Seed each profile from traces **outside the thesis** when you have them. No customers yet is normal for a new idea. Use **legal** adjacent traces: public forums, reviews of the substitute or a competitor, or the founder’s own prior-domain notes (no PII, nothing taken from a former employer’s private files). Do not import another company’s market or ICP list. If truly none, write **none yet**. A persona invented only from the pitch will confirm the pitch — use it to rank, not to promote.
+Seed each profile from traces **outside the thesis** when you have them. No customers yet is normal for a new idea. Use **legal** adjacent traces: public forums, reviews of the substitute or a competitor, or the founder’s own prior-domain notes (no PII, nothing taken from a former employer’s private files). Do not import another company’s market or ICP list. If truly none, write **none yet**. A persona invented only from the pitch will confirm the pitch — use it to rank, not to promote. House rule: do not seed a persona from a demographic one-liner. Seed from traces of what they already do, pay for, or said in public. Demo-only role-play is the weak case.
 
 Ask a **forced choice** that looks like the real decision, in the order they would face it. Also write down what they **say** (pain, substitute, objection, a yes). That is **stated** evidence. People are usually better at describing present pain than a future purchase — keep the words, do not treat a spoken yes as a sale. Do not ask the sim a 1–5 or a naked dollar WTP — a choice or a sentence, then map. Mapping may still produce a dollar figure. That is not the same as asking the sim for a price.
 
@@ -1134,7 +1134,7 @@ Accuracy numbers perish with the model checkpoint. Mechanism findings last until
 - Bisbee et al., 2024, *Political Analysis*. Task: silicon sampling / prompt variance and drift. Finding: too-tight variance and same-prompt drift make a pass unusable.
 - Brand, Israeli, and Ngwe, HBS 23-062 rev. 2026, §3.3. Task: willingness-to-pay and cross-category fine-tune (laptop → tablet). Finding: direct dollar WTP from GPT was useless; fine-tune failed on a new category. They still used conjoint with prices in the profile and reported $. They did not write “never produce a dollar” or “one condition change.”
 
-Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote.
+Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case).
 
 ## Changelog (high level)
 
@@ -1152,6 +1152,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8 | **Ready for human eyes** ship gate before external product feedback; cold URL + happy path + console/iframe/auth evidence; fail-closed ask-for-feedback; sandbox browser / NL synthetic user as vehicle (not founder CS homework); state field + checklist. |
 | 2.8.1 | Evidence labels stated / synthetic / observed; forced-choice + one condition change; no Likert/dollar from sims; optional Grok Build workflows (path 2). |
 | 2.8.2 | Honesty pass: label observed-wins / spoken-yes-cannot-promote as house epistemology; qualify naked dollar/Likert (mapped $ after a choice is allowed); short sources note (Bisbee 2024 + Brand 2026 §3.3 load-bearing only). |
+| 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
 
 ---
 

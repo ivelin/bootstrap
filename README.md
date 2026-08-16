@@ -6,7 +6,7 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 
 | | |
 |--|--|
-| **Version** | Blueprint + live runtime **v2.8.2** |
+| **Version** | Blueprint + live runtime **v2.8.3** |
 | **License** | Apache-2.0 |
 | **Audience** | Independent solo founders; mentors (Founder Institute, SCORE, …); AI helpers |
 | **Maintainer** | [Ivelin Ivanov](https://github.com/ivelin) · [Pirin.ai](https://pirin.ai) |
@@ -135,10 +135,13 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 | Doc | Current |
 |-----|---------|
-| Operating system blueprint | **v2.8.2** |
-| Live runtime | **v2.8.2** |
+| Operating system blueprint | **v2.8.3** |
+| Live runtime | **v2.8.3** |
 
 ### Recent portable additions
+
+**v2.8.3 — demo-only role-play is the weak case**  
+Do not seed a persona from a demographic one-liner. Seed from traces. Sharpening of thesis-only-is-weaker.
 
 **v2.8.2 — honesty pass**  
 House rules labeled (observed wins; spoken yes cannot promote). Dollar/Likert qualified. Load-bearing cites: Bisbee 2024, Brand 2026 §3.3.
