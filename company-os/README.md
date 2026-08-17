@@ -20,8 +20,9 @@ Optional Grok Build workflows live in [`../.grok/workflows/`](../.grok/workflows
 ```text
 BLUEPRINT                          LIVE RUNTIME
 operating-system.md                live-runtime.md
-  journey 1–9                        state + stages 1→7 → memory → back
-  founder gates                      honest scores + open questions
+  journey 1–9 + gates                state + stages 1→7 → memory → back
+  virtual office: partner + jobs     day tools in; git remembers
+  founder-day + skill-capture        honest scores + open questions
 ```
 
 Do not put filled thesis, ICPs, or product roadmaps in this folder. Those belong in *your* company’s instance after you copy from `templates/`.

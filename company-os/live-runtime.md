@@ -1,7 +1,7 @@
 # Live Company Runtime  
 ## Persistent state + continuous learning loop
 
-**Part of:** [Company Operating System](operating-system.md) (v2.8.3+)  
+**Part of:** [Company Operating System](operating-system.md) (v2.8.4+)  
 **Audience:** Solo founders implementing the OS; AI helpers; mentors  
 **Portable:** Yes — this is the *runtime shape*, not any one product  
 **Instance mapping:** Fill `templates/applied-here.md` in *your* company repo (not part of this template).  
@@ -73,7 +73,8 @@ Whatever tools you pick, the **live OS needs durable, versioned state** that bot
 2. **Label runs and claims** — every *run* is `synthetic` | `real` | `mixed`. Important *claims* inside reports use the four evidence labels in the blueprint ([honest research](operating-system.md#how-to-do-honest-research--validation)): outside facts, company signals, assumed capability, needs real-world proof.  
 3. **Redact by default in public repos** — personal data and raw recordings stay private / gitignored.  
 4. **Trace-first** — if it is not written down, the company did not learn it.  
-5. **Founder-readable** — structured files are fine; always keep a plain-language summary path (“Where are we?”).
+5. **Founder-readable** — structured files are fine; always keep a plain-language summary path (“Where are we?”).  
+6. **Day tools are inputs; git (or equivalent) is memory.** Calendar, inbox, and meeting notes feed the control plane. They are not a second operating system. If “Where are we?” cannot see this week’s conversations, you are running on last week’s markdown. Do not require any named vendor.
 
 ### 3.3 Tooling (examples, not requirements)
 
@@ -197,7 +198,7 @@ Founder gates sit between stages when strategy or spend would change.
 |--|--|
 | **Goal** | Bring **reality** into state (lawfully, redacted) |
 | **Inputs** | Conversations, usage, support, pilots — **prefer** after Ready for human eyes is green when the ask is “try my product link” |
-| **Work** | Capture outcomes; separate what people *said* vs *did*; link to hypotheses; if feedback was “link broken,” write stress scenario and set human-eyes **blocked** |
+| **Work** | Capture outcomes; separate what people *said* vs *did*; link to hypotheses; if feedback was “link broken,” write stress scenario and set human-eyes **blocked**. Prefer the [founder-day pack](operating-system.md#founder-day-pack-how-the-week-actually-runs): close-the-call artifact, then post-talk write-up into this store. |
 | **Outputs** | Feedback store entries; contradictions vs synthetic beliefs |
 | **Founder gate?** | Yes — when **observed** evidence overturns synthetic ranking |
 
@@ -293,7 +294,7 @@ Prioritize failures, novel objections, and successful recoveries:
 
 1. Update reward/risk notes and persona attributes (stage 7)  
 2. **Seed a permanent stress scenario** in the eval harness when the failure is repeatable or high-cost  
-3. Promote successful patterns into playbooks / agent instructions only after the eval gate still passes  
+3. Promote successful patterns into playbooks / agent instructions only after the eval gate still passes. First time you do a repeatable task together: write a short skill; every later steer updates it ([skill-capture](operating-system.md#skill-capture-first-time--skill)).  
 
 Do not let high-value traces die in chat history.
 
@@ -331,13 +332,15 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 2. Market notes: what outside evidence supports vs does not establish  
 3. `traces/` or `docs/decisions/YYYY-MM-DD-*.md`  
 4. Scoreboard + loop cursor + **autonomy posture** (markdown is fine; default Strict)  
-5. Learning rituals: weekly control-plane snapshot; stage 7 after real/heavy cycles; optional weekly scoreboard glance  
+5. Learning rituals: weekly control-plane snapshot; stage 7 after real/heavy cycles; optional weekly scoreboard glance; bench audit (automate / parallelize / delete)  
 6. A weekly pass through stages 1→7 with written outputs (even if stage 3 is “no build this week”)  
 7. After ranking: next pack — light synthetic product sandbox and/or real interest tests  
 8. Product tests that encode pass/fail for the tiny slice (reuse sandbox scenario ids)  
 9. **Ready for human eyes** field + cold-path check before external product-test asks ([checklist](ready-for-human-eyes.md))  
 10. Reward/risk scorecards for top groups ([operating-system](operating-system.md#reward--risk-thinking--customer-group-ranking))  
-11. Optional one-page virtual office (who does each function this week)  
+11. Optional one-page virtual office: one primary partner + callable jobs if useful; founder owns / AI helps / open; named human for external claims  
+12. Founder-day pack once real conversations exist (prep / close the call / post-talk / weekly admin drafts — drafts only)  
+13. Calendar / inbox / meeting notes wired as **inputs** when you already use them — git remains memory  
 
 **Then** add durable agent graphs when:
 
@@ -372,6 +375,9 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 | Ask mentor/user to try product while human-eyes is not green | Wastes human attention on deploy/path debris |
 | “Works in my chat / my cookies” as ready for eyes | Cold users hit different failures |
 | Green human-eyes treated as PMF | Path alive ≠ people care or pay |
+| Named bot roster as if staffed | Fake office; hides who approves ([virtual office](operating-system.md#virtual-office-how-company-work-is-divided)) |
+| Overnight prospecting before proof | Growth machinery in disguise |
+| “Where are we?” from git only while the week lives in chat | Control plane is stale |
 
 ---
 
@@ -392,7 +398,9 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 - [ ] If claiming “growth,” proof markers and a growth-round note exist — or explicit hold-scale ([growth pack](operating-system.md#after-proof-the-growth-pack))  
 - [ ] Autonomy posture is written down (default Strict); standing deny list known  
 - [ ] Weekly control-plane snapshot happened recently  
-- [ ] Virtual office (if used) names who approves external claims — no fake bot titles  
+- [ ] Virtual office (if used) names who approves external claims — one primary partner + jobs, no fake bot titles  
+- [ ] Weekly snapshot can see this week’s conversations (day tools as inputs) or explicitly notes “none this week”  
+- [ ] Founder-day pack ran if real talks happened (prep / close the call / post-talk); skills updated when steered  
 - [ ] `readyForHumanEyes` is tracked; external product-test asks only when **green** (or override + trace)  
 - [ ] Cold happy path was run outside founder-only session before last mentor/user product ask  
 

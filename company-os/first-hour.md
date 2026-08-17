@@ -77,6 +77,8 @@ On Day 0 you should hear something like: journey phase **1 of 9**, loop stage **
 
 Follow the [near-term checklist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#near-term-checklist-any-startup). Next real work is usually honest research across those groups — not a platform.
 
+Once real conversations start (later — not this hour), use the [founder-day pack](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#founder-day-pack-how-the-week-actually-runs): prep, close the call, write up. Do not add those rituals to Day 0.
+
 If you already have a product URL and want a mentor or stranger to click it, that is a **later** gate ([portable rules](https://github.com/ivelin/bootstrap/blob/main/company-os/ready-for-human-eyes.md)). If you instantiated, fill `product/READY_FOR_HUMAN_EYES.md`. Green eyes ≠ demand.
 
 ---

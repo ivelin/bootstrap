@@ -52,5 +52,8 @@ LIVE LOOP (fast)   M / 7   [stage name]
 
 - [ ] This weekly snapshot (read-back)
 - [ ] Stage 7 memory write after last real or heavy synthetic work (write-back)
+- [ ] Bench audit: what to automate, parallelize, or delete
+- [ ] Founder-day (if real talks happened): prep / close the call / post-talk / admin drafts
+- [ ] Day tools: this snapshot can see this week’s conversations — or I wrote “none this week”
 
 **What this is not:** proof of demand, payment, or product–market fit.

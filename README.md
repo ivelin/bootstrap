@@ -6,7 +6,7 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 
 | | |
 |--|--|
-| **Version** | Blueprint + live runtime **v2.8.3** |
+| **Version** | Blueprint + live runtime **v2.8.4** |
 | **License** | Apache-2.0 |
 | **Audience** | Independent solo founders; mentors (Founder Institute, SCORE, …); AI helpers |
 | **Maintainer** | [Ivelin Ivanov](https://github.com/ivelin) · [Pirin.ai](https://pirin.ai) |
@@ -20,7 +20,9 @@ BLUEPRINT (how to decide)              LIVE RUNTIME (how to learn every week)
 company-os/operating-system.md         company-os/live-runtime.md
   journey phases 1–9                     persistent state (personas, traces, scores…)
   founder gates + honest evidence        stages 1→7 loop → memory → back to 1
-  reward/risk + virtual office           optional: agent frameworks or scripts
+  reward/risk + virtual office           day tools in; git remembers
+    one primary partner + callable jobs  founder-day: prep / close / drafts
+    skill-capture (first time → skill)   optional: agent frameworks or scripts
 ```
 
 **Golden rule:** Copy *process and control*. Do **not** copy another founder’s market, ICP list, feature roadmap, or “current hypothesis.”
@@ -135,10 +137,13 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 | Doc | Current |
 |-----|---------|
-| Operating system blueprint | **v2.8.3** |
-| Live runtime | **v2.8.3** |
+| Operating system blueprint | **v2.8.4** |
+| Live runtime | **v2.8.4** |
 
 ### Recent portable additions
+
+**v2.8.4 — founder-day pack + honest specialist bench**  
+How the founder’s week runs (prep / close the call / post-talk / admin drafts) beside the two clocks. One primary partner may call jobs — still no fake bot staff. First time together becomes a skill. Day tools are inputs; git remains memory. Overnight drafts only after proof. [Before/after diagram](docs/diagrams/os-v2.8.4-before-after.html).
 
 **v2.8.3 — demo-only role-play is the weak case**  
 Do not seed a persona from a demographic one-liner. Seed from traces. Sharpening of thesis-only-is-weaker.

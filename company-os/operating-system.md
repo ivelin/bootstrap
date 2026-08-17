@@ -1,8 +1,8 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.3  
-**Last Updated:** 2026-08-15  
+**Version:** 2.8.4  
+**Last Updated:** 2026-08-17  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -85,6 +85,8 @@ The blueprint is **not** the running system. Do not confuse “we wrote the plan
 2. **Live loop (stages 1–7)** — fast weekly/daily cycle: research → validate → build → test → eval → real feedback → memory update → back  
 
 You can run many loop cycles inside one journey phase. Full detail, state stores, and the stage diagram: **[`live-runtime.md`](live-runtime.md)**.
+
+The [founder-day pack](#founder-day-pack-how-the-week-actually-runs) is **not** a third clock. It is how *you* get through Tuesday (prep, close a conversation, drafts). The two clocks above still answer “where is the company?”
 
 ---
 
@@ -473,7 +475,8 @@ Write growth/ROUND_* + decision trace; only then expand spend or add a second ch
 3. **One primary channel hypothesis at a time** (solo). Rank channels; demote; do not multi-GTM.  
 4. **Pain owner, then budget owner** when the motion is a human conversation.  
 5. **Reuse known history first** (closed-won patterns, champion continuity, churned power users) before buying cold volume — *if* that history exists.  
-6. **Evidence labels still apply.** A reply is not retention. Spend is not product–market fit.
+6. **Evidence labels still apply.** A reply is not retention. Spend is not product–market fit.  
+7. **Overnight drafts after proof only.** The primary partner may batch research or message drafts for that one channel while you sleep. Outputs stay drafts. Live-send still waits for you. This is not a Day-0 ritual.
 
 **Founder gate after each growth round:**
 
@@ -639,6 +642,8 @@ Document the decision either way.
 You do not need a big team. You **do** need honest labels for who or what does each job today.  
 This is about **company functions** (research, sales, product, finance), not product agents inside the app.
 
+Keep **one primary operating partner** — the AI you talk to most. It may call a **small bench of jobs** when that is faster than one giant chat. Jobs are functions, not employees.
+
 For each important function, keep a short card:
 
 ```text
@@ -654,12 +659,27 @@ What we do this week:
 Who must approve before anything goes external:
 ```
 
+Starter jobs (rename for your company; skip any you do not need this week):
+
+| Job | What it hands back | When |
+|-----|--------------------|------|
+| **Conversation prep** | Short brief you can read on a phone | Before a real talk |
+| **Close the call** | Next-step artifact from what they just said | Last minutes of a conversation |
+| **Post-talk write-up** | Follow-up draft + traces / open questions | After a real talk |
+| **Research** | Ranked notes with evidence labels | Live-loop stages 1–2 |
+| **Outreach drafts** | Message in your voice, unsent | Interest tests; growth pack after proof |
+| **Product-fact answers** | Customer-facing fact from *your* docs | When someone asks something technical |
+| **Conversation coach** | What we learned, missed, and should ask next | After interviews exist |
+
+The primary partner may run jobs in parallel. You still approve anything that goes external.
+
 Rules:
 
-1. **No fake staffing.** Do not label a box “Marketing Bot” or “Research Agent” as if a person exists. If AI helps, say so and name the human who approves.  
+1. **No fake staffing.** Do not label a box “Marketing Bot” or “Prospecting Bot” as if a person exists. If AI helps, say so and name the human who approves.  
 2. **One human gate per external claim.** Market numbers, customer promises, and public posts need a named person (usually you).  
 3. **Hire on a trigger, not a date.** Write what must be true before a hire makes sense (for example: “paid customers exceed white-glove founder time”), not only “hire in Q3.”  
-4. **Outputs beat org charts.** Each function should hand something concrete to the next (brief, scorecard, pilot, decision trace).
+4. **Outputs beat org charts.** Each function should hand something concrete to the next (brief, scorecard, pilot, decision trace).  
+5. **One orchestrator, not a bot org chart.** A callable job is still “AI helps.” Do not staff a roster of named bots.
 
 A one-page virtual office plus the control plane answers “Where are we?” better than a title-heavy chart of empty roles.
 
@@ -714,10 +734,61 @@ Recurring work that keeps the OS honest. Put it on a calendar or ask your AI eve
 | **Control-plane snapshot** | Weekly | Journey phase, loop stage, posture, gate, top open questions — under two minutes |
 | **Stage 7 memory write** | After every real or heavy synthetic cycle | Scores, open questions, and hypothesis notes updated |
 | **Scoreboard glance** | Weekly | The numbers you track still make sense (completion, willingness, escalation, …) |
+| **Bench audit** | Weekly, with the snapshot | What can we further automate, parallelize, or **delete**? |
 | **Coordination-tax check** | Monthly, or after you almost hire | Three bullets: who else needs an agent? multiplayer work? pain if two people share one workspace? |
 
 Skipping these is how you get chat logs instead of a company.  
 Stage 7 is the **write-back**. The weekly snapshot is the **read-back**. Details: [`live-runtime.md`](live-runtime.md).
+
+### Founder-day pack (how the week actually runs)
+
+Learning rituals keep the **company** honest. The founder-day pack keeps **you** from spending the evening on admin after a day of conversations.
+
+These are **drafts-only** under Strict. They are not a third clock and not a go-to-market machine.
+
+| Ritual | When | Done means |
+|--------|------|------------|
+| **Conversation prep** | Before a real talk | Phone-skimmable brief: who, last trace, one question, one risk |
+| **Close the call** | Last 5–10 minutes of a conversation | Next-step artifact from what they just said (follow-up, experiment, or one-pager) |
+| **Post-talk write-up** | After a real talk | Unsent follow-up draft + traces / open questions updated |
+| **Weekly admin drafts** | Weekly | Inbox and calendar sweep → drafts only; no send |
+
+Overnight research or message-draft batches belong in the [growth pack](#after-proof-the-growth-pack) **after proof** — still no live-send.
+
+If you have no real conversations this week, skip the first three rows. Do not invent meetings so the pack has work.
+
+### Skill-capture (first time → skill)
+
+Repeatable work should not live only in chat.
+
+1. The **first time** you do a task with your AI, do it together once.  
+2. Write a **short skill** — how you want it done, not only what.  
+3. Every later steer **updates that skill**.  
+4. Before any outreach draft: a **founder-voice** profile (from notes or sent mail you are proud of) and a standing **anti-slop** skill (plain language, no fake certainty, evidence labels).
+
+Promote a skill into a playbook only after the eval gate still passes ([live runtime](live-runtime.md#high-value-traces--stress-scenarios-and-playbooks)).  
+Skills are instance files in *your* repo (or your tool’s skill folder). Do not paste another founder’s market into a skill.
+
+```text
+BEFORE (v2.8.3)                         AFTER (v2.8.4)
+───────────────                         ──────────────
+FOUNDER (gates, send, spend)            FOUNDER (gates, send, spend)
+        │                                       │
+   primary AI partner                      PRIMARY PARTNER
+        │                                  (may call jobs in parallel)
+  function cards                             │
+  founder owns / AI helps / open     prep · close-the-call · post-talk
+                                     research · outreach drafts · coach
+  LEARNING RITUALS                      LEARNING RITUALS + bench audit
+  weekly snapshot · stage 7             FOUNDER-DAY (drafts only)
+                                        SKILL-CAPTURE (first time → skill)
+
+  git = the whole picture               day tools ──inputs──► control plane
+                                        git remains memory
+                                        overnight drafts only after proof
+
+Two clocks stay two. The weekday pack is how you get through Tuesday.
+```
 
 ---
 
@@ -740,6 +811,7 @@ Everything important lives in one place so both you and the AI agents can see th
 | **docs/** | This operating system, open questions, thesis, ADRs |
 | **AGENTS.md** (root) | Thin always-on enforcement for the primary AI agent |
 | *Optional:* **company/** | Policies, autonomy rules, workflow schemas |
+| *Optional:* **skills/** | Founder-voice, anti-slop, and how-we-do-X skills (instance only) |
 | *Optional:* **support/** | Escalation playbooks, exception handlers |
 | *Optional:* **infrastructure/** | Shared synthetic tooling, persona/trace libraries |
 
@@ -760,6 +832,7 @@ your-startup/
   traces/ or docs/decisions/
   growth/                 # After proof — growth-pack rounds
   company/                # Optional: policies, autonomy rules
+  skills/                 # Optional: voice, anti-slop, how-we-do-X
   support/                # Optional: escalation playbooks
   infrastructure/         # Optional: shared synthetic tooling
   runtime/                # Optional: LangGraph/CrewAI/etc. company loop
@@ -798,6 +871,8 @@ Inside the product it is often useful to think in **specialized roles** rather t
 
 These can be separate agents or clear responsibilities inside a larger system.  
 What matters: each role has **clear success criteria**, leaves **decision traces**, and escalates high-stakes steps to a human.
+
+Do not mix this map with the virtual office. Product roles live *inside* what customers use. The virtual office’s primary partner and callable jobs are *company* work (prep, drafts, research). Same rule both places: no fake staffed titles.
 
 ### Channel principle
 
@@ -947,7 +1022,7 @@ Hard rules you must follow:
 4. When I ask “Where are we?” or “Where do we stand?”, answer with a crisp plain-language
    company snapshot — journey and loop in everyday words, how free the AI is, gate in plain words,
    evidence, open questions, honest scores. No cryptic dumps.
-5. The standing deny list applies in every posture (no silent live-send, spend, or fake staffing).
+5. The standing deny list applies in every posture (no silent live-send, spend, or fake staffing). One primary partner may call jobs; jobs are not employees.
 6. When an important decision needs human judgment, say so directly.
 7. Prefer small, honest tests and evaluation-driven increments (Spec → Harness → Implement → Gate) over big unmeasured builds.
 8. After ranked synthetic research, prefer the next pack: light synthetic product sandbox and/or real interest tests before a heavy build.
@@ -1056,7 +1131,7 @@ Thin-slice gates should set numeric thresholds on at least Completion, Extractio
 8. Founder gate on sandbox + interest results before a heavy build.  
 9. Do deeper real conversations and small paid or concierge tests with the strongest groups.  
 10. Only then lock a primary focus and a tiny first slice (with the slice artifact checklist).  
-11. Sketch a **virtual office**: who does each function today, what comes out this week, who approves external claims.  
+11. Sketch a **virtual office**: one primary partner, callable jobs if useful, who approves external claims — no named-bot org chart.  
 12. Pick an **autonomy posture** this week (default **Strict**) and keep the standing deny list visible.  
 13. Put the thin AI instructions into root `AGENTS.md` / your main tool.  
 14. Define clear **numeric** pass/fail thresholds for the first slice **before** building further.  
@@ -1064,9 +1139,10 @@ Thin-slice gates should set numeric thresholds on at least Completion, Extractio
 16. Run evaluation-driven increments (Spec → Harness → Implement → Gate).  
 17. Keep asking: “What evidence do we actually have?” and “What would make us kill this hypothesis?”  
 18. Keep decision traces for anything that changes phase, customer group, monetization path, autonomy posture, or spend.  
-19. Run the **learning rituals**: weekly control-plane snapshot; stage 7 after every real or heavy synthetic cycle.  
-20. When proof markers exist, run the **[growth pack](#after-proof-the-growth-pack)** before multi-channel spend.  
-21. Keep growth round notes under `growth/`; vanity metrics are not phase-9 exit.
+19. Run the **learning rituals**: weekly control-plane snapshot; stage 7 after every real or heavy synthetic cycle; bench audit (automate / parallelize / delete).  
+20. Once real conversations start, run the **[founder-day pack](#founder-day-pack-how-the-week-actually-runs)** (prep / close the call / post-talk / weekly admin drafts). Capture skills the first time; update them when you steer.  
+21. When proof markers exist, run the **[growth pack](#after-proof-the-growth-pack)** before multi-channel spend. Overnight draft batches are allowed then — still no live-send.  
+22. Keep growth round notes under `growth/`; vanity metrics are not phase-9 exit.
 
 ---
 
@@ -1082,6 +1158,10 @@ Every company should maintain its own list. Starter prompts:
 - What **autonomy posture** are we on this week (Strict / Auto / Dangerous)?  
 - How often should the system ask the human for approval versus acting within a safe draft/dry-run band?  
 - Did we run the weekly control-plane snapshot and close stage 7 after the last real cycle?  
+- Did this week’s snapshot see the actual conversations (calendar / inbox / notes as inputs), or only last week’s markdown?  
+- Which founder-day rituals ran (prep / close the call / post-talk / admin drafts)?  
+- What skills did we capture or update? Is there a founder-voice profile before outreach drafts?  
+- What did the bench audit say we should automate, parallelize, or delete?  
 - What legal and ethical rules apply to outreach in our channels?  
 - When do the risks of staying solo become larger than the risks of adding help?  
 - What is the **smallest set of channels** that still produces real value?  
@@ -1114,7 +1194,10 @@ Every company should maintain its own list. Starter prompts:
 - Copying another startup’s product because their OS docs lived in the same monorepo  
 - Expanding channels or multi-agent complexity before the thin slice works  
 - Fake org charts (generic bot labels, empty roles with no outputs or human gates)  
+- A roster of named bots treated as staff (Prospecting Bot, Forecasting Bot, one agent per account)  
+- Overnight prospecting or message-batch machinery before proof  
 - Skipping weekly snapshot and stage 7 while claiming the company OS is “running”  
+- Letting “Where are we?” see only git while the week’s conversations live only in chat  
 - Silently rewriting this template every time one product ships a feature  
 - Running multi-channel growth machinery before proof of value or payment  
 - Treating opens, total replies, or list size as growth success  
@@ -1153,6 +1236,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.1 | Evidence labels stated / synthetic / observed; forced-choice + one condition change; no Likert/dollar from sims; optional Grok Build workflows (path 2). |
 | 2.8.2 | Honesty pass: label observed-wins / spoken-yes-cannot-promote as house epistemology; qualify naked dollar/Likert (mapped $ after a choice is allowed); short sources note (Bisbee 2024 + Brand 2026 §3.3 load-bearing only). |
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
+| 2.8.4 | Founder-day pack (prep / close the call / post-talk / weekly admin drafts); virtual office = one primary partner + callable jobs (still no fake staff); skill-capture (first time → skill; steer updates it; voice + anti-slop before outreach drafts); day tools are inputs, git remains memory; growth pack may overnight-draft after proof. Two clocks stay two. |
 
 ---
 

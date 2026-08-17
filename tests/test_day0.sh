@@ -352,9 +352,32 @@ else
   not_ok "constitution must not name Aaru/Simile/Verasight/Electric Twin"
 fi
 if grep -q '2.8.3' company-os/operating-system.md && grep -q '2.8.3' README.md; then
-  ok "version stamp 2.8.3"
+  ok "changelog still records 2.8.3"
 else
-  not_ok "version stamp must be 2.8.3"
+  not_ok "OS and README must still record 2.8.3"
+fi
+
+# --- l) founder-day pack + honest specialist bench ---
+if grep -q 'Founder-day pack' company-os/operating-system.md \
+  && grep -q 'close the call' company-os/operating-system.md \
+  && grep -q 'Skill-capture' company-os/operating-system.md \
+  && grep -q 'callable jobs' company-os/operating-system.md \
+  && grep -q 'Day tools are inputs' company-os/live-runtime.md \
+  && grep -q 'callable jobs' company-os/ai-instructions.md \
+  && grep -q 'founder-day pack' company-os/first-hour.md; then
+  ok "founder-day pack, skill-capture, callable jobs, day-tools-as-inputs"
+else
+  not_ok "v2.8.4 founder-day / skill-capture / jobs / day-tools missing"
+fi
+if grep -q 'Overnight drafts after proof' company-os/operating-system.md; then
+  ok "growth pack overnight drafts stay after proof"
+else
+  not_ok "growth pack must gate overnight drafts after proof"
+fi
+if grep -q '2.8.4' company-os/operating-system.md && grep -q '2.8.4' README.md; then
+  ok "version stamp 2.8.4"
+else
+  not_ok "version stamp must be 2.8.4"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

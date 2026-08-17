@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bootstrap OS — v2.8.3 before / v2.8.4 after</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1b2430;
+      --muted: #5a6570;
+      --line: #b7bec6;
+      --paper: #d8dde3;
+      --card: #f4f5f7;
+      --steel: #3d5064;
+      --copper: #c45a1a;
+      --copper-soft: #f3e4d6;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", sans-serif;
+      padding: 36px 40px 32px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 22px;
+    }
+    .kicker {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+    .legend {
+      display: flex;
+      gap: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: -1px;
+    }
+    .swatch.old { background: var(--steel); }
+    .swatch.new { background: var(--copper); }
+    .board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .col {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 20px 20px 16px;
+      min-height: 920px;
+    }
+    .col.after { border-color: #d9b89a; box-shadow: inset 3px 0 0 var(--copper); }
+    .col-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+    .col-head h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .ver {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .founder {
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 0 14px;
+    }
+    .founder span {
+      display: inline-block;
+      border: 1px solid var(--ink);
+      padding: 6px 14px;
+      letter-spacing: 0.04em;
+    }
+    .clocks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .clock-card {
+      border: 1px solid var(--line);
+      padding: 12px 10px 10px;
+      text-align: center;
+    }
+    .dial {
+      width: 72px;
+      height: 72px;
+      border: 2px solid var(--steel);
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      position: relative;
+    }
+    .dial i {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: bottom center;
+      background: var(--ink);
+      width: 2px;
+      margin-left: -1px;
+    }
+    .dial .h { height: 18px; transform: rotate(-50deg); }
+    .dial .m { height: 26px; transform: rotate(40deg); width: 1.5px; }
+    .dial.after-loop .m { transform: rotate(130deg); }
+    .clock-card strong {
+      display: block;
+      font-size: 13px;
+    }
+    .clock-card em {
+      font-style: normal;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .block {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+    .block h3 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      font-family: "IBM Plex Mono", monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .block p, .block li {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.4;
+    }
+    .block ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+    .ghost {
+      color: var(--muted);
+      border-style: dashed;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+    }
+    .ghost p { width: 100%; text-align: center; font-size: 13px; }
+    .new {
+      border-color: var(--copper);
+      background: var(--copper-soft);
+    }
+    .new h3 { color: var(--copper); }
+    .badge {
+      float: right;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: #fff;
+      background: var(--copper);
+      padding: 1px 6px;
+    }
+    .jobs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .job {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      border: 1px solid var(--copper);
+      color: var(--steel);
+      background: #fff;
+      padding: 3px 7px;
+    }
+    .arrow {
+      text-align: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 2px 0 10px;
+    }
+    footer {
+      margin-top: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <p class="kicker">Bootstrap OS · portable company operating system</p>
+      <h1>Two clocks stay two. The weekday gets a pack.</h1>
+    </div>
+    <div class="legend">
+      <span><i class="swatch old"></i>already there</span>
+      <span><i class="swatch new"></i>new in v2.8.4</span>
+    </div>
+  </header>
+
+  <div class="board">
+    <section class="col">
+      <div class="col-head">
+        <h2>Before</h2>
+        <span class="ver">v2.8.3 · how the company decides</span>
+      </div>
+      <div class="founder"><span>Founder · gates, send, spend</span></div>
+      <div class="clocks">
+        <div class="clock-card">
+          <div class="dial"><i class="h"></i><i class="m"></i></div>
+          <strong>Journey 1–9</strong>
+          <em>slow · prove-it path</em>
+        </div>
+        <div class="clock-card">
+          <div class="dial"><i class="h"></i><i class="m"></i></div>
+          <strong>Live loop 1–7</strong>
+          <em>fast · learn this week</em>
+        </div>
+      </div>
+      <div class="block">
+        <h3>Virtual office</h3>
+        <p>Function cards: founder owns / AI helps / open. One human gate on external claims. No fake “Marketing Bot.”</p>
+      </div>
+      <div class="block">
+        <h3>Primary AI partner</h3>
+        <p>One always-on helper. Specialists mentioned as product roles, not a weekday bench the partner can call.</p>
+      </div>
+      <div class="block">
+        <h3>Learning rituals</h3>
+        <ul>
+          <li>Weekly control-plane snapshot</li>
+          <li>Stage 7 memory write</li>
+          <li>Scoreboard glance</li>
+          <li>Monthly coordination-tax check</li>
+        </ul>
+      </div>
+      <div class="block ghost">
+        <p>No founder-day pack. Evening admin still sits with you.</p>
+      </div>
+      <div class="block ghost">
+        <p>No skill-capture loop. Good methods die in chat.</p>
+      </div>
+      <div class="block">
+        <h3>Memory</h3>
+        <p>Git holds thesis, traces, scores. Calendar, inbox, and notes are outside the control plane.</p>
+      </div>
+    </section>
+
+    <section class="col after">
+      <div class="col-head">
+        <h2>After</h2>
+        <span class="ver">v2.8.4 · decide and get through Tuesday</span>
+      </div>
+      <div class="founder"><span>Founder · gates, send, spend</span></div>
+      <div class="clocks">
+        <div class="clock-card">
+          <div class="dial"><i class="h"></i><i class="m"></i></div>
+          <strong>Journey 1–9</strong>
+          <em>unchanged · still founder-gated</em>
+        </div>
+        <div class="clock-card">
+          <div class="dial after-loop"><i class="h"></i><i class="m"></i></div>
+          <strong>Live loop 1–7</strong>
+          <em>unchanged · still evidence</em>
+        </div>
+      </div>
+      <div class="block new">
+        <h3>Primary partner <span class="badge">NEW</span></h3>
+        <p>One orchestrator. May call a small bench of <em>jobs</em> — not employees. Parallel drafts; you still approve anything external.</p>
+        <div class="jobs">
+          <span class="job">prep</span>
+          <span class="job">close the call</span>
+          <span class="job">post-talk</span>
+          <span class="job">research</span>
+          <span class="job">outreach drafts</span>
+          <span class="job">coach</span>
+        </div>
+      </div>
+      <div class="block new">
+        <h3>Founder-day pack <span class="badge">NEW</span></h3>
+        <p>Prep → close the call in the last minutes → post-talk write-up → weekly admin drafts. All drafts under Strict. Not a third clock.</p>
+      </div>
+      <div class="block new">
+        <h3>Skill-capture <span class="badge">NEW</span></h3>
+        <p>First time together → short skill. Every steer updates it. Founder-voice + anti-slop before outreach drafts.</p>
+      </div>
+      <div class="block">
+        <h3>Learning rituals</h3>
+        <p>Same snapshot + stage 7, plus a weekly bench audit: automate, parallelize, or <strong>delete</strong>.</p>
+      </div>
+      <div class="block new">
+        <h3>Day tools → memory <span class="badge">NEW</span></h3>
+        <p>Calendar, inbox, and notes feed “Where are we?” Git remains company memory. No named vendor required.</p>
+      </div>
+      <div class="arrow">after proof only · still no live-send</div>
+      <div class="block">
+        <h3>Growth pack</h3>
+        <p>Overnight research or message-draft batches allowed for the one primary channel — drafts only, and only after proof markers.</p>
+      </div>
+    </section>
+  </div>
+  <footer>Portable process only. No Salesforce, Gong, or named-bot org chart. Template change: company-os/ v2.8.4.</footer>
+</body>
+</html>
