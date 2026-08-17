@@ -352,9 +352,45 @@ else
   not_ok "constitution must not name Aaru/Simile/Verasight/Electric Twin"
 fi
 if grep -q '2.8.3' company-os/operating-system.md && grep -q '2.8.3' README.md; then
-  ok "version stamp 2.8.3"
+  ok "changelog still records 2.8.3"
 else
-  not_ok "version stamp must be 2.8.3"
+  not_ok "OS and README must still record 2.8.3"
+fi
+
+# --- l) founder-day pack is additive; stability contract ---
+if grep -q 'Additive by default' company-os/operating-system.md \
+  && grep -q 'Jobs do not replace cards' company-os/operating-system.md \
+  && grep -q 'Founder-day pack' company-os/operating-system.md \
+  && grep -q 'Skill-capture' company-os/operating-system.md \
+  && grep -q 'Day tools are inputs' company-os/live-runtime.md \
+  && grep -q 'Jobs are not employees' company-os/ai-instructions.md \
+  && grep -q 'founder-day pack' company-os/first-hour.md; then
+  ok "stability contract + additive founder-day / skill-capture / jobs"
+else
+  not_ok "v2.8.4 must stay additive: stability contract, cards stay, packs optional"
+fi
+if grep -q 'Additive, rarely breaking' README.md; then
+  ok "README template policy is additive / rarely breaking"
+else
+  not_ok "README template policy must say additive, rarely breaking"
+fi
+if grep -q 'Overnight drafts after proof' company-os/operating-system.md; then
+  ok "growth pack overnight drafts stay after proof"
+else
+  not_ok "growth pack must gate overnight drafts after proof"
+fi
+if grep -q 'Insight quality before posting cadence' company-os/operating-system.md \
+  && grep -q 'content calendar' company-os/operating-system.md \
+  && ! grep -qi 'nikitabier\|LoganTGott\|meme coin' company-os/operating-system.md \
+    company-os/live-runtime.md company-os/ai-instructions.md; then
+  ok "insight-quality rule is portable (no account/vendor folklore)"
+else
+  not_ok "growth pack must have portable insight-quality rule, no X-account folklore"
+fi
+if grep -q '2.8.4' company-os/operating-system.md && grep -q '2.8.4' README.md; then
+  ok "version stamp 2.8.4"
+else
+  not_ok "version stamp must be 2.8.4"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

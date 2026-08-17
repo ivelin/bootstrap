@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bootstrap OS v2.8.4 — additive, nothing removed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1b2430;
+      --muted: #5a6570;
+      --line: #b7bec6;
+      --paper: #d8dde3;
+      --card: #f4f5f7;
+      --steel: #3d5064;
+      --copper: #c45a1a;
+      --copper-soft: #f3e4d6;
+      --keep: #e7edf0;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", sans-serif;
+      padding: 28px 32px 24px;
+    }
+    header { margin-bottom: 16px; }
+    .kicker {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin: 0 0 8px;
+    }
+    .sub {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 920px;
+    }
+    .legend {
+      margin-top: 10px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin: 0 6px 0 14px;
+      vertical-align: -1px;
+    }
+    .swatch.keep { background: var(--steel); }
+    .swatch.add { background: var(--copper); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      padding: 10px 14px;
+      font-size: 13.5px;
+      line-height: 1.4;
+    }
+    th {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 500;
+      background: #eceff2;
+    }
+    th.layer { width: 18%; }
+    th.before, th.after { width: 41%; }
+    td.layer {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--keep);
+    }
+    .same {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--steel);
+      margin-right: 6px;
+    }
+    .plus {
+      display: block;
+      margin-top: 6px;
+      padding: 6px 8px;
+      background: var(--copper-soft);
+      border-left: 3px solid var(--copper);
+      font-size: 13px;
+    }
+    .plus b {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--copper);
+      margin-right: 6px;
+    }
+    .empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+    footer {
+      margin-top: 12px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Bootstrap OS · v2.8.3 → v2.8.4</p>
+    <h1>Additive. Nothing established was removed.</h1>
+    <p class="sub">Same clocks, same cards, same rituals, same git memory. New packs hang off the existing desk and stay optional until you have the situation they are for.</p>
+    <p class="legend"><i class="swatch keep"></i>kept <i class="swatch add"></i>added · optional until useful</p>
+  </header>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="layer">Layer</th>
+        <th class="before">v2.8.3 — still the desk</th>
+        <th class="after">v2.8.4 — same desk, plus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="layer">Founder</td>
+        <td>Gates, send, spend, journey advance.</td>
+        <td><span class="same">KEPT</span> Gates, send, spend, journey advance.</td>
+      </tr>
+      <tr>
+        <td class="layer">Two clocks</td>
+        <td>Journey 1–9 (prove-it). Live loop 1–7 (learn this week).</td>
+        <td><span class="same">KEPT</span> Journey 1–9. Live loop 1–7. Not a third clock.</td>
+      </tr>
+      <tr>
+        <td class="layer">Virtual office</td>
+        <td>Function cards: founder owns / AI helps / open. One human gate on external claims. No fake “Marketing Bot.”</td>
+        <td>
+          <span class="same">KEPT</span> Function cards: founder owns / AI helps / open. One human gate. No fake staff.
+          <span class="plus"><b>PLUS</b> The partner may call a job to finish a card faster. Jobs do not replace cards. Not a required roster.</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="layer">Primary partner</td>
+        <td>One always-on AI helper. Thin enforcement in AGENTS.md.</td>
+        <td><span class="same">KEPT</span> One always-on AI helper. Thin enforcement in AGENTS.md.</td>
+      </tr>
+      <tr>
+        <td class="layer">Learning rituals</td>
+        <td>Weekly snapshot. Stage 7 write-back. Scoreboard glance. Monthly coordination-tax check.</td>
+        <td>
+          <span class="same">KEPT</span> All four rituals, same names, same cadence.
+          <span class="plus"><b>PLUS</b> Snapshot may end with one optional line: automate, parallelize, or delete?</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="layer">Memory</td>
+        <td>Git holds thesis, traces, scores. That is company memory.</td>
+        <td>
+          <span class="same">KEPT</span> Git remains company memory.
+          <span class="plus"><b>PLUS</b> Calendar, inbox, and notes may feed the snapshot if you already use them. No named vendor.</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="layer">Founder-day</td>
+        <td class="empty">Not specified. Evening admin is on you.</td>
+        <td><span class="plus"><b>PLUS</b> Optional pack once real talks exist: prep, close the call, post-talk write-up, weekly admin drafts. Drafts only. Skip if no conversations.</span></td>
+      </tr>
+      <tr>
+        <td class="layer">Skills</td>
+        <td class="empty">Playbooks after the eval gate. No first-time capture loop.</td>
+        <td><span class="plus"><b>PLUS</b> First time together becomes a short skill. Every steer updates it. Voice + anti-slop before outreach drafts.</span></td>
+      </tr>
+      <tr>
+        <td class="layer">Growth pack</td>
+        <td>After proof only. One channel hypothesis. Founder promote / kill / hold.</td>
+        <td>
+          <span class="same">KEPT</span> After proof only. One channel. Founder gate.
+          <span class="plus"><b>PLUS</b> Overnight drafts still unsent. If the channel is public writing: one unexpected lived insight, short, same subject. Followers are a diagnostic — not a content calendar.</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="layer">Deny list</td>
+        <td>No silent live-send, spend, phase advance, fake staff, or skipped stage 7.</td>
+        <td><span class="same">KEPT</span> Same deny list. Nothing on it was relaxed or removed.</td>
+      </tr>
+    </tbody>
+  </table>
+  <footer>Stability contract: additive by default · optional until useful · rarely breaking · one mental model. Read last month’s snapshot against this week’s OS and it should still map.</footer>
+</body>
+</html>

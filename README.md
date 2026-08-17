@@ -6,7 +6,7 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 
 | | |
 |--|--|
-| **Version** | Blueprint + live runtime **v2.8.3** |
+| **Version** | Blueprint + live runtime **v2.8.4** |
 | **License** | Apache-2.0 |
 | **Audience** | Independent solo founders; mentors (Founder Institute, SCORE, …); AI helpers |
 | **Maintainer** | [Ivelin Ivanov](https://github.com/ivelin) · [Pirin.ai](https://pirin.ai) |
@@ -20,7 +20,8 @@ BLUEPRINT (how to decide)              LIVE RUNTIME (how to learn every week)
 company-os/operating-system.md         company-os/live-runtime.md
   journey phases 1–9                     persistent state (personas, traces, scores…)
   founder gates + honest evidence        stages 1→7 loop → memory → back to 1
-  reward/risk + virtual office           optional: agent frameworks or scripts
+  reward/risk + virtual office           git remembers; day tools may feed it
+  (cards stay; jobs optional)            optional: founder-day + skill-capture
 ```
 
 **Golden rule:** Copy *process and control*. Do **not** copy another founder’s market, ICP list, feature roadmap, or “current hypothesis.”
@@ -122,12 +123,14 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 3. **Thoughtful** — principle + checklist over markets, stacks, or one-off workflows  
 4. **Approval-gated** — short delta (what / why / where); wait for explicit approval  
 5. **Instance-first** — keep company-specific application in that company’s repo  
+6. **Additive, rarely breaking** — founders adopt this for months. New packs sit beside existing ones. Do not rename clocks, restack the loop, or drop a gate without a named version note. Optional until useful.
 
 ### Anti-patterns
 
 - Auto-promoting every product win into the OS  
 - Copying a beachhead market, MCP stack, or pricing into the blueprint “because we use them”  
 - Silent template edits inside product PRs without template approval  
+- Moving sand: a rewrite that makes last month’s snapshot unreadable  
 
 ---
 
@@ -135,10 +138,13 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 | Doc | Current |
 |-----|---------|
-| Operating system blueprint | **v2.8.3** |
-| Live runtime | **v2.8.3** |
+| Operating system blueprint | **v2.8.4** |
+| Live runtime | **v2.8.4** |
 
 ### Recent portable additions
+
+**v2.8.4 — additive weekday packs + stability contract**  
+Nothing established was removed. Founder-day and skill-capture sit beside existing rituals and are skippable until real conversations exist. Virtual-office cards stay; the partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. After proof: overnight drafts still unsent; if the channel is public writing, one lived insight beats a content calendar. [Additive diagram](docs/diagrams/os-v2.8.4-before-after.html).
 
 **v2.8.3 — demo-only role-play is the weak case**  
 Do not seed a persona from a demographic one-liner. Seed from traces. Sharpening of thesis-only-is-weaker.
