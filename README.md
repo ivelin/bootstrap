@@ -144,7 +144,7 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 ### Recent portable additions
 
 **v2.8.4 — additive weekday packs + stability contract**  
-Nothing established was removed. Founder-day and skill-capture sit beside existing rituals and are skippable until real conversations exist. Virtual-office cards stay; the partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Overnight drafts only after proof. [Additive diagram](docs/diagrams/os-v2.8.4-before-after.html).
+Nothing established was removed. Founder-day and skill-capture sit beside existing rituals and are skippable until real conversations exist. Virtual-office cards stay; the partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. After proof: overnight drafts still unsent; if the channel is public writing, one lived insight beats a content calendar. [Additive diagram](docs/diagrams/os-v2.8.4-before-after.html).
 
 **v2.8.3 — demo-only role-play is the weak case**  
 Do not seed a persona from a demographic one-liner. Seed from traces. Sharpening of thesis-only-is-weaker.

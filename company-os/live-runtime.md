@@ -372,6 +372,7 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 | Growth pack without proof markers | Spend/reputation burn before the business is real ([growth pack](operating-system.md#after-proof-the-growth-pack)) |
 | Multi-channel spray in phase 9 | Solo complexity without comparable signal |
 | Vanity metrics as growth success | Optimizes noise; hides weak offer/channel |
+| Daily content machine or follower count as phase-9 | Personal brand is not product–market fit |
 | Ask mentor/user to try product while human-eyes is not green | Wastes human attention on deploy/path debris |
 | “Works in my chat / my cookies” as ready for eyes | Cold users hit different failures |
 | Green human-eyes treated as PMF | Path alive ≠ people care or pay |

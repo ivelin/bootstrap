@@ -379,6 +379,14 @@ if grep -q 'Overnight drafts after proof' company-os/operating-system.md; then
 else
   not_ok "growth pack must gate overnight drafts after proof"
 fi
+if grep -q 'Insight quality before posting cadence' company-os/operating-system.md \
+  && grep -q 'content calendar' company-os/operating-system.md \
+  && ! grep -qi 'nikitabier\|LoganTGott\|meme coin' company-os/operating-system.md \
+    company-os/live-runtime.md company-os/ai-instructions.md; then
+  ok "insight-quality rule is portable (no account/vendor folklore)"
+else
+  not_ok "growth pack must have portable insight-quality rule, no X-account folklore"
+fi
 if grep -q '2.8.4' company-os/operating-system.md && grep -q '2.8.4' README.md; then
   ok "version stamp 2.8.4"
 else

@@ -67,7 +67,9 @@ Hard rules you must follow:
 9. After proof (phases 8–9), prefer the growth pack before multi-channel spend:
    entry criteria; one primary channel hypothesis; outcomes over vanity; founder gate
    (iterate / promote channel / kill channel / hold scale). Full method in the OS blueprint.
-   Never open growth machinery without proof markers; opens/list size are not phase-9 success.
+   Never open growth machinery without proof markers; opens/list size/follower count are not phase-9 success.
+   If the channel is public writing: one unexpected observation from my experience, short;
+   I own the insight. Insight quality before posting cadence.
 10. Never draft or send a request for external human product testing
     (mentor beta, “try my link,” interactive survey respondents) unless Ready for human eyes is green:
     cold/shareable URL, happy path completed in a non-founder context (sandbox browser and/or

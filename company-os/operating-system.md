@@ -113,6 +113,8 @@ Before putting serious time into an idea, answer:
 
 You do not need rocket science. Many good companies win by acting on a simple truth others thought was too messy, too small, or not worth the effort.
 
+If you later speak in public ([growth pack](#after-proof-the-growth-pack), after proof), that belief should still be **one unexpected observation from your experience** — short, same subject. It is not a content calendar and not Day-0 work.
+
 ---
 
 ## The Real Job of the Early Phases
@@ -447,7 +449,7 @@ Primary-focus **promotion** still requires the full promotion rule (synthetic + 
 
 **When:** journey phases **8–9**, after proof — not a substitute for the [next pack](#after-synthetic-ranking-the-next-pack) (phases 3–5).  
 **What:** capped experiments on the **same proven customer group** and thin path.  
-**What not:** multi-channel acquisition machinery, channel-tooling folklore, or a tenth journey phase.
+**What not:** multi-channel acquisition machinery, channel-tooling folklore, a daily personal-brand calendar, or a tenth journey phase.
 
 **Entry criteria (all required before growth machinery):**
 
@@ -487,7 +489,8 @@ Write growth/ROUND_* + decision trace; only then expand spend or add a second ch
 4. **Pain owner, then budget owner** when the motion is a human conversation.  
 5. **Reuse known history first** (closed-won patterns, champion continuity, churned power users) before buying cold volume — *if* that history exists.  
 6. **Evidence labels still apply.** A reply is not retention. Spend is not product–market fit.  
-7. **Overnight drafts after proof only.** The primary partner may batch research or message drafts for that one channel while you sleep. Outputs stay drafts. Live-send still waits for you. This is not a Day-0 ritual.
+7. **Overnight drafts after proof only.** The primary partner may batch research or message drafts for that one channel while you sleep. Outputs stay drafts. Live-send still waits for you. This is not a Day-0 ritual.  
+8. **Insight quality before posting cadence.** If the channel is public writing, one unexpected observation from *your* experience, on the same subject, short. AI may draft; you own the insight. Follower count, streak length, and creator payouts are diagnostics — not phase-9 success. Skip this rule if the channel is not public writing.
 
 **Founder gate after each growth round:**
 
@@ -500,7 +503,7 @@ Write growth/ROUND_* + decision trace; only then expand spend or add a second ch
 
 **Artifacts:** short notes under `growth/` (or equivalent) per round — hypothesis, cap, counts vs thresholds, decision, date. Live-loop stage 7 writes back scores and the next question.
 
-**Not in this pack:** deliverability ops, data-vendor stacks, channel-specific tooling. Optional private motion notes after a channel is chosen — never core OS law.
+**Not in this pack:** deliverability ops, data-vendor stacks, channel-specific tooling, posting calendars, or platform promotion promises. Optional private motion notes after a channel is chosen — never core OS law.
 
 ---
 
@@ -796,6 +799,8 @@ git = company memory                    same
                                         skill-capture (first time → skill)
 growth pack (after proof)               same
                                           + overnight drafts still unsent
+                                          + insight quality before cadence
+                                            (if the channel is public writing)
 
 Nothing above on the left was removed. Two clocks stay two.
 ```
@@ -1180,7 +1185,8 @@ Every company should maintain its own list. Starter prompts:
 - Which failures become permanent **stress scenarios**?  
 - What would make us **kill** the current hypothesis cleanly?  
 - Do we have **proof markers** that unlock the growth pack, or are we still in hold-scale?  
-- What is the **one** primary channel hypothesis for the next growth round, and what outcome threshold kills it?
+- What is the **one** primary channel hypothesis for the next growth round, and what outcome threshold kills it?  
+- If that channel is public writing: is the message one lived insight, or a content calendar?
 - Is **Ready for human eyes** green before we ask mentors or users to try a product link?  
 - What blockers (iframe, auth, JS, private URL) still kill the cold happy path?
 
@@ -1211,7 +1217,8 @@ Every company should maintain its own list. Starter prompts:
 - Silently rewriting this template every time one product ships a feature  
 - Moving sand: renaming clocks, restacking the loop, or dropping a gate so last month’s snapshot no longer maps  
 - Running multi-channel growth machinery before proof of value or payment  
-- Treating opens, total replies, or list size as growth success  
+- Treating opens, total replies, list size, or follower count as growth success  
+- A daily personal-brand machine, or AI insight spray, as a substitute for a lived observation  
 - AI personalization on an unproven audience as a substitute for offer/channel fit  
 - Asking mentors or users to “try it” before **Ready for human eyes** is green  
 - Treating “works on my machine / in my chat” as ready for external feedback  
@@ -1247,7 +1254,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.1 | Evidence labels stated / synthetic / observed; forced-choice + one condition change; no Likert/dollar from sims; optional Grok Build workflows (path 2). |
 | 2.8.2 | Honesty pass: label observed-wins / spoken-yes-cannot-promote as house epistemology; qualify naked dollar/Likert (mapped $ after a choice is allowed); short sources note (Bisbee 2024 + Brand 2026 §3.3 load-bearing only). |
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
-| 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack may overnight-draft after proof. No clocks, gates, or deny-list items removed. |
+| 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack: overnight drafts after proof; insight quality before posting cadence (one lived observation, short — not a content calendar). No clocks, gates, or deny-list items removed. |
 
 ---
 
