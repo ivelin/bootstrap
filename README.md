@@ -69,7 +69,7 @@ Optional. Script or hand copy — [Install](#install-in-your-company). Optional 
 
 ### 3. Self-hosted MCP (optional — several ideas)
 
-Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.4). Rank and kill per board. Markdown remains the constitution.
+Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.5). Rank and kill per board. Markdown remains the constitution.
 
 Not required. Path 1 (point an AI) and path 2 (optional files + workflows) stay enough.
 
