@@ -37,7 +37,7 @@ cd mcp && npm ci && npm run ci
 | M1a | **Automated** stdio protocol smoke in CI | [x] `test/stdio-mcp.client.mjs` | CI job |
 | M1b | Human client (Cursor/Claude/Grok) using `config/mcp.stdio.example.json` | [x] Grok CLI 2026-08-16 CT, sandbox only | [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) sign-off. Not Cursor GUI. M2 still required. |
 | M2 | Non-maintainer cold path | ☐ | Runbook [`docs/COLD_PATH.md`](docs/COLD_PATH.md) + sign-off form |
-| M3 | Private dogfood weekly snapshot + stage-7 | ☐ | ROADMAP §5a |
+| M3 | Private dogfood weekly snapshot + stage-7 | [x] 2026-08-16 Pirin instance (one week, not four) | Private files, not this template. M2 still open. |
 | M4 | PR description test plan boxes checked with evidence | ☐ | PR body |
 | M5 | Human-eyes for MCP still labeled honestly (`unknown` until M2) | ☐ | honest status |
 

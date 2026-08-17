@@ -89,19 +89,19 @@ Update this block when reality changes. Do not invent progress.
 
 | Field | Current (honest) |
 |-------|------------------|
-| **Journey phase** | ~5–6 — tiny system designed; local MCP thin slice in flight ([PR #1](https://github.com/ivelin/bootstrap/pull/1)) |
-| **Loop stage** | 3–4 — build + cold checks on MCP path; markdown path already “shippable” as docs |
+| **Journey phase** | **6 Hold** — tiny slice built; local MCP still draft ([PR #1](https://github.com/ivelin/bootstrap/pull/1)). No paid-path Advance. |
+| **Loop stage** | **7** this week (write-back after MCP work); markdown path already shippable as docs |
 | **Autonomy posture** | **Strict** — no auto phase advances; no silent hosted launch |
 | **Ready for human eyes** | **unknown** for MCP until cold install by a non-maintainer works end-to-end |
 | **Gate** | Do not market MCP as required. Do not ship hosted until local export + dogfood ledger exist or are explicitly killed |
 | **Open questions** | Will non-technical mentees use local MCP, or only markdown + later hosted read path? Does ledger reduce thrash in a real FI cohort? Can “Claude rooms / project setup” collapse into a 90‑min Bootstrap install without tool thrash? |
 | **Last roadmap review** | 2026-08-07 (evidence scan: Gmail FI/mentees, X, public LinkedIn) |
-| **Last weekly control-plane snapshot** | **Missing** — must complete in private dogfood instance (not chat) within 7 days of this note or fail the week |
-| **Stage 7 write-back this week** | **Missing** until decision trace exists outside this template repo |
+| **Last weekly control-plane snapshot** | **2026-08-16** in private Pirin instance (`docs/company-os/instance/WEEKLY-SNAPSHOT-2026-08-16.md`). Not in this template. |
+| **Stage 7 write-back this week** | **2026-08-16** — Hold PR #1 draft; MCP human-eyes unknown; WTP unchanged at 0.2. Trace lives in the Pirin instance. |
 | **Maintainer autonomy posture** | **Strict** — same as we prescribe early solo founders |
 
 **Where are we in one sentence:**  
-We pursue only P1–P6 (control plane, gates, human-eyes, harness-agnostic state, sparse evidence, teachable install). Optional MCP is a delivery path for P1–P4/P5 — not a goal in itself. Hosted/social stay out until evidence appears. **We are currently below our own bar on weekly snapshot + stage 7 — fix before claiming dogfood.**
+We pursue only P1–P6 (control plane, gates, human-eyes, harness-agnostic state, sparse evidence, teachable install). Optional MCP is a delivery path for P1–P4/P5 — not a goal in itself. Hosted/social stay out until evidence appears. **This week’s private snapshot + stage-7 exist.** That is one week, not four. M2 (non-author cold path) is still open. Do not claim mentee-ready MCP.
 
 ---
 
