@@ -1,0 +1,4 @@
+{
+  "name": "Bootstrap OS",
+  "install": "cd mcp && npm ci && npm run build"
+}
