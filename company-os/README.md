@@ -11,9 +11,10 @@ This folder is the **Bootstrap OS** blueprint and runtime shape. It is not any o
 | [`first-hour.md`](first-hour.md) | Day 0 — thesis, ≥3 customer groups, first “Where are we?” |
 
 **Blank instance files:** [`../templates/`](../templates/)  
-**Repo overview & install:** [`../README.md`](../README.md)
+**Repo overview & adopt order:** [`../README.md`](../README.md) — path 1 point-an-AI, path 2 optional install.
 
-Optional Grok Build workflows live in [`../.grok/workflows/`](../.grok/workflows/).
+Optional Grok Build workflows live in [`../.grok/workflows/`](../.grok/workflows/).  
+Optional local MCP (path 3, several ideas only): [`../mcp/README.md`](../mcp/README.md). Not required. Hosted MCP does not exist.
 
 ### Mental model
 

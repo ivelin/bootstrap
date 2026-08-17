@@ -1,0 +1,97 @@
+name: MCP CI
+
+on:
+  push:
+    branches: [main, "feat/**"]
+    paths:
+      - "mcp/**"
+      - "company-os/**"
+      - "templates/**"
+      - ".github/workflows/mcp-ci.yml"
+  pull_request:
+    paths:
+      - "mcp/**"
+      - "company-os/**"
+      - "templates/**"
+      - ".github/workflows/mcp-ci.yml"
+
+concurrency:
+  group: mcp-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mcp:
+    name: typecheck · test · smokes (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["20", "22"]
+    defaults:
+      run:
+        working-directory: mcp
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: mcp/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Cold-path smoke
+        run: node test/cold-path.smoke.mjs
+
+      - name: Stdio MCP client smoke (M1 protocol)
+        run: node test/stdio-mcp.client.mjs
+
+      - name: Dist hygiene (no source maps required; entry exists)
+        run: |
+          test -f dist/index.js
+          test -f dist/policy.js
+          test -f dist/companies.js
+          ! test -d node_modules/.cache || true
+
+  markdown-path:
+    name: markdown path integrity (no Node MCP required)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Required portable files
+        run: |
+          set -euo pipefail
+          for f in \
+            company-os/operating-system.md \
+            company-os/live-runtime.md \
+            company-os/ready-for-human-eyes.md \
+            company-os/ai-instructions.md \
+            company-os/first-hour.md \
+            templates/company/state/company-state.json \
+            templates/company/state/where-are-we.py \
+            templates/applied-here.md
+          do
+            test -s "$f"
+            echo "ok $f"
+          done
+          python3 - <<'PY'
+          import json
+          s = json.load(open("templates/company/state/company-state.json"))
+          for k in ("companyId", "journeyPhase", "loopStage", "readyForHumanEyes", "openQuestions"):
+              assert k in s, k
+          assert s["readyForHumanEyes"]["status"] == "unknown"
+          print("state template ok")
+          PY

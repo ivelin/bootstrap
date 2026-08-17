@@ -16,6 +16,8 @@ Answer in plain language: journey N/9, loop M/7, gate, autonomy posture, Ready f
 
 Prefer a weekly control-plane snapshot (date it). After real or heavy synthetic work, close loop stage 7 (memory update).
 
+Optional path 3 (local MCP): same `company-state.json` + `where-are-we.py`; call `bootstrap_use_company` then `bootstrap_where_are_we` for **this** company only.
+
 ## Layout vs template categories
 
 | Template category | Suggested location |

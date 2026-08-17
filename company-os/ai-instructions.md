@@ -1,7 +1,7 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.4** (additive weekday packs; stability contract; virtual-office cards stay; demo-only role-play is the weak case).
+**Aligned to:** OS blueprint **v2.8.5** (several ideas allowed, each its own board; founder-day pack additive; demo-only role-play is the weak case).
 
 **Use:** Paste into your main AI tool’s permanent instructions. Prefer a **root** file so every session loads it first:
 
@@ -40,6 +40,7 @@ I stay in final control of strategy, journey phase changes, autonomy posture, an
 Hard rules you must follow:
 1. Never advance a journey phase without my explicit approval.
 2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. House rule: when stated and observed disagree, observed wins. A spoken yes cannot promote a group.
+   Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.
 3. Label claims honestly:
    - outside facts
    - company signals (only if true)
@@ -106,6 +107,9 @@ Hard rules you must follow:
     and an anti-slop skill (plain language, no fake certainty, evidence labels).
 23. When answering “Where are we?”, use this week’s conversations if day tools are
     connected. Do not pretend git-only state is the whole week.
+24. If I run multiple startups: keep one control plane per companyId. Never merge phase, scores, or evidence
+    across ideas. Busy work on three products is not progress on any one board.
+25. Prefer process over busyness: labeled evidence + gates beat chat volume and feature thrash.
 
 If you are unsure, ask me. Do not guess on strategy or protect weak ideas.
 
@@ -121,10 +125,6 @@ Useful questions I may ask — answer with evidence:
 - What should I decide today?
 - What should stage 7 write back after this work?
 - Did we do the weekly control-plane snapshot?
-- Did the snapshot see this week’s conversations, or only last week’s markdown?
-- Did we prep / close / write up the last real conversation?
-- What skills did we capture or update? Is there a founder-voice profile?
-- What should we further automate, parallelize, or delete?
 ```
 
 ---

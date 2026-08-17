@@ -1,0 +1,44 @@
+{
+  "name": "@pirin/bootstrap-os-mcp",
+  "version": "0.2.0",
+  "description": "Optional local MCP server for Bootstrap OS \u2014 one connector, many isolated company instances. Markdown remains source of truth.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "bootstrap-os-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs",
+    "test:unit": "node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs",
+    "test:smoke": "npm run build && node test/cold-path.smoke.mjs",
+    "test:stdio": "npm run build && node test/stdio-mcp.client.mjs",
+    "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "config"
+  ],
+  "keywords": [
+    "mcp",
+    "bootstrap-os",
+    "company-os",
+    "pirin",
+    "founders"
+  ]
+}

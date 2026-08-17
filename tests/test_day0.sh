@@ -387,10 +387,20 @@ if grep -q 'Insight quality before posting cadence' company-os/operating-system.
 else
   not_ok "growth pack must have portable insight-quality rule, no X-account folklore"
 fi
-if grep -q '2.8.4' company-os/operating-system.md && grep -q '2.8.4' README.md; then
-  ok "version stamp 2.8.4"
+if grep -q '2.8.5' company-os/operating-system.md && grep -q '2.8.5' README.md; then
+  ok "version stamp 2.8.5"
 else
-  not_ok "version stamp must be 2.8.4"
+  not_ok "version stamp must be 2.8.5"
+fi
+
+# --- m) several ideas allowed ---
+if grep -q 'Several ideas are allowed' company-os/operating-system.md \
+  && grep -q 'Do not hide a second idea' company-os/operating-system.md \
+  && grep -q 'Rank and kill per board' company-os/operating-system.md \
+  && grep -q 'more than one idea' company-os/first-hour.md; then
+  ok "several-ideas house rule in OS and first-hour"
+else
+  not_ok "several-ideas house rule missing"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

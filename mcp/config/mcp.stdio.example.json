@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "bootstrap-os": {
+      "command": "node",
+      "args": ["/absolute/path/to/bootstrap/mcp/dist/index.js"],
+      "env": {
+        "BOOTSTRAP_OS_ROOT": "/absolute/path/to/bootstrap",
+        "BOOTSTRAP_DATA_ROOT": "/absolute/path/to/.bootstrap-os"
+      }
+    }
+  }
+}

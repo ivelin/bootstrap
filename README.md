@@ -6,7 +6,7 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 
 | | |
 |--|--|
-| **Version** | Blueprint + live runtime **v2.8.4** |
+| **Version** | Blueprint + live runtime **v2.8.5** · optional local MCP **v0.2** (path 3) |
 | **License** | Apache-2.0 |
 | **Audience** | Independent solo founders; mentors (Founder Institute, SCORE, …); AI helpers |
 | **Maintainer** | [Ivelin Ivanov](https://github.com/ivelin) · [Pirin.ai](https://pirin.ai) |
@@ -40,6 +40,7 @@ company-os/operating-system.md         company-os/live-runtime.md
 | [`templates/`](templates/) | Blank files to copy into *your* company repo when you instantiate |
 | [`examples/`](examples/) | Pointers to public live instances (illustration only) |
 | [`.grok/workflows/`](.grok/workflows/) | Optional Grok Build workflows (path 2) — company-operating-loop, user-research, ready-for-human-eyes |
+| [`mcp/`](mcp/) | **Optional path 3** — local MCP adapter (one connector, isolated instances). Not a second OS. |
 
 This repo is **template only**. Filled company state never lives here.
 
@@ -47,7 +48,7 @@ This repo is **template only**. Filled company state never lives here.
 
 ## How to use this (pick one)
 
-Compatible paths. Start at **1**. Later rungs are opt-in — still one idea, *your* company, unless you later run several.
+Compatible paths. Start at **1**. Later rungs are opt-in. Several ideas are allowed; each stays *your* company on its own board.
 
 ### 1. Point an AI at this pack (default)
 
@@ -64,11 +65,19 @@ Then Day 0 — thesis, ≥3 customer groups, first “Where are we?”: [`compan
 
 ### 2. Instantiate files (when you want them in your repo)
 
-Optional. Script or hand copy — [Install](#install-in-your-company). Optional Grok Build workflows live in [`.grok/workflows/`](.grok/workflows/) (`company-operating-loop`, `user-research`, `ready-for-human-eyes`) if present — same rung, not the only front door. Still one idea, your repo.
+Optional. Script or hand copy — [Install](#install-in-your-company). Optional Grok Build workflows live in [`.grok/workflows/`](.grok/workflows/) (`company-operating-loop`, `user-research`, `ready-for-human-eyes`) if present — same rung, not the only front door. One idea per repo is fine; several ideas each get their own board.
 
-### 3. Self-hosted MCP (later — several ideas)
+### 3. Self-hosted MCP (optional — several ideas)
 
-When you run multiple ideas, a self-hosted MCP could run the bootstrap loop across them without installing markdown or a CLI per idea. Not in this repo yet.
+Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.5). Rank and kill per board. Markdown remains the constitution.
+
+Not required. Path 1 (point an AI) and path 2 (optional files + workflows) stay enough.
+
+```bash
+cd mcp && npm install && npm run build
+```
+
+One stdio connector, many `companyId`s: [`mcp/README.md`](mcp/README.md). MCP never writes `company-os/` template files.
 
 ### 4. Hosted MCP (later)
 
@@ -78,7 +87,7 @@ A hosted MCP may exist later. Nothing to connect to today.
 
 ## Install in your company
 
-Optional (path 2). From this template repo:
+Optional (path 2). From this repo:
 
 ```text
 ./scripts/install-instance.sh /path/to/your-company
@@ -138,10 +147,14 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 | Doc | Current |
 |-----|---------|
-| Operating system blueprint | **v2.8.4** |
-| Live runtime | **v2.8.4** |
+| Operating system blueprint | **v2.8.5** |
+| Live runtime | **v2.8.5** |
+| Optional local MCP (path 3) | **v0.2** — adapter only; not a second OS |
 
 ### Recent portable additions
+
+**v2.8.5 — several ideas are allowed**  
+Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.
 
 **v2.8.4 — additive weekday packs + stability contract**  
 Nothing established was removed. Founder-day and skill-capture sit beside existing rituals and are skippable until real conversations exist. Virtual-office cards stay; the partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. After proof: overnight drafts still unsent; if the channel is public writing, one lived insight beats a content calendar. [Additive diagram](docs/diagrams/os-v2.8.4-before-after.html).
@@ -171,6 +184,7 @@ Light synthetic product sandbox + real interest tests before heavy build.
 - Insights (plain-language guides): [pirin.ai/insights](https://pirin.ai/insights) — search “Bootstrap OS”  
 - Hands-on install: [Install Bootstrap OS intensive](https://pirin.ai/install-os)  
 - Public live instances (illustration only): see [`examples/`](examples/)
+- Optional local MCP (path 3): [`mcp/README.md`](mcp/README.md)
 
 ---
 

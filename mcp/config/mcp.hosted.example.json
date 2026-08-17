@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "bootstrap-os": {
+      "url": "https://mcp.pirin.ai/bootstrap-os",
+      "_comment": "Hosted MCP does not exist. Nothing to connect to today. Placeholder only."
+    }
+  }
+}
