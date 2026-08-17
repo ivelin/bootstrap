@@ -357,17 +357,22 @@ else
   not_ok "OS and README must still record 2.8.3"
 fi
 
-# --- l) founder-day pack + honest specialist bench ---
-if grep -q 'Founder-day pack' company-os/operating-system.md \
-  && grep -q 'close the call' company-os/operating-system.md \
+# --- l) founder-day pack is additive; stability contract ---
+if grep -q 'Additive by default' company-os/operating-system.md \
+  && grep -q 'Jobs do not replace cards' company-os/operating-system.md \
+  && grep -q 'Founder-day pack' company-os/operating-system.md \
   && grep -q 'Skill-capture' company-os/operating-system.md \
-  && grep -q 'callable jobs' company-os/operating-system.md \
   && grep -q 'Day tools are inputs' company-os/live-runtime.md \
-  && grep -q 'callable jobs' company-os/ai-instructions.md \
+  && grep -q 'Jobs are not employees' company-os/ai-instructions.md \
   && grep -q 'founder-day pack' company-os/first-hour.md; then
-  ok "founder-day pack, skill-capture, callable jobs, day-tools-as-inputs"
+  ok "stability contract + additive founder-day / skill-capture / jobs"
 else
-  not_ok "v2.8.4 founder-day / skill-capture / jobs / day-tools missing"
+  not_ok "v2.8.4 must stay additive: stability contract, cards stay, packs optional"
+fi
+if grep -q 'Additive, rarely breaking' README.md; then
+  ok "README template policy is additive / rarely breaking"
+else
+  not_ok "README template policy must say additive, rarely breaking"
 fi
 if grep -q 'Overnight drafts after proof' company-os/operating-system.md; then
   ok "growth pack overnight drafts stay after proof"

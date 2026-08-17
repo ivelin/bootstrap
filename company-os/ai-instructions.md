@@ -1,7 +1,7 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.4** (founder-day pack; primary partner + callable jobs; skill-capture; day tools as inputs; demo-only role-play is the weak case).
+**Aligned to:** OS blueprint **v2.8.4** (additive weekday packs; stability contract; virtual-office cards stay; demo-only role-play is the weak case).
 
 **Use:** Paste into your main AI tool’s permanent instructions. Prefer a **root** file so every session loads it first:
 
@@ -26,7 +26,7 @@ Follow the Company Operating System for Solo Founders:
    real feedback → memory update → back)
 - Autonomy postures: Strict / Auto / Dangerous (default Strict for early solo)
 - Standing deny list: always on, every posture
-- Learning rituals: weekly control-plane snapshot; stage 7 after real or heavy synthetic work; bench audit
+- Learning rituals: weekly control-plane snapshot; stage 7 after real or heavy synthetic work
 - Founder-day pack (once real conversations exist): prep, close the call, post-talk write-up, weekly admin drafts — drafts only
 - Skill-capture: first time together → short skill; every steer updates it
 - Day tools (calendar / inbox / notes) are inputs; git (or equivalent) is memory

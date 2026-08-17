@@ -20,6 +20,17 @@ This system helps a solo founder use that leverage to move fast, stay in control
 
 **AI without personal agency is not an edge.** Skillful tool use is table stakes. Real advantage comes from *your* insight and decisions — including contrarian ones — that most people and current AI still undervalue.
 
+### How this OS may change (stability contract)
+
+Founders adopt this for months. The OS must not be moving sand.
+
+1. **Additive by default.** New packs sit beside existing ones. Names, clocks, gates, and deny-list items keep their meaning.  
+2. **Optional until useful.** A new ritual is skippable until you have the situation it is for (no real conversations → skip the founder-day rows).  
+3. **Rarely breaking.** We do not rename phases, restack the loop, or drop a gate without a named version note that says what to keep doing.  
+4. **One mental model.** Two clocks. You stay in control. Evidence beats narrative. That sentence should still be true next year.
+
+A solid tool improves gradually. It does not ask you to relearn the desk every week.
+
 ---
 
 ## Who This Is For
@@ -642,9 +653,9 @@ Document the decision either way.
 You do not need a big team. You **do** need honest labels for who or what does each job today.  
 This is about **company functions** (research, sales, product, finance), not product agents inside the app.
 
-Keep **one primary operating partner** — the AI you talk to most. It may call a **small bench of jobs** when that is faster than one giant chat. Jobs are functions, not employees.
+Keep **one primary operating partner** — the AI you talk to most.
 
-For each important function, keep a short card:
+For each important function, keep a short card (this card is the office; it does not go away):
 
 ```text
 Function name:
@@ -659,9 +670,9 @@ What we do this week:
 Who must approve before anything goes external:
 ```
 
-Starter jobs (rename for your company; skip any you do not need this week):
+**Additive, optional:** the primary partner may call a **job** (a named kind of draft or research) when that finishes a card faster than one giant chat. A job is still “AI helps,” not a new employee. Skip this list until you have the situation.
 
-| Job | What it hands back | When |
+| Job (examples — not a required roster) | What it hands back | When |
 |-----|--------------------|------|
 | **Conversation prep** | Short brief you can read on a phone | Before a real talk |
 | **Close the call** | Next-step artifact from what they just said | Last minutes of a conversation |
@@ -679,7 +690,7 @@ Rules:
 2. **One human gate per external claim.** Market numbers, customer promises, and public posts need a named person (usually you).  
 3. **Hire on a trigger, not a date.** Write what must be true before a hire makes sense (for example: “paid customers exceed white-glove founder time”), not only “hire in Q3.”  
 4. **Outputs beat org charts.** Each function should hand something concrete to the next (brief, scorecard, pilot, decision trace).  
-5. **One orchestrator, not a bot org chart.** A callable job is still “AI helps.” Do not staff a roster of named bots.
+5. **Jobs do not replace cards.** A callable job is still “AI helps” on an existing function. Do not staff a roster of named bots.
 
 A one-page virtual office plus the control plane answers “Where are we?” better than a title-heavy chart of empty roles.
 
@@ -731,10 +742,9 @@ Recurring work that keeps the OS honest. Put it on a calendar or ask your AI eve
 
 | Ritual | When | Done means |
 |--------|------|------------|
-| **Control-plane snapshot** | Weekly | Journey phase, loop stage, posture, gate, top open questions — under two minutes |
+| **Control-plane snapshot** | Weekly | Journey phase, loop stage, posture, gate, top open questions — under two minutes. Optional last line: what to automate, parallelize, or delete. |
 | **Stage 7 memory write** | After every real or heavy synthetic cycle | Scores, open questions, and hypothesis notes updated |
 | **Scoreboard glance** | Weekly | The numbers you track still make sense (completion, willingness, escalation, …) |
-| **Bench audit** | Weekly, with the snapshot | What can we further automate, parallelize, or **delete**? |
 | **Coordination-tax check** | Monthly, or after you almost hire | Three bullets: who else needs an agent? multiplayer work? pain if two people share one workspace? |
 
 Skipping these is how you get chat logs instead of a company.  
@@ -770,24 +780,24 @@ Promote a skill into a playbook only after the eval gate still passes ([live run
 Skills are instance files in *your* repo (or your tool’s skill folder). Do not paste another founder’s market into a skill.
 
 ```text
-BEFORE (v2.8.3)                         AFTER (v2.8.4)
-───────────────                         ──────────────
-FOUNDER (gates, send, spend)            FOUNDER (gates, send, spend)
-        │                                       │
-   primary AI partner                      PRIMARY PARTNER
-        │                                  (may call jobs in parallel)
-  function cards                             │
-  founder owns / AI helps / open     prep · close-the-call · post-talk
-                                     research · outreach drafts · coach
-  LEARNING RITUALS                      LEARNING RITUALS + bench audit
-  weekly snapshot · stage 7             FOUNDER-DAY (drafts only)
-                                        SKILL-CAPTURE (first time → skill)
+ESTABLISHED (kept)                      ADDITIVE (optional until useful)
+──────────────────                      ────────────────────────────────
+FOUNDER (gates, send, spend)            same
+two clocks (journey 1–9, loop 1–7)      same
+virtual-office cards                    same
+  founder owns / AI helps / open          + partner may call jobs for a card
+primary AI partner                      same
+learning rituals                        same four
+  snapshot · stage 7                      snapshot may end with
+  scoreboard · coordination-tax           “automate / parallelize / delete?”
+git = company memory                    same
+                                          + day tools may feed the snapshot
+                                        founder-day pack (if real talks)
+                                        skill-capture (first time → skill)
+growth pack (after proof)               same
+                                          + overnight drafts still unsent
 
-  git = the whole picture               day tools ──inputs──► control plane
-                                        git remains memory
-                                        overnight drafts only after proof
-
-Two clocks stay two. The weekday pack is how you get through Tuesday.
+Nothing above on the left was removed. Two clocks stay two.
 ```
 
 ---
@@ -1131,7 +1141,7 @@ Thin-slice gates should set numeric thresholds on at least Completion, Extractio
 8. Founder gate on sandbox + interest results before a heavy build.  
 9. Do deeper real conversations and small paid or concierge tests with the strongest groups.  
 10. Only then lock a primary focus and a tiny first slice (with the slice artifact checklist).  
-11. Sketch a **virtual office**: one primary partner, callable jobs if useful, who approves external claims — no named-bot org chart.  
+11. Sketch a **virtual office**: function cards (founder owns / AI helps / open) and who approves external claims. The primary partner may call jobs if useful — not a named-bot org chart.  
 12. Pick an **autonomy posture** this week (default **Strict**) and keep the standing deny list visible.  
 13. Put the thin AI instructions into root `AGENTS.md` / your main tool.  
 14. Define clear **numeric** pass/fail thresholds for the first slice **before** building further.  
@@ -1139,7 +1149,7 @@ Thin-slice gates should set numeric thresholds on at least Completion, Extractio
 16. Run evaluation-driven increments (Spec → Harness → Implement → Gate).  
 17. Keep asking: “What evidence do we actually have?” and “What would make us kill this hypothesis?”  
 18. Keep decision traces for anything that changes phase, customer group, monetization path, autonomy posture, or spend.  
-19. Run the **learning rituals**: weekly control-plane snapshot; stage 7 after every real or heavy synthetic cycle; bench audit (automate / parallelize / delete).  
+19. Run the **learning rituals**: weekly control-plane snapshot; stage 7 after every real or heavy synthetic cycle. The snapshot may end with what to automate, parallelize, or delete.  
 20. Once real conversations start, run the **[founder-day pack](#founder-day-pack-how-the-week-actually-runs)** (prep / close the call / post-talk / weekly admin drafts). Capture skills the first time; update them when you steer.  
 21. When proof markers exist, run the **[growth pack](#after-proof-the-growth-pack)** before multi-channel spend. Overnight draft batches are allowed then — still no live-send.  
 22. Keep growth round notes under `growth/`; vanity metrics are not phase-9 exit.
@@ -1161,7 +1171,7 @@ Every company should maintain its own list. Starter prompts:
 - Did this week’s snapshot see the actual conversations (calendar / inbox / notes as inputs), or only last week’s markdown?  
 - Which founder-day rituals ran (prep / close the call / post-talk / admin drafts)?  
 - What skills did we capture or update? Is there a founder-voice profile before outreach drafts?  
-- What did the bench audit say we should automate, parallelize, or delete?  
+- Optional last snapshot line: what should we further automate, parallelize, or delete?  
 - What legal and ethical rules apply to outreach in our channels?  
 - When do the risks of staying solo become larger than the risks of adding help?  
 - What is the **smallest set of channels** that still produces real value?  
@@ -1199,6 +1209,7 @@ Every company should maintain its own list. Starter prompts:
 - Skipping weekly snapshot and stage 7 while claiming the company OS is “running”  
 - Letting “Where are we?” see only git while the week’s conversations live only in chat  
 - Silently rewriting this template every time one product ships a feature  
+- Moving sand: renaming clocks, restacking the loop, or dropping a gate so last month’s snapshot no longer maps  
 - Running multi-channel growth machinery before proof of value or payment  
 - Treating opens, total replies, or list size as growth success  
 - AI personalization on an unproven audience as a substitute for offer/channel fit  
@@ -1236,7 +1247,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.1 | Evidence labels stated / synthetic / observed; forced-choice + one condition change; no Likert/dollar from sims; optional Grok Build workflows (path 2). |
 | 2.8.2 | Honesty pass: label observed-wins / spoken-yes-cannot-promote as house epistemology; qualify naked dollar/Likert (mapped $ after a choice is allowed); short sources note (Bisbee 2024 + Brand 2026 §3.3 load-bearing only). |
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
-| 2.8.4 | Founder-day pack (prep / close the call / post-talk / weekly admin drafts); virtual office = one primary partner + callable jobs (still no fake staff); skill-capture (first time → skill; steer updates it; voice + anti-slop before outreach drafts); day tools are inputs, git remains memory; growth pack may overnight-draft after proof. Two clocks stay two. |
+| 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack may overnight-draft after proof. No clocks, gates, or deny-list items removed. |
 
 ---
 

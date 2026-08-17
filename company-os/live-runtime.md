@@ -332,13 +332,13 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 2. Market notes: what outside evidence supports vs does not establish  
 3. `traces/` or `docs/decisions/YYYY-MM-DD-*.md`  
 4. Scoreboard + loop cursor + **autonomy posture** (markdown is fine; default Strict)  
-5. Learning rituals: weekly control-plane snapshot; stage 7 after real/heavy cycles; optional weekly scoreboard glance; bench audit (automate / parallelize / delete)  
+5. Learning rituals: weekly control-plane snapshot; stage 7 after real/heavy cycles; optional weekly scoreboard glance. Snapshot may end with automate / parallelize / delete.  
 6. A weekly pass through stages 1→7 with written outputs (even if stage 3 is “no build this week”)  
 7. After ranking: next pack — light synthetic product sandbox and/or real interest tests  
 8. Product tests that encode pass/fail for the tiny slice (reuse sandbox scenario ids)  
 9. **Ready for human eyes** field + cold-path check before external product-test asks ([checklist](ready-for-human-eyes.md))  
 10. Reward/risk scorecards for top groups ([operating-system](operating-system.md#reward--risk-thinking--customer-group-ranking))  
-11. Optional one-page virtual office: one primary partner + callable jobs if useful; founder owns / AI helps / open; named human for external claims  
+11. Optional one-page virtual office: function cards (founder owns / AI helps / open); named human for external claims; primary partner may call jobs if useful  
 12. Founder-day pack once real conversations exist (prep / close the call / post-talk / weekly admin drafts — drafts only)  
 13. Calendar / inbox / meeting notes wired as **inputs** when you already use them — git remains memory  
 
@@ -398,7 +398,7 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 - [ ] If claiming “growth,” proof markers and a growth-round note exist — or explicit hold-scale ([growth pack](operating-system.md#after-proof-the-growth-pack))  
 - [ ] Autonomy posture is written down (default Strict); standing deny list known  
 - [ ] Weekly control-plane snapshot happened recently  
-- [ ] Virtual office (if used) names who approves external claims — one primary partner + jobs, no fake bot titles  
+- [ ] Virtual office (if used) names who approves external claims — function cards stay, no fake bot titles  
 - [ ] Weekly snapshot can see this week’s conversations (day tools as inputs) or explicitly notes “none this week”  
 - [ ] Founder-day pack ran if real talks happened (prep / close the call / post-talk); skills updated when steered  
 - [ ] `readyForHumanEyes` is tracked; external product-test asks only when **green** (or override + trace)  

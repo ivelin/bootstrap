@@ -20,9 +20,8 @@ BLUEPRINT (how to decide)              LIVE RUNTIME (how to learn every week)
 company-os/operating-system.md         company-os/live-runtime.md
   journey phases 1–9                     persistent state (personas, traces, scores…)
   founder gates + honest evidence        stages 1→7 loop → memory → back to 1
-  reward/risk + virtual office           day tools in; git remembers
-    one primary partner + callable jobs  founder-day: prep / close / drafts
-    skill-capture (first time → skill)   optional: agent frameworks or scripts
+  reward/risk + virtual office           git remembers; day tools may feed it
+  (cards stay; jobs optional)            optional: founder-day + skill-capture
 ```
 
 **Golden rule:** Copy *process and control*. Do **not** copy another founder’s market, ICP list, feature roadmap, or “current hypothesis.”
@@ -124,12 +123,14 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 3. **Thoughtful** — principle + checklist over markets, stacks, or one-off workflows  
 4. **Approval-gated** — short delta (what / why / where); wait for explicit approval  
 5. **Instance-first** — keep company-specific application in that company’s repo  
+6. **Additive, rarely breaking** — founders adopt this for months. New packs sit beside existing ones. Do not rename clocks, restack the loop, or drop a gate without a named version note. Optional until useful.
 
 ### Anti-patterns
 
 - Auto-promoting every product win into the OS  
 - Copying a beachhead market, MCP stack, or pricing into the blueprint “because we use them”  
 - Silent template edits inside product PRs without template approval  
+- Moving sand: a rewrite that makes last month’s snapshot unreadable  
 
 ---
 
@@ -142,8 +143,8 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 ### Recent portable additions
 
-**v2.8.4 — founder-day pack + honest specialist bench**  
-How the founder’s week runs (prep / close the call / post-talk / admin drafts) beside the two clocks. One primary partner may call jobs — still no fake bot staff. First time together becomes a skill. Day tools are inputs; git remains memory. Overnight drafts only after proof. [Before/after diagram](docs/diagrams/os-v2.8.4-before-after.html).
+**v2.8.4 — additive weekday packs + stability contract**  
+Nothing established was removed. Founder-day and skill-capture sit beside existing rituals and are skippable until real conversations exist. Virtual-office cards stay; the partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Overnight drafts only after proof. [Additive diagram](docs/diagrams/os-v2.8.4-before-after.html).
 
 **v2.8.3 — demo-only role-play is the weak case**  
 Do not seed a persona from a demographic one-liner. Seed from traces. Sharpening of thesis-only-is-weaker.
