@@ -55,7 +55,5 @@ cd mcp && npm ci && npm run ci
 - [x] Automated CI workflow present
 - [x] Unit + smoke + **stdio client** coverage for hard rules
 - [x] Cold-path + client-connect runbooks published
-- [ ] Manual M1b + M2 + M3 complete
-- [ ] Maintainer decision: merge as **maintainers-only alpha** or hold until dogfood snapshot
-
-Until M1b–M3 pass, keep PR **draft**.
+- [x] Manual M1b (Grok CLI, sandbox) + first-week M3 (Pirin snapshot). M2 is **post-merge** on `main`
+- [x] Maintainer decision: merge as **maintainers-only alpha**. Mentees use `main` only. Do not hand them this PR.

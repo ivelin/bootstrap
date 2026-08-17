@@ -87,7 +87,7 @@ A hosted MCP may exist later. Nothing to connect to today.
 
 ## Install in your company
 
-Optional (path 2). From this template repo:
+Optional (path 2). From this repo:
 
 ```text
 ./scripts/install-instance.sh /path/to/your-company

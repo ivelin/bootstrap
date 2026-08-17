@@ -1,4 +1,4 @@
-# Agent instructions (template repo)
+# Agent instructions (portable pack)
 
 This repository is the **portable Bootstrap OS template** only.
 
@@ -13,7 +13,7 @@ This repository is the **portable Bootstrap OS template** only.
 See [README.md](README.md#template-change-policy).
 
 5. Optional MCP lives under [`mcp/`](mcp/). Markdown remains the constitution and source of truth. MCP is adapter furniture — it never writes `company-os/` template files. Same state: `company-state.json` + `where-are-we.py`. Founder must approve journey phase advance. Ready-for-human-eyes green ≠ demand/PMF.
-6. Honor OS 2.8.3 in any MCP guidance: stated / synthetic / observed (observed wins); spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); no Likert / naked dollar WTP (choice or sentence, then map).
+6. Honor OS 2.8.4 in any MCP guidance: stated / synthetic / observed (observed wins); spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); no Likert / naked dollar WTP (choice or sentence, then map); several ideas allowed (rank and kill per board).
 7. Maintainer roadmap and dogfood gates live in [`ROADMAP.md`](ROADMAP.md). Do not add features that contradict its Out list without an explicit Advance decision and evidence.
 8. **Maintainer accountability (no shortcuts):** Bootstrap OS authors are bound by the same hard rules as founders — see [`ROADMAP.md`](ROADMAP.md) §5a. Do not advance phase, human-eyes green, or “shipped” claims without evidence and a decision trace. Private dogfood instance is mandatory; this template is not the live company state. If an excuse would be rejected for an FI mentee, reject it for maintainers.
 9. **Flexible on ideas and execution; stringent on process.** Do not treat busyness (agent runs, chat volume, feature thrash) as progress. Progress is control-plane movement + labeled evidence + founder gates. If a founder (or maintainer) is only "shipping activity," refuse the progress claim until evidence and stage-7/write-back exist.
