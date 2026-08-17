@@ -14,7 +14,18 @@ Automated companion: `npm run test:stdio` (spawns server + official SDK client o
 6. [ ] Unapproved phase change rejected
 7. [ ] `bootstrap_refuse_external_ask_if_not_green` → `allow: false` when eyes ≠ green
 8. [ ] Second company does not inherit first company's phase
-9. [ ] `bootstrap_os_info` reports OS 2.8.3 house rules (observed wins; spoken yes cannot promote)
+9. [ ] `bootstrap_os_info` reports OS 2.8.4 house rules (observed wins; spoken yes cannot promote; several ideas allowed)
 10. [ ] Instance has `company-state.json` + `where-are-we.py`; `company-os/` templates unchanged
 
 Attach evidence on the PR (logs or screenshots). Keep human-eyes for MCP itself at **unknown** until cold path M2 is signed by a non-author.
+
+## Sign-off (maintainer Grok CLI, 2026-08-16 CT)
+
+Walked on Grok CLI (`grok mcp add` + session tools), not Cursor GUI. Sandbox data root only (`/workspace/m1b-sandbox`). No real founder boards.
+
+- Doctor: handshake OK, 17 tools, protocol 2025-11-25
+- Init `sandbox-demo` + `idea-b`; unapproved phase 1→5 rejected; refuse external ask `allow: false`
+- Isolation: idea-b stayed phase 1 / own hypothesis; `company-os/` listing unchanged
+- Human-eyes for MCP itself remains **unknown** until M2 (non-author cold path)
+
+M2 and M3 are still open.

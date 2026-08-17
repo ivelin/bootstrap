@@ -27,7 +27,7 @@ cd mcp && npm ci && npm run ci
 4. MCP never mutates files under `company-os/`.
 5. Markdown path (point-an-AI / optional install) works with **zero** MCP usage.
 6. Stdio MCP protocol serves the full tool surface to a real client.
-7. OS 2.8.3 house rules: stated / synthetic / observed (observed wins); spoken yes cannot promote; no demographic one-liner seed; no Likert / naked dollar WTP.
+7. OS 2.8.4 house rules: stated / synthetic / observed (observed wins); spoken yes cannot promote; no demographic one-liner seed; no Likert / naked dollar WTP; several ideas allowed (rank and kill per board).
 8. Same state furniture: instance gets `company-state.json` + `where-are-we.py` (and schema). Hosted MCP does not exist.
 
 ## Manual (before ready-for-review)
@@ -35,7 +35,7 @@ cd mcp && npm ci && npm run ci
 | # | Check | Status | Evidence |
 |---|--------|--------|----------|
 | M1a | **Automated** stdio protocol smoke in CI | [x] `test/stdio-mcp.client.mjs` | CI job |
-| M1b | Human client (Cursor/Claude/Grok) using `config/mcp.stdio.example.json` | ☐ | See [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) |
+| M1b | Human client (Cursor/Claude/Grok) using `config/mcp.stdio.example.json` | [x] Grok CLI 2026-08-16 CT, sandbox only | [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) sign-off. Not Cursor GUI. M2 still required. |
 | M2 | Non-maintainer cold path | ☐ | Runbook [`docs/COLD_PATH.md`](docs/COLD_PATH.md) + sign-off form |
 | M3 | Private dogfood weekly snapshot + stage-7 | ☐ | ROADMAP §5a |
 | M4 | PR description test plan boxes checked with evidence | ☐ | PR body |
