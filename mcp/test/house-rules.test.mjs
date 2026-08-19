@@ -6,11 +6,12 @@ import {
   spokenYesMayPromote,
   demographicOneLinerIsValidSeed,
   likertOrNakedDollarWtpAllowed,
+  marketingVolumeMayPromote,
 } from "../dist/house-rules.js";
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
 
-describe("OS 2.8.5 house rules (adapter reminders)", () => {
-  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert", () => {
+describe("OS 2.8.6 house rules (adapter reminders)", () => {
+  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume", () => {
     const blob = HOUSE_RULE_LINES.join("\n");
     assert.match(blob, /stated, synthetic, and observed/i);
     assert.match(blob, /observed wins/i);
@@ -23,6 +24,7 @@ describe("OS 2.8.5 house rules (adapter reminders)", () => {
     assert.match(blob, /Several ideas are allowed/);
     assert.match(blob, /Do not hide a second idea/);
     assert.match(blob, /Rank and kill per board/);
+    assert.match(blob, /Marketing volume cannot promote/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {
@@ -41,6 +43,7 @@ describe("OS 2.8.5 house rules (adapter reminders)", () => {
     assert.equal(spokenYesMayPromote(), false);
     assert.equal(demographicOneLinerIsValidSeed(), false);
     assert.equal(likertOrNakedDollarWtpAllowed(), false);
+    assert.equal(marketingVolumeMayPromote(), false);
   });
 
   it("phase 3 / stage 1 gates refuse demo-only seed, spoken yes, Likert WTP", () => {

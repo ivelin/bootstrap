@@ -83,6 +83,12 @@ Once real conversations start (later — not this hour), use the [founder-day pa
 
 If you already have a product URL and want a mentor or stranger to click it, that is a **later** gate ([portable rules](https://github.com/ivelin/bootstrap/blob/main/company-os/ready-for-human-eyes.md)). If you instantiated, fill `product/READY_FOR_HUMAN_EYES.md`. Green eyes ≠ demand.
 
+When someone says you need marketing to prove the product, or to attract people who might buy:
+
+> I don't need marketing to attract people who might buy. I need a cold URL that works and one path to people who already have this job. Eyeballs aren't buyers.
+
+House rule: [marketing volume cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
+
 ---
 
 *You supply the insight. AI supplies the speed.*

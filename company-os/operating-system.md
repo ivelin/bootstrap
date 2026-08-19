@@ -1,8 +1,8 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.5  
-**Last Updated:** 2026-08-17  
+**Version:** 2.8.6  
+**Last Updated:** 2026-08-19  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -27,7 +27,8 @@ Founders adopt this for months. The OS must not be moving sand.
 1. **Additive by default.** New packs sit beside existing ones. Names, clocks, gates, and deny-list items keep their meaning.  
 2. **Optional until useful.** A new ritual is skippable until you have the situation it is for (no real conversations → skip the founder-day rows).  
 3. **Rarely breaking.** We do not rename phases, restack the loop, or drop a gate without a named version note that says what to keep doing.  
-4. **One mental model.** Two clocks. You stay in control. Evidence beats narrative. That sentence should still be true next year.
+4. **One mental model.** Two clocks. You stay in control. Evidence beats narrative. That sentence should still be true next year.  
+5. **Say it once. Link. No filler.** Each idea lives in one place. Other files hyperlink. A short reminder is allowed on the page a founder actually opens (first-hour room line). Tests lock the source of truth and the pointers, not the same paragraph in eight files. High signal means only what changes a decision. Dense leftover text is good. A stream of novel riffs is not — house rules stay stable (see 1–3).
 
 A solid tool improves gradually. It does not ask you to relearn the desk every week.
 
@@ -74,7 +75,8 @@ Some principles may be useful inside larger companies. Those environments have a
    You should always be able to ask “Where are we?” and get a clear, honest answer.
 
 6. **Evidence beats narrative.**  
-   Time spent is not proof. Preference is not proof. Synthetic research is a filter. Real-world action is the gate.
+   Time spent is not proof. Preference is not proof. Synthetic research is a filter. Real-world action is the gate.  
+   House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).
 
 7. **Build evaluation-first when you build.**  
    Spec success criteria and a harness before (or with) the implementation — not after a big unmeasured build.
@@ -405,7 +407,8 @@ Small **real-world** steps that measure whether people will act at all — not w
 3. **Write decision thresholds before you spend** (example: “if fewer than X qualified signups in Y days on Z spend, iterate message or demote channel”).  
 4. **Cap paid spend** until a thin offer has passed at least one honest real conversation or sandbox feasibility check.  
 5. **Waitlist ≠ willingness to pay.** Treat it as early interest. Price and payment stay open questions.  
-6. **Lawful capture only** — consent, no spam, public-safe notes in public repos.
+6. **Lawful capture only** — consent, no spam, public-safe notes in public repos.  
+7. **Marketing volume cannot promote** — this track is one real-interest test, not a calendar. Full rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).
 
 **Outputs (minimum)**
 
@@ -988,7 +991,7 @@ Use modern tools as the **vehicle**, not a curriculum:
 - AI **must refuse** to draft “please test this” / beta-ask emails until the gate is **green** (or the founder explicitly overrides with a written decision trace: *why* they share a known-broken path).  
 - Mark state: `readyForHumanEyes` = `unknown` | `blocked` | `green` (see [`live-runtime.md`](live-runtime.md)).  
 - Prefer a short evidence artifact (e.g. `READY_FOR_HUMAN_EYES.md` or report path) with date, URL, path steps, pass/fail, blockers.  
-- Green does **not** mean demand, payment, or product–market fit. It only means: *cold humans can exercise the path you want feedback on.*
+- Green does **not** mean demand, payment, or product–market fit. It only means: *cold humans can exercise the path you want feedback on.* This gate is not a crowd — [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).
 
 ### Mentor practice (shared language)
 
@@ -1004,6 +1007,18 @@ Company OS makes that systemic so mentors are not the only backstop.
 - Treating green human-eyes as PMF or willingness to pay  
 
 Portable checklist + evidence template: [`ready-for-human-eyes.md`](ready-for-human-eyes.md).
+
+### House rule: marketing volume cannot promote
+
+Someone saying you need marketing to prove the product, or to attract people who might buy, is asking for access to **observed** evidence — not a marketing department. After Ready for human eyes is green, run one real-interest test ([Track B](#track-b--real-interest-tests-waitlist-and-friends)): one channel, one ask, to people who already have the job, kill threshold written first. A calendar, SEO push, public launch week, marketing hire, or a pre-AI playbook someone is selling cannot promote. Impressions and “potential buyers” cannot promote. Observed use or pay can. The [growth pack](#after-proof-the-growth-pack) stays after proof (phases 8–9).
+
+In this OS, **Ready for human eyes** means a stranger can finish the happy path on a cold link. It does not mean get a crowd looking. If the link is broken, marketing only advertises the breakage.
+
+| | Do this | Not this |
+|--|---------|----------|
+| **Link first** | Signup works on a phone using only the public link. Text eight people who already pay for a messy workaround. Watch what they do. | A big public launch week, a 30-day content calendar, or an agency “to get eyes on it” while a stranger cannot create an account. |
+| **One ask** | One post in the one place those people already complain. One ask (try the link, or book 15 minutes if you have this job this week). Kill line written first. | SEO blogs, lookalike ads, a waitlist of 400 with no constraint, or hiring a marketer to fill the top of the funnel. That is maybe, not use or pay. |
+| **By hand** | Do the first three jobs by hand. If they come back or pay, then you can talk about a channel. | Email sequences, launch-week hour-by-hour, or buying last decade’s marketing stack (agency retainer, SEO package, “this used to work”) before anyone has used the thing twice. |
 
 ---
 
@@ -1030,7 +1045,7 @@ I stay in final control of strategy, journey phase changes, and important decisi
 
 Hard rules you must follow:
 1. Never advance a journey phase without my explicit approval.
-2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. House rule: when stated and observed disagree, observed wins. A spoken yes cannot promote a group.
+2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. House rule: when stated and observed disagree, observed wins. A spoken yes cannot promote a group. Marketing volume cannot promote.
 3. Label claims honestly: outside facts, company signals, assumed capability, or needs real-world proof.
    Also label research inputs: stated (their words) | synthetic (sim after a condition change) | observed (time or money).
    Never treat simulated prices or a spoken “I would buy” as demand. Keep the words. They are stated evidence, not a sale.
@@ -1143,7 +1158,7 @@ Thin-slice gates should set numeric thresholds on at least Completion, Extractio
 4. Run honest synthetic research across several groups (not just the favorite), with evidence labels and a staged trust reveal when you score trust or price interest.  
 5. Create **reward/risk scorecards** for the top candidates (optional “what to say” fields only after rank/hold is clear).  
 6. Rank them by evidence, not by preference; demote weak groups explicitly; keep promote = **hold**.  
-7. Run the **next pack**: light synthetic product sandbox (Track A) and/or real interest tests such as waitlists (Track B) — parallel is fine.  
+7. Run the **next pack**: light synthetic product sandbox (Track A) and/or real interest tests such as waitlists (Track B) — parallel is fine. See [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).  
 8. Founder gate on sandbox + interest results before a heavy build.  
 9. Do deeper real conversations and small paid or concierge tests with the strongest groups.  
 10. Only then lock a primary focus and a tiny first slice (with the slice artifact checklist).  
@@ -1224,6 +1239,7 @@ Every company should maintain its own list. Starter prompts:
 - Asking mentors or users to “try it” before **Ready for human eyes** is green  
 - Treating “works on my machine / in my chat” as ready for external feedback  
 - Treating green human-eyes as demand or product–market fit  
+- Marketing volume as proof — see [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote)  
 
 ---
 
@@ -1236,7 +1252,7 @@ Accuracy numbers perish with the model checkpoint. Mechanism findings last until
 - Bisbee et al., 2024, *Political Analysis*. Task: silicon sampling / prompt variance and drift. Finding: too-tight variance and same-prompt drift make a pass unusable.
 - Brand, Israeli, and Ngwe, HBS 23-062 rev. 2026, §3.3. Task: willingness-to-pay and cross-category fine-tune (laptop → tablet). Finding: direct dollar WTP from GPT was useless; fine-tune failed on a new category. They still used conjoint with prices in the profile and reported $. They did not write “never produce a dollar” or “one condition change.”
 
-Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused).
+Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused); [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).
 
 ## Changelog (high level)
 
@@ -1257,6 +1273,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
 | 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack: overnight drafts after proof; insight quality before posting cadence (one lived observation, short — not a content calendar). No clocks, gates, or deny-list items removed. |
 | 2.8.5 | House rule: several ideas are allowed; each is its own thesis/instance/scorecard; do not hide a second idea to look focused; rank and kill per board. |
+| 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract) |
 
 ---
 

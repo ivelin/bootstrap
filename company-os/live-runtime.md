@@ -1,7 +1,7 @@
 # Live Company Runtime  
 ## Persistent state + continuous learning loop
 
-**Part of:** [Company Operating System](operating-system.md) (v2.8.5+)  
+**Part of:** [Company Operating System](operating-system.md) (v2.8.6+)  
 **Audience:** Solo founders implementing the OS; AI helpers; mentors  
 **Portable:** Yes — this is the *runtime shape*, not any one product  
 **Instance mapping:** Fill `templates/applied-here.md` in *your* company repo (not part of this template).  
@@ -320,7 +320,7 @@ Before stage 6 product asks that depend on a **working URL** (mentor beta, “tr
 
 Checklist template: [`ready-for-human-eyes.md`](ready-for-human-eyes.md).
 
-This is **not** Track A sandbox feasibility alone (sim capability). It is **cold deploy surface + happy path alive for a stranger**.
+This is **not** Track A sandbox feasibility alone (sim capability). It is **cold deploy surface + happy path alive for a stranger**. This gate is not a crowd — [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote).
 
 ---
 

@@ -388,9 +388,9 @@ else
   not_ok "growth pack must have portable insight-quality rule, no X-account folklore"
 fi
 if grep -q '2.8.5' company-os/operating-system.md && grep -q '2.8.5' README.md; then
-  ok "version stamp 2.8.5"
+  ok "changelog still records 2.8.5"
 else
-  not_ok "version stamp must be 2.8.5"
+  not_ok "OS and README must still record 2.8.5"
 fi
 
 # --- m) several ideas allowed ---
@@ -401,6 +401,70 @@ if grep -q 'Several ideas are allowed' company-os/operating-system.md \
   ok "several-ideas house rule in OS and first-hour"
 else
   not_ok "several-ideas house rule missing"
+fi
+
+# --- n) marketing volume cannot promote (OS 2.8.6) ---
+# Full rule lives once in the OS section. Other files pin + link; do not reprint the essay.
+if grep -q '^\*\*Version:\*\* 2.8.6' company-os/operating-system.md \
+  && grep -q 'v2.8.6' README.md \
+  && grep -q '### House rule: marketing volume cannot promote' company-os/operating-system.md \
+  && grep -q 'does not mean get a crowd looking' company-os/operating-system.md \
+  && grep -q 'Text eight people' company-os/operating-system.md \
+  && grep -q 'waitlist of 400' company-os/operating-system.md \
+  && grep -q 'first three jobs by hand' company-os/operating-system.md; then
+  ok "OS 2.8.6 constitution section has full rule, vocabulary, and examples"
+else
+  not_ok "operating-system.md must hold the full 2.8.6 house-rule section"
+fi
+if grep -q "Eyeballs aren't buyers" company-os/first-hour.md \
+  && grep -q 'house-rule-marketing-volume-cannot-promote' company-os/first-hour.md \
+  && grep -q 'https://github.com/ivelin/bootstrap' company-os/first-hour.md; then
+  ok "first-hour keeps room line and links to OS section"
+else
+  not_ok "first-hour.md must keep the room line and link to the OS section"
+fi
+if grep -q 'marketing volume cannot promote' company-os/ai-instructions.md \
+  && grep -q 'house-rule-marketing-volume-cannot-promote' company-os/ai-instructions.md \
+  && grep -q 'house-rule-marketing-volume-cannot-promote' company-os/live-runtime.md \
+  && grep -q 'house-rule-marketing-volume-cannot-promote' company-os/ready-for-human-eyes.md \
+  && grep -q 'house-rule-marketing-volume-cannot-promote' README.md; then
+  ok "pointers link to the OS house-rule section"
+else
+  not_ok "ai-instructions, live-runtime, ready-for-human-eyes, and README must link the OS section"
+fi
+if ! grep -q 'Text eight people' company-os/first-hour.md \
+    company-os/ai-instructions.md company-os/live-runtime.md \
+    company-os/ready-for-human-eyes.md README.md \
+  && ! grep -q 'waitlist of 400' company-os/first-hour.md \
+    company-os/ai-instructions.md company-os/live-runtime.md \
+    company-os/ready-for-human-eyes.md README.md \
+  && ! grep -q 'does not mean get a crowd looking' company-os/first-hour.md \
+    company-os/ai-instructions.md company-os/live-runtime.md \
+    company-os/ready-for-human-eyes.md README.md; then
+  ok "essay and example table are not copied outside the OS section"
+else
+  not_ok "do not reprint the 2.8.6 essay or example rows outside operating-system.md"
+fi
+if ! grep -qi 'Arcads\|Product Hunt' company-os/operating-system.md \
+  company-os/first-hour.md company-os/ai-instructions.md company-os/live-runtime.md \
+  company-os/ready-for-human-eyes.md README.md; then
+  ok "no vendor / required-launch-site names in constitution"
+else
+  not_ok "constitution must not name Arcads or Product Hunt"
+fi
+if grep -q 'Say it once. Link. No filler.' company-os/operating-system.md \
+  && grep -q 'Dense leftover text is good' company-os/operating-system.md \
+  && grep -q 'Additive by default' company-os/operating-system.md; then
+  ok "stability contract has say-it-once writing rule"
+else
+  not_ok "operating-system.md stability contract must include Say it once. Link. No filler."
+fi
+if ! grep -q 'Dense leftover text is good' company-os/first-hour.md \
+    company-os/ai-instructions.md company-os/live-runtime.md \
+    company-os/ready-for-human-eyes.md README.md mcp/README.md mcp/QA.md; then
+  ok "say-it-once writing rule is not copied outside the OS stability contract"
+else
+  not_ok "do not reprint the say-it-once writing rule outside operating-system.md"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
