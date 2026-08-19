@@ -1,5 +1,5 @@
 /**
- * OS 2.8.7 house-rule reminders for the optional MCP adapter.
+ * OS house-rule reminders for the optional MCP adapter. Version: OS_VERSION.
  * Constitution lives in company-os/*.md. This file must not invent a second OS.
  */
 
@@ -19,7 +19,7 @@ export const HOUSE_RULE_LINES = [
   "Ready for human eyes green is not demand or PMF.",
   "Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.",
   "Marketing volume cannot promote.",
-  "A security or compliance program cannot promote.",
+  "A security program cannot promote.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
 ] as const;
 
@@ -74,9 +74,5 @@ export function likertOrNakedDollarWtpAllowed(): false {
 }
 
 export function marketingVolumeMayPromote(): false {
-  return false;
-}
-
-export function securityProgramMayPromote(): false {
   return false;
 }

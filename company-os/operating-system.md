@@ -640,7 +640,7 @@ Default for early solo founders: **Strict**.
 1. Never advance a journey phase without explicit founder OK.  
 2. Never live-send, charge money, or change a real account without explicit OK.  
 3. Never treat simulated prices or “I would buy” as demand.  
-4. Never put secrets or personal customer data in public git or casual chat dumps. See [a security program cannot promote](#house-rule-a-security-program-cannot-promote).  
+4. Never put secrets or personal customer data in public git or casual chat dumps.  
 5. Never invent a fake staffed role (“Marketing Bot”) that hides who approves.  
 6. Never skip stage 7 memory write after meaningful work if you claim you ran the loop.
 
@@ -992,7 +992,7 @@ Use modern tools as the **vehicle**, not a curriculum:
 - AI **must refuse** to draft “please test this” / beta-ask emails until the gate is **green** (or the founder explicitly overrides with a written decision trace: *why* they share a known-broken path).  
 - Mark state: `readyForHumanEyes` = `unknown` | `blocked` | `green` (see [`live-runtime.md`](live-runtime.md)).  
 - Prefer a short evidence artifact (e.g. `READY_FOR_HUMAN_EYES.md` or report path) with date, URL, path steps, pass/fail, blockers.  
-- Green does **not** mean demand, payment, or product–market fit. It only means: *cold humans can exercise the path you want feedback on.* This gate is not a crowd — [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). This gate is not a security department — [a security program cannot promote](#house-rule-a-security-program-cannot-promote).
+- Green does **not** mean demand, payment, or product–market fit. It only means: *cold humans can exercise the path you want feedback on.* This gate is not a crowd — [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).
 
 ### Mentor practice (shared language)
 
@@ -1175,7 +1175,7 @@ Thin-slice gates should set numeric thresholds on at least Completion, Extractio
 9. Do deeper real conversations and small paid or concierge tests with the strongest groups.  
 10. Only then lock a primary focus and a tiny first slice (with the slice artifact checklist).  
 11. Sketch a **virtual office**: function cards (founder owns / AI helps / open) and who approves external claims. The primary partner may call jobs if useful — not a named-bot org chart.  
-12. Pick an **autonomy posture** this week (default **Strict**) and keep the standing deny list visible. See [a security program cannot promote](#house-rule-a-security-program-cannot-promote).  
+12. Pick an **autonomy posture** this week (default **Strict**) and keep the standing deny list visible.  
 13. Put the thin AI instructions into root `AGENTS.md` / your main tool.  
 14. Define clear **numeric** pass/fail thresholds for the first slice **before** building further.  
 15. Keep sandbox scenario ids as the seed of a **minimal evaluation harness** ([`live-runtime.md`](live-runtime.md)).  

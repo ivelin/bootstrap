@@ -90,7 +90,7 @@ async function main() {
     assert.match(JSON.stringify(info.houseRules), /observed wins/i);
     assert.match(JSON.stringify(info.houseRules), /spoken yes cannot promote/i);
     assert.match(JSON.stringify(info.houseRules), /marketing volume cannot promote/i);
-    assert.match(JSON.stringify(info.houseRules), /security or compliance program cannot promote/i);
+    assert.match(JSON.stringify(info.houseRules), /security program cannot promote/i);
 
     for (const id of ["pirin", "zk0", "tokbox"]) {
       const r = await call(client, "bootstrap_init_company", {

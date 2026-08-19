@@ -1,6 +1,6 @@
 /**
  * Portable gate catalog — what evidence / work unlocks the next slow phase
- * or advances the fast loop. Aligned to company-os v2.8.7 exit signals.
+ * or advances the fast loop. Aligned to company-os v2.8.6 exit signals.
  * Static process knowledge; instance state only marks hints, not auto-pass.
  * Constitution remains company-os/*.md — this is adapter furniture.
  */
@@ -11,7 +11,7 @@ export type EvidenceLabel =
   | "assumed_capability"
   | "needs_real_world_proof";
 
-/** Research-input labels (OS 2.8.7). Distinct from claim labels above. */
+/** Research-input labels (OS 2.8.6). Distinct from claim labels above. */
 export type ResearchInputLabel = "stated" | "synthetic" | "observed";
 
 export interface EvidenceItem {
