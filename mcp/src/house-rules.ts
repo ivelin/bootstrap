@@ -18,7 +18,7 @@ export const HOUSE_RULE_LINES = [
   "Do not ask a synthetic user for a Likert or a naked dollar WTP; a choice or a sentence, then map.",
   "Ready for human eyes green is not demand or PMF.",
   "Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.",
-  "Marketing volume cannot promote. A calendar, SEO push, public launch week, or a playbook someone is selling cannot promote. Impressions and potential buyers cannot promote. Observed use or pay can.",
+  "Marketing volume cannot promote.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
 ] as const;
 

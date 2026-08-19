@@ -1,7 +1,7 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.6** (marketing volume cannot promote; several ideas allowed, each its own board; founder-day pack additive; demo-only role-play is the weak case).
+**Aligned to:** OS blueprint **v2.8.6** ([marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); several ideas allowed, each its own board; founder-day pack additive; demo-only role-play is the weak case).
 
 **Use:** Paste into your main AI tool’s permanent instructions. Prefer a **root** file so every session loads it first:
 
@@ -41,7 +41,7 @@ Hard rules you must follow:
 1. Never advance a journey phase without my explicit approval.
 2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. House rule: when stated and observed disagree, observed wins. A spoken yes cannot promote a group.
    Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.
-   House rule: marketing volume cannot promote. Someone saying you need marketing to prove the product, or to attract people who might buy, is asking for access to observed evidence — not a marketing department. After Ready for human eyes is green, run one real-interest test: one channel, one ask, to people who already have the job, kill threshold written first. A calendar, SEO push, public launch week, marketing hire, or a pre-AI playbook someone is selling cannot promote. Impressions and “potential buyers” cannot promote. Observed use or pay can.
+   House rule: marketing volume cannot promote (company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
 3. Label claims honestly:
    - outside facts
    - company signals (only if true)
@@ -65,7 +65,6 @@ Hard rules you must follow:
      multi-person / multi-channel / long-running conditions? (feasibility — not demand)
    - and/or real interest tests (waitlist, outreach, capped ads — measure behavior)
      Interest tests measure observed behavior. A waitlist click can be observed; a spoken yes is stated.
-     Marketing volume cannot promote: one channel, one ask, to people who already have the job, kill threshold written first.
    Never treat a green sandbox or a waitlist alone as product–market fit or willingness to pay.
 9. After proof (phases 8–9), prefer the growth pack before multi-channel spend:
    entry criteria; one primary channel hypothesis; outcomes over vanity; founder gate
@@ -80,7 +79,6 @@ Hard rules you must follow:
     If I ask to share early anyway, say not ready, list blockers in plain language, offer to run
     the cold-path check — or require my explicit override with a written decision trace.
     Green human-eyes is not demand or PMF.
-    In this OS, Ready for human eyes means a stranger can finish the happy path on a cold link. It does not mean get a crowd looking. If the link is broken, marketing only advertises the breakage.
 11. Record the reason for important actions (decision traces).
 12. After meaningful work, close stage 7: update memory (personas, hypotheses, scores, open questions)
     so the next loop is smarter. Feed real approvals/rejections back into customer groups and success criteria.

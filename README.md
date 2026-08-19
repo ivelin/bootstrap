@@ -69,7 +69,7 @@ Optional. Script or hand copy — [Install](#install-in-your-company). Optional 
 
 ### 3. Self-hosted MCP (optional — several ideas)
 
-Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.6). Rank and kill per board. Marketing volume cannot promote. Markdown remains the constitution.
+Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.6). Rank and kill per board. Markdown remains the constitution.
 
 Not required. Path 1 (point an AI) and path 2 (optional files + workflows) stay enough.
 
@@ -154,7 +154,7 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 ### Recent portable additions
 
 **v2.8.6 — marketing volume cannot promote**  
-Someone saying you need marketing to prove the product, or to attract people who might buy, is asking for access to observed evidence — not a marketing department. After Ready for human eyes is green, one real-interest test: one channel, one ask, to people who already have the job, kill threshold written first. A calendar, SEO push, public launch week, marketing hire, or a pre-AI playbook cannot promote. Impressions and “potential buyers” cannot promote. Observed use or pay can. Ready for human eyes means a stranger can finish the happy path on a cold link — not get a crowd looking.
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
 
 **v2.8.5 — several ideas are allowed**  
 Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.

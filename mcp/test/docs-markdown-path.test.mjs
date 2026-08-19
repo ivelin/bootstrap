@@ -60,12 +60,12 @@ describe("markdown install path (zero MCP required)", () => {
       const firstHour = readOsDoc("first-hour");
       assert.match(firstHour, /demographic one-liner/i);
       assert.match(firstHour, /demo-only role-play is the weak case/i);
-      assert.match(firstHour, /marketing volume cannot promote/i);
       assert.match(firstHour, /Eyeballs aren't buyers/);
+      assert.match(firstHour, /house-rule-marketing-volume-cannot-promote/);
       const os = readOsDoc("operating-system");
       assert.match(os, /2\.8\.6/);
-      assert.match(os, /marketing volume cannot promote/i);
-      assert.match(os, /public launch week/);
+      assert.match(os, /### House rule: marketing volume cannot promote/);
+      assert.match(os, /Text eight people/);
     } finally {
       clearSession();
       rmrf(dataRoot);

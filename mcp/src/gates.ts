@@ -166,13 +166,12 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
       "Survey of one",
       "Synthetic-only packs",
       "Spoken yes treated as observed",
-      "Marketing volume (calendar, SEO push, public launch week, impressions) treated as observed",
+      "Marketing volume cannot promote",
     ],
     agentFocus: [
       "Prep scripts and capture notes",
       "Stress monetization lightly (will they pay path?)",
       "Do not build heavy product yet",
-      "One real-interest test: one channel, one ask, kill threshold first — marketing volume cannot promote",
     ],
   },
   5: {
@@ -245,14 +244,12 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
     doNotCountAsEvidence: [
       "Compliments without usage",
       "Burned favors on broken links",
-      "Public launch week or agency eyes while the cold path is broken",
-      "Impressions / potential buyers treated as use or pay",
+      "Marketing volume cannot promote",
     ],
     agentFocus: [
       "Clear human-eyes blockers first",
       "Instrument learning questions",
       "Refuse external try-asks while blocked",
-      "Marketing volume cannot promote — one channel, one ask after the link works",
     ],
   },
   8: {
@@ -301,7 +298,7 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
       "Spend without proof",
       "Multi-channel spray",
       "List size as PMF",
-      "Marketing volume before proof (calendar, SEO push, public launch week)",
+      "Marketing volume cannot promote",
     ],
     agentFocus: [
       "Hold scale until proof",

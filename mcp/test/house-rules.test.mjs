@@ -25,8 +25,6 @@ describe("OS 2.8.6 house rules (adapter reminders)", () => {
     assert.match(blob, /Do not hide a second idea/);
     assert.match(blob, /Rank and kill per board/);
     assert.match(blob, /Marketing volume cannot promote/);
-    assert.match(blob, /public launch week/);
-    assert.match(blob, /Observed use or pay can/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {
@@ -46,17 +44,6 @@ describe("OS 2.8.6 house rules (adapter reminders)", () => {
     assert.equal(demographicOneLinerIsValidSeed(), false);
     assert.equal(likertOrNakedDollarWtpAllowed(), false);
     assert.equal(marketingVolumeMayPromote(), false);
-  });
-
-  it("phase 4 / 7 / 9 gates refuse marketing volume as evidence", () => {
-    const p4 = PHASE_GATES[4].doNotCountAsEvidence.join("\n");
-    const p7 = PHASE_GATES[7].doNotCountAsEvidence.join("\n");
-    const p9 = PHASE_GATES[9].doNotCountAsEvidence.join("\n");
-    assert.match(p4, /Marketing volume/i);
-    assert.match(p4, /public launch week/i);
-    assert.match(p7, /Impressions/i);
-    assert.match(p7, /potential buyers/i);
-    assert.match(p9, /Marketing volume before proof/i);
   });
 
   it("phase 3 / stage 1 gates refuse demo-only seed, spoken yes, Likert WTP", () => {

@@ -83,19 +83,11 @@ Once real conversations start (later — not this hour), use the [founder-day pa
 
 If you already have a product URL and want a mentor or stranger to click it, that is a **later** gate ([portable rules](https://github.com/ivelin/bootstrap/blob/main/company-os/ready-for-human-eyes.md)). If you instantiated, fill `product/READY_FOR_HUMAN_EYES.md`. Green eyes ≠ demand.
 
-When someone says you need marketing to prove the product, or to attract people who might buy, use this room line:
+When someone says you need marketing to prove the product, or to attract people who might buy:
 
 > I don't need marketing to attract people who might buy. I need a cold URL that works and one path to people who already have this job. Eyeballs aren't buyers.
 
-House rule: **marketing volume cannot promote.** In this OS, **Ready for human eyes** means a stranger can finish the happy path on a cold link. It does not mean get a crowd looking. If the link is broken, marketing only advertises the breakage. After that gate is green, run one real-interest test — one channel, one ask, to people who already have the job, kill threshold written first. A calendar, SEO push, public launch week, or a playbook someone is selling cannot promote. Impressions and “potential buyers” cannot promote. Observed use or pay can.
-
-| | Do this | Not this |
-|--|---------|----------|
-| **Link first** | Signup works on a phone using only the public link. Text eight people who already pay for a messy workaround. Watch what they do. | A big public launch week, a 30-day content calendar, or an agency “to get eyes on it” while a stranger cannot create an account. |
-| **One ask** | One post in the one place those people already complain. One ask (try the link, or book 15 minutes if you have this job this week). Kill line written first. | SEO blogs, lookalike ads, a waitlist of 400 with no constraint, or hiring a marketer to fill the top of the funnel. That is maybe, not use or pay. |
-| **By hand** | Do the first three jobs by hand. If they come back or pay, then you can talk about a channel. | Email sequences, launch-week hour-by-hour, or buying last decade’s marketing stack (agency retainer, SEO package, “this used to work”) before anyone has used the thing twice. |
-
-Growth pack stays after proof (phases 8–9). Track B (one real-interest test) is the pre-proof instrument.
+House rule: [marketing volume cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
 
 ---
 

@@ -74,7 +74,7 @@ Hard rules (OS 2.8.6):
 - Do not seed a persona from a demographic one-liner (demo-only role-play is the weak case)
 - Do not ask a sim for a Likert or a naked dollar WTP — a choice or a sentence, then map
 - Several ideas are allowed — each `companyId` is its own board; do not hide a second idea to look focused; rank and kill per board
-- Marketing volume cannot promote — impressions and potential buyers cannot promote; observed use or pay can
+- Marketing volume cannot promote
 
 ---
 

@@ -179,7 +179,7 @@ export function buildNextEvidenceView(state: CompanyState): NextEvidenceView {
     "Busy is not progress — agent runtime, chat volume, and feature count are not evidence",
     "Do not seed a persona from a demographic one-liner (demo-only role-play is the weak case)",
     "Do not treat a spoken yes as promotion; observed (time or money) wins a clash",
-    "Do not treat marketing volume as promotion; impressions and potential buyers cannot promote",
+    "Do not treat marketing volume as promotion",
     "Do not ask a sim for a Likert or a naked dollar WTP — choice or sentence, then map",
     eyesBlocked
       ? "Do not draft 'please try my link' to mentors/users until human-eyes green or override+trace"
