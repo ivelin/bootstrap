@@ -138,10 +138,11 @@ export function whereAreWePlain(state: CompanyState): string {
     JSON.stringify(state.scores ?? {}, null, 2),
     "",
     "Rules reminder: AI never advances journey phase alone. Evidence beats narrative.",
-    "House rules (OS 2.8.6): stated / synthetic / observed — observed wins. Spoken yes cannot promote.",
+    "House rules (OS 2.8.7): stated / synthetic / observed — observed wins. Spoken yes cannot promote.",
     "Do not seed from a demographic one-liner (demo-only role-play is the weak case).",
     "Several ideas are allowed. Each companyId is its own board. Rank and kill per board.",
     "Marketing volume cannot promote.",
+    "A security or compliance program cannot promote.",
     "No Likert or naked dollar WTP — choice or sentence, then map.",
     "Same state as markdown: company-state.json + where-are-we.py. Green human-eyes ≠ demand/PMF.",
   ]

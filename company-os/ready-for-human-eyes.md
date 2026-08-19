@@ -1,8 +1,8 @@
 # Ready for human eyes — portable checklist
 
-**Part of:** [Company Operating System](operating-system.md) **v2.8.6+**  
+**Part of:** [Company Operating System](operating-system.md) **v2.8.7+**  
 **Purpose:** Fail-closed gate before asking mentors, betas, or strangers to use a product link.  
-**Not:** Proof of demand, payment, or product–market fit. This gate is not a crowd — [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote).  
+**Not:** Proof of demand, payment, or product–market fit. This gate is not a crowd — [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote). This gate is not a security department — [a security program cannot promote](operating-system.md#house-rule-a-security-program-cannot-promote).  
 **Template edits:** Approval-gated — see root [README](../README.md#template-change-policy).
 
 ---

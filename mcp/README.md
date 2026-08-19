@@ -62,7 +62,7 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 | `bootstrap_log_decision` | Trace under active company |
 | `bootstrap_refuse_external_ask_if_not_green` | Fail-closed external asks |
 
-Hard rules (OS 2.8.6):
+Hard rules (OS 2.8.7):
 
 - Journey phase does **not** change unless `founderApprovedPhaseChange=true`
 - Human-eyes **green** is not demand or PMF
@@ -75,6 +75,7 @@ Hard rules (OS 2.8.6):
 - Do not ask a sim for a Likert or a naked dollar WTP — a choice or a sentence, then map
 - Several ideas are allowed — each `companyId` is its own board; do not hide a second idea to look focused; rank and kill per board
 - Marketing volume cannot promote
+- A security or compliance program cannot promote
 
 ---
 

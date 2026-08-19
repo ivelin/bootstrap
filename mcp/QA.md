@@ -27,7 +27,7 @@ cd mcp && npm ci && npm run ci
 4. MCP never mutates files under `company-os/`.
 5. Markdown path (point-an-AI / optional install) works with **zero** MCP usage.
 6. Stdio MCP protocol serves the full tool surface to a real client.
-7. OS 2.8.6 house rules: stated / synthetic / observed (observed wins); spoken yes cannot promote; no demographic one-liner seed; no Likert / naked dollar WTP; several ideas allowed (rank and kill per board); marketing volume cannot promote.
+7. OS 2.8.7 house rules: stated / synthetic / observed (observed wins); spoken yes cannot promote; no demographic one-liner seed; no Likert / naked dollar WTP; several ideas allowed (rank and kill per board); marketing volume cannot promote; a security program cannot promote.
 8. Same state furniture: instance gets `company-state.json` + `where-are-we.py` (and schema). Hosted MCP does not exist.
 
 ## Manual (before ready-for-review)

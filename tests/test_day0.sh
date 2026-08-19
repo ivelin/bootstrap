@@ -405,7 +405,7 @@ fi
 
 # --- n) marketing volume cannot promote (OS 2.8.6) ---
 # Full rule lives once in the OS section. Other files pin + link; do not reprint the essay.
-if grep -q '^\*\*Version:\*\* 2.8.6' company-os/operating-system.md \
+if grep -q '2.8.6' company-os/operating-system.md \
   && grep -q 'v2.8.6' README.md \
   && grep -q '### House rule: marketing volume cannot promote' company-os/operating-system.md \
   && grep -q 'does not mean get a crowd looking' company-os/operating-system.md \
@@ -487,12 +487,6 @@ if ! find . -name '*.docx' ! -path './.git/*' | grep -q .; then
 else
   not_ok "do not copy legal .docx files into this repo"
 fi
-if ! grep -q 'house-rule-a-security-program-cannot-promote' \
-    company-os/operating-system.md company-os/ai-instructions.md README.md; then
-  ok "no hop to a security-program house rule that is not on this branch"
-else
-  not_ok "do not link a security-program house-rule heading that is not on this branch"
-fi
 
 # --- p) cap-table modeler (hyperlink only; not a house rule) ---
 # Constitution holds the section + home URLs + companion + CLI/skill path.
@@ -555,6 +549,21 @@ if ! printf '%s\n' "$cap_sec" | grep -Ei 'AngelList|Foundily|FoundStep|OpenCap|E
   ok "forbidden products are not listed as modelers"
 else
   not_ok "do not list Carta, Pulley, AngelList, Foundily, FoundStep, OpenCap, Eqvista, Cake, or captable.io as modelers"
+fi
+
+# --- q) a security program cannot promote (OS 2.8.7) ---
+# Constitution + first-hour / ai-instructions pointers. Do not require the essay elsewhere.
+if grep -q '^\*\*Version:\*\* 2.8.7' company-os/operating-system.md \
+  && grep -q '### House rule: a security program cannot promote' company-os/operating-system.md \
+  && grep -q 'v2.8.7' README.md \
+  && grep -q 'house-rule-a-security-program-cannot-promote' README.md \
+  && grep -q "I don't need a security department before anyone uses this" company-os/first-hour.md \
+  && grep -q 'house-rule-a-security-program-cannot-promote' company-os/first-hour.md \
+  && grep -q 'a security or compliance program cannot promote' company-os/ai-instructions.md \
+  && grep -q 'house-rule-a-security-program-cannot-promote' company-os/ai-instructions.md; then
+  ok "OS 2.8.7 section exists; first-hour and ai-instructions link to it"
+else
+  not_ok "2.8.7 must live in the OS section with first-hour and ai-instructions pointers"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

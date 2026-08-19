@@ -14,7 +14,7 @@ Automated companion: `npm run test:stdio` (spawns server + official SDK client o
 6. [ ] Unapproved phase change rejected
 7. [ ] `bootstrap_refuse_external_ask_if_not_green` → `allow: false` when eyes ≠ green
 8. [ ] Second company does not inherit first company's phase
-9. [ ] `bootstrap_os_info` reports OS 2.8.6 house rules (observed wins; spoken yes cannot promote; several ideas allowed; marketing volume cannot promote)
+9. [ ] `bootstrap_os_info` reports OS 2.8.7 house rules (observed wins; spoken yes cannot promote; several ideas allowed; marketing volume cannot promote; a security program cannot promote)
 10. [ ] Instance has `company-state.json` + `where-are-we.py`; `company-os/` templates unchanged
 
 Attach evidence on the PR (logs or screenshots). Keep human-eyes for MCP itself at **unknown** until cold path M2 is signed by a non-author.
