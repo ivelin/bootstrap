@@ -454,7 +454,7 @@ if ! grep -qi 'Arcads\|Product Hunt' company-os/operating-system.md \
 else
   not_ok "constitution must not name Arcads or Product Hunt"
 fi
-if grep -q 'marketing volume cannot promote' .grok/workflows/ready-for-human-eyes.rhai; then
+if grep -qi 'marketing volume cannot promote' .grok/workflows/ready-for-human-eyes.rhai; then
   ok "ready-for-human-eyes.rhai has marketing-volume house rule"
 else
   not_ok "ready-for-human-eyes.rhai must have marketing-volume house rule"
