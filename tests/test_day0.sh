@@ -452,6 +452,20 @@ if ! grep -qi 'Arcads\|Product Hunt' company-os/operating-system.md \
 else
   not_ok "constitution must not name Arcads or Product Hunt"
 fi
+if grep -q 'Say it once. Link. No filler.' company-os/operating-system.md \
+  && grep -q 'Dense leftover text is good' company-os/operating-system.md \
+  && grep -q 'Additive by default' company-os/operating-system.md; then
+  ok "stability contract has say-it-once writing rule"
+else
+  not_ok "operating-system.md stability contract must include Say it once. Link. No filler."
+fi
+if ! grep -q 'Dense leftover text is good' company-os/first-hour.md \
+    company-os/ai-instructions.md company-os/live-runtime.md \
+    company-os/ready-for-human-eyes.md README.md mcp/README.md mcp/QA.md; then
+  ok "say-it-once writing rule is not copied outside the OS stability contract"
+else
+  not_ok "do not reprint the say-it-once writing rule outside operating-system.md"
+fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then

@@ -27,7 +27,8 @@ Founders adopt this for months. The OS must not be moving sand.
 1. **Additive by default.** New packs sit beside existing ones. Names, clocks, gates, and deny-list items keep their meaning.  
 2. **Optional until useful.** A new ritual is skippable until you have the situation it is for (no real conversations → skip the founder-day rows).  
 3. **Rarely breaking.** We do not rename phases, restack the loop, or drop a gate without a named version note that says what to keep doing.  
-4. **One mental model.** Two clocks. You stay in control. Evidence beats narrative. That sentence should still be true next year.
+4. **One mental model.** Two clocks. You stay in control. Evidence beats narrative. That sentence should still be true next year.  
+5. **Say it once. Link. No filler.** Each idea lives in one place. Other files hyperlink. A short reminder is allowed on the page a founder actually opens (first-hour room line). Tests lock the source of truth and the pointers, not the same paragraph in eight files. High signal means only what changes a decision. Dense leftover text is good. A stream of novel riffs is not — house rules stay stable (see 1–3).
 
 A solid tool improves gradually. It does not ask you to relearn the desk every week.
 
@@ -1272,7 +1273,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
 | 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack: overnight drafts after proof; insight quality before posting cadence (one lived observation, short — not a content calendar). No clocks, gates, or deny-list items removed. |
 | 2.8.5 | House rule: several ideas are allowed; each is its own thesis/instance/scorecard; do not hide a second idea to look focused; rank and kill per board. |
-| 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). |
+| 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract) |
 
 ---
 

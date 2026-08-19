@@ -154,7 +154,7 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 ### Recent portable additions
 
 **v2.8.6 — marketing volume cannot promote**  
-House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](company-os/operating-system.md#how-this-os-may-change-stability-contract)
 
 **v2.8.5 — several ideas are allowed**  
 Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.
