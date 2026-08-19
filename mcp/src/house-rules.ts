@@ -1,5 +1,5 @@
 /**
- * OS 2.8.5 house-rule reminders for the optional MCP adapter.
+ * OS 2.8.6 house-rule reminders for the optional MCP adapter.
  * Constitution lives in company-os/*.md. This file must not invent a second OS.
  */
 
@@ -18,6 +18,7 @@ export const HOUSE_RULE_LINES = [
   "Do not ask a synthetic user for a Likert or a naked dollar WTP; a choice or a sentence, then map.",
   "Ready for human eyes green is not demand or PMF.",
   "Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.",
+  "Marketing volume cannot promote. A calendar, SEO push, public launch week, or a playbook someone is selling cannot promote. Impressions and potential buyers cannot promote. Observed use or pay can.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
 ] as const;
 
@@ -68,5 +69,9 @@ export function demographicOneLinerIsValidSeed(): false {
 }
 
 export function likertOrNakedDollarWtpAllowed(): false {
+  return false;
+}
+
+export function marketingVolumeMayPromote(): false {
   return false;
 }

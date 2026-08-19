@@ -1,7 +1,7 @@
 # Live Company Runtime  
 ## Persistent state + continuous learning loop
 
-**Part of:** [Company Operating System](operating-system.md) (v2.8.5+)  
+**Part of:** [Company Operating System](operating-system.md) (v2.8.6+)  
 **Audience:** Solo founders implementing the OS; AI helpers; mentors  
 **Portable:** Yes — this is the *runtime shape*, not any one product  
 **Instance mapping:** Fill `templates/applied-here.md` in *your* company repo (not part of this template).  
@@ -320,7 +320,8 @@ Before stage 6 product asks that depend on a **working URL** (mentor beta, “tr
 
 Checklist template: [`ready-for-human-eyes.md`](ready-for-human-eyes.md).
 
-This is **not** Track A sandbox feasibility alone (sim capability). It is **cold deploy surface + happy path alive for a stranger**.
+This is **not** Track A sandbox feasibility alone (sim capability). It is **cold deploy surface + happy path alive for a stranger**.  
+In this OS, Ready for human eyes means a stranger can finish the happy path on a cold link. It does not mean get a crowd looking. If the link is broken, marketing only advertises the breakage. House rule: marketing volume cannot promote.
 
 ---
 
@@ -376,6 +377,8 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 | Ask mentor/user to try product while human-eyes is not green | Wastes human attention on deploy/path debris |
 | “Works in my chat / my cookies” as ready for eyes | Cold users hit different failures |
 | Green human-eyes treated as PMF | Path alive ≠ people care or pay |
+| Marketing volume treated as proof | A calendar, SEO push, public launch week, or agency “eyes” cannot promote; observed use or pay can |
+| Impressions / “potential buyers” as observed | Maybe is not use or pay |
 | Named bot roster as if staffed | Fake office; hides who approves ([virtual office](operating-system.md#virtual-office-how-company-work-is-divided)) |
 | Overnight prospecting before proof | Growth machinery in disguise |
 | “Where are we?” from git only while the week lives in chat | Control plane is stale |

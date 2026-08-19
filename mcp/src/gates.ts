@@ -1,6 +1,6 @@
 /**
  * Portable gate catalog — what evidence / work unlocks the next slow phase
- * or advances the fast loop. Aligned to company-os v2.8.5 exit signals.
+ * or advances the fast loop. Aligned to company-os v2.8.6 exit signals.
  * Static process knowledge; instance state only marks hints, not auto-pass.
  * Constitution remains company-os/*.md — this is adapter furniture.
  */
@@ -11,7 +11,7 @@ export type EvidenceLabel =
   | "assumed_capability"
   | "needs_real_world_proof";
 
-/** Research-input labels (OS 2.8.5). Distinct from claim labels above. */
+/** Research-input labels (OS 2.8.6). Distinct from claim labels above. */
 export type ResearchInputLabel = "stated" | "synthetic" | "observed";
 
 export interface EvidenceItem {
@@ -166,11 +166,13 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
       "Survey of one",
       "Synthetic-only packs",
       "Spoken yes treated as observed",
+      "Marketing volume (calendar, SEO push, public launch week, impressions) treated as observed",
     ],
     agentFocus: [
       "Prep scripts and capture notes",
       "Stress monetization lightly (will they pay path?)",
       "Do not build heavy product yet",
+      "One real-interest test: one channel, one ask, kill threshold first — marketing volume cannot promote",
     ],
   },
   5: {
@@ -240,11 +242,17 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
         howToGather: "Watch sessions / structured feedback; record outcomes",
       },
     ],
-    doNotCountAsEvidence: ["Compliments without usage", "Burned favors on broken links"],
+    doNotCountAsEvidence: [
+      "Compliments without usage",
+      "Burned favors on broken links",
+      "Public launch week or agency eyes while the cold path is broken",
+      "Impressions / potential buyers treated as use or pay",
+    ],
     agentFocus: [
       "Clear human-eyes blockers first",
       "Instrument learning questions",
       "Refuse external try-asks while blocked",
+      "Marketing volume cannot promote — one channel, one ask after the link works",
     ],
   },
   8: {
@@ -289,7 +297,12 @@ export const PHASE_GATES: Record<number, PhaseGate> = {
         howToGather: "One channel at a time; kill criteria written first",
       },
     ],
-    doNotCountAsEvidence: ["Spend without proof", "Multi-channel spray", "List size as PMF"],
+    doNotCountAsEvidence: [
+      "Spend without proof",
+      "Multi-channel spray",
+      "List size as PMF",
+      "Marketing volume before proof (calendar, SEO push, public launch week)",
+    ],
     agentFocus: [
       "Hold scale until proof",
       "One growth hypothesis per round",

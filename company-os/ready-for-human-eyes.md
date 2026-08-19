@@ -1,8 +1,8 @@
 # Ready for human eyes — portable checklist
 
-**Part of:** [Company Operating System](operating-system.md) **v2.8+**  
+**Part of:** [Company Operating System](operating-system.md) **v2.8.6+**  
 **Purpose:** Fail-closed gate before asking mentors, betas, or strangers to use a product link.  
-**Not:** Proof of demand, payment, or product–market fit.  
+**Not:** Proof of demand, payment, or product–market fit. Not a crowd-looking gate. In this OS, Ready for human eyes means a stranger can finish the happy path on a cold link. It does not mean get a crowd looking. If the link is broken, marketing only advertises the breakage.  
 **Template edits:** Approval-gated — see root [README](../README.md#template-change-policy).
 
 ---
@@ -81,7 +81,7 @@ Only **then** draft “please try this” / mentor beta messages.
 | Artifact | Question |
 |----------|----------|
 | Ready for real-world *research* | ICP filter honest enough for real problem conversations? |
-| **Ready for human eyes** | Cold person can complete the *product* happy path? |
+| **Ready for human eyes** | Cold person can complete the *product* happy path? (Not: get a crowd looking.) |
 
 ---
 
