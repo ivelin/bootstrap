@@ -1257,7 +1257,7 @@ Do not commission custom paper before revenue. Point at these starting drafts. H
 - Use the .docx, not the markdown.
 - NDA, terms, US privacy: fine starting drafts.
 - Do not hand the MSA unless they are that kind of on-prem AI vendor.
-- Do not use BAA/GDPR as a reason to stall before a paying customer (same family as [a security program cannot promote](#house-rule-a-security-program-cannot-promote)).
+- Do not use BAA/GDPR as a reason to stall before a paying customer.
 - Formation, SAFE, hiring, CIIAA: [Cooley GO](https://www.cooleygo.com/documents/), [YC](https://www.ycombinator.com/documents/), [Orrick](https://www.orrick.com/en/tech-studio/forms) — not the General Legal repo.
 - This OS does not host copies, draft, or customize.
 

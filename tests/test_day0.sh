@@ -487,6 +487,12 @@ if ! find . -name '*.docx' ! -path './.git/*' | grep -q .; then
 else
   not_ok "do not copy legal .docx files into this repo"
 fi
+if ! grep -q 'house-rule-a-security-program-cannot-promote' \
+    company-os/operating-system.md company-os/ai-instructions.md README.md; then
+  ok "no hop to a security-program house rule that is not on this branch"
+else
+  not_ok "do not link a security-program house-rule heading that is not on this branch"
+fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then
