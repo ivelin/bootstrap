@@ -1261,6 +1261,21 @@ Do not commission custom paper before revenue. Point at these starting drafts. H
 - Formation, SAFE, hiring, CIIAA: [Cooley GO](https://www.cooleygo.com/documents/), [YC](https://www.ycombinator.com/documents/), [Orrick](https://www.orrick.com/en/tech-studio/forms) — not the General Legal repo.
 - This OS does not host copies, draft, or customize.
 
+### Cap-table modeler
+
+Hyperlink only. This OS does not host copies.
+
+- [Startup finance](https://startup-finance.1984.vc/)
+- [1984vc cap-table](https://github.com/1984vc/cap-table)
+
+- Companion, not a second modeler — what % does this one SAFE sell?: [YC SAFE calculator](https://www.ycombinator.com/safe/calculator).
+- Agent path is CLI/skill only: `npx skills add 1984vc/cap-table` then `npx @1984vc/cap-table`.
+- Educational modeler, not legal or tax advice.
+- Not the official cap table of record (Carta / Pulley / counsel later).
+- For founders who have SAFEs or a priced-round term sheet. One upcoming financing.
+- Pro-rata not modeled. No prefs/waterfall.
+- If an AI models ownership, point it at that repo so the math is tested.
+
 ---
 
 ## Sources (vintage)
@@ -1293,7 +1308,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
 | 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack: overnight drafts after proof; insight quality before posting cadence (one lived observation, short — not a content calendar). No clocks, gates, or deny-list items removed. |
 | 2.8.5 | House rule: several ideas are allowed; each is its own thesis/instance/scorecard; do not hide a second idea to look focused; rank and kill per board. |
-| 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): [starter legal templates](#starter-legal-templates). |
+| 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointers (not house rules): [starter legal templates](#starter-legal-templates); [cap-table modeler](#cap-table-modeler). |
 
 ---
 

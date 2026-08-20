@@ -494,6 +494,69 @@ else
   not_ok "do not link a security-program house-rule heading that is not on this branch"
 fi
 
+# --- p) cap-table modeler (hyperlink only; not a house rule) ---
+# Constitution holds the section + home URLs + companion + CLI/skill path.
+# Do not require caveats elsewhere. Do not claim 1984 MCP is live.
+os=company-os/operating-system.md
+if grep -q '### Cap-table modeler' "$os" \
+  && grep -q 'https://startup-finance.1984.vc/' "$os" \
+  && grep -q 'https://github.com/1984vc/cap-table' "$os"; then
+  ok "OS cap-table modeler section has both home URLs"
+else
+  not_ok "operating-system.md must have cap-table modeler + both home URLs"
+fi
+if grep -q 'https://www.ycombinator.com/safe/calculator' "$os" \
+  && grep -q 'what % does this one SAFE sell' "$os"; then
+  ok "YC SAFE calculator companion is present (not a second modeler)"
+else
+  not_ok "operating-system.md must have the YC SAFE calculator companion"
+fi
+if grep -q 'https://www.ycombinator.com/documents/' "$os"; then
+  ok "YC SAFE instruments stay at the existing YC documents pointer"
+else
+  not_ok "keep https://www.ycombinator.com/documents/ at the existing instruments pointer"
+fi
+if grep -q 'npx skills add 1984vc/cap-table' "$os" \
+  && grep -q 'npx @1984vc/cap-table' "$os" \
+  && grep -q 'CLI/skill only' "$os"; then
+  ok "agent path is CLI/skill only"
+else
+  not_ok "operating-system.md must pin npx skills add 1984vc/cap-table then npx @1984vc/cap-table"
+fi
+if ! grep -q 'startup-finance.1984.vc/mcp' "$os" README.md company-os/ai-instructions.md \
+  && ! grep -qi '1984 MCP is live' "$os" README.md company-os/ai-instructions.md; then
+  ok "do not claim 1984 MCP is live"
+else
+  not_ok "do not claim 1984 MCP is live or link startup-finance.1984.vc/mcp"
+fi
+if grep -q 'cap-table-modeler' README.md \
+  && grep -q 'cap-table-modeler' company-os/ai-instructions.md; then
+  ok "README and ai-instructions point at the OS cap-table-modeler section"
+else
+  not_ok "README and ai-instructions must hyperlink the OS cap-table-modeler section"
+fi
+if ! grep -q 'cap-table-modeler' company-os/first-hour.md \
+  && ! grep -q 'startup-finance.1984.vc' company-os/first-hour.md \
+  && ! grep -q '1984vc/cap-table' company-os/first-hour.md; then
+  ok "first-hour.md stays out of the cap-table pointer"
+else
+  not_ok "first-hour.md must stay out (Day 0 is thesis/ICP)"
+fi
+if ! find . -path './.git' -prune -o -path '*/node_modules/*' -prune -o \
+    -type d -name 'cap-table' -print | grep -q .; then
+  ok "no 1984vc cap-table repo copied into this tree"
+else
+  not_ok "do not copy the 1984vc cap-table repo into this tree"
+fi
+cap_sec=$(sed -n '/^### Cap-table modeler$/,/^## Sources/p' "$os")
+if ! printf '%s\n' "$cap_sec" | grep -Ei 'AngelList|Foundily|FoundStep|OpenCap|Eqvista|captable\.io' \
+  && ! printf '%s\n' "$cap_sec" | grep -E '[^A-Za-z]Cake[^A-Za-z]|^Cake' \
+  && ! printf '%s\n' "$cap_sec" | grep -E '\[[^]]*(Carta|Pulley)[^]]*\]\(' ; then
+  ok "forbidden products are not listed as modelers"
+else
+  not_ok "do not list Carta, Pulley, AngelList, Foundily, FoundStep, OpenCap, Eqvista, Cake, or captable.io as modelers"
+fi
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then
   exit 1
