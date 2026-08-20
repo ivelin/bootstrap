@@ -2,7 +2,7 @@
 ## For Solo Founders in Bootstrapping Mode
 
 **Version:** 2.8.6  
-**Last Updated:** 2026-08-19  
+**Last Updated:** 2026-08-20  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -1193,7 +1193,7 @@ Every company should maintain its own list. Starter prompts:
 - Which founder-day rituals ran (prep / close the call / post-talk / admin drafts)?  
 - What skills did we capture or update? Is there a founder-voice profile before outreach drafts?  
 - Optional last snapshot line: what should we further automate, parallelize, or delete?  
-- What legal and ethical rules apply to outreach in our channels?  
+- What legal and ethical rules apply to outreach in our channels? Starter drafts: [starter legal templates](#starter-legal-templates).  
 - When do the risks of staying solo become larger than the risks of adding help?  
 - What is the **smallest set of channels** that still produces real value?  
 - How aggressively should multi-party outreach run in **parallel** vs building trust one step at a time?  
@@ -1240,6 +1240,26 @@ Every company should maintain its own list. Starter prompts:
 - Treating “works on my machine / in my chat” as ready for external feedback  
 - Treating green human-eyes as demand or product–market fit  
 - Marketing volume as proof — see [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote)  
+- Commissioning custom legal agreements before revenue — see [starter legal templates](#starter-legal-templates)
+
+---
+
+## Resources
+
+### Starter legal templates
+
+Do not commission custom paper before revenue. Point at these starting drafts. Hyperlink only.
+
+- [General Legal library](https://general.legal/library)
+- [General Legal templates](https://github.com/General-Legal/legal-templates)
+
+- Templates, not advice. Not a substitute for counsel.
+- Use the .docx, not the markdown.
+- NDA, terms, US privacy: fine starting drafts.
+- Do not hand the MSA unless they are that kind of on-prem AI vendor.
+- Do not use BAA/GDPR as a reason to stall before a paying customer.
+- Formation, SAFE, hiring, CIIAA: [Cooley GO](https://www.cooleygo.com/documents/), [YC](https://www.ycombinator.com/documents/), [Orrick](https://www.orrick.com/en/tech-studio/forms) — not the General Legal repo.
+- This OS does not host copies, draft, or customize.
 
 ---
 
@@ -1273,7 +1293,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.3 | House rule: do not seed a persona from a demographic one-liner; demo-only role-play is the weak case (sharpening of thesis-only-is-weaker). |
 | 2.8.4 | Additive only. Stability contract (additive, optional-until-useful, rarely breaking). Founder-day pack and skill-capture sit beside existing rituals. Virtual-office cards stay; partner may call jobs for a card. Day tools may feed the snapshot; git remains memory. Growth pack: overnight drafts after proof; insight quality before posting cadence (one lived observation, short — not a content calendar). No clocks, gates, or deny-list items removed. |
 | 2.8.5 | House rule: several ideas are allowed; each is its own thesis/instance/scorecard; do not hide a second idea to look focused; rank and kill per board. |
-| 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract) |
+| 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): [starter legal templates](#starter-legal-templates). |
 
 ---
 

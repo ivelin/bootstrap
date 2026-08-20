@@ -467,6 +467,33 @@ else
   not_ok "do not reprint the say-it-once writing rule outside operating-system.md"
 fi
 
+# --- o) starter legal templates (hyperlink only; not a house rule) ---
+# Constitution holds the section + both canonical URLs. Do not require caveats elsewhere.
+if grep -q '### Starter legal templates' company-os/operating-system.md \
+  && grep -q 'https://github.com/General-Legal/legal-templates' company-os/operating-system.md \
+  && grep -q 'https://general.legal/library' company-os/operating-system.md; then
+  ok "OS starter legal templates section has both canonical URLs"
+else
+  not_ok "operating-system.md must have starter legal templates + both canonical URLs"
+fi
+if grep -q 'starter-legal-templates' README.md \
+  && grep -q 'starter-legal-templates' company-os/ai-instructions.md; then
+  ok "README and ai-instructions point at the OS starter-legal-templates section"
+else
+  not_ok "README and ai-instructions must hyperlink the OS starter-legal-templates section"
+fi
+if ! find . -name '*.docx' ! -path './.git/*' | grep -q .; then
+  ok "no .docx legal templates copied into this repo"
+else
+  not_ok "do not copy legal .docx files into this repo"
+fi
+if ! grep -q 'house-rule-a-security-program-cannot-promote' \
+    company-os/operating-system.md company-os/ai-instructions.md README.md; then
+  ok "no hop to a security-program house rule that is not on this branch"
+else
+  not_ok "do not link a security-program house-rule heading that is not on this branch"
+fi
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then
   exit 1

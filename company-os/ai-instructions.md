@@ -1,7 +1,8 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.6** ([marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); several ideas allowed, each its own board; founder-day pack additive; demo-only role-play is the weak case).
+**Aligned to:** OS blueprint **v2.8.6** ([marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); several ideas allowed, each its own board; founder-day pack additive; demo-only role-play is the weak case).  
+**Starter legal templates:** [operating-system.md](operating-system.md#starter-legal-templates) (hyperlink only; this OS does not draft or customize).
 
 **Use:** Paste into your main AI tool’s permanent instructions. Prefer a **root** file so every session loads it first:
 
