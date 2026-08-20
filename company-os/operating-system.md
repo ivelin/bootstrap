@@ -1275,7 +1275,6 @@ Hyperlink only. This OS does not host copies.
 - For founders who have SAFEs or a priced-round term sheet. One upcoming financing.
 - Pro-rata not modeled. No prefs/waterfall.
 - If an AI models ownership, point it at that repo so the math is tested.
-- Correspondence-only when a mentee asks about cap table / SAFEs / a term sheet.
 
 ---
 
