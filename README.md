@@ -189,6 +189,7 @@ Light synthetic product sandbox + real interest tests before heavy build.
 - Public live instances (illustration only): see [`examples/`](examples/)
 - Optional local MCP (path 3): [`mcp/README.md`](mcp/README.md)
 - Starter legal templates (hyperlink only): [operating-system.md](company-os/operating-system.md#starter-legal-templates)
+- Cap-table modeler (hyperlink only): [operating-system.md](company-os/operating-system.md#cap-table-modeler)
 
 ---
 

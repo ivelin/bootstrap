@@ -494,6 +494,35 @@ else
   not_ok "do not link a security-program house-rule heading that is not on this branch"
 fi
 
+# --- p) cap-table modeler (hyperlink only; not a house rule) ---
+# Constitution holds the section + both canonical URLs. Do not require caveats elsewhere.
+if grep -q '### Cap-table modeler' company-os/operating-system.md \
+  && grep -q 'https://startup-finance.1984.vc/' company-os/operating-system.md \
+  && grep -q 'https://github.com/1984vc/cap-table' company-os/operating-system.md; then
+  ok "OS cap-table modeler section has both canonical URLs"
+else
+  not_ok "operating-system.md must have cap-table modeler + both canonical URLs"
+fi
+if grep -q 'cap-table-modeler' README.md \
+  && grep -q 'cap-table-modeler' company-os/ai-instructions.md; then
+  ok "README and ai-instructions point at the OS cap-table-modeler section"
+else
+  not_ok "README and ai-instructions must hyperlink the OS cap-table-modeler section"
+fi
+if ! grep -q 'cap-table-modeler' company-os/first-hour.md \
+  && ! grep -q 'startup-finance.1984.vc' company-os/first-hour.md \
+  && ! grep -q '1984vc/cap-table' company-os/first-hour.md; then
+  ok "first-hour.md stays out of the cap-table pointer"
+else
+  not_ok "first-hour.md must stay out (Day 0 is thesis/ICP)"
+fi
+if ! find . -path './.git' -prune -o -path '*/node_modules/*' -prune -o \
+    -type d -name 'cap-table' -print | grep -q .; then
+  ok "no 1984vc cap-table repo copied into this tree"
+else
+  not_ok "do not copy the 1984vc cap-table repo into this tree"
+fi
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then
   exit 1

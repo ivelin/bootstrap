@@ -69,6 +69,9 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(os, /### Starter legal templates/);
       assert.match(os, /https:\/\/github.com\/General-Legal\/legal-templates/);
       assert.match(os, /https:\/\/general\.legal\/library/);
+      assert.match(os, /### Cap-table modeler/);
+      assert.match(os, /https:\/\/startup-finance\.1984\.vc\//);
+      assert.match(os, /https:\/\/github.com\/1984vc\/cap-table/);
     } finally {
       clearSession();
       rmrf(dataRoot);
