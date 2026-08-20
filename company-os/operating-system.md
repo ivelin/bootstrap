@@ -1268,10 +1268,14 @@ Hyperlink only. This OS does not host copies.
 - [Startup finance](https://startup-finance.1984.vc/)
 - [1984vc cap-table](https://github.com/1984vc/cap-table)
 
+- Companion, not a second modeler — what % does this one SAFE sell?: [YC SAFE calculator](https://www.ycombinator.com/safe/calculator).
+- Agent path is CLI/skill only: `npx skills add 1984vc/cap-table` then `npx @1984vc/cap-table`.
 - Educational modeler, not legal or tax advice.
-- Not the official cap table of record (Carta / Pulley / counsel).
-- For founders who have SAFEs or a priced-round term sheet.
+- Not the official cap table of record (Carta / Pulley / counsel later).
+- For founders who have SAFEs or a priced-round term sheet. One upcoming financing.
+- Pro-rata not modeled. No prefs/waterfall.
 - If an AI models ownership, point it at that repo so the math is tested.
+- Correspondence-only when a mentee asks about cap table / SAFEs / a term sheet.
 
 ---
 
