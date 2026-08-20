@@ -66,6 +66,9 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(os, /2\.8\.6/);
       assert.match(os, /### House rule: marketing volume cannot promote/);
       assert.match(os, /Text eight people/);
+      assert.match(os, /### Starter legal templates/);
+      assert.match(os, /https:\/\/github.com\/General-Legal\/legal-templates/);
+      assert.match(os, /https:\/\/general\.legal\/library/);
     } finally {
       clearSession();
       rmrf(dataRoot);
