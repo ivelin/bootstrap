@@ -1,6 +1,6 @@
-/** Portable journey + loop labels (aligned to company-os v2.8.6). */
+/** Portable journey + loop labels (aligned to company-os v2.8.7). */
 
-export const OS_VERSION = "2.8.6";
+export const OS_VERSION = "2.8.7";
 export const MCP_VERSION = "0.2.0";
 
 export const JOURNEY_PHASES: Record<number, string> = {

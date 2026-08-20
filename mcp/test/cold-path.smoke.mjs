@@ -47,7 +47,7 @@ try {
   const deny = evaluateExternalAsk({ readyStatus: eyes, intent: "try my link" });
   assert.equal(deny.allow, false);
 
-  // 6. Status plain + 2.8.6 house rules
+  // 6. Status plain + house rules
   const plain = whereAreWePlain(readState());
   assert.match(plain, /pirin/);
   assert.match(plain, /observed wins/i);

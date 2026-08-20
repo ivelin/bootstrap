@@ -89,6 +89,12 @@ When someone says you need marketing to prove the product, or to attract people 
 
 House rule: [marketing volume cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
 
+When someone says you must lock down the product so secrets do not leak, before anyone has used it:
+
+> I don't need a security department before anyone uses this. I need keys out of git and no live user data in chats. Idea theft by a lab is not how this dies.
+
+House rule: [a security program cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-a-security-program-cannot-promote).
+
 ---
 
 *You supply the insight. AI supplies the speed.*

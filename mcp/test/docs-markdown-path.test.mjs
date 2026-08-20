@@ -63,8 +63,9 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(firstHour, /Eyeballs aren't buyers/);
       assert.match(firstHour, /house-rule-marketing-volume-cannot-promote/);
       const os = readOsDoc("operating-system");
-      assert.match(os, /2\.8\.6/);
+      assert.match(os, /2\.8\.7/);
       assert.match(os, /### House rule: marketing volume cannot promote/);
+      assert.match(os, /### House rule: a security program cannot promote/);
       assert.match(os, /Text eight people/);
       assert.match(os, /### Starter legal templates/);
       assert.match(os, /https:\/\/github.com\/General-Legal\/legal-templates/);
