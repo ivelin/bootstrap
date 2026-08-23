@@ -3,7 +3,7 @@
   "mcpServers": {
     "bootstrap-os": {
       "type": "streamable-http",
-      "url": "${BOOTSTRAP_MCP_URL}"
+      "url": "https://bootstrap-os-mcp.vercel.app/mcp"
     }
   }
 }

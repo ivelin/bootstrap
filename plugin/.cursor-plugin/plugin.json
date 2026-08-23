@@ -14,10 +14,9 @@
     "properties": {
       "BOOTSTRAP_MCP_URL": {
         "type": "string",
-        "title": "Hosted MCP URL",
-        "description": "Streamable HTTP URL of a preview read adapter you run from mcp/ (npm run start:http). No public mentee-ready host. Do not use mcp.pirin.ai."
+        "title": "Hosted MCP URL override",
+        "description": "Optional override for the pinned *.vercel.app /mcp URL. Preview read adapter only. Do not use mcp.pirin.ai."
       }
-    },
-    "required": ["BOOTSTRAP_MCP_URL"]
+    }
   }
 }

@@ -112,7 +112,8 @@ async function main() {
     assert.equal(info.surface, "hosted-read");
     assert.equal(info.docsSource, "published");
     assert.match(String(info.docsBase), /127\.0\.0\.1/);
-    assert.match(JSON.stringify(info.adoptionOrder), /No public mentee-ready host/);
+    assert.match(JSON.stringify(info.adoptionOrder), /not mentee-ready boards/);
+    assert.match(JSON.stringify(info.adoptionOrder), /Not pirin\.ai/);
     assert.match(JSON.stringify(info.companyState), /Not hosted/i);
     assert.equal(info.marketplace, false);
     assert.ok(!info.paths?.statePath, "hosted-read must not expose founder state paths");

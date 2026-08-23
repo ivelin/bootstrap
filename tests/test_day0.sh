@@ -171,13 +171,14 @@ else
   not_ok "README: Point an AI must appear before ./scripts/install-instance.sh"
 fi
 
-if grep -qi 'no public mentee-ready host' README.md \
+if grep -qi 'not mentee-ready' README.md \
   && grep -q 'plugin/' README.md \
   && grep -q 'Path 1 stays' README.md \
+  && grep -q 'vercel.app' README.md \
   && ! grep -q 'https://mcp.pirin.ai' README.md; then
-  ok "README hosted MCP honesty (preview plugin, no public host)"
+  ok "README hosted MCP honesty (preview vercel.app, not mentee-ready, not pirin.ai)"
 else
-  not_ok "README must stay honest: preview plugin, no public mentee-ready host, no live pirin.ai URL"
+  not_ok "README must stay honest: preview vercel.app host, not mentee-ready boards, not pirin.ai"
 fi
 
 # --- g) evidence-label refinements (stated / synthetic / observed) ---
@@ -572,6 +573,7 @@ fi
 # --- r) preview plugin: manifests + hyperlink-only skills; no marketplace ---
 if [ -f plugin/plugin.json ] && [ -f plugin/mcp.json ] \
   && [ -f plugin/.cursor-plugin/plugin.json ] \
+  && [ -f mcp/vercel.json ] && [ -f mcp/api/mcp.ts ] && [ -f mcp/api/health.ts ] \
   && [ -f plugin/skills/path-1-default/SKILL.md ] \
   && [ -f plugin/skills/house-rule-pins/SKILL.md ] \
   && [ -f plugin/skills/first-hour/SKILL.md ]; then
@@ -589,7 +591,10 @@ assert plugin["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.sche
 mcp = json.loads((root / "mcp.json").read_text())
 server = mcp["mcpServers"]["bootstrap-os"]
 assert server["type"] == "streamable-http"
-assert server["url"] == "${BOOTSTRAP_MCP_URL}"
+assert server["url"].startswith("https://")
+assert server["url"].endswith("/mcp")
+assert ".vercel.app/" in server["url"]
+assert "pirin.ai" not in server["url"]
 assert "command" not in server
 raw = (root / "mcp.json").read_text()
 assert "mcp.pirin.ai" not in raw

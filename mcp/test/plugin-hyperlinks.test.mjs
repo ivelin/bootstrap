@@ -32,7 +32,8 @@ describe("preview plugin (hyperlink only)", () => {
     assert.equal(mcpJson.$schema, "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json");
     const server = mcpJson.mcpServers["bootstrap-os"];
     assert.equal(server.type, "streamable-http");
-    assert.equal(server.url, "${BOOTSTRAP_MCP_URL}");
+    assert.match(server.url, /^https:\/\/[A-Za-z0-9-]+\.vercel\.app\/mcp$/);
+    assert.doesNotMatch(server.url, /pirin\.ai/);
     assert.ok(!("command" in server));
     const mcpRaw = JSON.stringify(mcpJson);
     assert.doesNotMatch(mcpRaw, /mcp\.pirin\.ai/);
@@ -42,6 +43,9 @@ describe("preview plugin (hyperlink only)", () => {
     assert.ok(!fs.existsSync(path.join(PLUGIN, "marketplace.json")));
     assert.ok(!fs.existsSync(path.join(REPO_ROOT, ".cursor-plugin", "marketplace.json")));
     assert.ok(!fs.existsSync(path.join(PLUGIN, "operating-system.md")));
+    assert.ok(fs.existsSync(path.join(REPO_ROOT, "mcp", "vercel.json")));
+    assert.ok(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "mcp.ts")));
+    assert.ok(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "health.ts")));
   });
 
   it("skills exist, stay thin, and only hyperlink the published OS", () => {

@@ -86,7 +86,7 @@ A **preview** plugin lives in [`plugin/`](plugin/): thin skills that hyperlink t
 
 The hosted slice is read-only: OS info, docs, house-rule pins. Markdown on GitHub remains the constitution. Founder `company-state` stays on path 3 local stdio — not on a shared server.
 
-There is **no public mentee-ready host**. No day-one SaaS boards. Set `BOOTSTRAP_MCP_URL` only if you run the preview adapter yourself (`cd mcp && npm run start:http`). Do not use `mcp.pirin.ai` (dead placeholder).
+There is a **preview** public read adapter on `*.vercel.app` (not mentee-ready boards, not a marketplace, not pirin.ai). No day-one SaaS boards. Founder `company-state` stays path 3. Pin is in [`plugin/mcp.json`](plugin/mcp.json); `${BOOTSTRAP_MCP_URL}` can override. Do not use `mcp.pirin.ai` (dead).
 
 ---
 

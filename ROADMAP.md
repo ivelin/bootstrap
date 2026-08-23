@@ -186,7 +186,7 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 | **1. Point an AI** | **Default forever** | https://github.com/ivelin/bootstrap — no install, no MCP |
 | **2. Optional instance / CLI + workflows** | **Shipped on main** | `./scripts/install-instance.sh` + optional `.grok/workflows` |
 | **3. Local MCP** | **v0.2 optional adapter** | One connector, isolated instances; same `company-state.json` + `where-are-we.py` |
-| **4. Hosted MCP** | **Preview only — not mentee-ready** | `plugin/` + HTTP read adapter exist. No public host. No marketplace. No founder state on a shared server. Path 1 stays the front door. |
+| **4. Hosted MCP** | **Preview only — not mentee-ready** | `plugin/` + HTTP read adapter on `*.vercel.app` (project `bootstrap-os-mcp`). No marketplace. Not pirin.ai. No founder state on a shared server. Path 1 stays the front door. |
 
 MCP is **compass + logbook**, not a third harness.
 

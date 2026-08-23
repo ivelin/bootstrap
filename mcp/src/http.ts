@@ -1,109 +1,87 @@
 #!/usr/bin/env node
 /**
- * Preview Streamable HTTP transport for the same MCP server.
- * Hosted-read surface only: OS info / docs / house-rule pins.
- * Does not host founder company-state. Write/init/use-company stays stdio (path 3).
+ * Optional local helper: listen on loopback and forward to the same
+ * hosted-read fetch handler used on Vercel. Production is the Vercel
+ * request handler (api/mcp.ts), not this process.
  */
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import { createServer } from "node:http";
+import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { createBootstrapServer } from "./server.js";
+import { handleHostedReadFetch } from "./hosted-handler.js";
 
 export type HostedHttpOptions = {
   host?: string;
   port?: number;
 };
 
-function readJsonBody(req: IncomingMessage): Promise<unknown> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    req.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)));
-    req.on("end", () => {
-      if (chunks.length === 0) {
-        resolve(undefined);
-        return;
-      }
-      const raw = Buffer.concat(chunks).toString("utf8");
-      if (!raw.trim()) {
-        resolve(undefined);
-        return;
-      }
-      try {
-        resolve(JSON.parse(raw));
-      } catch (e) {
-        reject(e);
-      }
-    });
-    req.on("error", reject);
+async function readBody(req: IncomingMessage): Promise<Buffer> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
+}
+
+async function toWebRequest(req: IncomingMessage, host: string): Promise<Request> {
+  const url = `http://${req.headers.host ?? `${host}`}${req.url ?? "/"}`;
+  const headers = new Headers();
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (value === undefined) continue;
+    headers.set(key, Array.isArray(value) ? value.join(", ") : value);
+  }
+  const method = (req.method ?? "GET").toUpperCase();
+  if (method === "GET" || method === "HEAD") {
+    return new Request(url, { method, headers });
+  }
+  const body = await readBody(req);
+  return new Request(url, {
+    method,
+    headers,
+    body: body.length ? new Uint8Array(body) : undefined,
   });
 }
 
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  const payload = JSON.stringify(body);
-  res.writeHead(status, {
-    "Content-Type": "application/json",
-    "Content-Length": Buffer.byteLength(payload),
+async function sendWebResponse(webRes: Response, res: ServerResponse): Promise<void> {
+  res.statusCode = webRes.status;
+  webRes.headers.forEach((value, key) => {
+    if (key.toLowerCase() === "transfer-encoding") return;
+    res.setHeader(key, value);
   });
-  res.end(payload);
-}
-
-async function handleMcp(req: IncomingMessage, res: ServerResponse): Promise<void> {
-  const server = createBootstrapServer("hosted-read");
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
-  await server.connect(transport);
-  const parsedBody = req.method === "POST" ? await readJsonBody(req) : undefined;
-  res.on("close", () => {
-    void transport.close();
-    void server.close();
-  });
-  await transport.handleRequest(req, res, parsedBody);
+  if (!webRes.body) {
+    res.end();
+    return;
+  }
+  Readable.fromWeb(webRes.body as import("node:stream/web").ReadableStream).pipe(res);
 }
 
 export async function startHostedReadServer(
   opts: HostedHttpOptions = {},
 ): Promise<{ url: string; port: number; host: string; close: () => Promise<void> }> {
-  process.env.BOOTSTRAP_MCP_SURFACE = "hosted-read";
   const host = opts.host ?? process.env.BOOTSTRAP_MCP_HTTP_HOST ?? "127.0.0.1";
   const port = opts.port ?? Number(process.env.BOOTSTRAP_MCP_HTTP_PORT ?? process.env.PORT ?? 0);
 
   const httpServer: Server = createServer(async (req, res) => {
-    const url = new URL(req.url ?? "/", `http://${host}`);
-    if (req.method === "OPTIONS") {
-      res.writeHead(204, {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Accept, MCP-Session-Id, MCP-Protocol-Version",
-      });
-      res.end();
-      return;
-    }
-    if (url.pathname === "/health") {
-      res.writeHead(200, { "Content-Type": "text/plain" });
-      res.end("ok");
-      return;
-    }
-    if (url.pathname === "/mcp") {
-      try {
-        await handleMcp(req, res);
-      } catch (e) {
-        if (!res.headersSent) {
-          sendJson(res, 500, {
+    try {
+      const webReq = await toWebRequest(req, host);
+      const webRes = await handleHostedReadFetch(webReq);
+      await sendWebResponse(webRes, res);
+    } catch (e) {
+      if (!res.headersSent) {
+        res.statusCode = 500;
+        res.setHeader("Content-Type", "application/json");
+        res.end(
+          JSON.stringify({
             jsonrpc: "2.0",
             error: {
               code: -32603,
               message: e instanceof Error ? e.message : "Internal server error",
             },
             id: null,
-          });
-        }
+          }),
+        );
       }
-      return;
     }
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("Preview hosted-read MCP. POST /mcp. Not mentee-ready boards.");
   });
 
   await new Promise<void>((resolve, reject) => {
@@ -133,8 +111,8 @@ async function main() {
   const started = await startHostedReadServer({
     port: Number(process.env.BOOTSTRAP_MCP_HTTP_PORT ?? process.env.PORT ?? 8787),
   });
-  console.error(`bootstrap-os hosted-read preview listening on ${started.url}`);
-  console.error("Read adapter only. No founder company-state. Path 1 stays the front door.");
+  console.error(`bootstrap-os hosted-read local helper listening on ${started.url}`);
+  console.error("Vercel request handler is api/mcp.ts. This process is local-only.");
 }
 
 const invokedAsMain =

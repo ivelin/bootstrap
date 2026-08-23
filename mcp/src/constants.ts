@@ -18,7 +18,7 @@ export const HOSTED_READ_TOOL_NAMES = [
 ] as const;
 
 export const PATH4_HONESTY =
-  "Preview only. plugin/ + HTTP read adapter exist. No public mentee-ready host. No marketplace. No founder company-state on a shared server. Path 1 stays the front door.";
+  "Preview only. plugin/ + HTTP read adapter exist. Public preview on *.vercel.app is not mentee-ready boards. No marketplace. Not pirin.ai. No founder company-state on a shared server. Path 1 stays the front door.";
 
 export const JOURNEY_PHASES: Record<number, string> = {
   1: "Thesis",

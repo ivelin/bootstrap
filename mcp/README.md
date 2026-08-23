@@ -9,7 +9,7 @@
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
 | **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
-| **4. Hosted MCP** | Preview only | HTTP read adapter + [`../plugin/`](../plugin/). No public mentee-ready host. No marketplace. |
+| **4. Hosted MCP** | Preview only | HTTP read adapter on `*.vercel.app` + [`../plugin/`](../plugin/). Not mentee-ready boards. No marketplace. Not pirin.ai. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
@@ -132,9 +132,18 @@ See [`config/mcp.stdio.example.json`](config/mcp.stdio.example.json).
 
 ### Hosted read (preview)
 
-Same package, Streamable HTTP transport: `npm run start:http`. Read tools only (`bootstrap_os_info`, docs, house-rule pins). Fetches the published repo. Does **not** host founder `company-state`. Write / init / use-company stay stdio.
+Same package. Production entry is the Vercel request handler (`api/mcp.ts` + `api/health.ts`). `npm run start:http` is a local helper only.
 
-Set `BOOTSTRAP_MCP_URL` in the preview plugin if you run this yourself. [`config/mcp.hosted.example.json`](config/mcp.hosted.example.json) is a placeholder — `mcp.pirin.ai` is dead. No public mentee-ready host. Path 1 stays the front door.
+Read tools only (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). Does **not** host founder `company-state`. Write / init / use-company stay stdio.
+
+Public preview is `*.vercel.app` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Not mentee-ready boards. Not a marketplace. Not pirin.ai. Path 1 stays the front door.
+
+```bash
+cd mcp
+npx vercel --prod --yes --name bootstrap-os-mcp --scope ivelins-projects-9f9b7132
+```
+
+Never deploy this adapter to `v0-pirin-ai-founder-studio` or any pirin.ai host.
 
 ---
 

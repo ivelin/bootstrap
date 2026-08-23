@@ -18,6 +18,13 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 ## Hosted MCP URL
 
-`mcp.json` is Streamable HTTP (`type: streamable-http`). Set `BOOTSTRAP_MCP_URL` to a read adapter **you** run from [`../mcp/`](../mcp/) (`npm run start:http`). No public host. Do not use `mcp.pirin.ai`.
+`mcp.json` pins the preview Streamable HTTP host `https://bootstrap-os-mcp.vercel.app/mcp`. `${BOOTSTRAP_MCP_URL}` may override. Not mentee-ready boards. Not a marketplace. Do not use `mcp.pirin.ai`.
 
 Read tools only: OS info, docs, house-rule pins. Founder `company-state` stays path 3 local stdio.
+
+Deploy recipe (new Vercel project `bootstrap-os-mcp` only):
+
+```bash
+cd mcp
+npx vercel --prod --yes --name bootstrap-os-mcp --scope ivelins-projects-9f9b7132
+```
