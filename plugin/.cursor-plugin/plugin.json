@@ -1,0 +1,23 @@
+{
+  "name": "bootstrap-os",
+  "version": "0.1.0",
+  "description": "Preview pointer to published Bootstrap OS. Skills hyperlink the constitution. Path 1 stays the front door. Not a marketplace listing.",
+  "author": {
+    "name": "Ivelin Ivanov"
+  },
+  "homepage": "https://github.com/ivelin/bootstrap",
+  "repository": "https://github.com/ivelin/bootstrap",
+  "license": "Apache-2.0",
+  "keywords": ["bootstrap-os", "company-os", "preview"],
+  "variables": {
+    "type": "object",
+    "properties": {
+      "BOOTSTRAP_MCP_URL": {
+        "type": "string",
+        "title": "Hosted MCP URL",
+        "description": "Streamable HTTP URL of a preview read adapter you run from mcp/ (npm run start:http). No public mentee-ready host. Do not use mcp.pirin.ai."
+      }
+    },
+    "required": ["BOOTSTRAP_MCP_URL"]
+  }
+}

@@ -40,7 +40,8 @@ company-os/operating-system.md         company-os/live-runtime.md
 | [`templates/`](templates/) | Blank files to copy into *your* company repo when you instantiate |
 | [`examples/`](examples/) | Pointers to public live instances (illustration only) |
 | [`.grok/workflows/`](.grok/workflows/) | Optional Grok Build workflows (path 2) — company-operating-loop, user-research, ready-for-human-eyes |
-| [`mcp/`](mcp/) | **Optional path 3** — local MCP adapter (one connector, isolated instances). Not a second OS. |
+| [`mcp/`](mcp/) | **Optional path 3** — local MCP adapter (one connector, isolated instances). Not a second OS. HTTP read transport is preview only. |
+| [`plugin/`](plugin/) | **Preview** Cursor/Grok Agent Plugin — skills hyperlink this pack. Not a marketplace listing. |
 
 This repo is **template only**. Filled company state never lives here.
 
@@ -79,9 +80,13 @@ cd mcp && npm install && npm run build
 
 One stdio connector, many `companyId`s: [`mcp/README.md`](mcp/README.md). MCP never writes `company-os/` template files.
 
-### 4. Hosted MCP (later)
+### 4. Hosted MCP (preview — not mentee-ready)
 
-A hosted MCP may exist later. Nothing to connect to today.
+A **preview** plugin lives in [`plugin/`](plugin/): thin skills that hyperlink this repo, plus an optional Streamable HTTP **read** adapter in [`mcp/`](mcp/). It is not a marketplace listing. It is not a second front door. Path 1 stays default.
+
+The hosted slice is read-only: OS info, docs, house-rule pins. Markdown on GitHub remains the constitution. Founder `company-state` stays on path 3 local stdio — not on a shared server.
+
+There is **no public mentee-ready host**. No day-one SaaS boards. Set `BOOTSTRAP_MCP_URL` only if you run the preview adapter yourself (`cd mcp && npm run start:http`). Do not use `mcp.pirin.ai` (dead placeholder).
 
 ---
 
@@ -149,12 +154,13 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 |-----|---------|
 | Operating system blueprint | **v2.8.7** |
 | Live runtime | **v2.8.7** |
-| Optional local MCP (path 3) | **v0.2** — adapter only; not a second OS |
+| Optional local MCP (path 3) | **v0.2** — adapter only; not a second OS. HTTP read transport is preview. |
+| Preview plugin | **0.1.0** — [`plugin/`](plugin/). Skills hyperlink this pack. Not a marketplace listing. |
 
 ### Recent portable additions
 
 **v2.8.7 — a security program cannot promote**  
-House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-a-security-program-cannot-promote).
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-a-security-program-cannot-promote). Preview plugin pointer (not a house rule): [`plugin/`](plugin/) — hyperlinks only; no marketplace; hosted read adapter is preview, not mentee-ready boards.
 
 **v2.8.6 — marketing volume cannot promote**  
 House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](company-os/operating-system.md#how-this-os-may-change-stability-contract)
@@ -191,6 +197,7 @@ Light synthetic product sandbox + real interest tests before heavy build.
 - Hands-on install: [Install Bootstrap OS intensive](https://pirin.ai/install-os)  
 - Public live instances (illustration only): see [`examples/`](examples/)
 - Optional local MCP (path 3): [`mcp/README.md`](mcp/README.md)
+- Preview plugin (not a marketplace): [`plugin/`](plugin/)
 - Starter legal templates (hyperlink only): [operating-system.md](company-os/operating-system.md#starter-legal-templates)
 - Cap-table modeler (hyperlink only): [operating-system.md](company-os/operating-system.md#cap-table-modeler)
 
