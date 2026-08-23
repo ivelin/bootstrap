@@ -171,7 +171,7 @@ else
   not_ok "README: Point an AI must appear before ./scripts/install-instance.sh"
 fi
 
-if grep -q 'No public mentee-ready host' README.md \
+if grep -qi 'no public mentee-ready host' README.md \
   && grep -q 'plugin/' README.md \
   && grep -q 'Path 1 stays' README.md \
   && ! grep -q 'https://mcp.pirin.ai' README.md; then
