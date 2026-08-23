@@ -76,3 +76,27 @@ export function likertOrNakedDollarWtpAllowed(): false {
 export function marketingVolumeMayPromote(): false {
   return false;
 }
+
+/** Pins only — full essays live in the published OS. */
+export const HOUSE_RULE_PINS = [
+  {
+    id: "observed-wins-spoken-yes",
+    pin: "Weigh stated / synthetic / observed. Observed wins. A spoken yes cannot promote.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#how-to-do-honest-research--validation",
+  },
+  {
+    id: "several-ideas",
+    pin: "Several ideas are allowed. Rank and kill per board.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#core-beliefs",
+  },
+  {
+    id: "marketing-volume-2.8.6",
+    pin: "Marketing volume cannot promote.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-marketing-volume-cannot-promote",
+  },
+  {
+    id: "security-program-2.8.7",
+    pin: "A security program cannot promote.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-a-security-program-cannot-promote",
+  },
+] as const;

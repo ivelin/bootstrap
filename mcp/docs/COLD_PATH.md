@@ -3,7 +3,7 @@
 **Goal:** On a clean machine, go from zero → working multi-company control plane in under 15 minutes.  
 **Pass criteria for gate M2:** someone who did **not** write this code completes the path and records evidence below.
 
-This is **optional path 3**. Path 1 is still point an AI at https://github.com/ivelin/bootstrap (no install). Path 2 is optional instance/CLI. Hosted MCP does not exist.
+This is **optional path 3**. Path 1 is still point an AI at https://github.com/ivelin/bootstrap (no install). Path 2 is optional instance/CLI. Hosted read adapter is preview only — no public mentee-ready host.
 
 ---
 
@@ -32,14 +32,15 @@ npm ci
 npm run ci
 ```
 
-Expected: typecheck, build, unit tests (including OS 2.8.6 house rules), cold-path smoke, **stdio MCP client smoke** all pass.
+Expected: typecheck, build, unit tests (including OS 2.8.6 house rules), cold-path smoke, **stdio MCP client smoke**, **HTTP hosted-read smoke** all pass.
 
 What `npm run ci` proves without a GUI:
 
 1. Package builds on Node 20/22  
 2. Phase gate + isolation + refuse-external-ask  
 3. Markdown templates intact  
-4. Real stdio JSON-RPC: list tools → init companies → use → update (gated) → refuse  
+4. Real stdio JSON-RPC: list tools → init companies → use → update (gated) → refuse
+5. HTTP read adapter serves OS info/docs without a local clone; write tools absent  
 
 ---
 

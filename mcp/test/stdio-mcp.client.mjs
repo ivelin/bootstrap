@@ -76,6 +76,7 @@ async function main() {
       "bootstrap_update_state",
       "bootstrap_refuse_external_ask_if_not_green",
       "bootstrap_get_ai_instructions",
+      "bootstrap_house_rule_pins",
     ];
     for (const n of required) {
       assert.ok(names.includes(n), `missing tool ${n}`);
@@ -86,7 +87,9 @@ async function main() {
     assert.equal(info.mcpVersion, "0.2.0");
     assert.equal(info.osVersion, "2.8.7");
     assert.equal(path.resolve(info.paths.dataRoot), path.resolve(dataRoot));
-    assert.match(JSON.stringify(info.adoptionOrder), /Nothing to connect to today/);
+    assert.match(JSON.stringify(info.adoptionOrder), /No public mentee-ready host/);
+    assert.match(JSON.stringify(info.adoptionOrder), /Path 1 stays the front door/);
+    assert.equal(info.marketplace, false);
     assert.match(JSON.stringify(info.houseRules), /observed wins/i);
     assert.match(JSON.stringify(info.houseRules), /spoken yes cannot promote/i);
     assert.match(JSON.stringify(info.houseRules), /marketing volume cannot promote/i);

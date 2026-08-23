@@ -5,12 +5,14 @@ on:
     branches: [main, "feat/**"]
     paths:
       - "mcp/**"
+      - "plugin/**"
       - "company-os/**"
       - "templates/**"
       - ".github/workflows/mcp-ci.yml"
   pull_request:
     paths:
       - "mcp/**"
+      - "plugin/**"
       - "company-os/**"
       - "templates/**"
       - ".github/workflows/mcp-ci.yml"
@@ -58,6 +60,9 @@ jobs:
 
       - name: Stdio MCP client smoke (M1 protocol)
         run: node test/stdio-mcp.client.mjs
+
+      - name: HTTP hosted-read smoke (no local clone)
+        run: node test/http-mcp.client.mjs
 
       - name: Dist hygiene (no source maps required; entry exists)
         run: |

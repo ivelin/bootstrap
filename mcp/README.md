@@ -2,14 +2,14 @@
 
 **What this is / is not:** see root [`ROADMAP.md` §0](../ROADMAP.md) — MCP is optional adapter furniture to the control plane, not a second OS, harness, memory product, or hosted service.
 
-**Markdown is the constitution.** Front door is still **path 1**: point an AI at https://github.com/ivelin/bootstrap — no install. Path 2 is optional instance files / CLI + `.grok/workflows`. **This package is path 3 only.** Several ideas are allowed. Each `companyId` is its own board. Do not hide a second idea to look focused. Rank and kill per board. Hosted MCP does not exist.
+**Markdown is the constitution.** Front door is still **path 1**: point an AI at https://github.com/ivelin/bootstrap — no install. Path 2 is optional instance files / CLI + `.grok/workflows`. **This package is path 3 (stdio writes) plus a preview HTTP read adapter.** Several ideas are allowed. Each `companyId` is its own board. Do not hide a second idea to look focused. Rank and kill per board. There is no public mentee-ready host.
 
 | Path | Who it is for | Dependency |
 |------|----------------|------------|
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
 | **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
-| **4. Hosted MCP** | Nobody today | Does not exist. Nothing to connect to today. |
+| **4. Hosted MCP** | Preview only | HTTP read adapter + [`../plugin/`](../plugin/). No public mentee-ready host. No marketplace. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
@@ -130,18 +130,20 @@ See [`config/mcp.stdio.example.json`](config/mcp.stdio.example.json).
 }
 ```
 
-### Hosted (does not exist)
+### Hosted read (preview)
 
-A hosted URL is not available. Nothing to connect to today. If one ships later, tool names + company isolation stay stable. Do not treat any example URL as live.
+Same package, Streamable HTTP transport: `npm run start:http`. Read tools only (`bootstrap_os_info`, docs, house-rule pins). Fetches the published repo. Does **not** host founder `company-state`. Write / init / use-company stay stdio.
+
+Set `BOOTSTRAP_MCP_URL` in the preview plugin if you run this yourself. [`config/mcp.hosted.example.json`](config/mcp.hosted.example.json) is a placeholder — `mcp.pirin.ai` is dead. No public mentee-ready host. Path 1 stays the front door.
 
 ---
 
 ## Privacy
 
-| Data | Local MCP (path 3) | Hosted (does not exist) |
+| Data | Local MCP (path 3) | Hosted read (preview) |
 |------|--------------------|-------------------------|
-| Blueprint | Read from your clone | Nothing to connect to today |
-| Company state | Disk under data root, **per company** | Future-only if ever shipped |
+| Blueprint | Read from your clone | Fetch published GitHub repo |
+| Company state | Disk under data root, **per company** | **Not hosted** |
 | Cross-tenant | **Denied** | **Denied** |
 | Leaderboards | Out of scope | Never |
 
@@ -153,7 +155,7 @@ A hosted URL is not available. Nothing to connect to today. If one ships later, 
 - Auto-advancing journey phases
 - Blended multi-idea scoreboard
 - Writing into `company-os/` template files
-- Hosted service (does not exist)
+- Public mentee-ready hosted boards (preview read adapter only)
 - Weekly market-radar jobs
 - Seeding personas from a demographic one-liner
 - Likert or naked-dollar WTP from a sim
@@ -177,6 +179,8 @@ High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROAD
 | `npm run test:unit` | Hard-rule unit tests (phase gate, isolation, policy, markdown path) |
 | `npm run test:smoke` | Cold-path multi-company smoke |
 | `npm run test:stdio` | Real stdio MCP client (M1 protocol) |
+| `npm run test:http` | Streamable HTTP hosted-read (no local clone) |
+| `npm run start:http` | Preview HTTP read adapter |
 | `npm run ci` | Full local CI mirror |
 
 Merge gates and manual checklist: [`QA.md`](QA.md).

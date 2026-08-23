@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   HOUSE_RULE_LINES,
+  HOUSE_RULE_PINS,
   weighResearchInputs,
   spokenYesMayPromote,
   demographicOneLinerIsValidSeed,
@@ -26,6 +27,10 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Rank and kill per board/);
     assert.match(blob, /Marketing volume cannot promote/);
     assert.match(blob, /A security program cannot promote/);
+    const pins = JSON.stringify(HOUSE_RULE_PINS);
+    assert.match(pins, /github.com\/ivelin\/bootstrap/);
+    assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
+    assert.match(pins, /house-rule-a-security-program-cannot-promote/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {

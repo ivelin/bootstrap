@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "bootstrap-os": {
-      "url": "https://mcp.pirin.ai/bootstrap-os",
-      "_comment": "Hosted MCP does not exist. Nothing to connect to today. Placeholder only."
+    "bootstrap-os-hosted-read": {
+      "url": "${BOOTSTRAP_MCP_URL}",
+      "_comment": "Preview read adapter only. No public host. DEAD do-not-use: https://mcp.pirin.ai/bootstrap-os. Run `cd mcp && npm run start:http` and set BOOTSTRAP_MCP_URL. Write/init/use-company stays path 3 stdio. Not mentee-ready hosted boards."
     }
   }
 }

@@ -1,6 +1,6 @@
 # M1 — MCP client connect checklist
 
-Optional **path 3** only. Path 1 (point an AI at the GitHub pack) stays the front door. Hosted MCP does not exist.
+Optional **path 3** only. Path 1 (point an AI at the GitHub pack) stays the front door. Hosted read adapter is preview only — no public mentee-ready host.
 
 Automated companion: `npm run test:stdio` (spawns server + official SDK client over stdio).
 
