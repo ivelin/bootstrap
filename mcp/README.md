@@ -140,8 +140,10 @@ Public preview is `*.vercel.app` (project `bootstrap-os-mcp` under `ivelins-proj
 
 ```bash
 cd mcp
-npx vercel --prod --yes --name bootstrap-os-mcp --scope ivelins-projects-9f9b7132
+npx vercel --prod --yes --scope ivelins-projects-9f9b7132
 ```
+
+First time: create project `bootstrap-os-mcp` in that team (CLI may prompt for the name; `--name` is deprecated). Never `v0-pirin-ai-founder-studio`.
 
 Never deploy this adapter to `v0-pirin-ai-founder-studio` or any pirin.ai host.
 

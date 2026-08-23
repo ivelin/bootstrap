@@ -26,5 +26,7 @@ Deploy recipe (new Vercel project `bootstrap-os-mcp` only):
 
 ```bash
 cd mcp
-npx vercel --prod --yes --name bootstrap-os-mcp --scope ivelins-projects-9f9b7132
+npx vercel --prod --yes --scope ivelins-projects-9f9b7132
 ```
+
+Create project `bootstrap-os-mcp` in that team. Never `v0-pirin-ai-founder-studio`.
