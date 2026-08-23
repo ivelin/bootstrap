@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "bootstrap-os": {
-      "url": "https://mcp.pirin.ai/bootstrap-os",
-      "_comment": "Hosted MCP does not exist. Nothing to connect to today. Placeholder only."
+    "bootstrap-os-hosted-read": {
+      "url": "https://bootstrap-os-mcp.vercel.app/mcp",
+      "_comment": "Preview read adapter on *.vercel.app. Override with BOOTSTRAP_MCP_URL if needed. DEAD do-not-use: https://mcp.pirin.ai/bootstrap-os. Write/init/use-company stays path 3 stdio. Not mentee-ready hosted boards."
     }
   }
 }

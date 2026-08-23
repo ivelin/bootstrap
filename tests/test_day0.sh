@@ -171,10 +171,14 @@ else
   not_ok "README: Point an AI must appear before ./scripts/install-instance.sh"
 fi
 
-if grep -q 'Nothing to connect to today' README.md; then
-  ok "README hosted MCP honesty (Nothing to connect to today)"
+if grep -qi 'not mentee-ready' README.md \
+  && grep -q 'plugin/' README.md \
+  && grep -q 'Path 1 stays' README.md \
+  && grep -q 'vercel.app' README.md \
+  && ! grep -q 'https://mcp.pirin.ai' README.md; then
+  ok "README hosted MCP honesty (preview vercel.app, not mentee-ready, not pirin.ai)"
 else
-  not_ok "README missing Nothing to connect to today"
+  not_ok "README must stay honest: preview vercel.app host, not mentee-ready boards, not pirin.ai"
 fi
 
 # --- g) evidence-label refinements (stated / synthetic / observed) ---
@@ -564,6 +568,60 @@ if grep -q '^\*\*Version:\*\* 2.8.7' company-os/operating-system.md \
   ok "OS 2.8.7 section exists; first-hour and ai-instructions link to it"
 else
   not_ok "2.8.7 must live in the OS section with first-hour and ai-instructions pointers"
+fi
+
+# --- r) preview plugin: manifests + hyperlink-only skills; no marketplace ---
+if [ -f plugin/plugin.json ] && [ -f plugin/mcp.json ] \
+  && [ -f plugin/.cursor-plugin/plugin.json ] \
+  && [ -f mcp/vercel.json ] && [ -f mcp/api/mcp.ts ] && [ -f mcp/api/health.ts ] \
+  && [ -f plugin/skills/path-1-default/SKILL.md ] \
+  && [ -f plugin/skills/house-rule-pins/SKILL.md ] \
+  && [ -f plugin/skills/first-hour/SKILL.md ]; then
+  ok "plugin manifests and thin skills exist"
+else
+  not_ok "plugin/ must have plugin.json, mcp.json, .cursor-plugin/plugin.json, and three skills"
+fi
+if python3 - <<'PY'
+import json, pathlib, sys
+root = pathlib.Path("plugin")
+plugin = json.loads((root / "plugin.json").read_text())
+assert plugin["name"] == "bootstrap-os"
+assert plugin["version"] == "0.1.0"
+assert plugin["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+mcp = json.loads((root / "mcp.json").read_text())
+server = mcp["mcpServers"]["bootstrap-os"]
+assert server["type"] == "streamable-http"
+assert server["url"].startswith("https://")
+assert server["url"].endswith("/mcp")
+assert ".vercel.app/" in server["url"]
+assert "pirin.ai" not in server["url"]
+assert "command" not in server
+raw = (root / "mcp.json").read_text()
+assert "mcp.pirin.ai" not in raw
+assert "npx" not in raw
+assert not (root / "marketplace.json").exists()
+assert not pathlib.Path(".cursor-plugin/marketplace.json").exists()
+forbidden = [
+    "Text eight people",
+    "waitlist of 400",
+    "does not mean get a crowd looking",
+    "Dense leftover text is good",
+]
+for skill in (root / "skills").glob("*/SKILL.md"):
+    body = skill.read_text()
+    assert "https://github.com/ivelin/bootstrap" in body, skill
+    assert len(body) < 1600, skill
+    for phrase in forbidden:
+        assert phrase not in body, (skill, phrase)
+pins = (root / "skills/house-rule-pins/SKILL.md").read_text()
+assert "house-rule-marketing-volume-cannot-promote" in pins
+assert "house-rule-a-security-program-cannot-promote" in pins
+print("plugin lock ok")
+PY
+then
+  ok "plugin skills only hyperlink the published OS"
+else
+  not_ok "plugin must stay thin hyperlinks; no marketplace; no pirin.ai host"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

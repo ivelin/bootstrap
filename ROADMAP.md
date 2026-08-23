@@ -41,7 +41,7 @@
 | **Value** | Enforces P1–P4 (and later P5) across Cursor/Claude/Grok/etc. without re-pasting novels | Required for mentees; replacement for reading the blueprint |
 | **State** | Reads/writes **founder-owned** files (or future private store); template `company-os/` stays read-only | Multi-tenant social graph or public leaderboard backend |
 | **Local v0.1** | Stdio server in-repo; process tools + thin `company-state.json` | Hosted SaaS, auth product, or investor network |
-| **Hosted (maybe later)** | Same tool names; private by default; share **export/read** if proven | Day-one dependency; ranking; auto-ingest of all chats |
+| **Hosted (preview / maybe later)** | Preview: same read tool names; fetch published OS; no shared founder state. Mentee-ready boards later only if proven | Day-one dependency; ranking; auto-ingest of all chats |
 | **Noise policy** | Explicit tools only (milestone/decision/gate) | Auto skill creation, ambient memory, “agent built 40 skills today” |
 
 ### One stack picture
@@ -186,7 +186,7 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 | **1. Point an AI** | **Default forever** | https://github.com/ivelin/bootstrap — no install, no MCP |
 | **2. Optional instance / CLI + workflows** | **Shipped on main** | `./scripts/install-instance.sh` + optional `.grok/workflows` |
 | **3. Local MCP** | **v0.2 optional adapter** | One connector, isolated instances; same `company-state.json` + `where-are-we.py` |
-| **4. Hosted MCP** | **Later / does not exist** | Nothing to connect to today |
+| **4. Hosted MCP** | **Preview only — not mentee-ready** | `plugin/` + HTTP read adapter on `*.vercel.app` (project `bootstrap-os-mcp`). No marketplace. Not pirin.ai. No founder state on a shared server. Path 1 stays the front door. |
 
 MCP is **compass + logbook**, not a third harness.
 
@@ -251,7 +251,7 @@ Agents should start sessions with focus → do work → record when ready (`log_
 | **Ship only if** | Phase C dogfood green **and** real demand for shareable read-only export |
 | **Done means** | Same tools/names; founder owns revoke; no public ranking |
 | **Kill if** | Local export + Drive/git share is enough for dogfood cohort |
-| **Status** | **Hold** — not started |
+| **Status** | **Hold** — mentee-ready hosted boards not started. In-repo preview: HTTP read adapter + `plugin/` (not a marketplace, not a public host). |
 
 ---
 
@@ -546,7 +546,8 @@ T1 hooks (no new product):
 ## 9. Related
 
 - Process pack: [`company-os/`](company-os/)  
-- Optional MCP: [`mcp/README.md`](mcp/README.md)  
+- Optional MCP: [`mcp/README.md`](mcp/README.md)
+- Preview plugin: [`plugin/`](plugin/) — not a marketplace listing  
 - Template policy: [README](README.md#template-change-policy)  
 - PR (local MCP): https://github.com/ivelin/bootstrap/pull/1  
 

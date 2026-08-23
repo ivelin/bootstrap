@@ -3,6 +3,23 @@
 export const OS_VERSION = "2.8.7";
 export const MCP_VERSION = "0.2.0";
 
+/** Published constitution. Hosted read adapter fetches from here; do not embed copies. */
+export const PUBLISHED_REPO = "https://github.com/ivelin/bootstrap";
+export const PUBLISHED_BLOB_BASE = `${PUBLISHED_REPO}/blob/main`;
+export const PUBLISHED_RAW_BASE = "https://raw.githubusercontent.com/ivelin/bootstrap/main";
+
+export const HOSTED_READ_TOOL_NAMES = [
+  "bootstrap_os_info",
+  "bootstrap_list_docs",
+  "bootstrap_get_doc",
+  "bootstrap_get_ai_instructions",
+  "bootstrap_reference_clocks",
+  "bootstrap_house_rule_pins",
+] as const;
+
+export const PATH4_HONESTY =
+  "Preview only. plugin/ + HTTP read adapter exist. Public preview on *.vercel.app is not mentee-ready boards. No marketplace. Not pirin.ai. No founder company-state on a shared server. Path 1 stays the front door.";
+
 export const JOURNEY_PHASES: Record<number, string> = {
   1: "Thesis",
   2: "Success definitions",

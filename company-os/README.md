@@ -14,7 +14,7 @@ This folder is the **Bootstrap OS** blueprint and runtime shape. It is not any o
 **Repo overview & adopt order:** [`../README.md`](../README.md) — path 1 point-an-AI, path 2 optional install.
 
 Optional Grok Build workflows live in [`../.grok/workflows/`](../.grok/workflows/).  
-Optional local MCP (path 3, several ideas only): [`../mcp/README.md`](../mcp/README.md). Not required. Hosted MCP does not exist.
+Optional local MCP (path 3, several ideas only): [`../mcp/README.md`](../mcp/README.md). Not required. Preview plugin: [`../plugin/`](../plugin/). Hosted read adapter is preview only — no public mentee-ready host.
 
 ### Mental model
 

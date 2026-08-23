@@ -1,28 +1,33 @@
 {
   "name": "@pirin/bootstrap-os-mcp",
   "version": "0.2.0",
-  "description": "Optional local MCP server for Bootstrap OS \u2014 one connector, many isolated company instances. Markdown remains source of truth.",
+  "description": "Optional local MCP server for Bootstrap OS — one connector, many isolated company instances. Markdown remains source of truth.",
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
-    "bootstrap-os-mcp": "./dist/index.js"
+    "bootstrap-os-mcp": "./dist/index.js",
+    "bootstrap-os-mcp-http": "./dist/http.js"
   },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:http": "node dist/http.js",
+    "deploy:http": "vercel --prod --yes --scope ivelins-projects-9f9b7132",
     "dev": "tsc && node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs",
-    "test:unit": "node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs",
+    "test": "npm run build && node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs test/docs-remote.test.mjs test/plugin-hyperlinks.test.mjs test/hosted-handler.test.mjs",
+    "test:unit": "node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs test/docs-remote.test.mjs test/plugin-hyperlinks.test.mjs test/hosted-handler.test.mjs",
     "test:smoke": "npm run build && node test/cold-path.smoke.mjs",
     "test:stdio": "npm run build && node test/stdio-mcp.client.mjs",
-    "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs"
+    "test:http": "npm run build && node test/http-mcp.client.mjs",
+    "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs && node test/http-mcp.client.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.0",
+    "hono": "^4.13.3",
     "zod": "^3.24.0"
   },
   "devDependencies": {

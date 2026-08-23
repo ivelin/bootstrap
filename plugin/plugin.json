@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "bootstrap-os",
+  "version": "0.1.0",
+  "description": "Preview pointer to published Bootstrap OS. Skills hyperlink the constitution. Path 1 stays the front door. Not a marketplace listing. Not mentee-ready hosted boards.",
+  "author": {
+    "name": "Ivelin Ivanov",
+    "url": "https://github.com/ivelin"
+  },
+  "homepage": "https://github.com/ivelin/bootstrap",
+  "repository": "https://github.com/ivelin/bootstrap",
+  "license": "Apache-2.0",
+  "keywords": ["bootstrap-os", "company-os", "preview"]
+}

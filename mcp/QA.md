@@ -11,6 +11,7 @@
 | Unit tests | `npm run test:unit` | phase gate, isolation, policy, markdown path |
 | Cold-path smoke | `node test/cold-path.smoke.mjs` | multi-company + refuse external ask + no template writes |
 | **Stdio MCP client (M1 protocol)** | `node test/stdio-mcp.client.mjs` | official SDK client over stdio: tools, init, phase gate, refuse |
+| **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 
 Local full CI mirror:
@@ -28,7 +29,7 @@ cd mcp && npm ci && npm run ci
 5. Markdown path (point-an-AI / optional install) works with **zero** MCP usage.
 6. Stdio MCP protocol serves the full tool surface to a real client.
 7. OS 2.8.6 house rules: stated / synthetic / observed (observed wins); spoken yes cannot promote; no demographic one-liner seed; no Likert / naked dollar WTP; several ideas allowed (rank and kill per board); marketing volume cannot promote.
-8. Same state furniture: instance gets `company-state.json` + `where-are-we.py` (and schema). Hosted MCP does not exist.
+8. Same state furniture: instance gets `company-state.json` + `where-are-we.py` (and schema). Hosted read adapter is preview only — no founder state on a shared server.
 
 ## Manual (before ready-for-review)
 
@@ -43,11 +44,11 @@ cd mcp && npm ci && npm run ci
 
 ## SRE / ops notes
 
-- **Runtime:** Node ≥20, stdio MCP only (no network server in v0.2).
+- **Runtime:** Node ≥20. Stdio is the write path. `npm run start:http` is a preview read adapter (no company-state).
 - **State:** founder-owned disk under `BOOTSTRAP_DATA_ROOT` (default `~/.bootstrap-os`).
 - **Failure modes:** missing state file, unknown companyId, template demo mode when no instance — tools return structured errors, not silent success.
 - **Secrets:** do not put API keys in company state; traces may be shared carefully (no PII).
-- **Rollback:** path 1 (point an AI) remains the default forever; disable MCP client config to fall back. Hosted MCP does not exist.
+- **Rollback:** path 1 (point an AI) remains the default forever; disable MCP client config to fall back. Hosted read adapter is preview only.
 - **Runbooks:** [`docs/COLD_PATH.md`](docs/COLD_PATH.md), [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md)
 
 ## Exit criteria for this PR
