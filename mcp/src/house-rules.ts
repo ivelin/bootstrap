@@ -21,6 +21,7 @@ export const HOUSE_RULE_LINES = [
   "Marketing volume cannot promote.",
   "A security program cannot promote.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
+  "Empty context with no founder update: do not invent their stage. Write unknown / none yet.",
 ] as const;
 
 export function weighResearchInputs(input: {
@@ -62,6 +63,16 @@ export function weighResearchInputs(input: {
 }
 
 export function spokenYesMayPromote(): false {
+  return false;
+}
+
+/** Empty context, no founder update — do not invent journey or loop stage. */
+export function emptyContextMayInventStage(): false {
+  return false;
+}
+
+/** A spoken yes or verbal maybe is stated, not GTM / traction. */
+export function spokenYesIsGtm(): false {
   return false;
 }
 

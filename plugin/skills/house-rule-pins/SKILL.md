@@ -1,13 +1,13 @@
 ---
 name: house-rule-pins
-description: Pin published Bootstrap OS house rules by link. Use before treating a spoken yes, a crowd, a security program, or a second idea as proof.
+description: Pin published Bootstrap OS house rules by link. Use when a specialist asks whether a customer conversation, spoken yes, or verbal maybe counts as GTM or traction. Also use before treating a crowd, a security program, or a second idea as proof. Refuse and cite the OS.
 ---
 
 # House-rule pins
 
-When to use: before promoting on words, volume, a security program, or a hidden second idea.
+When to use: GTM/traction from a conversation; spoken yes / verbal maybe; volume; a security program; a hidden second idea.
 
-Full text lives in the OS.
+Full text lives in the OS. Refuse. Cite the link.
 
 - Observed wins; spoken yes cannot promote — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#how-to-do-honest-research--validation
 - Several ideas are allowed — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#core-beliefs

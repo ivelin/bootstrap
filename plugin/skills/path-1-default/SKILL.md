@@ -1,6 +1,6 @@
 ---
 name: path-1-default
-description: Default Bootstrap OS start. Use when a founder asks how to begin, which path to pick, or whether they need MCP or this plugin. Point an AI at the published repo. Path 1 stays the front door.
+description: Default Bootstrap OS start. Use when a founder asks how to begin, which path to pick, or whether they need MCP or this plugin. Point an AI at the published repo. If they install, it is this plugin plus https://bootstrap-os-mcp.vercel.app/mcp only. Path 1 stays the front door.
 ---
 
 # Path 1

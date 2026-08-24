@@ -95,8 +95,8 @@ function registerReadTools(server: McpServer, surface: McpSurface) {
         marketplace: false,
         pluginPreview: {
           path: "plugin/",
-          version: "0.1.0",
-          note: "Preview Agent Plugin. Skills hyperlink the published OS. Not a marketplace listing. Not a second front door.",
+          version: "0.1.1",
+          note: "Preview Agent Plugin 0.1.1. Skills hyperlink the published OS. Team Import from Repo only — not a public catalog submit. Not mentee-ready hosted boards. Path 1 stays the front door.",
         },
       };
 

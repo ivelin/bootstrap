@@ -9,7 +9,7 @@
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
 | **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
-| **4. Hosted MCP** | Preview only | HTTP read adapter on `*.vercel.app` + [`../plugin/`](../plugin/). Not mentee-ready boards. No marketplace. Not pirin.ai. |
+| **4. Hosted MCP** | Preview only | HTTP read adapter on `*.vercel.app` + [`../plugin/`](../plugin/). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
@@ -136,7 +136,7 @@ Same package. Production entry is the Vercel request handler (`api/mcp.ts` + `ap
 
 Read tools only (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). Does **not** host founder `company-state`. Write / init / use-company stay stdio.
 
-Public preview is `*.vercel.app` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Not mentee-ready boards. Not a marketplace. Not pirin.ai. Path 1 stays the front door.
+Public preview is `*.vercel.app` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
 
 ```bash
 cd mcp

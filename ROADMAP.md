@@ -186,7 +186,7 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 | **1. Point an AI** | **Default forever** | https://github.com/ivelin/bootstrap — no install, no MCP |
 | **2. Optional instance / CLI + workflows** | **Shipped on main** | `./scripts/install-instance.sh` + optional `.grok/workflows` |
 | **3. Local MCP** | **v0.2 optional adapter** | One connector, isolated instances; same `company-state.json` + `where-are-we.py` |
-| **4. Hosted MCP** | **Preview only — not mentee-ready** | `plugin/` + HTTP read adapter on `*.vercel.app` (project `bootstrap-os-mcp`). No marketplace. Not pirin.ai. No founder state on a shared server. Path 1 stays the front door. |
+| **4. Hosted MCP** | **Preview only — not mentee-ready** | `plugin/` + HTTP read adapter on `*.vercel.app` (project `bootstrap-os-mcp`). No public catalog submit (team Import from Repo only). Not pirin.ai. No founder state on a shared server. Path 1 stays the front door. |
 
 MCP is **compass + logbook**, not a third harness.
 
@@ -251,7 +251,7 @@ Agents should start sessions with focus → do work → record when ready (`log_
 | **Ship only if** | Phase C dogfood green **and** real demand for shareable read-only export |
 | **Done means** | Same tools/names; founder owns revoke; no public ranking |
 | **Kill if** | Local export + Drive/git share is enough for dogfood cohort |
-| **Status** | **Hold** — mentee-ready hosted boards not started. In-repo preview: HTTP read adapter + `plugin/` (not a marketplace, not a public host). |
+| **Status** | **Hold** — mentee-ready hosted boards not started. In-repo preview: HTTP read adapter + `plugin/` (team Import from Repo only — not a public catalog submit, not a public host). |
 
 ---
 
@@ -547,7 +547,7 @@ T1 hooks (no new product):
 
 - Process pack: [`company-os/`](company-os/)  
 - Optional MCP: [`mcp/README.md`](mcp/README.md)
-- Preview plugin: [`plugin/`](plugin/) — not a marketplace listing  
+- Preview plugin: [`plugin/`](plugin/) — team Import from Repo only; not a public catalog submit  
 - Template policy: [README](README.md#template-change-policy)  
 - PR (local MCP): https://github.com/ivelin/bootstrap/pull/1  
 
