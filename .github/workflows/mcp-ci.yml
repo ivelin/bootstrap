@@ -64,6 +64,9 @@ jobs:
       - name: HTTP hosted-read smoke (no local clone)
         run: node test/http-mcp.client.mjs
 
+      - name: Live public pin (mentee-visible Vercel host)
+        run: node test/preview-live.mjs
+
       - name: Dist hygiene (no source maps required; entry exists)
         run: |
           test -f dist/index.js

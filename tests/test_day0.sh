@@ -578,10 +578,11 @@ if [ -f plugin/plugin.json ] && [ -f plugin/mcp.json ] \
   && [ -f plugin/skills/path-1-default/SKILL.md ] \
   && [ -f plugin/skills/house-rule-pins/SKILL.md ] \
   && [ -f plugin/skills/first-hour/SKILL.md ] \
-  && [ -f plugin/skills/query-os-first/SKILL.md ]; then
-  ok "plugin manifests, team marketplace listing, and thin skills exist"
+  && [ -f plugin/skills/query-os-first/SKILL.md ] \
+  && [ -f plugin/COVERAGE.md ]; then
+  ok "plugin manifests, team marketplace listing, thin skills, and coverage story exist"
 else
-  not_ok "plugin/ must have plugin.json, mcp.json, .cursor-plugin/plugin.json, query-os-first, and repo-root marketplace.json"
+  not_ok "plugin/ must have plugin.json, mcp.json, query-os-first, COVERAGE.md, and repo-root marketplace.json"
 fi
 if python3 - <<'PY'
 import json, pathlib, sys
@@ -646,6 +647,14 @@ assert "spoken yes" in standing
 assert "Do not speak as Ivelin" in standing
 assert "Do not host mentee" in standing
 assert "Path 1 stays the front door" in standing
+coverage = (root / "COVERAGE.md").read_text()
+assert "## Locked" in coverage
+assert "## Not locked" in coverage
+assert "## Visitor matrix" in coverage
+assert "https://bootstrap-os-mcp.vercel.app/mcp" in coverage
+assert "GET /health" in coverage
+assert "Rollback" in coverage
+assert "SSO" in coverage
 print("plugin lock ok")
 PY
 then

@@ -4,6 +4,8 @@ Preview package. Skills hyperlink the published OS. **Not** mentee-ready hosted 
 
 Path 1 stays default: point an AI at https://github.com/ivelin/bootstrap
 
+Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visitor matrix is only for surfaces a mentee agent is told to see. Git-branch Vercel preview is SSO-gated — use the public pin.
+
 ## Standing rule
 
 Mentee CoS and specialists query this plugin first when the ask is where a project sits on 0-1, whether something can promote, or whether a spoken yes is enough. Cite the published OS by link. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md).
