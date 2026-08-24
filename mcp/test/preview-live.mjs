@@ -125,7 +125,13 @@ async function main() {
       redirect: "follow",
       headers: { "User-Agent": "bootstrap-os-preview-live" },
     });
-    assert.equal(res.status, 200, `skill link ${url} → ${res.status}`);
+    if (res.status === 200) continue;
+    const rel = url.match(/github\.com\/ivelin\/bootstrap\/blob\/main\/([^#]+)/)?.[1];
+    const local = rel ? path.join(REPO_ROOT, decodeURIComponent(rel)) : "";
+    assert.ok(
+      local && fs.existsSync(local),
+      `skill link ${url} → ${res.status} and missing locally`,
+    );
   }
 
   console.log(

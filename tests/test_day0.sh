@@ -643,7 +643,7 @@ forbidden = [
     "long LTV model is fiction",
     "grind three years on a popcorn stand",
 ]
-required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first"}
+required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency"}
 found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
 assert required <= found, found
 for skill in (root / "skills").glob("*/SKILL.md"):
@@ -672,6 +672,15 @@ assert "is this price optimal" in standing
 assert "old SaaS playbook" in standing
 assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in standing
 assert "a price, or an LTV number" in standing
+assert "Exit without fences+proof" in standing
+assert "Two clocks" in standing
+gate = (root / "skills/after-proof-efficiency/SKILL.md").read_text()
+assert "ALL" in gate
+assert "fences" in gate
+assert "proof" in gate
+assert "efficiency or an exit" in gate
+assert "after-proof-efficiency.md" in gate
+assert "0.75 stop-spend" not in gate
 first = (root / "skills/first-hour/SKILL.md").read_text()
 assert "Install-first" in first or "install-first" in first
 assert "https://bootstrap-os-mcp.vercel.app/mcp" in first
@@ -680,8 +689,15 @@ assert "No database" in first
 assert "day-0-lifestyle-or-swinging-for-the-fences" in first
 path1 = (root / "skills/path-1-default/SKILL.md").read_text()
 assert "day-0-lifestyle-or-swinging-for-the-fences" in path1
+assert "1.0 may-spend" not in first
+assert "1.0 may-spend" not in path1
+assert "NRR" not in first
+assert "NRR" not in path1
+assert "after-proof-efficiency.md" not in first
+assert "after-proof-efficiency.md" not in path1
 readme = (root / "README.md").read_text()
 assert "Merge-gate visitor matrix" in readme
+assert "After-proof efficiency visitor matrix" in readme
 assert "do not invent their stage" in readme
 coverage = (root / "COVERAGE.md").read_text()
 assert "## Locked" in coverage
@@ -696,6 +712,9 @@ assert "SSO" in coverage
 assert "2.8.8" in coverage
 assert "there is no optimal price until people have paid and stayed" in coverage
 assert "lifestyle or swinging for the fences" in coverage
+assert "After-proof efficiency visitor matrix" in coverage
+assert "afterProofEfficiencyPageMayOpen" in coverage
+assert "emptyContextMayInventEfficiencyMetrics" in coverage
 print("plugin lock ok")
 PY
 then
@@ -762,24 +781,27 @@ else
   not_ok "do not reprint the 2.8.8 house-rule essay outside operating-system.md"
 fi
 # Path 1 / Day 0 surfaces must not carry house-rule metrics or CAC/LTV targets.
-# Do not paste last-decade SaaS playbook targets as the aim (anywhere founders would take them as the aim).
+# Do not paste last-decade SaaS playbook targets as the aim on those surfaces.
 path1_block=$(sed -n '/^### 1. Point an AI at this pack/,/^### 2. Instantiate files/p' README.md)
-if ! printf '%s\n' "$path1_block" | grep -Eq 'CAC|LTV|day 31|day 90' \
-  && ! grep -Eq 'CAC|day 31|day 90' company-os/first-hour.md \
+day0_block=$(sed -n '/^## Day 0: lifestyle or swinging for the fences/,/^## How Mentors/p' company-os/operating-system.md)
+if ! printf '%s\n' "$path1_block" | grep -Eq 'CAC|LTV|day 31|day 90|NRR|magic number|0\.75 stop-spend' \
+  && ! grep -Eq 'CAC|day 31|day 90|NRR|magic number|0\.75 stop-spend' company-os/first-hour.md \
+  && ! printf '%s\n' "$day0_block" | grep -Eq 'CAC|NRR|magic number|0\.75 stop-spend|after-proof-efficiency' \
   && ! grep -q 'vc-scoreboard\|VC scoreboard\|top-shelf exit' \
     company-os/operating-system.md company-os/first-hour.md README.md \
     plugin/skills/*/SKILL.md; then
-  ok "Path 1 and first-hour have no CAC/LTV targets; no VC scoreboard page"
+  ok "Path 1, Day 0, and first-hour have no CAC/NRR/magic-number numbers"
 else
-  not_ok "Path 1 / first-hour must not carry CAC/LTV targets; do not start a VC scoreboard"
+  not_ok "Path 1 / Day 0 / first-hour must not carry CAC/NRR/magic-number numbers"
 fi
 if ! grep -Eq 'LTV:CAC|T2D3|Bessemer|magic-number|magic number' \
     company-os/operating-system.md company-os/first-hour.md \
-    company-os/ai-instructions.md README.md \
-    plugin/skills/*/SKILL.md mcp/src/house-rules.ts; then
-  ok "old SaaS playbook targets are not pasted as the aim"
+    company-os/ai-instructions.md \
+    plugin/skills/path-1-default/SKILL.md plugin/skills/first-hour/SKILL.md \
+    mcp/src/house-rules.ts; then
+  ok "old SaaS playbook targets are not pasted as the aim on Path 1 / Day 0 / OS pins"
 else
-  not_ok "do not paste LTV:CAC, T2D3, magic-number, or Bessemer tables as the aim"
+  not_ok "do not paste LTV:CAC, T2D3, magic-number, or Bessemer tables as the aim on Path 1 / Day 0"
 fi
 if grep -q 'old SaaS playbook' plugin/skills/house-rule-pins/SKILL.md \
   && grep -q 'old SaaS playbook' plugin/skills/query-os-first/SKILL.md \
@@ -790,6 +812,56 @@ if grep -q 'old SaaS playbook' plugin/skills/house-rule-pins/SKILL.md \
   ok "stay-current essay stays in the house-rule home; skills only pin"
 else
   not_ok "do not copy the stay-current essay onto Day 0 / Path 1 or into skills"
+fi
+
+# --- t) after-proof efficiency page (resource; not a house rule; not a version bump) ---
+eff=company-os/after-proof-efficiency.md
+if [ -f "$eff" ] \
+  && grep -q 'Dated:\*\* 2026-08-24' "$eff" \
+  && grep -q 'CAC payback (gross-margin adjusted)' "$eff" \
+  && grep -q 'NRR and GRR' "$eff" \
+  && grep -q 'Pilots fake NRR' "$eff" \
+  && grep -q 'Usage, not seats' "$eff" \
+  && grep -q 'Gross margin' "$eff" \
+  && grep -q 'Magic number only if margin-adjusted' "$eff" \
+  && grep -q '0.75 stop-spend' "$eff" \
+  && grep -q '1.0 may-spend' "$eff" \
+  && grep -q 'Benchmarkit 2026' "$eff" \
+  && grep -q 'https://www.benchmarkit.ai/2026-saas-ai-native-metrics' "$eff" \
+  && grep -q 'LTV:CAC 3x' "$eff" \
+  && grep -q 'dead as the aim' "$eff" \
+  && grep -q 'T2D3' "$eff" \
+  && grep -q 'Wiz-sized exit is not a goal' "$eff" \
+  && grep -q 'older than a year' "$eff" \
+  && grep -q 'Not a house rule' "$eff" \
+  && ! grep -q '^\*\*Version:\*\* 2.8.9' company-os/operating-system.md; then
+  ok "after-proof efficiency page is dated, five instruments, stale not the aim; no OS version bump"
+else
+  not_ok "company-os/after-proof-efficiency.md must be the single dated home"
+fi
+if grep -q '### After-proof efficiency (fences)' company-os/operating-system.md \
+  && grep -q 'after-proof-efficiency.md' company-os/operating-system.md \
+  && grep -q 'after-proof-efficiency.md' README.md \
+  && grep -q 'after-proof-efficiency.md' company-os/ai-instructions.md \
+  && grep -q 'after-proof-efficiency.md' company-os/README.md \
+  && grep -q 'after-proof-efficiency.md' company-os/live-runtime.md; then
+  ok "thin pins point at the after-proof efficiency home"
+else
+  not_ok "OS / README / ai-instructions / live-runtime must hyperlink the page"
+fi
+if ! grep -q 'after-proof-efficiency' company-os/first-hour.md \
+  && ! grep -q '0.75 stop-spend' company-os/first-hour.md \
+  && ! grep -q 'Benchmarkit' company-os/first-hour.md; then
+  ok "first-hour.md stays out of the after-proof efficiency page"
+else
+  not_ok "first-hour.md must stay out (Day 0 is thesis/ICP)"
+fi
+if grep -q 'After-proof efficiency visitor matrix' plugin/README.md \
+  && grep -q 'After-proof efficiency visitor matrix' plugin/COVERAGE.md \
+  && grep -q 'afterProofEfficiencyPageMayOpen' plugin/COVERAGE.md; then
+  ok "plugin README and COVERAGE name the after-proof visitor matrix"
+else
+  not_ok "plugin README and COVERAGE must name the after-proof visitor matrix"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

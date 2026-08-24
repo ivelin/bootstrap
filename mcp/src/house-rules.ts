@@ -24,6 +24,7 @@ export const HOUSE_RULE_LINES = [
   "SaaS 1.0 playbooks may be outdated. Stay current.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
   "Empty context with no founder update: do not invent their stage, a price, or an LTV number. Write unknown / none yet.",
+  "Do not invent after-proof efficiency metrics. Open that page only if fences + proof + they asked.",
 ] as const;
 
 export function weighResearchInputs(input: {

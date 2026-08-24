@@ -88,6 +88,7 @@ jobs:
             company-os/ready-for-human-eyes.md \
             company-os/ai-instructions.md \
             company-os/first-hour.md \
+            company-os/after-proof-efficiency.md \
             templates/company/state/company-state.json \
             templates/company/state/where-are-we.py \
             templates/applied-here.md

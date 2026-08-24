@@ -76,7 +76,13 @@ describe("preview plugin (hyperlink only)", () => {
   it("skills exist, stay thin, and only hyperlink the published OS", () => {
     const files = skillFiles();
     assert.ok(files.length >= 4, `expected thin skills, got ${files.length}`);
-    const required = ["path-1-default", "house-rule-pins", "first-hour", "query-os-first"];
+    const required = [
+      "path-1-default",
+      "house-rule-pins",
+      "first-hour",
+      "query-os-first",
+      "after-proof-efficiency",
+    ];
     for (const name of required) {
       assert.ok(
         files.some((f) => f.endsWith(`${path.sep}${name}${path.sep}SKILL.md`)),
@@ -121,5 +127,15 @@ describe("preview plugin (hyperlink only)", () => {
     const path1 = fs.readFileSync(path.join(PLUGIN, "skills", "path-1-default", "SKILL.md"), "utf8");
     assert.match(path1, /lifestyle or swinging for the fences/i);
     assert.match(path1, /day-0-lifestyle-or-swinging-for-the-fences/);
+    const efficiency = fs.readFileSync(
+      path.join(PLUGIN, "skills", "after-proof-efficiency", "SKILL.md"),
+      "utf8",
+    );
+    assert.match(efficiency, /ALL of|ALL three/);
+    assert.match(efficiency, /after-proof-efficiency\.md/);
+    assert.match(efficiency, /Two clocks/);
+    assert.doesNotMatch(path1, /CAC payback|NRR|0\.75 stop-spend/);
+    assert.doesNotMatch(firstHour, /CAC payback|NRR|0\.75 stop-spend/);
+    assert.doesNotMatch(efficiency, /0\.75 stop-spend/);
   });
 });

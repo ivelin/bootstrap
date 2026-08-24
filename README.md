@@ -33,6 +33,7 @@ company-os/operating-system.md         company-os/live-runtime.md
 | Path | What it is |
 |------|------------|
 | [`company-os/operating-system.md`](company-os/operating-system.md) | **Blueprint** — principles, 9 journey phases, gates, evidence labels, next pack, Ready for human eyes, growth pack |
+| [`company-os/after-proof-efficiency.md`](company-os/after-proof-efficiency.md) | **After proof** — five instruments (fences + they asked). Not Day 0. |
 | [`company-os/live-runtime.md`](company-os/live-runtime.md) | **Live OS shape** — durable state + 7-stage loop + eval harness ideas |
 | [`company-os/ready-for-human-eyes.md`](company-os/ready-for-human-eyes.md) | **Ship gate checklist** — cold URL + happy path before external product-test asks |
 | [`company-os/ai-instructions.md`](company-os/ai-instructions.md) | Thin enforcement layer — paste into `AGENTS.md` / Cursor / Claude / Grok |
@@ -159,6 +160,9 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 ### Recent portable additions
 
+**After proof — efficiency (fences)**  
+Resource page, not a house rule, not a version bump. Open only if fences + proof + they asked: [after-proof-efficiency.md](company-os/after-proof-efficiency.md).
+
 **v2.8.8 — there is no optimal price until people have paid and stayed**  
 House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. Stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not this essay): [lifestyle or swinging for the fences](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 
@@ -203,6 +207,7 @@ Light synthetic product sandbox + real interest tests before heavy build.
 - Preview plugin (team Import from Repo only — not a public catalog submit): [`plugin/`](plugin/)
 - Starter legal templates (hyperlink only): [operating-system.md](company-os/operating-system.md#starter-legal-templates)
 - Cap-table modeler (hyperlink only): [operating-system.md](company-os/operating-system.md#cap-table-modeler)
+- After-proof efficiency (hyperlink only; fences + proof + they asked): [after-proof-efficiency.md](company-os/after-proof-efficiency.md)
 
 ---
 

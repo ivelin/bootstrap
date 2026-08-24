@@ -519,6 +519,8 @@ Write growth/ROUND_* + decision trace; only then expand spend or add a second ch
 
 **Not in this pack:** deliverability ops, data-vendor stacks, channel-specific tooling, posting calendars, or platform promotion promises. Optional private motion notes after a channel is chosen — never core OS law.
 
+Efficiency or an exit after fences + proof: [`after-proof-efficiency.md`](after-proof-efficiency.md). Not Day 0. Not a third clock.
+
 ---
 
 ## Reward / Risk Thinking & Customer Group Ranking
@@ -1047,7 +1049,7 @@ Same family: [there is no optimal price until people have paid and stayed](#hous
 
 Someone saying you must find the optimal price from a handful-of-users survey, or stand up a CAC/LTV model before anyone has paid and stayed, is asking for **busy-looking fiction at 0→1** — not a price. Same family as a spoken yes cannot promote, [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote), and [a security program cannot promote](#house-rule-a-security-program-cannot-promote): a survey is not proof. There is no optimal price until people have paid and stayed. A survey of a handful of users will lie. Start with one price. Watch three numbers: how many start the trial, how many pay on day 31, how many are still paying on day 90. If almost everyone pays, raise it. If almost everyone leaves on day 31, the product is the problem or the price is. Do not optimize LTV until you have a year of that. Most 0→1 companies die; a long LTV model is fiction.
 
-SaaS 1.0 playbooks may be outdated in the AI era. Stay current. Do not guide to where the puck has been. This OS does not host last decade's SaaS tables as the aim. If a later page ever cites numbers, they must be dated current-year AI sources, not old tables.
+SaaS 1.0 playbooks may be outdated in the AI era. Stay current. Do not guide to where the puck has been. This OS does not host last decade's SaaS tables as the aim. If a later page ever cites numbers, they must be dated current-year AI sources, not old tables. That page: [`after-proof-efficiency.md`](after-proof-efficiency.md) — fences + proof + they asked. Not Day 0.
 
 | | Do this | Not this |
 |--|---------|----------|
@@ -1313,6 +1315,12 @@ Hyperlink only. This OS does not host copies.
 - For founders who have SAFEs or a priced-round term sheet. One upcoming financing.
 - Pro-rata not modeled. No prefs/waterfall.
 - If an AI models ownership, point it at that repo so the math is tested.
+
+### After-proof efficiency (fences)
+
+Not a house rule. Not Day 0. Hyperlink only.
+
+Open only if they chose fences, they have proof, and they asked about efficiency or an exit: [`after-proof-efficiency.md`](after-proof-efficiency.md). Otherwise two clocks.
 
 ---
 

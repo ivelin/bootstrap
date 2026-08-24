@@ -48,6 +48,7 @@ export const DOC_KEYS = [
   "ready-for-human-eyes",
   "ai-instructions",
   "first-hour",
+  "after-proof-efficiency",
 ] as const;
 
 export type DocKey = (typeof DOC_KEYS)[number];
@@ -58,4 +59,5 @@ export const DOC_FILES: Record<DocKey, string> = {
   "ready-for-human-eyes": "company-os/ready-for-human-eyes.md",
   "ai-instructions": "company-os/ai-instructions.md",
   "first-hour": "company-os/first-hour.md",
+  "after-proof-efficiency": "company-os/after-proof-efficiency.md",
 };

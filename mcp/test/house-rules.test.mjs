@@ -38,6 +38,7 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /do not invent their stage/i);
     assert.match(blob, /a price, or an LTV number/);
     assert.match(blob, /none yet/);
+    assert.match(blob, /Do not invent after-proof efficiency metrics/);
     const pins = JSON.stringify(HOUSE_RULE_PINS);
     assert.match(pins, /github.com\/ivelin\/bootstrap/);
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
