@@ -628,7 +628,10 @@ assert "escalation to Ivelin" in readme
 assert "not a public suggestion box" in readme
 assert "ivelin@pirin.ai" in readme
 assert readme.count("ivelin@pirin.ai") == 1
-assert "GitHub issue is not the escalate path" in readme
+assert "public GitHub issue on ivelin/bootstrap" in readme
+assert "Either path is fine" in readme
+assert "No mentee names" in readme
+assert "GitHub issue is not the escalate path" not in readme
 assert "Feedback does not auto-change house rules" in readme
 forbidden = [
     "Text eight people",
