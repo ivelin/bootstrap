@@ -623,6 +623,10 @@ assert "/add-plugin" in readme
 assert "we have not submitted" in readme.lower() or "We have not submitted" in readme
 assert "query-os-first" in readme
 assert "0-1" in readme
+assert "## Feedback" in readme
+assert "ivelin@pirin.ai" in readme
+assert readme.count("ivelin@pirin.ai") == 1
+assert "Feedback does not auto-change house rules" in readme
 forbidden = [
     "Text eight people",
     "waitlist of 400",
@@ -650,6 +654,8 @@ assert "verbal maybe" in standing
 assert "Do not speak as Ivelin" in standing
 assert "Do not host mentee" in standing
 assert "Path 1 stays the front door" in standing
+assert "plugin/README.md#feedback" in standing
+assert "ivelin@pirin.ai" not in standing
 first = (root / "skills/first-hour/SKILL.md").read_text()
 assert "Install-first" in first or "install-first" in first
 assert "https://bootstrap-os-mcp.vercel.app/mcp" in first

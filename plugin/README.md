@@ -47,6 +47,10 @@ Optional `${BOOTSTRAP_MCP_URL}` override; it defaults to that host. Read tools o
 
 Copy this `plugin/` folder to `~/.cursor/plugins/local/bootstrap-os`. Restart Cursor (or Developer: Reload Window).
 
+## Feedback
+
+If a rule is unclear or a milestone feels wrong, include the published OS URL, what you tried, and why it failed. Humans write ivelin@pirin.ai. Agents open a GitHub issue on ivelin/bootstrap with that same shape. Feedback does not auto-change house rules.
+
 ## What stays in this folder
 
 Portable Agent Plugin: `plugin.json` + `mcp.json` + `skills/`. Cursor may also read `.cursor-plugin/plugin.json`.

@@ -99,6 +99,8 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(standing, /Do not speak as Ivelin/);
     assert.match(standing, /Do not host mentee/);
     assert.match(standing, /Path 1 stays the front door/);
+    assert.match(standing, /plugin\/README\.md#feedback/);
+    assert.doesNotMatch(standing, /ivelin@pirin\.ai/);
     const firstHour = fs.readFileSync(path.join(PLUGIN, "skills", "first-hour", "SKILL.md"), "utf8");
     assert.match(firstHour, /Install-first|install-first/);
     assert.match(firstHour, /bootstrap-os-mcp\.vercel\.app\/mcp/);
