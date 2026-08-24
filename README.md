@@ -160,7 +160,7 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 ### Recent portable additions
 
 **v2.8.8 — there is no optimal price until people have paid and stayed**  
-House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. Day 0 / Path 1 question (not a house rule; not this essay): [lifestyle or swinging for the fences](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. Stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not this essay): [lifestyle or swinging for the fences](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 
 **v2.8.7 — a security program cannot promote**  
 House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-a-security-program-cannot-promote). Preview plugin pointer (not a house rule): [`plugin/`](plugin/) — hyperlinks only; team Import from Repo only, not a public catalog submit; hosted read adapter is preview, not mentee-ready boards.

@@ -124,6 +124,8 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     }
     assert.match(standing, /handful WTP/i);
     assert.match(standing, /LTV/);
+    assert.match(standing, /old SaaS playbook/);
+    assert.match(pins, /old SaaS playbook/);
     assert.match(standing, /do not invent their stage, a price, or an LTV number/);
     assert.match(pins, /Refuse/);
     assert.equal(handfulSurveyMaySetOptimalPrice(), false);

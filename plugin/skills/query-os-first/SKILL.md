@@ -5,7 +5,7 @@ description: Standing rule for mentee CoS and specialists. Call this plugin firs
 
 # Query Bootstrap OS first
 
-When to use: 0-1; GTM; spoken yes; empty context; is this price optimal; handful WTP; LTV/CAC at 0-1.
+When to use: 0-1; GTM; spoken yes; empty context; is this price optimal; handful WTP; LTV/CAC at 0-1; old SaaS playbook.
 
 Call this plugin first. Cite the published OS. Do not speak as Ivelin. Do not host mentee boards. Path 1 stays the front door.
 

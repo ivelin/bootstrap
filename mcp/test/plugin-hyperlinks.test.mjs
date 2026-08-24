@@ -16,6 +16,8 @@ const ESSAY_FORBIDDEN = [
   "still paying on day 90",
   "long LTV model is fiction",
   "grind three years on a popcorn stand",
+  "Do not guide to where the puck has been",
+  "dated current-year AI sources",
 ];
 
 function skillFiles() {
@@ -93,6 +95,7 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
     assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    assert.match(pins, /old SaaS playbook/);
     const standing = fs.readFileSync(
       path.join(PLUGIN, "skills", "query-os-first", "SKILL.md"),
       "utf8",
@@ -106,6 +109,7 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(standing, /Path 1 stays the front door/);
     assert.match(standing, /plugin\/README\.md#feedback/);
     assert.match(standing, /is this price optimal/);
+    assert.match(standing, /old SaaS playbook/);
     assert.match(standing, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
     assert.match(standing, /do not invent their stage, a price, or an LTV number/);
     assert.doesNotMatch(standing, /ivelin@pirin\.ai/);

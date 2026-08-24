@@ -1047,10 +1047,12 @@ Same family: [there is no optimal price until people have paid and stayed](#hous
 
 Someone saying you must find the optimal price from a handful-of-users survey, or stand up a CAC/LTV model before anyone has paid and stayed, is asking for **busy-looking fiction at 0→1** — not a price. Same family as a spoken yes cannot promote, [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote), and [a security program cannot promote](#house-rule-a-security-program-cannot-promote): a survey is not proof. There is no optimal price until people have paid and stayed. A survey of a handful of users will lie. Start with one price. Watch three numbers: how many start the trial, how many pay on day 31, how many are still paying on day 90. If almost everyone pays, raise it. If almost everyone leaves on day 31, the product is the problem or the price is. Do not optimize LTV until you have a year of that. Most 0→1 companies die; a long LTV model is fiction.
 
+SaaS 1.0 playbooks may be outdated in the AI era. Stay current. Do not guide to where the puck has been. This OS does not host last decade's SaaS tables as the aim. If a later page ever cites numbers, they must be dated current-year AI sources, not old tables.
+
 | | Do this | Not this |
 |--|---------|----------|
 | **One price** | Start with one price. Watch how many start the trial, how many pay on day 31, how many are still paying on day 90. | A handful survey for “optimal price” or willingness to pay. |
-| **Then move** | If almost everyone pays, raise it. If almost everyone leaves on day 31, the product is the problem or the price is. | A CAC/LTV model before you have a year of people who paid and stayed. |
+| **Then move** | If almost everyone pays, raise it. If almost everyone leaves on day 31, the product is the problem or the price is. | A CAC/LTV model before you have a year of people who paid and stayed. Last decade's SaaS playbook as the aim. |
 
 This rule applies whenever a founder sets a price. It is **not** a third clock, **not** Day 0 homework, and **not** only a hosted MCP pin.
 
@@ -1275,7 +1277,7 @@ Every company should maintain its own list. Starter prompts:
 - Treating green human-eyes as demand or product–market fit  
 - Marketing volume as proof — see [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote)  
 - A security or compliance program as proof — see [a security program cannot promote](#house-rule-a-security-program-cannot-promote)  
-- A handful survey as optimal price, or a CAC/LTV model at 0→1 as proof — see [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed)  
+- A handful survey as optimal price, a CAC/LTV model at 0→1 as proof, or last decade's SaaS playbook as the aim — see [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed)  
 - Commissioning custom legal agreements before revenue — see [starter legal templates](#starter-legal-templates)
 
 ---
@@ -1346,7 +1348,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.5 | House rule: several ideas are allowed; each is its own thesis/instance/scorecard; do not hide a second idea to look focused; rank and kill per board. |
 | 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointers (not house rules): [starter legal templates](#starter-legal-templates); [cap-table modeler](#cap-table-modeler). |
 | 2.8.7 | House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). Same family as 2.8.6; do not merge. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): preview plugin [`plugin/`](../plugin/) — skills hyperlink this pack; hosted MCP is a read adapter only, not mentee-ready boards, not a marketplace. |
-| 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. SaaS 1.0 playbooks may be outdated; stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 

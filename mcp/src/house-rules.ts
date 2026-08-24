@@ -21,6 +21,7 @@ export const HOUSE_RULE_LINES = [
   "Marketing volume cannot promote.",
   "A security program cannot promote.",
   "There is no optimal price until people have paid and stayed.",
+  "SaaS 1.0 playbooks may be outdated. Stay current.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
   "Empty context with no founder update: do not invent their stage, a price, or an LTV number. Write unknown / none yet.",
 ] as const;

@@ -36,6 +36,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | VC scoreboard / top-shelf exit page | Out of this PR. After proof only (growth pack / phases 8–9). |
 | Production `bootstrap_os_info.osVersion` already `2.8.8` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | CAC / LTV / day-31 / day-90 targets on Path 1 | Must stay absent. CI locks the absence, not a target. |
+| Old SaaS playbook tables as the aim | Must stay absent. No invented replacement targets. A later page that cites numbers must use dated current-year AI sources. |
 
 ## Visitor matrix (merge-gate CoS smell-test)
 

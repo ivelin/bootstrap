@@ -33,6 +33,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Marketing volume cannot promote/);
     assert.match(blob, /A security program cannot promote/);
     assert.match(blob, /There is no optimal price until people have paid and stayed/);
+    assert.match(blob, /SaaS 1\.0 playbooks may be outdated/);
+    assert.match(blob, /Stay current/);
     assert.match(blob, /do not invent their stage/i);
     assert.match(blob, /a price, or an LTV number/);
     assert.match(blob, /none yet/);
