@@ -1,7 +1,7 @@
 {
   "name": "bootstrap-os",
-  "version": "0.1.0",
-  "description": "Preview pointer to published Bootstrap OS. Skills hyperlink the constitution. Path 1 stays the front door. Not a marketplace listing.",
+  "version": "0.1.1",
+  "description": "Preview 0.1.1 pointer to published Bootstrap OS. Skills hyperlink the constitution. Team Import from Repo only — not a public catalog submit. Not mentee-ready hosted boards. Path 1 stays the front door.",
   "author": {
     "name": "Ivelin Ivanov"
   },
@@ -15,7 +15,8 @@
       "BOOTSTRAP_MCP_URL": {
         "type": "string",
         "title": "Hosted MCP URL override",
-        "description": "Optional override for the pinned *.vercel.app /mcp URL. Preview read adapter only. Do not use mcp.pirin.ai."
+        "description": "Optional override for the pinned *.vercel.app /mcp URL. Preview read adapter only. Do not use mcp.pirin.ai.",
+        "default": "https://bootstrap-os-mcp.vercel.app/mcp"
       }
     }
   }

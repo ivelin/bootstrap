@@ -570,43 +570,67 @@ else
   not_ok "2.8.7 must live in the OS section with first-hour and ai-instructions pointers"
 fi
 
-# --- r) preview plugin: manifests + hyperlink-only skills; no marketplace ---
+# --- r) preview plugin 0.1.1: team Import from Repo + hyperlink-only skills ---
 if [ -f plugin/plugin.json ] && [ -f plugin/mcp.json ] \
   && [ -f plugin/.cursor-plugin/plugin.json ] \
+  && [ -f .cursor-plugin/marketplace.json ] \
   && [ -f mcp/vercel.json ] && [ -f mcp/api/mcp.ts ] && [ -f mcp/api/health.ts ] \
   && [ -f plugin/skills/path-1-default/SKILL.md ] \
   && [ -f plugin/skills/house-rule-pins/SKILL.md ] \
-  && [ -f plugin/skills/first-hour/SKILL.md ]; then
-  ok "plugin manifests and thin skills exist"
+  && [ -f plugin/skills/first-hour/SKILL.md ] \
+  && [ -f plugin/skills/query-os-first/SKILL.md ]; then
+  ok "plugin manifests, team marketplace listing, and thin skills exist"
 else
-  not_ok "plugin/ must have plugin.json, mcp.json, .cursor-plugin/plugin.json, and three skills"
+  not_ok "plugin/ must have plugin.json, mcp.json, .cursor-plugin/plugin.json, query-os-first, and repo-root marketplace.json"
 fi
 if python3 - <<'PY'
 import json, pathlib, sys
 root = pathlib.Path("plugin")
 plugin = json.loads((root / "plugin.json").read_text())
 assert plugin["name"] == "bootstrap-os"
-assert plugin["version"] == "0.1.0"
+assert plugin["version"] == "0.1.1"
 assert plugin["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+cursor_plugin = json.loads((root / ".cursor-plugin/plugin.json").read_text())
+assert cursor_plugin["version"] == "0.1.1"
+default_url = cursor_plugin["variables"]["properties"]["BOOTSTRAP_MCP_URL"]["default"]
+assert default_url == "https://bootstrap-os-mcp.vercel.app/mcp"
 mcp = json.loads((root / "mcp.json").read_text())
+assert list(mcp["mcpServers"]) == ["bootstrap-os"]
 server = mcp["mcpServers"]["bootstrap-os"]
 assert server["type"] == "streamable-http"
-assert server["url"].startswith("https://")
-assert server["url"].endswith("/mcp")
-assert ".vercel.app/" in server["url"]
+assert server["url"] == "https://bootstrap-os-mcp.vercel.app/mcp"
 assert "pirin.ai" not in server["url"]
 assert "command" not in server
 raw = (root / "mcp.json").read_text()
 assert "mcp.pirin.ai" not in raw
 assert "npx" not in raw
+assert "gmail" not in raw.lower()
+assert "stripe" not in raw.lower()
 assert not (root / "marketplace.json").exists()
-assert not pathlib.Path(".cursor-plugin/marketplace.json").exists()
+market = json.loads(pathlib.Path(".cursor-plugin/marketplace.json").read_text())
+assert market["name"] == "bootstrap-os"
+assert len(market["plugins"]) == 1
+assert market["plugins"][0]["source"] == "plugin"
+assert market["plugins"][0]["name"] == "bootstrap-os"
+readme = (root / "README.md").read_text()
+assert "0.1.1" in readme
+assert "Import from Repo" in readme
+assert "https://github.com/ivelin/bootstrap" in readme
+assert "https://bootstrap-os-mcp.vercel.app/mcp" in readme
+assert "~/.cursor/plugins/local/bootstrap-os" in readme
+assert "/add-plugin" in readme
+assert "we have not submitted" in readme.lower() or "We have not submitted" in readme
+assert "query-os-first" in readme
+assert "0-1" in readme
 forbidden = [
     "Text eight people",
     "waitlist of 400",
     "does not mean get a crowd looking",
     "Dense leftover text is good",
 ]
+required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first"}
+found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
+assert required <= found, found
 for skill in (root / "skills").glob("*/SKILL.md"):
     body = skill.read_text()
     assert "https://github.com/ivelin/bootstrap" in body, skill
@@ -616,12 +640,18 @@ for skill in (root / "skills").glob("*/SKILL.md"):
 pins = (root / "skills/house-rule-pins/SKILL.md").read_text()
 assert "house-rule-marketing-volume-cannot-promote" in pins
 assert "house-rule-a-security-program-cannot-promote" in pins
+standing = (root / "skills/query-os-first/SKILL.md").read_text()
+assert "0-1" in standing
+assert "spoken yes" in standing
+assert "Do not speak as Ivelin" in standing
+assert "Do not host mentee" in standing
+assert "Path 1 stays the front door" in standing
 print("plugin lock ok")
 PY
 then
-  ok "plugin skills only hyperlink the published OS"
+  ok "plugin skills only hyperlink the published OS; team Import from Repo listed"
 else
-  not_ok "plugin must stay thin hyperlinks; no marketplace; no pirin.ai host"
+  not_ok "plugin must stay thin hyperlinks; one vercel.app connector; team marketplace.json at plugin/"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

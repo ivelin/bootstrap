@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "bootstrap-os",
-  "version": "0.1.0",
-  "description": "Preview pointer to published Bootstrap OS. Skills hyperlink the constitution. Path 1 stays the front door. Not a marketplace listing. Not mentee-ready hosted boards.",
+  "version": "0.1.1",
+  "description": "Preview 0.1.1 pointer to published Bootstrap OS. Skills hyperlink the constitution. Team Import from Repo only — not a public catalog submit. Not mentee-ready hosted boards. Path 1 stays the front door.",
   "author": {
     "name": "Ivelin Ivanov",
     "url": "https://github.com/ivelin"
