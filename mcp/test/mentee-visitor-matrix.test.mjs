@@ -58,8 +58,12 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(readme, /Import from Repo/);
     assert.match(readme, /plugin \+ MCP connector/);
     assert.match(readme, /## Feedback/);
+    assert.match(readme, /escalation to Ivelin/i);
+    assert.match(readme, /not a public suggestion box/);
     assert.match(readme, /ivelin@pirin\.ai/);
-    assert.match(readme, /GitHub issue on ivelin\/bootstrap/);
+    assert.match(readme, /humans and their agents/);
+    assert.match(readme, /Cos brings it to him/);
+    assert.match(readme, /GitHub issue is not the escalate path/);
     assert.match(readme, /Feedback does not auto-change house rules/);
     assert.equal((readme.match(/ivelin@pirin\.ai/g) || []).length, 1);
   });
@@ -72,6 +76,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(standing, /Call this plugin first/);
     assert.match(standing, /Do not speak as Ivelin/);
     assert.match(standing, /plugin\/README\.md#feedback/);
+    assert.match(standing, /Escalation to Ivelin/);
     assert.doesNotMatch(standing, /ivelin@pirin\.ai/);
     const fm = standing.match(/^description:\s*(.+)$/m);
     assert.ok(fm, "query-os-first needs a description trigger");

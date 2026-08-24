@@ -49,7 +49,7 @@ Copy this `plugin/` folder to `~/.cursor/plugins/local/bootstrap-os`. Restart Cu
 
 ## Feedback
 
-If a rule is unclear or a milestone feels wrong, include the published OS URL, what you tried, and why it failed. Humans write ivelin@pirin.ai. Agents open a GitHub issue on ivelin/bootstrap with that same shape. Feedback does not auto-change house rules.
+This is an escalation to Ivelin, not a public suggestion box. If a rule is unclear or a milestone feels wrong, send the published OS URL, what you tried, and why it failed to ivelin@pirin.ai (humans and their agents). Cos brings it to him. A GitHub issue is not the escalate path unless that same mail is also sent. Feedback does not auto-change house rules.
 
 ## What stays in this folder
 

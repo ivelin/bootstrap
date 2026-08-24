@@ -624,8 +624,11 @@ assert "we have not submitted" in readme.lower() or "We have not submitted" in r
 assert "query-os-first" in readme
 assert "0-1" in readme
 assert "## Feedback" in readme
+assert "escalation to Ivelin" in readme
+assert "not a public suggestion box" in readme
 assert "ivelin@pirin.ai" in readme
 assert readme.count("ivelin@pirin.ai") == 1
+assert "GitHub issue is not the escalate path" in readme
 assert "Feedback does not auto-change house rules" in readme
 forbidden = [
     "Text eight people",
