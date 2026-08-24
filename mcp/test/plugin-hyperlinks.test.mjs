@@ -94,8 +94,13 @@ describe("preview plugin (hyperlink only)", () => {
     );
     assert.match(standing, /0-1/);
     assert.match(standing, /spoken yes/);
+    assert.match(standing, /do not invent their stage/);
+    assert.match(standing, /is not GTM/);
     assert.match(standing, /Do not speak as Ivelin/);
     assert.match(standing, /Do not host mentee/);
     assert.match(standing, /Path 1 stays the front door/);
+    const firstHour = fs.readFileSync(path.join(PLUGIN, "skills", "first-hour", "SKILL.md"), "utf8");
+    assert.match(firstHour, /Install-first|install-first/);
+    assert.match(firstHour, /bootstrap-os-mcp\.vercel\.app\/mcp/);
   });
 });

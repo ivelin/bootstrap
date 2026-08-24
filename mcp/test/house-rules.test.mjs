@@ -5,6 +5,8 @@ import {
   HOUSE_RULE_PINS,
   weighResearchInputs,
   spokenYesMayPromote,
+  emptyContextMayInventStage,
+  spokenYesIsGtm,
   demographicOneLinerIsValidSeed,
   likertOrNakedDollarWtpAllowed,
   marketingVolumeMayPromote,
@@ -27,6 +29,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Rank and kill per board/);
     assert.match(blob, /Marketing volume cannot promote/);
     assert.match(blob, /A security program cannot promote/);
+    assert.match(blob, /do not invent their stage/i);
+    assert.match(blob, /none yet/);
     const pins = JSON.stringify(HOUSE_RULE_PINS);
     assert.match(pins, /github.com\/ivelin\/bootstrap/);
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
@@ -47,6 +51,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.equal(syn.mayPromote, false);
 
     assert.equal(spokenYesMayPromote(), false);
+    assert.equal(emptyContextMayInventStage(), false);
+    assert.equal(spokenYesIsGtm(), false);
     assert.equal(demographicOneLinerIsValidSeed(), false);
     assert.equal(likertOrNakedDollarWtpAllowed(), false);
     assert.equal(marketingVolumeMayPromote(), false);

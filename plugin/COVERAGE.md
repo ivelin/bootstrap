@@ -12,7 +12,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Connector URL | `plugin/mcp.json` | Only `https://bootstrap-os-mcp.vercel.app/mcp`. No Gmail/Stripe/other. |
 | `${BOOTSTRAP_MCP_URL}` default | `plugin/.cursor-plugin/plugin.json` | Optional override defaults to that host. |
 | Plugin 0.1.1 + thin skills | `plugin/plugin.json`, `skills/*/SKILL.md` | Hyperlinks to the published OS. No constitution copy. |
-| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / promote / spoken yes → query this plugin first. Cite OS. Do not speak as Ivelin. Do not host boards. |
+| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / GTM / spoken yes / empty-context. Query this plugin first. Do not invent stage. Cite OS. |
 | Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Read tools only. No company-state. `marketplace: false`. |
 | Hosted-read surface (live pin) | `mcp/test/preview-live.mjs` | Anonymous visitor on `*.vercel.app` `/`, `/health`, `/mcp`. Honesty text. No write tools. |
 | Skill OS links | preview-live | Each `https://github.com/ivelin/bootstrap` link in skills returns HTTP 200. |
@@ -31,22 +31,21 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Non-maintainer MCP cold path (M2) | Still open. Human-eyes for hosted boards stays **unknown**. |
 | Database, auth, extra connectors | Not started. Do not start. |
 
-## Visitor matrix (mentee-agent surfaces only)
+## Visitor matrix (merge-gate CoS smell-test)
 
-Walk every surface this package **claims** a mentee CoS or specialist will see. Skip GUI claims we do not make.
+Seven cases. Skills/README make the four **agent** behaviors inevitable. Skip GUI claims we do not make.
 
-| Visitor | Surface | Done means | Evidence |
-|---------|---------|------------|----------|
-| Cold mentee CoS | `query-os-first` | 0-1 / promote / spoken yes → plugin first; OS links; no Ivelin voice; no boards | File lock + GitHub 200 |
-| Specialist (promote?) | `house-rule-pins` + `query-os-first` | Pins link OS 2.8.6 / 2.8.7 / spoken-yes | File lock + GitHub 200 |
-| Day-0 founder | `path-1-default` + `first-hour` | Path 1 is the front door; first-hour is a link | File lock + GitHub 200 |
-| Install reader | `plugin/README.md` | (a) Import from Repo (b) remote MCP pin (c) local copy. No `/add-plugin` catalog. | File lock |
-| Team listing reader | `.cursor-plugin/marketplace.json` | One plugin, `source: plugin` | File lock |
-| Anonymous HTTP | `GET https://bootstrap-os-mcp.vercel.app/` | Plain honesty. Not a board UI. | Live preview-live |
-| Anonymous HTTP | `GET …/health` | `ok` | Live preview-live |
-| MCP mentee agent | `POST …/mcp` | Hosted-read tools. No init/update/where-are-we. `marketplace: false`. Company-state not hosted. | Live preview-live |
+| # | Visitor | Surface | Done means | Evidence |
+|---|---------|---------|------------|----------|
+| H1 | Installing founder | `first-hour` + README (a)(b)(c) | First hour + plugin + `…vercel.app/mcp` only. No auth/DB. | File lock |
+| H2 | Mentee CoS, where on 0-1 | `query-os-first` | Query this plugin first. Cite OS journey 1–9. | File lock + GitHub 200 |
+| H3 | Specialist, conversation = GTM? | `query-os-first` + `house-rule-pins` | Spoken yes cannot promote. Refuse. Cite OS. | File lock + GitHub 200 |
+| A1 | Agent install-first | `first-hour` | Plugin + this connector only. | File lock |
+| A2 | Agent 0-1 placement | `query-os-first` | Query-OS-first. | File lock |
+| A3 | Agent empty-context | `query-os-first` | No founder update → do not invent their stage. unknown / none yet. | File lock + `emptyContextMayInventStage()===false` |
+| A4 | Agent spoken-yes as GTM | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
 
-**Not on this matrix (not claimed as mentee-visible):** Vercel SSO preview, Cursor GUI, pirin.ai, `mcp.pirin.ai`.
+HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Vercel SSO preview, Cursor GUI, pirin.ai, `mcp.pirin.ai`.
 
 ## Preview checks
 

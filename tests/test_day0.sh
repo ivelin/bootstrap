@@ -644,13 +644,26 @@ assert "house-rule-a-security-program-cannot-promote" in pins
 standing = (root / "skills/query-os-first/SKILL.md").read_text()
 assert "0-1" in standing
 assert "spoken yes" in standing
+assert "do not invent their stage" in standing
+assert "is not GTM" in standing
+assert "verbal maybe" in standing
 assert "Do not speak as Ivelin" in standing
 assert "Do not host mentee" in standing
 assert "Path 1 stays the front door" in standing
+first = (root / "skills/first-hour/SKILL.md").read_text()
+assert "Install-first" in first or "install-first" in first
+assert "https://bootstrap-os-mcp.vercel.app/mcp" in first
+assert "No auth" in first
+assert "No database" in first
+readme = (root / "README.md").read_text()
+assert "Merge-gate visitor matrix" in readme
+assert "do not invent their stage" in readme
 coverage = (root / "COVERAGE.md").read_text()
 assert "## Locked" in coverage
 assert "## Not locked" in coverage
 assert "## Visitor matrix" in coverage
+assert "do not invent their stage" in coverage
+assert "H1" in coverage and "A4" in coverage
 assert "https://bootstrap-os-mcp.vercel.app/mcp" in coverage
 assert "GET /health" in coverage
 assert "Rollback" in coverage

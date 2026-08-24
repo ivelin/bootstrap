@@ -8,7 +8,24 @@ Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visi
 
 ## Standing rule
 
-Mentee CoS and specialists query this plugin first when the ask is where a project sits on 0-1, whether something can promote, or whether a spoken yes is enough. Cite the published OS by link. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md).
+Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, or whether a spoken yes is enough. Empty context with no founder update — do not invent their stage. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md).
+
+## Merge-gate visitor matrix (CoS smell-test)
+
+Seven cases this package must support. Thin links, not essays. No auth. No database. No public catalog.
+
+**Human**
+
+1. Installing founder, first hour, plugin + MCP connector — [`first-hour`](skills/first-hour/SKILL.md) + this README (a)(b)(c). Connector only `https://bootstrap-os-mcp.vercel.app/mcp`.
+2. Mentee CoS asking where current work sits on 0-1 — [`query-os-first`](skills/query-os-first/SKILL.md).
+3. Specialist asking whether a customer conversation counts as GTM/traction — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Spoken yes cannot promote.
+
+**Agent** (these four must be inevitable)
+
+1. Install-first, plugin + connector only — [`first-hour`](skills/first-hour/SKILL.md). No other connectors.
+2. Query-OS-first on a 0-1 placement ask — [`query-os-first`](skills/query-os-first/SKILL.md).
+3. Empty-context, no founder update — do not invent their stage. Write unknown / none yet. Same skill.
+4. Spoken-yes / verbal maybe treated as GTM — refuse and cite the OS. Same skill + house-rule pins.
 
 ## How to install (no public catalog)
 
@@ -40,10 +57,10 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 | Skill | Points at |
 |-------|-----------|
-| `query-os-first` | Standing rule — 0-1 placement / promote / spoken yes |
+| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage) |
 | `path-1-default` | https://github.com/ivelin/bootstrap |
-| `house-rule-pins` | OS 2.8.6 / 2.8.7 / spoken-yes / several ideas |
-| `first-hour` | `company-os/first-hour.md` |
+| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 |
+| `first-hour` | Day 0 + install-first (plugin + this connector only) |
 
 ## Hosted MCP URL
 
