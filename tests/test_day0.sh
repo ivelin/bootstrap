@@ -681,12 +681,6 @@ assert "proof" in gate
 assert "efficiency or an exit" in gate
 assert "after-proof-efficiency.md" in gate
 assert "0.75 stop-spend" not in gate
-assert "1.0 may-spend" not in first
-assert "1.0 may-spend" not in path1
-assert "NRR" not in first
-assert "NRR" not in path1
-assert "after-proof-efficiency.md" not in first
-assert "after-proof-efficiency.md" not in path1
 first = (root / "skills/first-hour/SKILL.md").read_text()
 assert "Install-first" in first or "install-first" in first
 assert "https://bootstrap-os-mcp.vercel.app/mcp" in first
@@ -695,6 +689,12 @@ assert "No database" in first
 assert "day-0-lifestyle-or-swinging-for-the-fences" in first
 path1 = (root / "skills/path-1-default/SKILL.md").read_text()
 assert "day-0-lifestyle-or-swinging-for-the-fences" in path1
+assert "1.0 may-spend" not in first
+assert "1.0 may-spend" not in path1
+assert "NRR" not in first
+assert "NRR" not in path1
+assert "after-proof-efficiency.md" not in first
+assert "after-proof-efficiency.md" not in path1
 readme = (root / "README.md").read_text()
 assert "Merge-gate visitor matrix" in readme
 assert "After-proof efficiency visitor matrix" in readme
