@@ -19,7 +19,7 @@ Message / channel experiments stay in the [growth pack](operating-system.md#afte
 
 4. **Gross margin.** The adjustment on payback and magic number. Ignore it and the other four lie.
 
-5. **Magic number only if margin-adjusted.** `(net new ARR × gross margin) × 4 ÷ prior-quarter S&M`. Dated stop/may, [Benchmarkit 2026](https://www.benchmarkit.ai/2026-saas-ai-native-metrics) until replaced: **0.75 stop-spend** / **1.0 may-spend**. Do not invent other cutoffs.
+5. **Magic number only if margin-adjusted.** `(net new ARR × gross margin) / prior-quarter S&M`. Dated stop/may, [Benchmarkit 2026](https://www.benchmarkit.ai/2026-saas-ai-native-metrics) until replaced: **0.75 stop-spend** / **1.0 may-spend**. Do not invent other cutoffs.
 
 ---
 
