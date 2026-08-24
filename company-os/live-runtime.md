@@ -229,7 +229,7 @@ Founder gates sit between stages when strategy or spend would change.
 | 6 Build tiny slice | **3** + **4** (reuse sandbox scenario ids) |
 | 7 Real/realistic users | **4** + **5** + **6** |
 | 8 Learn & improve | **5** + **7** (full cycles) |
-| 9 Grow | Full loop; [growth pack](operating-system.md#after-proof-the-growth-pack) only after proof markers; one channel hypothesis; expand spend only after founder promote |
+| 9 Grow | Full loop; [growth pack](operating-system.md#after-proof-the-growth-pack) only after proof markers; one channel hypothesis; expand spend only after founder promote. Efficiency or an exit after fences + proof: [after-proof-efficiency.md](after-proof-efficiency.md). |
 
 ---
 

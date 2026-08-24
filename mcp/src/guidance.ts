@@ -182,6 +182,8 @@ export function buildNextEvidenceView(state: CompanyState): NextEvidenceView {
     "Do not treat marketing volume as promotion",
     "Do not treat a handful survey as optimal price or WTP; there is no optimal price until people have paid and stayed",
     "Do not model LTV or CAC as proof at 0-1",
+    "Do not open after-proof efficiency without fences + proof + they asked — two clocks",
+    "Do not invent CAC payback, NRR, or magic-number numbers at 0-1 or on Path 1",
     "Do not ask a sim for a Likert or a naked dollar WTP — choice or sentence, then map",
     eyesBlocked
       ? "Do not draft 'please try my link' to mentors/users until human-eyes green or override+trace"

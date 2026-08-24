@@ -15,6 +15,11 @@ import {
   ltvModelMayPromoteAtZeroToOne,
   emptyContextMayInventPriceOrLtv,
 } from "../dist/house-rules.js";
+import {
+  afterProofEfficiencyPageMayOpen,
+  emptyContextMayInventEfficiencyMetrics,
+  path1MayCiteEfficiencyNumbers,
+} from "../dist/after-proof-efficiency.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const PLUGIN = path.join(REPO_ROOT, "plugin");
@@ -144,6 +149,38 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
       assert.doesNotMatch(body, /day 31/);
       assert.doesNotMatch(body, /popcorn stand/);
     }
+  });
+
+  it("after-proof efficiency: fences+proof+ask opens; lifestyle / 0-1 / empty do not", () => {
+    const gate = skill("after-proof-efficiency");
+    const standing = skill("query-os-first");
+    const pins = skill("house-rule-pins");
+    const first = skill("first-hour");
+    const path1 = skill("path-1-default");
+    assert.match(gate, /ALL of|ALL three/);
+    assert.match(gate, /after-proof-efficiency\.md/);
+    assert.match(standing, /Exit without fences\+proof/);
+    assert.match(pins, /LTV:CAC 3x \/ T2D3 stale/);
+    assert.doesNotMatch(first, /CAC payback|NRR|magic number|0\.75 stop-spend/);
+    assert.doesNotMatch(path1, /CAC payback|NRR|magic number|0\.75 stop-spend/);
+    assert.equal(
+      afterProofEfficiencyPageMayOpen({
+        choseFences: true,
+        hasProof: true,
+        askedEfficiencyOrExit: true,
+      }),
+      true,
+    );
+    assert.equal(
+      afterProofEfficiencyPageMayOpen({
+        choseFences: false,
+        hasProof: true,
+        askedEfficiencyOrExit: true,
+      }),
+      false,
+    );
+    assert.equal(emptyContextMayInventEfficiencyMetrics(), false);
+    assert.equal(path1MayCiteEfficiencyNumbers(), false);
   });
 
   it("install-reader and team listing still lock the pin", () => {

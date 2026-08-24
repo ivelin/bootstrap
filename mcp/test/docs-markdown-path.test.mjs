@@ -14,6 +14,7 @@ describe("markdown install path (zero MCP required)", () => {
       "company-os/ready-for-human-eyes.md",
       "company-os/ai-instructions.md",
       "company-os/first-hour.md",
+      "company-os/after-proof-efficiency.md",
       "templates/company/state/company-state.json",
       "templates/company/state/where-are-we.py",
       "templates/applied-here.md",
@@ -50,7 +51,7 @@ describe("markdown install path (zero MCP required)", () => {
     clearSession();
     try {
       const docs = listOsDocs();
-      assert.equal(docs.length, 5);
+      assert.equal(docs.length, 6);
       const body = readOsDoc("ai-instructions");
       assert.match(body, /Hard rules/i);
       assert.match(body, /stated, synthetic, and observed/i);
@@ -82,6 +83,23 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(os, /npx skills add 1984vc\/cap-table/);
       assert.match(os, /npx @1984vc\/cap-table/);
       assert.match(os, /CLI\/skill only/);
+      assert.match(os, /### After-proof efficiency \(fences\)/);
+      assert.match(os, /after-proof-efficiency\.md/);
+      const efficiency = readOsDoc("after-proof-efficiency");
+      assert.match(efficiency, /Dated/);
+      assert.match(efficiency, /CAC payback/);
+      assert.match(efficiency, /NRR and GRR/);
+      assert.match(efficiency, /Pilots fake NRR/);
+      assert.match(efficiency, /Usage, not seats/);
+      assert.match(efficiency, /Gross margin/);
+      assert.match(efficiency, /Magic number only if margin-adjusted/);
+      assert.match(efficiency, /0\.75 stop-spend/);
+      assert.match(efficiency, /1\.0 may-spend/);
+      assert.match(efficiency, /Benchmarkit 2026/);
+      assert.match(efficiency, /LTV:CAC 3x/);
+      assert.match(efficiency, /T2D3/);
+      assert.match(efficiency, /dead as the aim/);
+      assert.doesNotMatch(efficiency, /Wiz-sized exit is a goal/i);
       assert.doesNotMatch(os, /startup-finance\.1984\.vc\/mcp/);
       assert.doesNotMatch(os, /1984 MCP is live/i);
     } finally {

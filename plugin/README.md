@@ -8,7 +8,7 @@ Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visi
 
 ## Standing rule
 
-Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, or whether to model LTV/CAC at 0-1. Empty context with no founder update — do not invent their stage, a price, or an LTV number. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md).
+Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, or whether to model LTV/CAC at 0-1. Empty context with no founder update — do not invent their stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md). After-proof efficiency page: [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) — open only if fences + proof + they asked.
 
 ## Merge-gate visitor matrix (CoS smell-test)
 
@@ -26,6 +26,24 @@ Seven cases this package must support. Thin links, not essays. No auth. No datab
 2. Query-OS-first on a 0-1 placement ask — [`query-os-first`](skills/query-os-first/SKILL.md).
 3. Empty-context, no founder update — do not invent their stage. Write unknown / none yet. Same skill.
 4. Spoken-yes / verbal maybe treated as GTM — refuse and cite the OS. Same skill + house-rule pins.
+
+## After-proof efficiency visitor matrix
+
+Not a mentee dashboard. Not Path 1. Open the page only when the three gates hold.
+
+**Human**
+
+1. Fences + proof + asks efficiency or an exit — sees [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) → the page.
+2. Lifestyle founder — must not be sent this page.
+3. 0-1 / no proof — two clocks only. No numbers.
+4. Someone citing LTV:CAC 3x or T2D3 as the aim — stale. Cite the page.
+
+**Agent**
+
+1. Empty context — do not invent stage, price, or these metrics.
+2. Asked about exit without fences+proof — refuse, two clocks.
+3. Path 1 / Day 0 — no CAC / NRR / magic-number numbers.
+4. Source older than a year — mark dead or cut.
 
 ## How to install (no public catalog)
 
@@ -61,10 +79,11 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 | Skill | Points at |
 |-------|-----------|
-| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price |
+| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / exit without fences+proof |
 | `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences |
-| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 |
+| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8; LTV:CAC 3x / T2D3 stale |
 | `first-hour` | Day 0 + install-first (plugin + this connector only) · lifestyle or fences |
+| `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
 
 ## Hosted MCP URL
 
