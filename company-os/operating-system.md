@@ -1,8 +1,8 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.7  
-**Last Updated:** 2026-08-20  
+**Version:** 2.8.8  
+**Last Updated:** 2026-08-24  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -44,6 +44,14 @@ Some principles may be useful inside larger companies. Those environments have a
 
 ---
 
+## Day 0: lifestyle or swinging for the fences
+
+Answer this once, in the first hour: are you willing to work about ten years on a lifestyle / small good business, or did you decide up front you are swinging for the fences? Say it now so you do not grind three years on a popcorn stand and then notice it is not a company someone buys.
+
+This is a Day 0 / Path 1 question. It is **not** a house rule and **not** a third clock. It does not set a price.
+
+---
+
 ## How Mentors and Mentees Should Use This
 
 | Role | Use |
@@ -77,7 +85,8 @@ Some principles may be useful inside larger companies. Those environments have a
 6. **Evidence beats narrative.**  
    Time spent is not proof. Preference is not proof. Synthetic research is a filter. Real-world action is the gate.  
    House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).  
-   House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote).
+   House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote).  
+   House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
 7. **Build evaluation-first when you build.**  
    Spec success criteria and a harness before (or with) the implementation — not after a big unmeasured build.
@@ -1021,7 +1030,7 @@ In this OS, **Ready for human eyes** means a stranger can finish the happy path 
 | **One ask** | One post in the one place those people already complain. One ask (try the link, or book 15 minutes if you have this job this week). Kill line written first. | SEO blogs, lookalike ads, a waitlist of 400 with no constraint, or hiring a marketer to fill the top of the funnel. That is maybe, not use or pay. |
 | **By hand** | Do the first three jobs by hand. If they come back or pay, then you can talk about a channel. | Email sequences, launch-week hour-by-hour, or buying last decade’s marketing stack (agency retainer, SEO package, “this used to work”) before anyone has used the thing twice. |
 
-Same family: [a security program cannot promote](#house-rule-a-security-program-cannot-promote).
+Same family: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
 ### House rule: a security program cannot promote
 
@@ -1031,6 +1040,21 @@ Someone saying you must lock down the product so secrets do not leak to cloud ve
 |--|---------|----------|
 | **Hygiene first** | `.env` is gitignored. You used Cursor or Grok to build and did not paste a real user’s email thread into the chat. You concierge three people by hand. | Delaying the cold URL until every model has a vendor review. |
 | **If you leaked** | If a key was committed, rotate it today, then get back to the interest test. | Refusing AI tools because “labs will train on my SaaS.” Hiring a security person or buying last decade’s compliance stack before anyone has used the thing twice. |
+
+Same family: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+
+### House rule: there is no optimal price until people have paid and stayed
+
+Someone saying you must find the optimal price from a handful-of-users survey, or stand up a CAC/LTV model before anyone has paid and stayed, is asking for **busy-looking fiction at 0→1** — not a price. Same family as a spoken yes cannot promote, [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote), and [a security program cannot promote](#house-rule-a-security-program-cannot-promote): a survey is not proof. There is no optimal price until people have paid and stayed. A survey of a handful of users will lie. Start with one price. Watch three numbers: how many start the trial, how many pay on day 31, how many are still paying on day 90. If almost everyone pays, raise it. If almost everyone leaves on day 31, the product is the problem or the price is. Do not optimize LTV until you have a year of that. Most 0→1 companies die; a long LTV model is fiction.
+
+SaaS 1.0 playbooks may be outdated in the AI era. Stay current. Do not guide to where the puck has been. This OS does not host last decade's SaaS tables as the aim. If a later page ever cites numbers, they must be dated current-year AI sources, not old tables.
+
+| | Do this | Not this |
+|--|---------|----------|
+| **One price** | Start with one price. Watch how many start the trial, how many pay on day 31, how many are still paying on day 90. | A handful survey for “optimal price” or willingness to pay. |
+| **Then move** | If almost everyone pays, raise it. If almost everyone leaves on day 31, the product is the problem or the price is. | A CAC/LTV model before you have a year of people who paid and stayed. Last decade's SaaS playbook as the aim. |
+
+This rule applies whenever a founder sets a price. It is **not** a third clock, **not** Day 0 homework, and **not** only a hosted MCP pin.
 
 ---
 
@@ -1057,7 +1081,7 @@ I stay in final control of strategy, journey phase changes, and important decisi
 
 Hard rules you must follow:
 1. Never advance a journey phase without my explicit approval.
-2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. House rule: when stated and observed disagree, observed wins. A spoken yes cannot promote a group. Marketing volume cannot promote. A security program cannot promote.
+2. Never treat an early idea or customer group as proven on stated preference or synthetic work alone. Weigh stated, synthetic, and observed. House rule: when stated and observed disagree, observed wins. A spoken yes cannot promote a group. Marketing volume cannot promote. A security program cannot promote. There is no optimal price until people have paid and stayed.
 3. Label claims honestly: outside facts, company signals, assumed capability, or needs real-world proof.
    Also label research inputs: stated (their words) | synthetic (sim after a condition change) | observed (time or money).
    Never treat simulated prices or a spoken “I would buy” as demand. Keep the words. They are stated evidence, not a sale.
@@ -1196,7 +1220,7 @@ Every company should maintain its own list. Starter prompts:
 - Which customer groups currently have the strongest **combined reward/risk** profile?  
 - Did the light synthetic product sandbox pass baseline paths for the top groups?  
 - Did real interest tests clear pre-written thresholds (waitlist, replies, calls)?  
-- What exact price (if any) are people willing to pay? (real-world proof only — not simulated tables)  
+- What exact price (if any) are people willing to pay? (real-world proof only — not simulated tables). A handful survey is not that proof — [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).  
 - What are the **numeric pass thresholds** for the current thin slice?  
 - What **autonomy posture** are we on this week (Strict / Auto / Dangerous)?  
 - How often should the system ask the human for approval versus acting within a safe draft/dry-run band?  
@@ -1253,6 +1277,7 @@ Every company should maintain its own list. Starter prompts:
 - Treating green human-eyes as demand or product–market fit  
 - Marketing volume as proof — see [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote)  
 - A security or compliance program as proof — see [a security program cannot promote](#house-rule-a-security-program-cannot-promote)  
+- A handful survey as optimal price, a CAC/LTV model at 0→1 as proof, or last decade's SaaS playbook as the aim — see [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed)  
 - Commissioning custom legal agreements before revenue — see [starter legal templates](#starter-legal-templates)
 
 ---
@@ -1300,7 +1325,7 @@ Accuracy numbers perish with the model checkpoint. Mechanism findings last until
 - Bisbee et al., 2024, *Political Analysis*. Task: silicon sampling / prompt variance and drift. Finding: too-tight variance and same-prompt drift make a pass unusable.
 - Brand, Israeli, and Ngwe, HBS 23-062 rev. 2026, §3.3. Task: willingness-to-pay and cross-category fine-tune (laptop → tablet). Finding: direct dollar WTP from GPT was useless; fine-tune failed on a new category. They still used conjoint with prices in the profile and reported $. They did not write “never produce a dollar” or “one condition change.”
 
-Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused); [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote); [a security program cannot promote](#house-rule-a-security-program-cannot-promote).
+Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused); [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote); [a security program cannot promote](#house-rule-a-security-program-cannot-promote); [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
 ## Changelog (high level)
 
@@ -1323,6 +1348,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.5 | House rule: several ideas are allowed; each is its own thesis/instance/scorecard; do not hide a second idea to look focused; rank and kill per board. |
 | 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointers (not house rules): [starter legal templates](#starter-legal-templates); [cap-table modeler](#cap-table-modeler). |
 | 2.8.7 | House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). Same family as 2.8.6; do not merge. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): preview plugin [`plugin/`](../plugin/) — skills hyperlink this pack; hosted MCP is a read adapter only, not mentee-ready boards, not a marketplace. |
+| 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. SaaS 1.0 playbooks may be outdated; stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 

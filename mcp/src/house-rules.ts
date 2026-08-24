@@ -20,8 +20,10 @@ export const HOUSE_RULE_LINES = [
   "Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.",
   "Marketing volume cannot promote.",
   "A security program cannot promote.",
+  "There is no optimal price until people have paid and stayed.",
+  "SaaS 1.0 playbooks may be outdated. Stay current.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
-  "Empty context with no founder update: do not invent their stage. Write unknown / none yet.",
+  "Empty context with no founder update: do not invent their stage, a price, or an LTV number. Write unknown / none yet.",
 ] as const;
 
 export function weighResearchInputs(input: {
@@ -88,6 +90,18 @@ export function marketingVolumeMayPromote(): false {
   return false;
 }
 
+export function handfulSurveyMaySetOptimalPrice(): false {
+  return false;
+}
+
+export function ltvModelMayPromoteAtZeroToOne(): false {
+  return false;
+}
+
+export function emptyContextMayInventPriceOrLtv(): false {
+  return false;
+}
+
 /** Pins only — full essays live in the published OS. */
 export const HOUSE_RULE_PINS = [
   {
@@ -109,5 +123,10 @@ export const HOUSE_RULE_PINS = [
     id: "security-program-2.8.7",
     pin: "A security program cannot promote.",
     url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-a-security-program-cannot-promote",
+  },
+  {
+    id: "no-optimal-price-2.8.8",
+    pin: "There is no optimal price until people have paid and stayed.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed",
   },
 ] as const;

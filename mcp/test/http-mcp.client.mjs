@@ -132,6 +132,7 @@ async function main() {
     assert.match(pinBlob, /github.com\/ivelin\/bootstrap/);
     assert.match(pinBlob, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pinBlob, /house-rule-a-security-program-cannot-promote/);
+    assert.match(pinBlob, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
 
     console.log(
       JSON.stringify(

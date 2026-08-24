@@ -12,6 +12,12 @@ const ESSAY_FORBIDDEN = [
   "does not mean get a crowd looking",
   "Dense leftover text is good",
   "### House rule:",
+  "Watch three numbers",
+  "still paying on day 90",
+  "long LTV model is fiction",
+  "grind three years on a popcorn stand",
+  "Do not guide to where the puck has been",
+  "dated current-year AI sources",
 ];
 
 function skillFiles() {
@@ -88,6 +94,8 @@ describe("preview plugin (hyperlink only)", () => {
     const pins = fs.readFileSync(path.join(PLUGIN, "skills", "house-rule-pins", "SKILL.md"), "utf8");
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
+    assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    assert.match(pins, /old SaaS playbook/);
     const standing = fs.readFileSync(
       path.join(PLUGIN, "skills", "query-os-first", "SKILL.md"),
       "utf8",
@@ -100,9 +108,18 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(standing, /Do not host mentee/);
     assert.match(standing, /Path 1 stays the front door/);
     assert.match(standing, /plugin\/README\.md#feedback/);
+    assert.match(standing, /is this price optimal/);
+    assert.match(standing, /old SaaS playbook/);
+    assert.match(standing, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    assert.match(standing, /do not invent their stage, a price, or an LTV number/);
     assert.doesNotMatch(standing, /ivelin@pirin\.ai/);
     const firstHour = fs.readFileSync(path.join(PLUGIN, "skills", "first-hour", "SKILL.md"), "utf8");
     assert.match(firstHour, /Install-first|install-first/);
     assert.match(firstHour, /bootstrap-os-mcp\.vercel\.app\/mcp/);
+    assert.match(firstHour, /lifestyle or swinging for the fences/i);
+    assert.match(firstHour, /day-0-lifestyle-or-swinging-for-the-fences/);
+    const path1 = fs.readFileSync(path.join(PLUGIN, "skills", "path-1-default", "SKILL.md"), "utf8");
+    assert.match(path1, /lifestyle or swinging for the fences/i);
+    assert.match(path1, /day-0-lifestyle-or-swinging-for-the-fences/);
   });
 });

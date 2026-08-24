@@ -1,7 +1,7 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.6** ([marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); several ideas allowed, each its own board; founder-day pack additive; demo-only role-play is the weak case).  
+**Aligned to:** OS blueprint **v2.8.8** ([there is no optimal price until people have paid and stayed](operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [a security program cannot promote](operating-system.md#house-rule-a-security-program-cannot-promote); [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); Day 0: [lifestyle or swinging for the fences](operating-system.md#day-0-lifestyle-or-swinging-for-the-fences)).  
 **Starter legal templates:** [operating-system.md](operating-system.md#starter-legal-templates) (hyperlink only; this OS does not draft or customize).  
 **Cap-table modeler:** [operating-system.md](operating-system.md#cap-table-modeler) (hyperlink only; this OS does not host copies).
 
@@ -45,6 +45,8 @@ Hard rules you must follow:
    Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.
    House rule: marketing volume cannot promote (company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
    House rule: a security or compliance program cannot promote (company-os/operating-system.md#house-rule-a-security-program-cannot-promote).
+   House rule: there is no optimal price until people have paid and stayed (company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+   Day 0: lifestyle / small good business, or swinging for the fences (company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 3. Label claims honestly:
    - outside facts
    - company signals (only if true)

@@ -142,6 +142,7 @@ export function whereAreWePlain(state: CompanyState): string {
     "Do not seed from a demographic one-liner (demo-only role-play is the weak case).",
     "Several ideas are allowed. Each companyId is its own board. Rank and kill per board.",
     "Marketing volume cannot promote.",
+    "There is no optimal price until people have paid and stayed.",
     "No Likert or naked dollar WTP — choice or sentence, then map.",
     "Same state as markdown: company-state.json + where-are-we.py. Green human-eyes ≠ demand/PMF.",
   ]

@@ -10,11 +10,14 @@ import {
   demographicOneLinerIsValidSeed,
   likertOrNakedDollarWtpAllowed,
   marketingVolumeMayPromote,
+  handfulSurveyMaySetOptimalPrice,
+  ltvModelMayPromoteAtZeroToOne,
+  emptyContextMayInventPriceOrLtv,
 } from "../dist/house-rules.js";
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
 
 describe("OS house rules (adapter reminders)", () => {
-  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program", () => {
+  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program, no optimal price", () => {
     const blob = HOUSE_RULE_LINES.join("\n");
     assert.match(blob, /stated, synthetic, and observed/i);
     assert.match(blob, /observed wins/i);
@@ -29,12 +32,17 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Rank and kill per board/);
     assert.match(blob, /Marketing volume cannot promote/);
     assert.match(blob, /A security program cannot promote/);
+    assert.match(blob, /There is no optimal price until people have paid and stayed/);
+    assert.match(blob, /SaaS 1\.0 playbooks may be outdated/);
+    assert.match(blob, /Stay current/);
     assert.match(blob, /do not invent their stage/i);
+    assert.match(blob, /a price, or an LTV number/);
     assert.match(blob, /none yet/);
     const pins = JSON.stringify(HOUSE_RULE_PINS);
     assert.match(pins, /github.com\/ivelin\/bootstrap/);
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
+    assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {
@@ -56,6 +64,9 @@ describe("OS house rules (adapter reminders)", () => {
     assert.equal(demographicOneLinerIsValidSeed(), false);
     assert.equal(likertOrNakedDollarWtpAllowed(), false);
     assert.equal(marketingVolumeMayPromote(), false);
+    assert.equal(handfulSurveyMaySetOptimalPrice(), false);
+    assert.equal(ltvModelMayPromoteAtZeroToOne(), false);
+    assert.equal(emptyContextMayInventPriceOrLtv(), false);
   });
 
   it("phase 3 / stage 1 gates refuse demo-only seed, spoken yes, Likert WTP", () => {

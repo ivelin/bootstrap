@@ -26,6 +26,10 @@ You need:
 
 If you cannot write a kill line, you are already protecting the idea.
 
+> Lifestyle / small good business for about ten years, or swinging for the fences? Say it now so you do not grind three years on a popcorn stand.
+
+[Day 0: lifestyle or swinging for the fences](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
+
 If you have **more than one idea**, write each as its own thesis. Do not fold the second into the first to look focused. Rank and kill per board. Path 1 (chat) is enough for one idea; optional path 3 (local MCP) keeps several ideas isolated.
 
 ---
@@ -94,6 +98,12 @@ When someone says you must lock down the product so secrets do not leak, before 
 > I don't need a security department before anyone uses this. I need keys out of git and no live user data in chats. Idea theft by a lab is not how this dies.
 
 House rule: [a security program cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-a-security-program-cannot-promote).
+
+When someone says you must find the optimal price from a handful of users, before anyone has paid and stayed:
+
+> There is no optimal price until people have paid and stayed. A survey of a handful will lie. Start with one price.
+
+House rule: [there is no optimal price until people have paid and stayed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
 ---
 

@@ -557,7 +557,7 @@ fi
 
 # --- q) a security program cannot promote (OS 2.8.7) ---
 # Constitution + first-hour / ai-instructions pointers. Do not require the essay elsewhere.
-if grep -q '^\*\*Version:\*\* 2.8.7' company-os/operating-system.md \
+if grep -q '2.8.7' company-os/operating-system.md \
   && grep -q '### House rule: a security program cannot promote' company-os/operating-system.md \
   && grep -q 'v2.8.7' README.md \
   && grep -q 'house-rule-a-security-program-cannot-promote' README.md \
@@ -638,6 +638,10 @@ forbidden = [
     "waitlist of 400",
     "does not mean get a crowd looking",
     "Dense leftover text is good",
+    "Watch three numbers",
+    "still paying on day 90",
+    "long LTV model is fiction",
+    "grind three years on a popcorn stand",
 ]
 required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first"}
 found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
@@ -651,6 +655,8 @@ for skill in (root / "skills").glob("*/SKILL.md"):
 pins = (root / "skills/house-rule-pins/SKILL.md").read_text()
 assert "house-rule-marketing-volume-cannot-promote" in pins
 assert "house-rule-a-security-program-cannot-promote" in pins
+assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in pins
+assert "old SaaS playbook" in pins
 standing = (root / "skills/query-os-first/SKILL.md").read_text()
 assert "0-1" in standing
 assert "spoken yes" in standing
@@ -662,11 +668,18 @@ assert "Do not host mentee" in standing
 assert "Path 1 stays the front door" in standing
 assert "plugin/README.md#feedback" in standing
 assert "ivelin@pirin.ai" not in standing
+assert "is this price optimal" in standing
+assert "old SaaS playbook" in standing
+assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in standing
+assert "a price, or an LTV number" in standing
 first = (root / "skills/first-hour/SKILL.md").read_text()
 assert "Install-first" in first or "install-first" in first
 assert "https://bootstrap-os-mcp.vercel.app/mcp" in first
 assert "No auth" in first
 assert "No database" in first
+assert "day-0-lifestyle-or-swinging-for-the-fences" in first
+path1 = (root / "skills/path-1-default/SKILL.md").read_text()
+assert "day-0-lifestyle-or-swinging-for-the-fences" in path1
 readme = (root / "README.md").read_text()
 assert "Merge-gate visitor matrix" in readme
 assert "do not invent their stage" in readme
@@ -680,12 +693,103 @@ assert "https://bootstrap-os-mcp.vercel.app/mcp" in coverage
 assert "GET /health" in coverage
 assert "Rollback" in coverage
 assert "SSO" in coverage
+assert "2.8.8" in coverage
+assert "there is no optimal price until people have paid and stayed" in coverage
+assert "lifestyle or swinging for the fences" in coverage
 print("plugin lock ok")
 PY
 then
   ok "plugin skills only hyperlink the published OS; team Import from Repo listed"
 else
   not_ok "plugin must stay thin hyperlinks; one vercel.app connector; team marketplace.json at plugin/"
+fi
+
+# --- s) OS 2.8.8: no-optimal-price house rule + Day 0 lifestyle/fences (do not mix) ---
+# Full house rule and full Day 0 question live once in the OS. Pointers elsewhere.
+# Path 1 / first-hour must not carry house-rule metrics or CAC/LTV targets.
+if grep -q '^\*\*Version:\*\* 2.8.8' company-os/operating-system.md \
+  && grep -q '### House rule: there is no optimal price until people have paid and stayed' company-os/operating-system.md \
+  && grep -q 'A survey of a handful of users will lie' company-os/operating-system.md \
+  && grep -q 'Watch three numbers' company-os/operating-system.md \
+  && grep -q 'pay on day 31' company-os/operating-system.md \
+  && grep -q 'still paying on day 90' company-os/operating-system.md \
+  && grep -q 'long LTV model is fiction' company-os/operating-system.md \
+  && grep -q 'SaaS 1.0 playbooks may be outdated' company-os/operating-system.md \
+  && grep -q 'Do not guide to where the puck has been' company-os/operating-system.md \
+  && grep -q 'dated current-year AI sources' company-os/operating-system.md \
+  && grep -q 'v2.8.8' README.md \
+  && grep -q 'house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed' README.md; then
+  ok "OS 2.8.8 house-rule section has full rule and vocabulary"
+else
+  not_ok "operating-system.md must hold the full 2.8.8 no-optimal-price house rule"
+fi
+if grep -q '## Day 0: lifestyle or swinging for the fences' company-os/operating-system.md \
+  && grep -q 'popcorn stand' company-os/operating-system.md \
+  && grep -q 'about ten years' company-os/operating-system.md \
+  && grep -q 'not a house rule' company-os/operating-system.md \
+  && grep -q 'not a third clock' company-os/operating-system.md \
+  && ! grep -q 'unicorn' company-os/operating-system.md; then
+  ok "OS Day 0 lifestyle/fences section exists; not a house rule; no unicorn"
+else
+  not_ok "operating-system.md must hold the Day 0 lifestyle/fences question once"
+fi
+if grep -q 'grind three years on a popcorn stand' company-os/first-hour.md \
+  && grep -q 'day-0-lifestyle-or-swinging-for-the-fences' company-os/first-hour.md \
+  && grep -q 'There is no optimal price until people have paid and stayed' company-os/first-hour.md \
+  && grep -q 'house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed' company-os/first-hour.md \
+  && grep -q 'day-0-lifestyle-or-swinging-for-the-fences' README.md \
+  && grep -q 'Lifestyle / small good business, or swinging for the fences' README.md \
+  && grep -q 'house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed' company-os/ai-instructions.md \
+  && grep -q 'day-0-lifestyle-or-swinging-for-the-fences' company-os/ai-instructions.md; then
+  ok "first-hour, Path 1, and ai-instructions pin Day 0 and the price rule"
+else
+  not_ok "first-hour, README Path 1, and ai-instructions must pin both homes"
+fi
+if ! grep -q 'Watch three numbers' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/house-rule-pins/SKILL.md \
+    plugin/skills/query-os-first/SKILL.md \
+    plugin/skills/first-hour/SKILL.md \
+    plugin/skills/path-1-default/SKILL.md \
+  && ! grep -q 'still paying on day 90' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'long LTV model is fiction' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md; then
+  ok "house-rule essay is not copied outside the OS section"
+else
+  not_ok "do not reprint the 2.8.8 house-rule essay outside operating-system.md"
+fi
+# Path 1 / Day 0 surfaces must not carry house-rule metrics or CAC/LTV targets.
+# Do not paste last-decade SaaS playbook targets as the aim (anywhere founders would take them as the aim).
+path1_block=$(sed -n '/^### 1. Point an AI at this pack/,/^### 2. Instantiate files/p' README.md)
+if ! printf '%s\n' "$path1_block" | grep -Eq 'CAC|LTV|day 31|day 90' \
+  && ! grep -Eq 'CAC|day 31|day 90' company-os/first-hour.md \
+  && ! grep -q 'vc-scoreboard\|VC scoreboard\|top-shelf exit' \
+    company-os/operating-system.md company-os/first-hour.md README.md \
+    plugin/skills/*/SKILL.md; then
+  ok "Path 1 and first-hour have no CAC/LTV targets; no VC scoreboard page"
+else
+  not_ok "Path 1 / first-hour must not carry CAC/LTV targets; do not start a VC scoreboard"
+fi
+if ! grep -Eq 'LTV:CAC|T2D3|Bessemer|magic-number|magic number' \
+    company-os/operating-system.md company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md mcp/src/house-rules.ts; then
+  ok "old SaaS playbook targets are not pasted as the aim"
+else
+  not_ok "do not paste LTV:CAC, T2D3, magic-number, or Bessemer tables as the aim"
+fi
+if grep -q 'old SaaS playbook' plugin/skills/house-rule-pins/SKILL.md \
+  && grep -q 'old SaaS playbook' plugin/skills/query-os-first/SKILL.md \
+  && ! grep -q 'SaaS 1.0 playbooks may be outdated' company-os/first-hour.md \
+  && ! grep -q 'where the puck has been' company-os/first-hour.md \
+  && ! grep -q 'dated current-year AI sources' company-os/first-hour.md README.md \
+    plugin/skills/*/SKILL.md; then
+  ok "stay-current essay stays in the house-rule home; skills only pin"
+else
+  not_ok "do not copy the stay-current essay onto Day 0 / Path 1 or into skills"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
