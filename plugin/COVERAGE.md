@@ -12,7 +12,9 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Connector URL | `plugin/mcp.json` | Only `https://bootstrap-os-mcp.vercel.app/mcp`. No Gmail/Stripe/other. |
 | `${BOOTSTRAP_MCP_URL}` default | `plugin/.cursor-plugin/plugin.json` | Optional override defaults to that host. |
 | Plugin 0.1.1 + thin skills | `plugin/plugin.json`, `skills/*/SKILL.md` | Hyperlinks to the published OS. No constitution copy. |
-| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / GTM / spoken yes / empty-context. Query this plugin first. Do not invent stage. Cite OS. |
+| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / GTM / spoken yes / empty-context / optimal price. Query this plugin first. Do not invent stage, a price, or an LTV number. Cite OS. |
+| OS 2.8.8 house rule (once) | `company-os/operating-system.md` | Full text of *there is no optimal price until people have paid and stayed*. Pointers only elsewhere. |
+| Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
 | Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Read tools only. No company-state. `marketplace: false`. |
 | Hosted-read surface (live pin) | `mcp/test/preview-live.mjs` | Anonymous visitor on `*.vercel.app` `/`, `/health`, `/mcp`. Honesty text. No write tools. |
 | Skill OS links | preview-live | Each `https://github.com/ivelin/bootstrap` link in skills returns HTTP 200. |
@@ -30,6 +32,10 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Mentee-ready hosted boards / founder `company-state` on the host | Out. Path 3 local stdio only. |
 | Non-maintainer MCP cold path (M2) | Still open. Human-eyes for hosted boards stays **unknown**. |
 | Database, auth, extra connectors | Not started. Do not start. |
+| A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
+| VC scoreboard / top-shelf exit page | Out of this PR. After proof only (growth pack / phases 8–9). |
+| Production `bootstrap_os_info.osVersion` already `2.8.8` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
+| CAC / LTV / day-31 / day-90 targets on Path 1 | Must stay absent. CI locks the absence, not a target. |
 
 ## Visitor matrix (merge-gate CoS smell-test)
 

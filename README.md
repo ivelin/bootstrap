@@ -6,7 +6,7 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 
 | | |
 |--|--|
-| **Version** | Blueprint + live runtime **v2.8.7** · optional local MCP **v0.2** (path 3) |
+| **Version** | Blueprint + live runtime **v2.8.8** · optional local MCP **v0.2** (path 3) |
 | **License** | Apache-2.0 |
 | **Audience** | Independent solo founders; mentors (Founder Institute, SCORE, …); AI helpers |
 | **Maintainer** | [Ivelin Ivanov](https://github.com/ivelin) · [Pirin.ai](https://pirin.ai) |
@@ -62,7 +62,7 @@ Apply process and control to MY startup only.
 Do not import any other company's product thesis or market.
 ```
 
-Then Day 0 — thesis, ≥3 customer groups, first “Where are we?”: [`company-os/first-hour.md`](company-os/first-hour.md). Chat is enough.
+Then Day 0 — thesis, ≥3 customer groups, first “Where are we?”: [`company-os/first-hour.md`](company-os/first-hour.md). Chat is enough. Lifestyle / small good business, or swinging for the fences? [Day 0](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 
 ### 2. Instantiate files (when you want them in your repo)
 
@@ -70,7 +70,7 @@ Optional. Script or hand copy — [Install](#install-in-your-company). Optional 
 
 ### 3. Self-hosted MCP (optional — several ideas)
 
-Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.7). Rank and kill per board. Markdown remains the constitution.
+Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.8). Rank and kill per board. Markdown remains the constitution.
 
 Not required. Path 1 (point an AI) and path 2 (optional files + workflows) stay enough.
 
@@ -152,12 +152,15 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 | Doc | Current |
 |-----|---------|
-| Operating system blueprint | **v2.8.7** |
-| Live runtime | **v2.8.7** |
+| Operating system blueprint | **v2.8.8** |
+| Live runtime | **v2.8.8** |
 | Optional local MCP (path 3) | **v0.2** — adapter only; not a second OS. HTTP read transport is preview. |
 | Preview plugin | **0.1.1** — [`plugin/`](plugin/). Skills hyperlink this pack. Team Import from Repo only — not a public catalog submit. Not mentee-ready hosted boards. |
 
 ### Recent portable additions
+
+**v2.8.8 — there is no optimal price until people have paid and stayed**  
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. Day 0 / Path 1 question (not a house rule; not this essay): [lifestyle or swinging for the fences](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 
 **v2.8.7 — a security program cannot promote**  
 House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-a-security-program-cannot-promote). Preview plugin pointer (not a house rule): [`plugin/`](plugin/) — hyperlinks only; team Import from Repo only, not a public catalog submit; hosted read adapter is preview, not mentee-ready boards.

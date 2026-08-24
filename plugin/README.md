@@ -8,7 +8,7 @@ Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visi
 
 ## Standing rule
 
-Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, or whether a spoken yes is enough. Empty context with no founder update — do not invent their stage. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md).
+Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, or whether to model LTV/CAC at 0-1. Empty context with no founder update — do not invent their stage, a price, or an LTV number. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md).
 
 ## Merge-gate visitor matrix (CoS smell-test)
 
@@ -61,10 +61,10 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 | Skill | Points at |
 |-------|-----------|
-| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage) |
-| `path-1-default` | https://github.com/ivelin/bootstrap |
-| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 |
-| `first-hour` | Day 0 + install-first (plugin + this connector only) |
+| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price |
+| `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences |
+| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 |
+| `first-hour` | Day 0 + install-first (plugin + this connector only) · lifestyle or fences |
 
 ## Hosted MCP URL
 

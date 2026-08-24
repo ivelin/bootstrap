@@ -11,6 +11,9 @@ import {
   emptyContextMayInventStage,
   spokenYesIsGtm,
   spokenYesMayPromote,
+  handfulSurveyMaySetOptimalPrice,
+  ltvModelMayPromoteAtZeroToOne,
+  emptyContextMayInventPriceOrLtv,
 } from "../dist/house-rules.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
@@ -110,6 +113,35 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(standing, /unknown \/ none yet/);
     assert.match(standing, /first-hour.md/);
     assert.equal(emptyContextMayInventStage(), false);
+  });
+
+  it("price / handful WTP / LTV at 0-1 — refuse and cite OS; empty context invents no price", () => {
+    const standing = skill("query-os-first");
+    const pins = skill("house-rule-pins");
+    for (const body of [standing, pins]) {
+      assert.match(body, /optimal price/i);
+      assert.match(body, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    }
+    assert.match(standing, /handful WTP/i);
+    assert.match(standing, /LTV/);
+    assert.match(standing, /do not invent their stage, a price, or an LTV number/);
+    assert.match(pins, /Refuse/);
+    assert.equal(handfulSurveyMaySetOptimalPrice(), false);
+    assert.equal(ltvModelMayPromoteAtZeroToOne(), false);
+    assert.equal(emptyContextMayInventPriceOrLtv(), false);
+  });
+
+  it("Day 0 lifestyle or fences is a Path 1 pin, not a house-rule essay", () => {
+    const first = skill("first-hour");
+    const path1 = skill("path-1-default");
+    for (const body of [first, path1]) {
+      assert.match(body, /lifestyle or swinging for the fences/i);
+      assert.match(body, /day-0-lifestyle-or-swinging-for-the-fences/);
+      assert.match(body, /not a house rule/);
+      assert.doesNotMatch(body, /Watch three numbers/);
+      assert.doesNotMatch(body, /day 31/);
+      assert.doesNotMatch(body, /popcorn stand/);
+    }
   });
 
   it("install-reader and team listing still lock the pin", () => {
