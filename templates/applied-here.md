@@ -74,6 +74,21 @@ Optional path 3 (local MCP, several ideas): the same `company-state.json` + `whe
 
 ## Persistent state locations
 
+SoR index — living list of where the real copy lives. Append, do not silently rewrite. Play may not hold customer or company truth. A tool joins SoR only on observed use (it actually became the record), not a demo or a vendor story. If you do not know the git URL, finding it is the first chore.
+
+| SoR starter | Where (fill yours) |
+|-------------|-------------------|
+| Live site | |
+| Main git repo | |
+| One working folder | |
+| Where leads live | |
+
+Play list (tools and agents — allowed; not SoR until observed use):
+
+| Play | What it is | Still Play? |
+|------|------------|-------------|
+| | | yes |
+
 | Store (OS) | Path in this repo | Status |
 |------------|-------------------|--------|
 | Durable cursor + scores | `company/state/company-state.json` | |

@@ -813,6 +813,36 @@ if grep -q '~60 minutes' company-os/first-hour.md \
 else
   not_ok "first-hour must stay ~60 minutes; two-minute figure is the read; do not call Day 0 / Path 1 a control plane"
 fi
+# SoR / buy vs build / advice filter — pins in first-hour + applied-here. Skills point; they do not reprint.
+if grep -q 'SoR index' company-os/first-hour.md \
+  && grep -q 'Play may not hold' company-os/first-hour.md \
+  && grep -q 'observed use' company-os/first-hour.md \
+  && grep -q 'finding it is the first chore' company-os/first-hour.md \
+  && grep -q 'Do not buy a new category' company-os/first-hour.md \
+  && grep -q 'Not exceptions' company-os/first-hour.md \
+  && grep -q 'Advice filter' company-os/first-hour.md \
+  && grep -q 'this company this week' company-os/first-hour.md \
+  && grep -q 'Do not add a tool' company-os/first-hour.md \
+  && grep -q 'SoR index' templates/applied-here.md \
+  && grep -q 'Live site' templates/applied-here.md \
+  && grep -q 'Main git repo' templates/applied-here.md \
+  && grep -q 'One working folder' templates/applied-here.md \
+  && grep -q 'Where leads live' templates/applied-here.md \
+  && grep -q 'Play may not hold' templates/applied-here.md \
+  && grep -q 'first chore' templates/applied-here.md \
+  && grep -q 'SoR vs Play' plugin/skills/query-os-first/SKILL.md \
+  && grep -q 'buy vs build' plugin/skills/query-os-first/SKILL.md \
+  && grep -q 'advice filter' plugin/skills/query-os-first/SKILL.md \
+  && grep -q 'SoR vs Play' plugin/skills/first-hour/SKILL.md \
+  && grep -q 'SoR vs Play' plugin/skills/path-1-default/SKILL.md \
+  && ! grep -q 'Do not buy a new category' plugin/skills/*/SKILL.md \
+  && ! grep -q 'Four starters' plugin/skills/*/SKILL.md \
+  && ! grep -q 'workspace-architecture' company-os/first-hour.md \
+    templates/applied-here.md plugin/skills/*/SKILL.md; then
+  ok "SoR / buy-vs-build / advice-filter pins live in first-hour and applied-here; skills only point"
+else
+  not_ok "first-hour + applied-here must hold SoR / buy-vs-build / advice-filter pins; skills must not reprint"
+fi
 if ! grep -Eq 'LTV:CAC|T2D3|Bessemer|magic-number|magic number' \
     company-os/operating-system.md company-os/first-hour.md \
     company-os/ai-instructions.md \

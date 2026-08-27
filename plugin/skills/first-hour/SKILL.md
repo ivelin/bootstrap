@@ -13,4 +13,6 @@ Install-first is this plugin + `https://bootstrap-os-mcp.vercel.app/mcp` only. N
 
 https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md
 
+SoR vs Play; buy vs build; advice filter. Git URL unknown → find it first.
+
 Lifestyle or swinging for the fences (not a house rule) — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences
