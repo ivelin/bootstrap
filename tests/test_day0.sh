@@ -841,6 +841,9 @@ if grep -q 'SoR index' company-os/first-hour.md \
   && ! grep -q 'Four starters' plugin/skills/*/SKILL.md \
   && ! grep -q 'six talks' plugin/skills/*/SKILL.md \
   && grep -q 'advice pile' plugin/skills/query-os-first/SKILL.md \
+  && grep -qi 'until then chat is enough' company-os/first-hour.md \
+  && grep -q 'Where the company lives / instantiate' plugin/skills/query-os-first/SKILL.md \
+  && ! grep -E 'advice pile / buy a CRM.*[Gg]it URL' plugin/skills/query-os-first/SKILL.md \
   && ! grep -q 'workspace-architecture' company-os/first-hour.md \
     templates/applied-here.md plugin/skills/*/SKILL.md; then
   ok "SoR / buy-vs-build / advice-filter pins live in first-hour and applied-here; skills only point"

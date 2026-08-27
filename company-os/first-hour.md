@@ -119,8 +119,9 @@ Not Day 0 homework. The hour stays thesis, ≥3 groups, one snapshot.
 
 Living list of where the real copy lives. It evolves. Append, do not silently rewrite.
 
-Four starters: live site; main git repo; one working folder; where leads live.  
-If you do not know the git URL, finding it is the first chore.
+Four starters: live site; main git repo; one working folder; where leads live.
+
+If they ask where the company lives, or they instantiate: if the git URL is unknown, finding it is the first chore. Until then chat is enough. Do not start this chore from an advice pile or a CRM ask.
 
 Play list: new tools and agents are allowed. Play may not hold customer or company truth.  
 A tool joins SoR only on observed use (it actually became the record), not a demo or a vendor story. Same family as spoken yes cannot promote.

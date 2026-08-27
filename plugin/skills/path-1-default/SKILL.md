@@ -13,7 +13,9 @@ Day 0 (~60 minutes): https://github.com/ivelin/bootstrap/blob/main/company-os/fi
 
 Chat plus a weekly “Where are we?” ritual. The two-minute figure is the snapshot read, not the hour.
 
-SoR vs Play; buy vs build; advice filter. Git URL unknown → find it first. — https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md
+SoR vs Play; buy vs build; advice filter. Do not add a stack.
+
+They ask where the company lives: git URL unknown → first SoR chore; until then chat is enough. Not from an advice pile. — https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md
 
 Lifestyle or swinging for the fences (not a house rule) — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences
 
