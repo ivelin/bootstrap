@@ -1,6 +1,6 @@
 # First hour (Day 0)
 
-Day 0 is about **60 minutes**. Official slices: thesis ~20, at least three customer groups ~25, first “Where are we?” ~15.
+Day 0 is **~60 minutes**. Official slices: thesis ~20, at least three customer groups ~25, first “Where are we?” ~15.
 
 This hour: write the thesis, name at least three customer groups, and produce one honest “Where are we?”  
 **Do not build product in this hour.**
