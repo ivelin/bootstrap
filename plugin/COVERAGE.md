@@ -45,7 +45,7 @@ Seven cases. Skills/README make the four **agent** behaviors inevitable. Skip GU
 
 | # | Visitor | Surface | Done means | Evidence |
 |---|---------|---------|------------|----------|
-| H1 | Installing founder | `first-hour` + README (a)(b)(c) | First hour + plugin + `…vercel.app/mcp` only. No auth/DB. | File lock |
+| H1 | Installing founder | `first-hour` + README (a)(b)(c) | Day 0 (~60 minutes) + plugin + `…vercel.app/mcp` only. Snapshot is a two-minute read. No auth/DB. | File lock |
 | H2 | Mentee CoS, where on 0-1 | `query-os-first` | Query this plugin first. Cite OS journey 1–9. | File lock + GitHub 200 |
 | H3 | Specialist, conversation = GTM? | `query-os-first` + `house-rule-pins` | Spoken yes cannot promote. Refuse. Cite OS. | File lock + GitHub 200 |
 | A1 | Agent install-first | `first-hour` | Plugin + this connector only. | File lock |

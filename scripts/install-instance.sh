@@ -166,10 +166,11 @@ cat <<EOF
 
 Day 0 files are in place.
 
-Next (about an hour) — open:
+Next (about 60 minutes) — open:
   $TARGET/docs/company-os/first-hour.md
 
 That page is: fill thesis, ≥3 ICP scorecards, first "Where are we?"
+The two-minute figure is the snapshot read, not this hour.
 Do not copy another founder's market, ICP list, or roadmap.
 
 Manual paste path (if you skip this script next time):

@@ -16,7 +16,7 @@ Seven cases this package must support. Thin links, not essays. No auth. No datab
 
 **Human**
 
-1. Installing founder, first hour, plugin + MCP connector — [`first-hour`](skills/first-hour/SKILL.md) + this README (a)(b)(c). Connector only `https://bootstrap-os-mcp.vercel.app/mcp`.
+1. Installing founder, Day 0 (~60 minutes), plugin + MCP connector — [`first-hour`](skills/first-hour/SKILL.md) + this README (a)(b)(c). Connector only `https://bootstrap-os-mcp.vercel.app/mcp`.
 2. Mentee CoS asking where current work sits on 0-1 — [`query-os-first`](skills/query-os-first/SKILL.md).
 3. Specialist asking whether a customer conversation counts as GTM/traction — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Spoken yes cannot promote.
 
@@ -82,7 +82,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 | `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / exit without fences+proof |
 | `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences |
 | `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8; LTV:CAC 3x / T2D3 stale |
-| `first-hour` | Day 0 + install-first (plugin + this connector only) · lifestyle or fences |
+| `first-hour` | Day 0 (~60 minutes) + install-first (plugin + this connector only) · lifestyle or fences. Two-minute figure is the snapshot read. |
 | `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
 
 ## Hosted MCP URL

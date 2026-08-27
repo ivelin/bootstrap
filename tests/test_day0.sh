@@ -794,6 +794,25 @@ if ! printf '%s\n' "$path1_block" | grep -Eq 'CAC|LTV|day 31|day 90|NRR|magic nu
 else
   not_ok "Path 1 / Day 0 / first-hour must not carry CAC/NRR/magic-number numbers"
 fi
+# Day 0 is ~60 minutes. The two-minute figure is the snapshot read, not the hour.
+# Do not sell Day 0 / Path 1 / hour one as a control plane.
+if grep -q '~60 minutes' company-os/first-hour.md \
+  && grep -q 'takes to \*\*read\*\*' company-os/first-hour.md \
+  && grep -q 'Path 1 is chat plus a weekly' company-os/first-hour.md \
+  && grep -q '~60 minutes' README.md \
+  && grep -q 'Mental model (blueprint vs weekly loop)' README.md \
+  && ! grep -q 'Mental model (two minutes)' README.md \
+  && ! grep -qi 'control plane' company-os/first-hour.md \
+    plugin/skills/first-hour/SKILL.md \
+    plugin/skills/path-1-default/SKILL.md \
+  && ! printf '%s\n' "$path1_block" | grep -qi 'control plane' \
+  && grep -q '60 minutes' plugin/skills/first-hour/SKILL.md \
+  && grep -q 'snapshot \*read\*' plugin/skills/first-hour/SKILL.md \
+  && grep -q '60 minutes' plugin/skills/path-1-default/SKILL.md; then
+  ok "first-hour duration is ~60 minutes; snapshot is a two-minute read; Day 0/Path 1 copy does not say control plane"
+else
+  not_ok "first-hour must stay ~60 minutes; two-minute figure is the read; do not call Day 0 / Path 1 a control plane"
+fi
 if ! grep -Eq 'LTV:CAC|T2D3|Bessemer|magic-number|magic number' \
     company-os/operating-system.md company-os/first-hour.md \
     company-os/ai-instructions.md \

@@ -1,9 +1,13 @@
 # First hour (Day 0)
 
+Day 0 is about **60 minutes**. Official slices: thesis ~20, at least three customer groups ~25, first “Where are we?” ~15.
+
 This hour: write the thesis, name at least three customer groups, and produce one honest “Where are we?”  
 **Do not build product in this hour.**
 
-You do **not** need to copy files first. Point an AI at the Bootstrap OS and do this in chat. Paths below are for when you have instantiated a blank instance in your company repo.
+Path 1 is chat plus a weekly “Where are we?” ritual. You do **not** need to copy files first. Point an AI at the Bootstrap OS and do this in chat. Paths below are for when you have instantiated a blank instance in your company repo.
+
+The **two-minute** figure is how long a good “Where are we?” answer takes to **read**. It is not this hour.
 
 Full constitution: [`operating-system.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md) · live loop: [`live-runtime.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/live-runtime.md).  
 Hard rules: [`ai-instructions.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/ai-instructions.md). If you instantiated, they should already be in `AGENTS.md`.
@@ -53,7 +57,7 @@ Then list the three (name only + rank) in the same place as the thesis — chat 
 ## 3. First “Where are we?” (~15 minutes)
 
 Ask your AI: **“Where are we?”**  
-A good answer is a two-minute company snapshot, not a dump.
+A good answer is a company snapshot you can **read in about two minutes**, not a dump. Writing that first snapshot is this ~15-minute slice. The two-minute figure is the read, not Day 0.
 
 If you instantiated, also copy `docs/company-os/instance/snapshots/TEMPLATE.md` to `docs/company-os/instance/snapshots/YYYY-MM-DD.md` and fill it in everyday words. Optional machine read (does **not** replace the dated snapshot):
 
