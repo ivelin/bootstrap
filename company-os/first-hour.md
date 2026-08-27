@@ -83,39 +83,6 @@ On Day 0 you should hear something like: journey phase **1 of 9**, loop stage **
 
 ---
 
-## SoR index (systems of record)
-
-Living list of where the real copy lives. It evolves. Append, do not silently rewrite.
-
-Four starters: live site; main git repo; one working folder; where leads live.  
-If you do not know the git URL, finding it is the first chore.
-
-Play list: new tools and agents are allowed. Play may not hold customer or company truth.  
-A tool joins SoR only on observed use (it actually became the record), not a demo or a vendor story. Same family as spoken yes cannot promote.
-
-Chat is enough. If you instantiated, write the list in `docs/company-os/applied-here.md`.
-
-## Buy vs build, 0-1 default
-
-Do not buy a new category. Do not spend a week evaluating one. The frontier AI you already use builds the thin thing for this business. Spreading data across unproven tools is the cost.
-
-Exceptions (commodity you already need): domain, email, git host, payments, the AI harness.  
-Not exceptions: CRM, lead-gen suites, a second workspace.
-
-## Advice filter
-
-When a mentor, investor, or seminar says do X:
-
-- What evidence would make this true for **this company this week**?
-- Does it change SoR, or is it Play?
-- Does it buy a category or spread data?
-- Does it advance a journey phase without observed proof?
-- Are they optimizing for their fund (fences) or the founder’s stated Day 0 (lifestyle vs fences)?
-
-If it fails: keep the weekly snapshot. Do not add a tool.
-
----
-
 ## After this hour
 
 Follow the [near-term checklist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#near-term-checklist-any-startup). Next real work is usually honest research across those groups — not a platform.
@@ -141,6 +108,43 @@ When someone says you must find the optimal price from a handful of users, befor
 > There is no optimal price until people have paid and stayed. A survey of a handful will lie. Start with one price.
 
 House rule: [there is no optimal price until people have paid and stayed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+
+---
+
+## Standing rules (not this hour)
+
+Not Day 0 homework. The hour stays thesis, ≥3 groups, one snapshot.
+
+### SoR index (systems of record)
+
+Living list of where the real copy lives. It evolves. Append, do not silently rewrite.
+
+Four starters: live site; main git repo; one working folder; where leads live.  
+If you do not know the git URL, finding it is the first chore.
+
+Play list: new tools and agents are allowed. Play may not hold customer or company truth.  
+A tool joins SoR only on observed use (it actually became the record), not a demo or a vendor story. Same family as spoken yes cannot promote.
+
+Chat is enough. If you instantiated, write the list in `docs/company-os/applied-here.md`.
+
+### Buy vs build, 0-1 default
+
+Do not buy a new category. Do not spend a week evaluating one. The frontier AI you already use builds the thin thing for this business. Spreading data across unproven tools is the cost.
+
+Exceptions (commodity you already need): domain, email, git host, payments, the AI harness.  
+Not exceptions: CRM, lead-gen suites, a second workspace.
+
+### Advice filter
+
+When a mentor, investor, or seminar says do X:
+
+- What evidence would make this true for **this company this week**?
+- Does it change SoR, or is it Play?
+- Does it buy a category or spread data?
+- Does it advance a journey phase without observed proof?
+- Are they optimizing for their fund (fences) or the founder’s stated Day 0 (lifestyle vs fences)?
+
+If it fails: keep the weekly snapshot. Do not add a tool.
 
 ---
 

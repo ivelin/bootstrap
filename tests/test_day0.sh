@@ -821,6 +821,8 @@ if grep -q 'SoR index' company-os/first-hour.md \
   && grep -q 'Do not buy a new category' company-os/first-hour.md \
   && grep -q 'Not exceptions' company-os/first-hour.md \
   && grep -q 'Advice filter' company-os/first-hour.md \
+  && grep -q 'Standing rules (not this hour)' company-os/first-hour.md \
+  && awk '/^## After this hour/{a=1} /^## Standing rules \(not this hour\)/{exit (a?0:1)}' company-os/first-hour.md \
   && grep -q 'this company this week' company-os/first-hour.md \
   && grep -q 'Do not add a tool' company-os/first-hour.md \
   && grep -q 'SoR index' templates/applied-here.md \
@@ -837,6 +839,8 @@ if grep -q 'SoR index' company-os/first-hour.md \
   && grep -q 'SoR vs Play' plugin/skills/path-1-default/SKILL.md \
   && ! grep -q 'Do not buy a new category' plugin/skills/*/SKILL.md \
   && ! grep -q 'Four starters' plugin/skills/*/SKILL.md \
+  && ! grep -q 'six talks' plugin/skills/*/SKILL.md \
+  && grep -q 'advice pile' plugin/skills/query-os-first/SKILL.md \
   && ! grep -q 'workspace-architecture' company-os/first-hour.md \
     templates/applied-here.md plugin/skills/*/SKILL.md; then
   ok "SoR / buy-vs-build / advice-filter pins live in first-hour and applied-here; skills only point"
