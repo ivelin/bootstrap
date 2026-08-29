@@ -12,7 +12,7 @@ Mentee CoS and specialists query this plugin first when the ask is where current
 
 ## Merge-gate visitor matrix (CoS smell-test)
 
-Seven cases this package must support. Thin links, not essays. No auth. No database. No public catalog.
+Seven cases this package must support. Thin links, not essays. Install-first: no auth. No public catalog. Optional identity (whoami + labels) is a separate matrix in [`COVERAGE.md`](COVERAGE.md) — it does not change these seven.
 
 **Human**
 
@@ -120,7 +120,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 `mcp.json` pins the preview Streamable HTTP host `https://bootstrap-os-mcp.vercel.app/mcp`. `${BOOTSTRAP_MCP_URL}` may override (default is that host). Not mentee-ready boards. Not a public catalog. Do not use `mcp.pirin.ai`.
 
-Read tools only: OS info, docs, house-rule pins. Founder `company-state` stays path 3 local stdio.
+Public read tools (no login): OS info, docs, house-rule pins. Optional gated `bootstrap_whoami` / company labels behind a bearer token minted on pirin.ai after existing auth. Founder `company-state` stays path 3 local stdio. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
 
 Deploy recipe (new Vercel project `bootstrap-os-mcp` only):
 

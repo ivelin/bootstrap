@@ -13,6 +13,7 @@
 | **Stdio MCP client (M1 protocol)** | `node test/stdio-mcp.client.mjs` | official SDK client over stdio: tools, init, phase gate, refuse |
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
+| **Hosted identity + RLS** | `test/identity.test.mjs` + `test/identity-rls.test.mjs` | Anonymous OS stays open; Ivelin fixture sees three labels; one mentee cannot read another |
 | **Live public pin** | `node test/preview-live.mjs` | Anonymous `/`, `/health`, `/mcp` on `bootstrap-os-mcp.vercel.app`. Git preview is SSO — not mentee-visible. |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 
@@ -49,7 +50,7 @@ cd mcp && npm ci && npm run ci
 - **Runtime:** Node ≥20. Stdio is the write path. `npm run start:http` is a preview read adapter (no company-state).
 - **State:** founder-owned disk under `BOOTSTRAP_DATA_ROOT` (default `~/.bootstrap-os`).
 - **Failure modes:** missing state file, unknown companyId, template demo mode when no instance — tools return structured errors, not silent success.
-- **Secrets:** do not put API keys in company state; traces may be shared carefully (no PII).
+- **Secrets:** do not put API keys in company state; traces may be shared carefully (no PII). Hosted identity uses `BOOTSTRAP_SUPABASE_URL` + anon key on Vercel only (Cosyo). Never service role on the pin.
 - **Rollback:** Vercel → Deployments → Redeploy / previous production on `bootstrap-os-mcp`. Path 1 (point an AI) remains the default forever; disable MCP client config to fall back. Hosted read adapter is preview only. Logs: Vercel project logs. Liveness: `GET /health`.
 - **Runbooks:** [`docs/COLD_PATH.md`](docs/COLD_PATH.md), [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md)
 

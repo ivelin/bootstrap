@@ -4,6 +4,7 @@
  * Does not listen on 127.0.0.1. Does not host founder company-state.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import { resolveHostedWhoami } from "./identity.js";
 import { createBootstrapServer } from "./server.js";
 
 export function applyHostedReadEnv(): void {
@@ -18,7 +19,7 @@ function corsHeaders(): Record<string, string> {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
     "Access-Control-Allow-Headers":
-      "Content-Type, Accept, MCP-Session-Id, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID",
+      "Content-Type, Accept, Authorization, MCP-Session-Id, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID",
   };
 }
 
@@ -72,7 +73,8 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     });
   }
 
-  const server = createBootstrapServer("hosted-read");
+  const whoami = await resolveHostedWhoami(req.headers.get("authorization"));
+  const server = createBootstrapServer("hosted-read", { whoami });
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,

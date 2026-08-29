@@ -49,10 +49,20 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     }
     assert.match(coverage, /emptyContextMayInventStage/);
     assert.match(coverage, /spokenYesMayPromote/);
+    assert.match(coverage, /Optional identity visitor matrix/);
+    assert.match(coverage, /pirin.*zk0.*totbox|ivelin fixture whoami/i);
+    assert.match(coverage, /one mentee cannot read another|Cannot see Ivelin labels/i);
     const mcpRaw = fs.readFileSync(path.join(PLUGIN, "mcp.json"), "utf8");
     assert.doesNotMatch(mcpRaw, /mcp\.pirin\.ai/);
     assert.doesNotMatch(mcpRaw, /gmail/i);
     assert.doesNotMatch(mcpRaw, /stripe/i);
+    const identity = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "HOSTED_IDENTITY.md"), "utf8");
+    const mcpReadme = fs.readFileSync(path.join(REPO_ROOT, "mcp", "README.md"), "utf8");
+    assert.match(identity, /bootstrap_mcp_mint_token/);
+    assert.match(identity, /Authorization: Bearer/);
+    assert.match(mcpReadme, /Ivelin first account/);
+    assert.match(mcpReadme, /pirin.*zk0.*totbox/s);
+    assert.match(mcpReadme, /Replaces Path 1\?/);
   });
 
   it("H1 + A1 install-first: plugin + connector only", () => {

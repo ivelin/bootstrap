@@ -1,6 +1,6 @@
 # Plugin 0.1.1 — coverage story (this PR, not a product)
 
-Process bar stays on **Vercel’s current** Git integration, preview, env, and tests. No second CI host. No database. No auth build. One connector: `https://bootstrap-os-mcp.vercel.app/mcp`.
+Process bar stays on **Vercel’s current** Git integration, preview, env, and tests. No second CI host. Public OS tools: no login. Optional gated identity (whoami + labels) uses the existing pirin.ai Supabase — not a new Neon, not company-state. One connector: `https://bootstrap-os-mcp.vercel.app/mcp`.
 
 This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the front door.
 
@@ -19,8 +19,9 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | OS 2.8.9 house rule (once) | `company-os/operating-system.md` | Full text of *do not automate a step that should not exist*. One bottleneck this week. Pointers only elsewhere. |
 | Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
 | After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: query hosted MCP `https://bootstrap-os-mcp.vercel.app/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
-| Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Read tools only. No company-state. `marketplace: false`. |
-| Hosted-read surface (live pin) | `mcp/test/preview-live.mjs` | Anonymous visitor on `*.vercel.app` `/`, `/health`, `/mcp`. Honesty text. No write tools. |
+| Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Public read tools + gated whoami/labels. No company-state. `marketplace: false`. |
+| Hosted-read surface (live pin) | `mcp/test/preview-live.mjs` | Anonymous visitor on `*.vercel.app` `/`, `/health`, `/mcp`. Honesty text. No write tools. No login required. |
+| Optional identity + RLS | `mcp/test/identity.test.mjs` + `identity-rls.test.mjs` + SQL migration | Ivelin fixture whoami → `pirin`, `zk0`, `totbox`. Other token cannot see those labels. SQL FORCE RLS + own-row policies. |
 | Skill OS links | preview-live | Each `https://github.com/ivelin/bootstrap` link in skills returns HTTP 200. |
 | Day-0 + MCP CI | `./scripts/ci.sh`, `cd mcp && npm run ci` | Same workflows as today (GitHub Actions + Vercel). |
 
@@ -35,7 +36,9 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Production `bootstrap_os_info.pluginPreview.version` already `0.1.1` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | Mentee-ready hosted boards / founder `company-state` on the host | Out. Path 3 local stdio only. |
 | Non-maintainer MCP cold path (M2) | Still open. Human-eyes for hosted boards stays **unknown**. |
-| Database, auth, extra connectors | Not started. Do not start. |
+| A human actually signed in as Ivelin and called whoami on the live pin | File/fixture lock only. Do not claim a paste that is not in this PR. |
+| pirin.ai mint page | Contract in `mcp/docs/HOSTED_IDENTITY.md`. Page lives on ivelin/pirin-ai (existing auth). Not this repo. |
+| Extra connectors / mentee roster / usage analytics as proof | Out. |
 | A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
 | Production `bootstrap_os_info.osVersion` already `2.8.9` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | CAC / LTV / day-31 / day-90 / NRR / magic-number numbers on Path 1 | Must stay absent. CI locks the absence. |
@@ -55,7 +58,18 @@ Seven cases. Skills/README make the four **agent** behaviors inevitable. Skip GU
 | A3 | Agent empty-context | `query-os-first` | No founder update → do not invent their stage. unknown / none yet. | File lock + `emptyContextMayInventStage()===false` |
 | A4 | Agent spoken-yes as GTM | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
 
-HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Vercel SSO preview, Cursor GUI, pirin.ai, `mcp.pirin.ai`.
+HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Vercel SSO preview, Cursor GUI, a human Ivelin whoami paste, `mcp.pirin.ai`.
+
+## Optional identity visitor matrix (labels only)
+
+Does **not** replace the seven-case matrix. Login is optional. Install-first still says no auth.
+
+| # | Visitor | Surface | Done means | Evidence |
+|---|---------|---------|------------|----------|
+| I1 | Installing founder / install-first agent | `first-hour` + public `/mcp` | Still no login required. Published OS tools work. | File lock + hosted-handler + preview-live anonymous |
+| I2 | Empty-context agent | `bootstrap_whoami` with no header | `authenticated: false`, empty labels. Does not invent their stage. | `identity.test.mjs` |
+| I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
+| I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
 
 ## After First Hour visitor matrix
 
@@ -101,9 +115,11 @@ Stay on Vercel Git:
 2. Public pin `https://bootstrap-os-mcp.vercel.app` — `/`, `/health`, `/mcp` (anonymous).
 3. Git preview URL exists for maintainers; **SSO redirect** means it is not a mentee visitor.
 
-## Env (no new secrets)
+## Env
 
-Hosted-read already sets `BOOTSTRAP_MCP_SURFACE=hosted-read` and defaults docs to the published repo. Optional `${BOOTSTRAP_MCP_URL}` override only. No mentee company-state env. No DB URL. No auth keys.
+Hosted-read already sets `BOOTSTRAP_MCP_SURFACE=hosted-read` and defaults docs to the published repo. Optional `${BOOTSTRAP_MCP_URL}` override only. No mentee company-state env.
+
+Gated whoami (optional) on Vercel `bootstrap-os-mcp`: `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY` for project `supabase-pirin-ai`. Public tools work if those are unset. Cosyo sets the keys — they are not in this repo.
 
 ## SRE already in play
 

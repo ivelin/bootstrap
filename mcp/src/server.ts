@@ -33,6 +33,7 @@ import {
 import { buildNextEvidenceView, buildStatusView } from "./guidance.js";
 import { evaluateExternalAsk } from "./policy.js";
 import { HOUSE_RULE_LINES, HOUSE_RULE_PINS } from "./house-rules.js";
+import { anonymousWhoami, type HostedRequestContext } from "./identity-context.js";
 
 export type McpSurface = "full" | "hosted-read";
 
@@ -114,7 +115,12 @@ function registerReadTools(server: McpServer, surface: McpSurface) {
             localMcpMultiCompany:
               "Path 3. One stdio server; bootstrap_init_company / list / use_company; state under BOOTSTRAP_DATA_ROOT/instances/<id>.",
             hostedReadPreview:
-              "Path 4 preview. Read-only: os info, docs, house-rule pins. Fetch published repo. No shared founder boards.",
+              "Path 4 preview. Read-only: os info, docs, house-rule pins. Optional gated whoami + company labels behind a bearer token. Fetch published repo. No shared founder boards.",
+            identity: {
+              publicTools: "Unauthenticated. Install-first and empty-context agents keep working.",
+              gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels"],
+              stores: "Labels only on the existing pirin.ai Supabase. Not company-state. Not ~/.bootstrap-os.",
+            },
           },
         });
       }
@@ -215,6 +221,46 @@ function registerReadTools(server: McpServer, surface: McpSurface) {
         note: "Pins only. Read the linked OS sections.",
         pins: HOUSE_RULE_PINS,
       }),
+  );
+}
+
+function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext) {
+  server.tool(
+    "bootstrap_whoami",
+    "Optional hosted identity. Without a bearer token: not authenticated, empty labels. With a valid mentee token: email + company labels only. Not boards. Not company-state.",
+    {},
+    async () => {
+      const who = ctx.whoami;
+      return text({
+        authenticated: who.authenticated,
+        email: who.authenticated ? who.email : null,
+        labels: who.labels,
+        reason: who.reason ?? null,
+        identityStore: who.identityStore ?? null,
+        note:
+          who.note ??
+          "Public OS tools stay open with no login. Labels only — not boards, not company-state, not ~/.bootstrap-os.",
+      });
+    },
+  );
+
+  server.tool(
+    "bootstrap_list_company_labels",
+    "Optional hosted company labels for the logged-in mentee. Empty without a valid bearer token. Labels only — not boards or company-state.",
+    {},
+    async () => {
+      const who = ctx.whoami;
+      if (!who.authenticated) {
+        return err(
+          "Login required for company labels. Public OS tools stay open without login. Mint a token on pirin.ai after existing auth, then send Authorization: Bearer <token>.",
+        );
+      }
+      return text({
+        labels: who.labels,
+        email: who.email,
+        note: "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os. Writes stay on path 3 local files.",
+      });
+    },
   );
 }
 
@@ -552,12 +598,18 @@ function registerWriteTools(server: McpServer) {
   );
 }
 
-export function createBootstrapServer(surface: McpSurface = "full"): McpServer {
+export function createBootstrapServer(
+  surface: McpSurface = "full",
+  hosted?: HostedRequestContext,
+): McpServer {
   const server = new McpServer({
     name: "bootstrap-os",
     version: MCP_VERSION,
   });
   registerReadTools(server, surface);
+  if (surface === "hosted-read") {
+    registerGatedIdentityTools(server, hosted ?? { whoami: anonymousWhoami() });
+  }
   if (surface === "full") {
     registerWriteTools(server);
   }
