@@ -17,7 +17,7 @@ import {
   parseBearerToken,
   setIdentityStoreForTests,
 } from "../dist/identity.js";
-import { isJwtAccessToken, PIRIN_PROTECTED_RESOURCE_METADATA_URL } from "../dist/oauth.js";
+import { isJwtAccessToken, WWW_AUTHENTICATE_CHALLENGE } from "../dist/oauth.js";
 
 const IVELIN_TOKEN = "bos_ivelin_fixture_token_ok";
 const OTHER_TOKEN = "bos_other_token_fixture_xx";
@@ -60,10 +60,11 @@ function parseTool(result) {
 async function assertGatedUnauthorized(res) {
   assert.equal(res.status, 401);
   const challenge = res.headers.get("WWW-Authenticate") ?? "";
-  assert.match(challenge, /Bearer/i);
-  assert.match(challenge, /resource_metadata=/);
-  assert.match(challenge, /pirin\.ai\/\.well-known\/oauth-protected-resource/);
-  assert.equal(challenge.includes(PIRIN_PROTECTED_RESOURCE_METADATA_URL), true);
+  assert.equal(challenge, WWW_AUTHENTICATE_CHALLENGE);
+  assert.equal(
+    challenge,
+    'Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", scope="bootstrap-os"',
+  );
   const body = JSON.parse(await res.text());
   assert.equal(body.error, "invalid_token");
 }

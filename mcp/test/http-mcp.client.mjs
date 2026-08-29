@@ -136,8 +136,10 @@ async function main() {
       }),
     });
     assert.equal(gated.status, 401);
-    assert.match(gated.headers.get("WWW-Authenticate") ?? "", /pirin\.ai\/\.well-known\/oauth-protected-resource/);
-    assert.match(gated.headers.get("WWW-Authenticate") ?? "", /resource_metadata=/);
+    assert.equal(
+      gated.headers.get("WWW-Authenticate"),
+      'Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", scope="bootstrap-os"',
+    );
 
     const listed = await call(client, "bootstrap_list_docs");
     assert.ok(Array.isArray(listed));

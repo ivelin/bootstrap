@@ -10,8 +10,12 @@ export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
 
 export const HOSTED_MCP_RESOURCE = "https://bootstrap-os-mcp.vercel.app/mcp";
 
+/** Exact challenge Web Builder and MCP clients must parse. */
+export const WWW_AUTHENTICATE_CHALLENGE =
+  `Bearer realm="bootstrap-os-mcp", resource_metadata="${PIRIN_PROTECTED_RESOURCE_METADATA_URL}", scope="bootstrap-os"`;
+
 export function wwwAuthenticateChallenge(): string {
-  return `Bearer realm="bootstrap-os-mcp", resource_metadata="${PIRIN_PROTECTED_RESOURCE_METADATA_URL}", error="invalid_token"`;
+  return WWW_AUTHENTICATE_CHALLENGE;
 }
 
 export function isJwtAccessToken(token: string): boolean {

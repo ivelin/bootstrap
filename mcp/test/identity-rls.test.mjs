@@ -1,7 +1,7 @@
 /**
  * RLS lock: one mentee cannot read another.
  * In-memory replica of the SQL USING clauses + migration file locks.
- * Live probe (optional): BOOTSTRAP_SUPABASE_URL + BOOTSTRAP_SUPABASE_ANON_KEY.
+ * No network. PGlite runtime lock lives in identity-pglite.test.mjs.
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";

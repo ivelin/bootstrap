@@ -1,7 +1,7 @@
 /**
  * Merge-gate visitor matrix (CoS smell-test).
  * Seven cases the package must support. File locks only.
- * Live HTTP is mcp/test/preview-live.mjs. Not a Cursor GUI test.
+ * File locks only. PR CI does not live-probe the production pin.
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
@@ -59,8 +59,11 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     const identity = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "HOSTED_IDENTITY.md"), "utf8");
     const mcpReadme = fs.readFileSync(path.join(REPO_ROOT, "mcp", "README.md"), "utf8");
     assert.match(identity, /WWW-Authenticate/);
-    assert.match(identity, /resource_metadata/);
-    assert.match(identity, /pirin\.ai\/\.well-known\/oauth-protected-resource/);
+    assert.match(
+      identity,
+      /Bearer realm="bootstrap-os-mcp", resource_metadata="https:\/\/pirin\.ai\/\.well-known\/oauth-protected-resource", scope="bootstrap-os"/,
+    );
+    assert.match(identity, /PGlite/);
     assert.match(identity, /Authorization: Bearer/);
     assert.match(identity, /Founder lock/);
     assert.match(identity, /\/bootstrap-os\/login/);

@@ -1,6 +1,7 @@
 /**
- * Live preview checks on the public Vercel pin mentee agents are told to use.
- * Git-branch preview is SSO-gated — not a mentee visitor. Do not claim it is.
+ * Optional maintainer check of the production pin. Not PR CI.
+ * Cloud agents on PRs must not run this (it live-probes prod).
+ * Git-branch preview is SSO-gated — not a mentee visitor.
  *
  * Override pin with BOOTSTRAP_MCP_ORIGIN (default https://bootstrap-os-mcp.vercel.app).
  */

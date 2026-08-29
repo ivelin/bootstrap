@@ -4,7 +4,7 @@ Process bar stays on **Vercel’s current** Git integration, preview, env, and t
 
 This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the front door.
 
-## Locked (CI / file / live pin)
+## Locked (CI / file)
 
 | Lock | Where | What it proves |
 |------|--------|----------------|
@@ -19,10 +19,9 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | OS 2.8.9 house rule (once) | `company-os/operating-system.md` | Full text of *do not automate a step that should not exist*. One bottleneck this week. Pointers only elsewhere. |
 | Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
 | After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: query hosted MCP `https://bootstrap-os-mcp.vercel.app/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
-| Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Public read tools + gated whoami/labels. No company-state. `marketplace: false`. |
-| Hosted-read surface (live pin) | `mcp/test/preview-live.mjs` | Anonymous visitor on `*.vercel.app` `/`, `/health`, `/mcp`. Honesty text. No write tools. No login required. |
-| Optional identity + RLS | `mcp/test/identity.test.mjs` + `identity-rls.test.mjs` + SQL migration | Ivelin fixture whoami → `pirin`, `zk0`, `totbox`. Other token cannot see those labels. SQL FORCE RLS + own-row policies. |
-| Skill OS links | preview-live | Each `https://github.com/ivelin/bootstrap` link in skills returns HTTP 200. |
+| Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Public read tools. Gated whoami/labels 401 + WWW-Authenticate. No company-state. `marketplace: false`. |
+| Optional identity + RLS | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | 401 + exact pirin.ai challenge. PGlite FORCE RLS (never the live project). Ivelin fixture labels. |
+| Skill OS links | plugin-hyperlinks unit | Skills only hyperlink the published OS. |
 | Day-0 + MCP CI | `./scripts/ci.sh`, `cd mcp && npm run ci` | Same workflows as today (GitHub Actions + Vercel). |
 
 ## Not locked (do not claim)
@@ -66,8 +65,8 @@ Does **not** replace the seven-case matrix. Login is optional. Install-first sti
 
 | # | Visitor | Surface | Done means | Evidence |
 |---|---------|---------|------------|----------|
-| I1 | Installing founder / install-first agent | `first-hour` + public `/mcp` | Still no login required. Published OS tools work. | File lock + hosted-handler + preview-live anonymous |
-| I2 | Empty-context agent | `bootstrap_whoami` with no header | `authenticated: false`, empty labels. Does not invent their stage. | `identity.test.mjs` |
+| I1 | Installing founder / install-first agent | `first-hour` + public `/mcp` | Still no login required. Published OS tools work. | File lock + hosted-handler |
+| I2 | Empty-context agent | `bootstrap_whoami` with no header | HTTP 401 + WWW-Authenticate to pirin.ai. Does not invent their stage. | `identity.test.mjs` |
 | I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
 | I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
 
@@ -119,7 +118,7 @@ Stay on Vercel Git:
 
 Hosted-read already sets `BOOTSTRAP_MCP_SURFACE=hosted-read` and defaults docs to the published repo. Optional `${BOOTSTRAP_MCP_URL}` override only. No mentee company-state env.
 
-Gated whoami (optional) on Vercel `bootstrap-os-mcp`: `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY` for project `supabase-pirin-ai`. Public tools work if those are unset. Cosyo sets the keys — they are not in this repo.
+Gated whoami env pin is **parked**. PR CI uses PGlite. Do not live-probe the production pin from a PR agent.
 
 ## SRE already in play
 

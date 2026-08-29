@@ -1,5 +1,5 @@
 -- Bootstrap OS hosted MCP identity (labels only).
--- Target: existing pirin.ai project supabase-pirin-ai (vsqekesftzstsjvcowgm).
+-- DO NOT apply from a PR cloud agent. Local/CI use mcp/test/pglite/identity-schema.sql.
 -- No company-state, no boards, no ~/.bootstrap-os, no mentee roster.
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;

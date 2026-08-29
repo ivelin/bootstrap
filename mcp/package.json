@@ -15,13 +15,13 @@
     "deploy:http": "vercel --prod --yes --scope ivelins-projects-9f9b7132",
     "dev": "tsc && node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs test/docs-remote.test.mjs test/plugin-hyperlinks.test.mjs test/hosted-handler.test.mjs test/mentee-visitor-matrix.test.mjs test/after-proof-efficiency.test.mjs test/identity.test.mjs test/identity-rls.test.mjs",
-    "test:unit": "node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs test/docs-remote.test.mjs test/plugin-hyperlinks.test.mjs test/hosted-handler.test.mjs test/mentee-visitor-matrix.test.mjs test/after-proof-efficiency.test.mjs test/identity.test.mjs test/identity-rls.test.mjs",
+    "test": "npm run build && npm run test:unit",
+    "test:unit": "node --test test/policy.test.mjs test/state-gates.test.mjs test/multi-company.test.mjs test/docs-markdown-path.test.mjs test/house-rules.test.mjs test/docs-remote.test.mjs test/plugin-hyperlinks.test.mjs test/hosted-handler.test.mjs test/mentee-visitor-matrix.test.mjs test/after-proof-efficiency.test.mjs test/identity.test.mjs test/identity-rls.test.mjs test/identity-pglite.test.mjs",
     "test:smoke": "npm run build && node test/cold-path.smoke.mjs",
     "test:stdio": "npm run build && node test/stdio-mcp.client.mjs",
     "test:http": "npm run build && node test/http-mcp.client.mjs",
     "test:preview": "node test/preview-live.mjs",
-    "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs && node test/http-mcp.client.mjs && node test/preview-live.mjs"
+    "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs && node test/http-mcp.client.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -32,6 +32,7 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@types/node": "^22.10.0",
     "typescript": "^5.7.0"
   },
