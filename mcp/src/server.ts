@@ -253,7 +253,7 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
       const who = ctx.whoami;
       if (!who.authenticated) {
         return err(
-          "Login required for company labels. Public OS tools stay open. Sign in on pirin.ai, then send that access token as Authorization: Bearer. Do not paste a bos_ mint token.",
+          "Login required for company labels. Public OS tools stay open. Follow 401 WWW-Authenticate to pirin.ai (authorization code + PKCE at /bootstrap-os/login).",
         );
       }
       return text({

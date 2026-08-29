@@ -1,6 +1,6 @@
 # Hosted MCP identity (resource server)
 
-This host is the **resource server only**. Public OS tools stay **unauthenticated**. Gated tools require a **pirin.ai access token**.
+This host is the **resource server only**. Public OS tools stay **unauthenticated**. Gated tools accept **access tokens issued by pirin.ai login**.
 
 Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write path.
 
@@ -8,11 +8,11 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 
 | | |
 |--|--|
-| Login / OAuth / metadata | **pirin.ai only** — Web Builder owns `/bootstrap-os/login` and `/.well-known/oauth-protected-resource` |
+| Login / OAuth | **pirin.ai only.** Web Builder owns `/bootstrap-os/login` (authorize URL, authorization code + PKCE) and `/.well-known/oauth-protected-resource` |
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
-| Copy-paste `bos_` mint | **Not the product.** Do not tell mentees to mint a string and paste it. |
-| Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai Supabase. Local / preview / branch / CI use **PGlite** (or an isolated branch DB). Never prod. |
-| Env pin | **Parked.** Do not set Vercel env from this PR. Production pin stays on `main`. Do not merge. |
+| Product | MCP client follows 401 → protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
+| Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
+| Env pin | **Parked.** 401 contract does not wait on Vercel env. Production pin stays on `main`. Do not merge. |
 
 ## HTTP contract
 
@@ -24,11 +24,17 @@ Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_
 WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", scope="bootstrap-os"
 ```
 
-Metadata URL (Web Builder must publish RFC 9728 here):
+## Web Builder
+
+Protected-resource metadata URL:
 
 `https://pirin.ai/.well-known/oauth-protected-resource`
 
-Suggested document:
+Authorize URL (authorization code + PKCE):
+
+`https://pirin.ai/bootstrap-os/login`
+
+Suggested RFC 9728 document:
 
 ```json
 {
@@ -39,25 +45,25 @@ Suggested document:
 }
 ```
 
-Login UI: `https://pirin.ai/bootstrap-os/login`. This repo does not host it.
+Authorization-server metadata on pirin.ai must advertise `authorization_endpoint` as `/bootstrap-os/login` and support authorization code + PKCE. This repo does not host those documents.
 
-A valid call sends the **pirin.ai-issued access token**:
+After the code exchange, the MCP client retries gated tools with:
 
 ```http
-Authorization: Bearer <pirin.ai access_token>
+Authorization: Bearer <access_token issued by pirin.ai>
 ```
 
-This host validates that JWT (when env is later pinned) via `/auth/v1/user` + `bootstrap_mcp_my_labels()`. Until then, gated tools still 401; public tools still work.
+Install-first clients omit `Authorization`. They still get the published OS. They receive 401 only if they call a gated tool.
 
 ## Tests (PGlite / isolated)
 
 | | |
 |--|--|
 | HTTP 401 + exact `WWW-Authenticate` | `mcp/test/identity.test.mjs` |
-| FORCE RLS, one mentee cannot read another | `mcp/test/identity-pglite.test.mjs` against [`../test/pglite/identity-schema.sql`](../test/pglite/identity-schema.sql) |
+| FORCE RLS | `mcp/test/identity-pglite.test.mjs` |
 | SQL file locks | `mcp/test/identity-rls.test.mjs` (no network) |
 
-Do not point CI at the live pirin.ai project. Do not run `preview-live.mjs` on PR cloud agents (that hits the production pin).
+Do not run `preview-live.mjs` on PR cloud agents.
 
 ## Out
 

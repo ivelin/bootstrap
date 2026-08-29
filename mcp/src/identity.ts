@@ -1,7 +1,7 @@
 /**
  * Hosted-MCP identity: pirin.ai access token → whoami + company labels.
  * Public OS tools do not use this module. No company-state. No boards.
- * Product path is a JWT issued by pirin.ai login — not a copy-paste bos_ token.
+ * Product path is a JWT issued by pirin.ai login (authorization code + PKCE).
  */
 import { createHash, timingSafeEqual } from "node:crypto";
 import { isJwtAccessToken } from "./oauth.js";

@@ -167,7 +167,7 @@ Never deploy this adapter to `v0-pirin-ai-founder-studio` or any pirin.ai host.
 | Blueprint | Read from your clone | Fetch published GitHub repo (no login) |
 | Company state | Disk under data root, **per company** | **Not hosted** |
 | Identity | None (local files) | Optional. Whoami + labels on existing pirin.ai Supabase + RLS |
-| Cross-tenant | **Denied** | **Denied** (RLS + token hash). Tests lock it. |
+| Cross-tenant | **Denied** | **Denied** (RLS + pirin.ai access token). Tests lock it. |
 | Leaderboards | Out of scope | Never |
 
 ---

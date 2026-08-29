@@ -143,6 +143,8 @@ BEGIN
 END;
 $$;
 
+-- Leftover hashed-token RPC. Not the mentee path. Product is a pirin.ai
+-- access token (authorization code + PKCE). Do not apply this file from a PR agent.
 CREATE OR REPLACE FUNCTION public.bootstrap_mcp_mint_token()
 RETURNS jsonb
 LANGUAGE plpgsql
