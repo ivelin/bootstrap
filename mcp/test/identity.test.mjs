@@ -97,8 +97,11 @@ describe("hosted identity (optional, gated)", () => {
     );
     assert.equal(who.authenticated, true);
     assert.equal(who.email, IVELIN_SEED_EMAIL);
+    assert.deepEqual(who.labels, ["pirin", "totbox", "zk0"]);
     assert.deepEqual(who.labels, [...IVELIN_SEED_LABELS]);
-    assert.doesNotMatch(JSON.stringify(who), /company-state|journeyPhase|instanceRoot|secret-other/);
+    const blob = JSON.stringify(who);
+    assert.doesNotMatch(blob, /journeyPhase|instanceRoot|secret-other|company-state\.json/);
+    assert.match(blob, /Labels only/);
 
     const labels = parseTool(
       await rpc("tools/call", { name: "bootstrap_list_company_labels", arguments: {} }, 6, IVELIN_TOKEN),

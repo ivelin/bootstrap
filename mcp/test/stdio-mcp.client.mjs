@@ -84,7 +84,7 @@ async function main() {
     assert.ok(names.length >= 15, `expected full tool surface, got ${names.length}`);
 
     const info = await call(client, "bootstrap_os_info");
-    assert.equal(info.mcpVersion, "0.2.0");
+    assert.equal(info.mcpVersion, "0.3.0");
     assert.equal(info.osVersion, "2.8.9");
     assert.equal(path.resolve(info.paths.dataRoot), path.resolve(dataRoot));
     assert.match(JSON.stringify(info.adoptionOrder), /not mentee-ready boards/);

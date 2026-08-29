@@ -27,7 +27,7 @@ export interface IdentityStore {
 }
 
 export const IVELIN_SEED_EMAIL = "ivelin@pirin.ai";
-export const IVELIN_SEED_LABELS = ["pirin", "zk0", "totbox"] as const;
+export const IVELIN_SEED_LABELS = ["pirin", "totbox", "zk0"] as const;
 
 export function hashMcpToken(token: string): string {
   return createHash("sha256").update(token, "utf8").digest("hex");
