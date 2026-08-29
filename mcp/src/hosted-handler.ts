@@ -4,7 +4,9 @@
  * Does not listen on 127.0.0.1. Does not host founder company-state.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import { isHostedGatedToolName } from "./constants.js";
 import { resolveHostedWhoami } from "./identity.js";
+import { wwwAuthenticateChallenge } from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
 
 export function applyHostedReadEnv(): void {
@@ -20,7 +22,32 @@ function corsHeaders(): Record<string, string> {
     "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
     "Access-Control-Allow-Headers":
       "Content-Type, Accept, Authorization, MCP-Session-Id, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID",
+    "Access-Control-Expose-Headers": "WWW-Authenticate",
   };
+}
+
+function gatedToolNameFromRpc(body: unknown): string | undefined {
+  if (!body || typeof body !== "object") return undefined;
+  const msg = body as { method?: unknown; params?: { name?: unknown } };
+  if (msg.method !== "tools/call") return undefined;
+  const name = msg.params?.name;
+  return typeof name === "string" && isHostedGatedToolName(name) ? name : undefined;
+}
+
+export function unauthorizedGatedToolResponse(): Response {
+  const headers = {
+    ...corsHeaders(),
+    "WWW-Authenticate": wwwAuthenticateChallenge(),
+    "Content-Type": "application/json; charset=utf-8",
+  };
+  return new Response(
+    JSON.stringify({
+      error: "invalid_token",
+      error_description:
+        "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
+    }),
+    { status: 401, headers },
+  );
 }
 
 function withCors(res: Response): Response {
@@ -74,6 +101,18 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
   }
 
   const whoami = await resolveHostedWhoami(req.headers.get("authorization"));
+  if (req.method === "POST") {
+    let rpcBody: unknown = null;
+    try {
+      rpcBody = await req.clone().json();
+    } catch {
+      rpcBody = null;
+    }
+    if (gatedToolNameFromRpc(rpcBody) && !whoami.authenticated) {
+      return unauthorizedGatedToolResponse();
+    }
+  }
+
   const server = createBootstrapServer("hosted-read", { whoami });
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,

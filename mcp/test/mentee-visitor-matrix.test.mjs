@@ -58,11 +58,15 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.doesNotMatch(mcpRaw, /stripe/i);
     const identity = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "HOSTED_IDENTITY.md"), "utf8");
     const mcpReadme = fs.readFileSync(path.join(REPO_ROOT, "mcp", "README.md"), "utf8");
-    assert.match(identity, /bootstrap_mcp_mint_token/);
+    assert.match(identity, /WWW-Authenticate/);
+    assert.match(identity, /resource_metadata/);
+    assert.match(identity, /pirin\.ai\/\.well-known\/oauth-protected-resource/);
     assert.match(identity, /Authorization: Bearer/);
     assert.match(identity, /Founder lock/);
     assert.match(identity, /\/bootstrap-os\/login/);
     assert.match(identity, /Do \*\*not\*\* add a login UI/);
+    assert.match(identity, /not the mentee path|not the product/i);
+    assert.doesNotMatch(identity, /Put it on the MCP connector as Authorization: Bearer bos_/);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "plugin", "login.html")), false);
     assert.match(mcpReadme, /Ivelin first account/);

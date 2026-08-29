@@ -115,10 +115,11 @@ function registerReadTools(server: McpServer, surface: McpSurface) {
             localMcpMultiCompany:
               "Path 3. One stdio server; bootstrap_init_company / list / use_company; state under BOOTSTRAP_DATA_ROOT/instances/<id>.",
             hostedReadPreview:
-              "Path 4 preview. Read-only: os info, docs, house-rule pins. Optional gated whoami + company labels behind a bearer token. Fetch published repo. No shared founder boards.",
+              "Path 4 preview. Read-only: os info, docs, house-rule pins. Gated whoami + labels: 401 + WWW-Authenticate to pirin.ai. Fetch published repo. No shared founder boards.",
             identity: {
               publicTools: "Unauthenticated. Install-first and empty-context agents keep working.",
               gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels"],
+              challenge: "HTTP 401 + WWW-Authenticate resource_metadata on pirin.ai. No login UI here.",
               stores: "Labels only on the existing pirin.ai Supabase. Not company-state. Not ~/.bootstrap-os.",
             },
           },
@@ -227,7 +228,7 @@ function registerReadTools(server: McpServer, surface: McpSurface) {
 function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "bootstrap_whoami",
-    "Optional hosted identity. Without a bearer token: not authenticated, empty labels. With a valid mentee token: email + company labels only. Not boards. Not company-state.",
+    "Hosted identity. Requires a pirin.ai access token (Authorization: Bearer). Unauthenticated calls get HTTP 401 + WWW-Authenticate. Email + company labels only. Not boards. Not company-state.",
     {},
     async () => {
       const who = ctx.whoami;
@@ -246,13 +247,13 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
 
   server.tool(
     "bootstrap_list_company_labels",
-    "Optional hosted company labels for the logged-in mentee. Empty without a valid bearer token. Labels only — not boards or company-state.",
+    "Hosted company labels for the mentee identified by a pirin.ai access token. Unauthenticated calls get HTTP 401 + WWW-Authenticate. Labels only — not boards or company-state.",
     {},
     async () => {
       const who = ctx.whoami;
       if (!who.authenticated) {
         return err(
-          "Login required for company labels. Public OS tools stay open without login. Mint a token on pirin.ai after existing auth, then send Authorization: Bearer <token>.",
+          "Login required for company labels. Public OS tools stay open. Sign in on pirin.ai, then send that access token as Authorization: Bearer. Do not paste a bos_ mint token.",
         );
       }
       return text({

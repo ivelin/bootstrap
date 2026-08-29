@@ -1,8 +1,10 @@
 /**
- * Hosted-MCP identity: optional bearer token → whoami + company labels.
+ * Hosted-MCP identity: pirin.ai access token → whoami + company labels.
  * Public OS tools do not use this module. No company-state. No boards.
+ * Product path is a JWT issued by pirin.ai login — not a copy-paste bos_ token.
  */
 import { createHash, timingSafeEqual } from "node:crypto";
+import { isJwtAccessToken } from "./oauth.js";
 
 export type HostedWhoami = {
   authenticated: boolean;
@@ -153,32 +155,51 @@ export class SupabaseIdentityStore implements IdentityStore {
         identityStore: "supabase",
       };
     }
-    const endpoint = `${this.url.replace(/\/+$/, "")}/rest/v1/rpc/bootstrap_mcp_whoami`;
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        apikey: this.anonKey,
-        Authorization: `Bearer ${this.anonKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ p_token: token }),
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!res.ok) {
+    if (!isJwtAccessToken(token)) {
       return {
         authenticated: false,
         labels: [],
-        reason: `lookup_failed_${res.status}`,
+        reason: "not_a_pirin_access_token",
         identityStore: "supabase",
       };
     }
-    const raw = (await res.json()) as HostedWhoami;
+    const base = this.url.replace(/\/+$/, "");
+    const userRes = await fetch(`${base}/auth/v1/user`, {
+      headers: {
+        apikey: this.anonKey,
+        Authorization: `Bearer ${token}`,
+      },
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!userRes.ok) {
+      return {
+        authenticated: false,
+        labels: [],
+        reason: "invalid_or_revoked_token",
+        identityStore: "supabase",
+      };
+    }
+    const user = (await userRes.json()) as { email?: string };
+    const labelsRes = await fetch(`${base}/rest/v1/rpc/bootstrap_mcp_my_labels`, {
+      method: "POST",
+      headers: {
+        apikey: this.anonKey,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: "{}",
+      signal: AbortSignal.timeout(10_000),
+    });
+    let labels: string[] = [];
+    if (labelsRes.ok) {
+      const raw = (await labelsRes.json()) as { labels?: unknown };
+      labels = Array.isArray(raw.labels) ? raw.labels.map(String).sort() : [];
+    }
     return {
-      authenticated: Boolean(raw.authenticated),
-      email: raw.email,
-      labels: Array.isArray(raw.labels) ? raw.labels.map(String).sort() : [],
-      reason: raw.reason,
-      note: raw.note ?? "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os.",
+      authenticated: true,
+      email: user.email,
+      labels,
+      note: "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os.",
       identityStore: "supabase",
     };
   }
@@ -212,7 +233,7 @@ export async function resolveHostedWhoami(authorizationHeader: string | null | u
       labels: [],
       reason: token ? "identity_store_unset" : "missing_or_short_token",
       identityStore: "unset",
-      note: "Public OS tools stay open. Gated whoami needs the pirin.ai Supabase env on this host.",
+      note: "Public OS tools stay open. Gated tools need a pirin.ai access token and this host's Supabase env.",
     };
   }
   return store.whoami(token);

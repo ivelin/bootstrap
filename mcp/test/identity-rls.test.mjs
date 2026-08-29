@@ -58,7 +58,7 @@ describe("RLS: one mentee cannot read another", () => {
     assert.match(sql, /'zk0'/);
     assert.match(sql, /'totbox'/);
     assert.match(sql, /SET search_path = public, extensions/);
-    assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_whoami/);
+    assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_my_labels\(\) TO authenticated/);
     assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_mint_token\(\) TO authenticated/);
     assert.doesNotMatch(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_mint_token\(\) TO anon/);
   });
@@ -82,8 +82,9 @@ describe("RLS: one mentee cannot read another", () => {
     assert.ok(!rlsVisibleLabels(mentees, mentees[0].authUserId).includes("bravo"));
   });
 
-  it("mint RPC is authenticated-only; whoami RPC is token-scoped in SQL", () => {
+  it("session labels RPC is authenticated-only; hashed mint stays demoted leftover", () => {
     const sql = fs.readFileSync(SQL, "utf8");
+    assert.match(sql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_my_labels/);
     assert.match(sql, /IF uid IS NULL THEN\s+RAISE EXCEPTION 'not_authenticated'/);
     assert.match(sql, /token_hash = public\.bootstrap_mcp_hash_token\(p_token\)/);
     assert.match(sql, /revoked_at IS NULL/);

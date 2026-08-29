@@ -1,5 +1,5 @@
 /**
- * Hosted identity: public OS stays open; gated whoami + labels need a bearer token.
+ * Hosted identity: public OS stays open; gated tools 401 without a pirin.ai token.
  * File + in-memory store. Does not claim a human logged in on the live pin.
  */
 import { afterEach, describe, it } from "node:test";
@@ -17,6 +17,7 @@ import {
   parseBearerToken,
   setIdentityStoreForTests,
 } from "../dist/identity.js";
+import { isJwtAccessToken, PIRIN_PROTECTED_RESOURCE_METADATA_URL } from "../dist/oauth.js";
 
 const IVELIN_TOKEN = "bos_ivelin_fixture_token_ok";
 const OTHER_TOKEN = "bos_other_token_fixture_xx";
@@ -25,19 +26,23 @@ afterEach(() => {
   setIdentityStoreForTests(undefined);
 });
 
-async function rpc(method, params, id = 1, token) {
+async function rawRpc(method, params, id = 1, token) {
   const headers = {
     "Content-Type": "application/json",
     Accept: "application/json, text/event-stream",
   };
   if (token) headers.Authorization = `Bearer ${token}`;
-  const res = await handleHostedReadFetch(
+  return handleHostedReadFetch(
     new Request("https://preview.example/mcp", {
       method: "POST",
       headers,
       body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
     }),
   );
+}
+
+async function rpc(method, params, id = 1, token) {
+  const res = await rawRpc(method, params, id, token);
   const text = await res.text();
   assert.ok(res.ok, `RPC ${method} failed ${res.status}: ${text}`);
   return JSON.parse(text);
@@ -52,14 +57,29 @@ function parseTool(result) {
   }
 }
 
-describe("hosted identity (optional, gated)", () => {
-  it("parses Bearer tokens and hashes them", () => {
+async function assertGatedUnauthorized(res) {
+  assert.equal(res.status, 401);
+  const challenge = res.headers.get("WWW-Authenticate") ?? "";
+  assert.match(challenge, /Bearer/i);
+  assert.match(challenge, /resource_metadata=/);
+  assert.match(challenge, /pirin\.ai\/\.well-known\/oauth-protected-resource/);
+  assert.equal(challenge.includes(PIRIN_PROTECTED_RESOURCE_METADATA_URL), true);
+  const body = JSON.parse(await res.text());
+  assert.equal(body.error, "invalid_token");
+}
+
+describe("hosted identity (resource server, gated)", () => {
+  it("parses Bearer tokens and recognizes JWTs", () => {
     assert.equal(parseBearerToken("Bearer bos_abc1234567890xyz"), "bos_abc1234567890xyz");
     assert.equal(parseBearerToken("bearer bos_abc1234567890xyz"), "bos_abc1234567890xyz");
     assert.equal(parseBearerToken("Token nope"), undefined);
     assert.equal(parseBearerToken("Bearer short"), undefined);
     assert.equal(hashMcpToken("bos_a").length, 64);
     assert.notEqual(hashMcpToken("bos_a"), hashMcpToken("bos_b"));
+    const jwt =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhQGIifQ.sig";
+    assert.equal(isJwtAccessToken(jwt), true);
+    assert.equal(isJwtAccessToken("bos_not_a_jwt_token_xx"), false);
   });
 
   it("anonymous still gets published OS tools and no login wall", async () => {
@@ -83,17 +103,23 @@ describe("hosted identity (optional, gated)", () => {
     assert.equal(info.surface, "hosted-read");
     assert.match(String(info.companyState), /Not hosted/i);
     assert.ok(!info.paths?.statePath);
+    assert.match(String(info.modes?.identity?.challenge ?? info.modes?.hostedReadPreview), /401|WWW-Authenticate|pirin\.ai/);
+  });
 
-    const who = parseTool(await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 4));
-    assert.equal(who.authenticated, false);
-    assert.deepEqual(who.labels, []);
-    assert.equal(who.email, null);
+  it("gated tools without a token return 401 + WWW-Authenticate to pirin.ai", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    await assertGatedUnauthorized(
+      await rawRpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 4),
+    );
+    await assertGatedUnauthorized(
+      await rawRpc("tools/call", { name: "bootstrap_list_company_labels", arguments: {} }, 5),
+    );
   });
 
   it("logged-in Ivelin fixture whoami sees pirin, zk0, totbox only", async () => {
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
     const who = parseTool(
-      await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 5, IVELIN_TOKEN),
+      await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 6, IVELIN_TOKEN),
     );
     assert.equal(who.authenticated, true);
     assert.equal(who.email, IVELIN_SEED_EMAIL);
@@ -104,7 +130,7 @@ describe("hosted identity (optional, gated)", () => {
     assert.match(blob, /Labels only/);
 
     const labels = parseTool(
-      await rpc("tools/call", { name: "bootstrap_list_company_labels", arguments: {} }, 6, IVELIN_TOKEN),
+      await rpc("tools/call", { name: "bootstrap_list_company_labels", arguments: {} }, 7, IVELIN_TOKEN),
     );
     assert.deepEqual(labels.labels, [...IVELIN_SEED_LABELS]);
     assert.match(String(labels.note), /Labels only/i);
@@ -113,7 +139,7 @@ describe("hosted identity (optional, gated)", () => {
   it("other mentee token cannot see Ivelin labels", async () => {
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
     const who = parseTool(
-      await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 7, OTHER_TOKEN),
+      await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 8, OTHER_TOKEN),
     );
     assert.equal(who.authenticated, true);
     assert.equal(who.email, "other@example.test");
@@ -123,27 +149,27 @@ describe("hosted identity (optional, gated)", () => {
     assert.ok(!who.labels.includes("totbox"));
   });
 
-  it("invalid token does not leak labels", async () => {
+  it("invalid token does not leak labels and still challenges to pirin.ai", async () => {
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
-    const who = parseTool(
-      await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 8, "bos_not_a_real_token_xx"),
+    await assertGatedUnauthorized(
+      await rawRpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 9, "bos_not_a_real_token_xx"),
     );
-    assert.equal(who.authenticated, false);
-    assert.deepEqual(who.labels, []);
-    const labels = await rpc(
-      "tools/call",
-      { name: "bootstrap_list_company_labels", arguments: {} },
-      9,
-      "bos_not_a_real_token_xx",
+    await assertGatedUnauthorized(
+      await rawRpc(
+        "tools/call",
+        { name: "bootstrap_list_company_labels", arguments: {} },
+        10,
+        "bos_not_a_real_token_xx",
+      ),
     );
-    assert.equal(labels.result.isError, true);
   });
 
-  it("CORS allows Authorization so a client can send a bearer token", async () => {
+  it("CORS allows Authorization and exposes WWW-Authenticate", async () => {
     const res = await handleHostedReadFetch(
       new Request("https://preview.example/mcp", { method: "OPTIONS" }),
     );
     assert.equal(res.status, 204);
     assert.match(res.headers.get("Access-Control-Allow-Headers") ?? "", /Authorization/i);
+    assert.match(res.headers.get("Access-Control-Expose-Headers") ?? "", /WWW-Authenticate/i);
   });
 });

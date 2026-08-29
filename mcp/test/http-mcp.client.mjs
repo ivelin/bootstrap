@@ -122,10 +122,22 @@ async function main() {
     assert.equal(info.marketplace, false);
     assert.ok(!info.paths?.statePath, "hosted-read must not expose founder state paths");
 
-    const who = await call(client, "bootstrap_whoami");
-    assert.equal(who.authenticated, false);
-    assert.deepEqual(who.labels, []);
-    assert.ok(!who.email);
+    const gated = await fetch(hosted.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 90,
+        method: "tools/call",
+        params: { name: "bootstrap_whoami", arguments: {} },
+      }),
+    });
+    assert.equal(gated.status, 401);
+    assert.match(gated.headers.get("WWW-Authenticate") ?? "", /pirin\.ai\/\.well-known\/oauth-protected-resource/);
+    assert.match(gated.headers.get("WWW-Authenticate") ?? "", /resource_metadata=/);
 
     const listed = await call(client, "bootstrap_list_docs");
     assert.ok(Array.isArray(listed));
