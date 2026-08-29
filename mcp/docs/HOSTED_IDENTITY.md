@@ -4,6 +4,17 @@ Public OS tools stay **unauthenticated**. Login is only for gated `bootstrap_who
 
 Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write path. This host does not replace either.
 
+## Founder lock — login lives on pirin.ai only
+
+Login and OAuth consolidate on **pirin.ai**. Do **not** add a login UI, OAuth callback, or mint page in `ivelin/bootstrap`.
+
+| Owner | Surface |
+|-------|---------|
+| **This repo** | MCP adapter, SQL + RLS, `bootstrap-os-mcp` env pin + preview redeploy |
+| **Web Builder / pirin-ai** | `/bootstrap-os/login` on pirin.ai — existing auth, then mint RPC |
+
+Mentees sign in on pirin.ai. The hosted pin only accepts `Authorization: Bearer bos_…`. There is no second password store and no login route on `*.vercel.app` for this adapter.
+
 ## What ships in this repo
 
 | Piece | Where |
@@ -13,7 +24,7 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 | Gated tools | `bootstrap_whoami`, `bootstrap_list_company_labels` on the hosted-read surface |
 | Public pin | `https://bootstrap-os-mcp.vercel.app/mcp` — still works with no header |
 
-Login UI is **not** in this repo. Use existing pirin.ai auth (same Supabase project). Do not invent a second password store.
+Login UI is **not** in this repo. Web Builder owns `/bootstrap-os/login` on pirin.ai (same Supabase project). Do not invent a second password store.
 
 ## Existing project (no new Neon)
 
@@ -36,9 +47,9 @@ Aliases accepted: `SUPABASE_URL`, `SUPABASE_ANON_KEY`. Do not put the service ro
 
 If the env is unset, public tools still work. Gated whoami returns `authenticated: false` / `identity_store_unset`.
 
-## API the pirin.ai page must call
+## API `/bootstrap-os/login` must call
 
-After the existing Supabase session (same project — do not mint against another DB):
+Web Builder owns that route on pirin.ai. After the existing Supabase session (same project — do not mint against another DB):
 
 ```http
 POST https://vsqekesftzstsjvcowgm.supabase.co/rest/v1/rpc/bootstrap_mcp_mint_token

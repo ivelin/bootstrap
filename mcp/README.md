@@ -145,7 +145,7 @@ Same package. Production entry is the Vercel request handler (`api/mcp.ts` + `ap
 
 Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). **No login** for those tools. Does **not** host founder `company-state`. Write / init / use-company stay stdio.
 
-Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Bearer token from the existing pirin.ai Supabase. Labels only — not boards. Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
+Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Bearer token minted after login on pirin.ai (`/bootstrap-os/login`, Web Builder). Labels only — not boards. No login UI in this repo. Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
 
 Public preview is `*.vercel.app` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
 

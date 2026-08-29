@@ -120,7 +120,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 `mcp.json` pins the preview Streamable HTTP host `https://bootstrap-os-mcp.vercel.app/mcp`. `${BOOTSTRAP_MCP_URL}` may override (default is that host). Not mentee-ready boards. Not a public catalog. Do not use `mcp.pirin.ai`.
 
-Public read tools (no login): OS info, docs, house-rule pins. Optional gated `bootstrap_whoami` / company labels behind a bearer token minted on pirin.ai after existing auth. Founder `company-state` stays path 3 local stdio. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
+Public read tools (no login): OS info, docs, house-rule pins. Optional gated `bootstrap_whoami` / company labels behind a bearer token minted on pirin.ai `/bootstrap-os/login` (Web Builder; not this repo). Founder `company-state` stays path 3 local stdio. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
 
 Deploy recipe (new Vercel project `bootstrap-os-mcp` only):
 

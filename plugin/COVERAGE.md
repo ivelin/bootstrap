@@ -37,7 +37,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Mentee-ready hosted boards / founder `company-state` on the host | Out. Path 3 local stdio only. |
 | Non-maintainer MCP cold path (M2) | Still open. Human-eyes for hosted boards stays **unknown**. |
 | A human actually signed in as Ivelin and called whoami on the live pin | File/fixture lock only. Do not claim a paste that is not in this PR. |
-| pirin.ai mint page | Contract in `mcp/docs/HOSTED_IDENTITY.md`. Page lives on ivelin/pirin-ai (existing auth). Not this repo. |
+| pirin.ai `/bootstrap-os/login` | Contract in `mcp/docs/HOSTED_IDENTITY.md`. Login + OAuth + mint live on pirin.ai (Web Builder). Not this repo. Do not add a login UI here. |
 | Extra connectors / mentee roster / usage analytics as proof | Out. |
 | A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
 | Production `bootstrap_os_info.osVersion` already `2.8.9` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
