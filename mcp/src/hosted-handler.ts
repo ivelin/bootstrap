@@ -5,7 +5,7 @@
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { isHostedGatedToolName } from "./constants.js";
-import { resolveHostedWhoami } from "./identity.js";
+import { resolveHostedWhoami, type HostedWhoami } from "./identity.js";
 import { wwwAuthenticateChallenge } from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
 
@@ -34,7 +34,7 @@ function gatedToolNameFromRpc(body: unknown): string | undefined {
   return typeof name === "string" && isHostedGatedToolName(name) ? name : undefined;
 }
 
-export function unauthorizedGatedToolResponse(): Response {
+export function unauthorizedGatedToolResponse(whoami?: HostedWhoami): Response {
   const headers = {
     ...corsHeaders(),
     "WWW-Authenticate": wwwAuthenticateChallenge(),
@@ -45,6 +45,7 @@ export function unauthorizedGatedToolResponse(): Response {
       error: "invalid_token",
       error_description:
         "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
+      identityStore: whoami?.identityStore ?? "unset",
     }),
     { status: 401, headers },
   );
@@ -109,7 +110,7 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
       rpcBody = null;
     }
     if (gatedToolNameFromRpc(rpcBody) && !whoami.authenticated) {
-      return unauthorizedGatedToolResponse();
+      return unauthorizedGatedToolResponse(whoami);
     }
   }
 

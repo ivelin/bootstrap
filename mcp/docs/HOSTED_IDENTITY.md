@@ -12,23 +12,33 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
 | Product | MCP client follows 401 → protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
-| Env pin | **Parked.** 401 contract does not wait on Vercel env. Production pin stays on `main`. Do not merge. |
+| Env pin | Ivelin saved `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY` on Vercel project `bootstrap-os-mcp` (production + preview + development). Do **not** print those values. Production pin stays on `main`. Do not merge. |
 
 ## HTTP contract
 
 Public tools (`bootstrap_os_info`, docs, house-rule pins), `initialize`, and `tools/list` stay **200** with no `Authorization` header.
 
-Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_company_labels` (and any later gated tool) return **HTTP 401** with this exact header:
+Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_company_labels` (and any later gated tool) return **HTTP 401**. Production / main uses this exact header:
 
 ```http
 WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", scope="bootstrap-os"
 ```
 
+The 401 JSON also includes `identityStore` (`supabase` | `memory` | `unset`). That is not a session claim.
+
+Preview (this PR, until pirin-ai merge) may point `resource_metadata` at the #143 well-known instead. Override: `BOOTSTRAP_OAUTH_RESOURCE_METADATA` (preview only — never a prod-pin change). If that env is unset and `VERCEL_ENV=preview`, the host uses:
+
+`https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
+
 ## Web Builder
 
-Protected-resource metadata URL:
+Protected-resource metadata URL (production / after pirin-ai merge):
 
 `https://pirin.ai/.well-known/oauth-protected-resource`
+
+Protected-resource metadata URL (preview until pirin-ai #143 merges):
+
+`https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
 
 Authorize URL (authorization code + PKCE):
 

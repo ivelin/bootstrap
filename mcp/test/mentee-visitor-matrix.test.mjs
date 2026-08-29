@@ -69,6 +69,11 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /\/bootstrap-os\/login/);
     assert.match(identity, /authorization code \+ PKCE/i);
     assert.match(identity, /Do \*\*not\*\* add a login UI/);
+    assert.match(identity, /BOOTSTRAP_OAUTH_RESOURCE_METADATA/);
+    assert.match(
+      identity,
+      /v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource/,
+    );
     assert.doesNotMatch(identity, /bos_/);
     assert.doesNotMatch(identity, /mint a token/i);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);

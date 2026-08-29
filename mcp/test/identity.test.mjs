@@ -17,13 +17,21 @@ import {
   parseBearerToken,
   setIdentityStoreForTests,
 } from "../dist/identity.js";
-import { isJwtAccessToken, WWW_AUTHENTICATE_CHALLENGE } from "../dist/oauth.js";
+import {
+  isJwtAccessToken,
+  PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL,
+  WWW_AUTHENTICATE_CHALLENGE,
+  wwwAuthenticateChallenge,
+  wwwAuthenticateChallengeFor,
+} from "../dist/oauth.js";
 
 const IVELIN_TOKEN = "bos_ivelin_fixture_token_ok";
 const OTHER_TOKEN = "bos_other_token_fixture_xx";
 
 afterEach(() => {
   setIdentityStoreForTests(undefined);
+  delete process.env.BOOTSTRAP_OAUTH_RESOURCE_METADATA;
+  delete process.env.VERCEL_ENV;
 });
 
 async function rawRpc(method, params, id = 1, token) {
@@ -67,6 +75,8 @@ async function assertGatedUnauthorized(res) {
   );
   const body = JSON.parse(await res.text());
   assert.equal(body.error, "invalid_token");
+  assert.ok(body.identityStore === "memory" || body.identityStore === "supabase" || body.identityStore === "unset");
+  return body;
 }
 
 describe("hosted identity (resource server, gated)", () => {
@@ -105,6 +115,7 @@ describe("hosted identity (resource server, gated)", () => {
     assert.match(String(info.companyState), /Not hosted/i);
     assert.ok(!info.paths?.statePath);
     assert.match(String(info.modes?.identity?.challenge ?? info.modes?.hostedReadPreview), /401|WWW-Authenticate|pirin\.ai/);
+    assert.equal(info.modes?.identity?.identityStore, "memory");
   });
 
   it("gated tools without a token return 401 + WWW-Authenticate to pirin.ai", async () => {
@@ -163,6 +174,33 @@ describe("hosted identity (resource server, gated)", () => {
         "bos_not_a_real_token_xx",
       ),
     );
+  });
+
+  it("BOOTSTRAP_OAUTH_RESOURCE_METADATA overrides the challenge (preview #143)", async () => {
+    process.env.BOOTSTRAP_OAUTH_RESOURCE_METADATA = PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL;
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const res = await rawRpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 11);
+    assert.equal(res.status, 401);
+    assert.equal(
+      res.headers.get("WWW-Authenticate"),
+      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL),
+    );
+    assert.match(
+      res.headers.get("WWW-Authenticate") ?? "",
+      /v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource/,
+    );
+    const body = JSON.parse(await res.text());
+    assert.equal(body.identityStore, "memory");
+  });
+
+  it("VERCEL_ENV=preview uses the #143 well-known when override is unset", async () => {
+    process.env.VERCEL_ENV = "preview";
+    assert.equal(
+      wwwAuthenticateChallenge(),
+      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL),
+    );
+    process.env.VERCEL_ENV = "production";
+    assert.equal(wwwAuthenticateChallenge(), WWW_AUTHENTICATE_CHALLENGE);
   });
 
   it("CORS allows Authorization and exposes WWW-Authenticate", async () => {

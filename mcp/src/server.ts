@@ -34,6 +34,7 @@ import { buildNextEvidenceView, buildStatusView } from "./guidance.js";
 import { evaluateExternalAsk } from "./policy.js";
 import { HOUSE_RULE_LINES, HOUSE_RULE_PINS } from "./house-rules.js";
 import { anonymousWhoami, type HostedRequestContext } from "./identity-context.js";
+import { protectedResourceMetadataUrl } from "./oauth.js";
 
 export type McpSurface = "full" | "hosted-read";
 
@@ -69,7 +70,7 @@ function adoptionOrder() {
   };
 }
 
-function registerReadTools(server: McpServer, surface: McpSurface) {
+function registerReadTools(server: McpServer, surface: McpSurface, hosted?: HostedRequestContext) {
   server.tool(
     "bootstrap_os_info",
     "Bootstrap OS + MCP modes, versions, and honesty about hosted preview vs path 3 writes.",
@@ -119,7 +120,9 @@ function registerReadTools(server: McpServer, surface: McpSurface) {
             identity: {
               publicTools: "Unauthenticated. Install-first and empty-context agents keep working.",
               gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels"],
-              challenge: "HTTP 401 + WWW-Authenticate resource_metadata on pirin.ai. No login UI here.",
+              challenge: "HTTP 401 + WWW-Authenticate resource_metadata. No login UI here.",
+              identityStore: hosted?.whoami.identityStore ?? "unset",
+              resourceMetadata: protectedResourceMetadataUrl(),
               stores: "Labels only on the existing pirin.ai Supabase. Not company-state. Not ~/.bootstrap-os.",
             },
           },
@@ -607,7 +610,7 @@ export function createBootstrapServer(
     name: "bootstrap-os",
     version: MCP_VERSION,
   });
-  registerReadTools(server, surface);
+  registerReadTools(server, surface, hosted);
   if (surface === "hosted-read") {
     registerGatedIdentityTools(server, hosted ?? { whoami: anonymousWhoami() });
   }
