@@ -118,7 +118,7 @@ Stay on Vercel Git:
 
 Hosted-read already sets `BOOTSTRAP_MCP_SURFACE=hosted-read` and defaults docs to the published repo. Optional `${BOOTSTRAP_MCP_URL}` override only. No mentee company-state env.
 
-Gated whoami env pin is **parked**. PR CI uses PGlite. Do not live-probe the production pin from a PR agent.
+Gated whoami env is live on `bootstrap-os-mcp` (do not print values). PR CI uses PGlite. Do not live-probe the production pin from a PR agent.
 
 ## SRE already in play
 

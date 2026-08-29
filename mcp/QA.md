@@ -49,7 +49,7 @@ cd mcp && npm ci && npm run ci
 - **Runtime:** Node ≥20. Stdio is the write path. `npm run start:http` is a preview read adapter (no company-state).
 - **State:** founder-owned disk under `BOOTSTRAP_DATA_ROOT` (default `~/.bootstrap-os`).
 - **Failure modes:** missing state file, unknown companyId, template demo mode when no instance — tools return structured errors, not silent success.
-- **Secrets:** do not put API keys in company state; traces may be shared carefully (no PII). Identity tests use PGlite. Env pin is parked. Never service role.
+- **Secrets:** do not put API keys in company state; traces may be shared carefully (no PII). Identity tests use PGlite. Supabase env is live on `bootstrap-os-mcp` — do not print it. Never service role.
 - **Rollback:** Vercel → Deployments → Redeploy / previous production on `bootstrap-os-mcp`. Path 1 (point an AI) remains the default forever; disable MCP client config to fall back. Hosted read adapter is preview only. Logs: Vercel project logs. Liveness: `GET /health`.
 - **Runbooks:** [`docs/COLD_PATH.md`](docs/COLD_PATH.md), [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md)
 
