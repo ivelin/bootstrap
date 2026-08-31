@@ -1,9 +1,13 @@
 # First hour (Day 0)
 
+Day 0 is **~60 minutes**. Official slices: thesis ~20, at least three customer groups ~25, first “Where are we?” ~15.
+
 This hour: write the thesis, name at least three customer groups, and produce one honest “Where are we?”  
 **Do not build product in this hour.**
 
-You do **not** need to copy files first. Point an AI at the Bootstrap OS and do this in chat. Paths below are for when you have instantiated a blank instance in your company repo.
+Path 1 is chat plus a weekly “Where are we?” ritual. You do **not** need to copy files first. Point an AI at the Bootstrap OS and do this in chat. Paths below are for when you have instantiated a blank instance in your company repo.
+
+The **two-minute** figure is how long a good “Where are we?” answer takes to **read**. It is not this hour.
 
 Full constitution: [`operating-system.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md) · live loop: [`live-runtime.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/live-runtime.md).  
 Hard rules: [`ai-instructions.md`](https://github.com/ivelin/bootstrap/blob/main/company-os/ai-instructions.md). If you instantiated, they should already be in `AGENTS.md`.
@@ -53,7 +57,7 @@ Then list the three (name only + rank) in the same place as the thesis — chat 
 ## 3. First “Where are we?” (~15 minutes)
 
 Ask your AI: **“Where are we?”**  
-A good answer is a two-minute company snapshot, not a dump.
+A good answer is a company snapshot you can **read in about two minutes**, not a dump. Writing that first snapshot is this ~15-minute slice. The two-minute figure is the read, not Day 0.
 
 If you instantiated, also copy `docs/company-os/instance/snapshots/TEMPLATE.md` to `docs/company-os/instance/snapshots/YYYY-MM-DD.md` and fill it in everyday words. Optional machine read (does **not** replace the dated snapshot):
 
@@ -104,6 +108,44 @@ When someone says you must find the optimal price from a handful of users, befor
 > There is no optimal price until people have paid and stayed. A survey of a handful will lie. Start with one price.
 
 House rule: [there is no optimal price until people have paid and stayed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+
+---
+
+## Standing rules (not this hour)
+
+Not Day 0 homework. The hour stays thesis, ≥3 groups, one snapshot.
+
+### SoR index (systems of record)
+
+Living list of where the real copy lives. It evolves. Append, do not silently rewrite.
+
+Four starters: live site; main git repo; one working folder; where leads live.
+
+If they ask where the company lives, or they instantiate: if the git URL is unknown, finding it is the first chore. Until then chat is enough. Do not start this chore from an advice pile or a CRM ask.
+
+Play list: new tools and agents are allowed. Play may not hold customer or company truth.  
+A tool joins SoR only on observed use (it actually became the record), not a demo or a vendor story. Same family as spoken yes cannot promote.
+
+Chat is enough. If you instantiated, write the list in `docs/company-os/applied-here.md`.
+
+### Buy vs build, 0-1 default
+
+Do not buy a new category. Do not spend a week evaluating one. The frontier AI you already use builds the thin thing for this business. Spreading data across unproven tools is the cost.
+
+Exceptions (commodity you already need): domain, email, git host, payments, the AI harness.  
+Not exceptions: CRM, lead-gen suites, a second workspace.
+
+### Advice filter
+
+When a mentor, investor, or seminar says do X:
+
+- What evidence would make this true for **this company this week**?
+- Does it change SoR, or is it Play?
+- Does it buy a category or spread data?
+- Does it advance a journey phase without observed proof?
+- Are they optimizing for their fund (fences) or the founder’s stated Day 0 (lifestyle vs fences)?
+
+If it fails: keep the weekly snapshot. Do not add a tool.
 
 ---
 
