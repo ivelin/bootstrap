@@ -91,7 +91,7 @@ describe("preview plugin (hyperlink only)", () => {
     }
     for (const file of files) {
       const body = fs.readFileSync(file, "utf8");
-      assert.ok(body.length < 1600, `${file} is too long — link, do not copy the OS`);
+      assert.ok(body.length < 1800, `${file} is too long — link, do not copy the OS`);
       assert.match(body, /https:\/\/github.com\/ivelin\/bootstrap/);
       for (const phrase of ESSAY_FORBIDDEN) {
         assert.ok(!body.includes(phrase), `${file} must not copy OS essay: ${phrase}`);
@@ -124,9 +124,19 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(firstHour, /bootstrap-os-mcp\.vercel\.app\/mcp/);
     assert.match(firstHour, /lifestyle or swinging for the fences/i);
     assert.match(firstHour, /day-0-lifestyle-or-swinging-for-the-fences/);
+    assert.match(firstHour, /Do not upload mentee work to Ivelin.s GitHub/);
+    assert.match(firstHour, /first-hour\.md#standing-rules/);
+    assert.doesNotMatch(firstHour, /Grok Bot marketplace bot/);
     const path1 = fs.readFileSync(path.join(PLUGIN, "skills", "path-1-default", "SKILL.md"), "utf8");
     assert.match(path1, /lifestyle or swinging for the fences/i);
     assert.match(path1, /day-0-lifestyle-or-swinging-for-the-fences/);
+    assert.match(path1, /Do not upload mentee work to Ivelin.s GitHub/);
+    assert.match(path1, /first-hour\.md#standing-rules/);
+    assert.match(path1, /https:\/\/github.com\/ivelin\/bootstrap/);
+    assert.doesNotMatch(path1, /Grok Bot marketplace bot/);
+    assert.match(standing, /Upload mentee work to Ivelin.s GitHub — refuse/);
+    assert.match(standing, /first-hour\.md#standing-rules/);
+    assert.doesNotMatch(standing, /Grok Bot marketplace bot/);
     const efficiency = fs.readFileSync(
       path.join(PLUGIN, "skills", "after-proof-efficiency", "SKILL.md"),
       "utf8",

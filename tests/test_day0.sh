@@ -649,7 +649,7 @@ assert required <= found, found
 for skill in (root / "skills").glob("*/SKILL.md"):
     body = skill.read_text()
     assert "https://github.com/ivelin/bootstrap" in body, skill
-    assert len(body) < 1600, skill
+    assert len(body) < 1800, skill
     for phrase in forbidden:
         assert phrase not in body, (skill, phrase)
 pins = (root / "skills/house-rule-pins/SKILL.md").read_text()
@@ -687,8 +687,18 @@ assert "https://bootstrap-os-mcp.vercel.app/mcp" in first
 assert "No auth" in first
 assert "No database" in first
 assert "day-0-lifestyle-or-swinging-for-the-fences" in first
+assert "Do not upload mentee work to Ivelin's GitHub" in first
+assert "first-hour.md#standing-rules" in first
+assert "Grok Bot marketplace bot" not in first
 path1 = (root / "skills/path-1-default/SKILL.md").read_text()
 assert "day-0-lifestyle-or-swinging-for-the-fences" in path1
+assert "Do not upload mentee work to Ivelin's GitHub" in path1
+assert "first-hour.md#standing-rules" in path1
+assert "https://github.com/ivelin/bootstrap" in path1
+assert "Grok Bot marketplace bot" not in path1
+assert "Upload mentee work to Ivelin's GitHub — refuse" in standing
+assert "first-hour.md#standing-rules" in standing
+assert "Grok Bot marketplace bot" not in standing
 assert "1.0 may-spend" not in first
 assert "1.0 may-spend" not in path1
 assert "NRR" not in first
@@ -698,7 +708,11 @@ assert "after-proof-efficiency.md" not in path1
 readme = (root / "README.md").read_text()
 assert "Merge-gate visitor matrix" in readme
 assert "After-proof efficiency visitor matrix" in readme
+assert "After First Hour visitor matrix" in readme
 assert "do not invent their stage" in readme
+assert "Do not upload mentee work to Ivelin's GitHub" in readme
+assert "first-hour.md#standing-rules" in readme
+assert "push mentee files to ivelin/bootstrap" in readme
 coverage = (root / "COVERAGE.md").read_text()
 assert "## Locked" in coverage
 assert "## Not locked" in coverage
@@ -715,6 +729,10 @@ assert "lifestyle or swinging for the fences" in coverage
 assert "After-proof efficiency visitor matrix" in coverage
 assert "afterProofEfficiencyPageMayOpen" in coverage
 assert "emptyContextMayInventEfficiencyMetrics" in coverage
+assert "After First Hour visitor matrix" in coverage
+assert "Do not upload mentee work to Ivelin's GitHub" in coverage
+assert "https://github.com/ivelin/bootstrap" in coverage
+assert "push mentee files to ivelin/bootstrap" in coverage
 print("plugin lock ok")
 PY
 then
@@ -862,6 +880,58 @@ if grep -q 'After-proof efficiency visitor matrix' plugin/README.md \
   ok "plugin README and COVERAGE name the after-proof visitor matrix"
 else
   not_ok "plugin README and COVERAGE must name the after-proof visitor matrix"
+fi
+
+# --- u) After First Hour standing rules (once in first-hour; pins elsewhere) ---
+# Full line lives under After this hour / standing rules. Not extra Day 0 homework.
+# Exact MCP URL and Path 1 GitHub stay unmodified. Skills pin + link only.
+fh=company-os/first-hour.md
+if grep -q '### Standing rules' "$fh" \
+  && grep -q 'https://bootstrap-os-mcp.vercel.app/mcp' "$fh" \
+  && grep -q "Do \*\*not\*\* upload mentee work to Ivelin's GitHub" "$fh" \
+  && grep -q 'https://github.com/ivelin/bootstrap' "$fh" \
+  && grep -q 'Not a public catalog submit' "$fh" \
+  && grep -q 'Not mentee boards on our host' "$fh" \
+  && grep -q 'Not a Grok Bot marketplace bot' "$fh" \
+  && grep -q 'Not another Day 0 checkbox' "$fh"; then
+  ok "first-hour.md After this hour holds the standing rules once"
+else
+  not_ok "first-hour.md must hold After First Hour standing rules under After this hour"
+fi
+if grep -q 'Write the thesis (~20 minutes)' "$fh" \
+  && grep -q 'At least three customer groups (~25 minutes)' "$fh" \
+  && grep -q 'First “Where are we?” (~15 minutes)' "$fh" \
+  && grep -q 'Thesis written' "$fh" \
+  && grep -q '≥3 customer groups' "$fh"; then
+  ok "Day 0 stays thesis / ≥3 groups / one snapshot (~60 minutes)"
+else
+  not_ok "Day 0 must stay thesis / ≥3 groups / one snapshot (~60 minutes)"
+fi
+# Done when (Day 0 homework) must not grow the standing rules.
+done_when=$(sed -n '/^## Done when$/,/^## After this hour$/p' "$fh")
+if ! printf '%s\n' "$done_when" | grep -q 'bootstrap-os-mcp.vercel.app' \
+  && ! printf '%s\n' "$done_when" | grep -q 'upload mentee work'; then
+  ok "standing rules are not extra Day 0 homework"
+else
+  not_ok "do not put After First Hour standing rules in the Day 0 Done when checklist"
+fi
+if grep -q 'first-hour.md#standing-rules' plugin/skills/first-hour/SKILL.md \
+  && grep -q 'first-hour.md#standing-rules' plugin/skills/path-1-default/SKILL.md \
+  && grep -q 'first-hour.md#standing-rules' plugin/skills/query-os-first/SKILL.md \
+  && grep -q "Do not upload mentee work to Ivelin's GitHub" plugin/skills/first-hour/SKILL.md \
+  && grep -q "Upload mentee work to Ivelin's GitHub — refuse" plugin/skills/query-os-first/SKILL.md \
+  && grep -q 'After First Hour visitor matrix' plugin/README.md \
+  && grep -q 'After First Hour visitor matrix' plugin/COVERAGE.md; then
+  ok "plugin skills and README pin+link the standing rules"
+else
+  not_ok "plugin skills and README must pin+link first-hour.md#standing-rules"
+fi
+if ! grep -q 'Grok Bot marketplace bot' plugin/skills/first-hour/SKILL.md \
+    plugin/skills/path-1-default/SKILL.md \
+    plugin/skills/query-os-first/SKILL.md; then
+  ok "Grok Bot essay stays in first-hour.md, not in skills"
+else
+  not_ok "do not copy the Grok Bot marketplace line into plugin skills"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
