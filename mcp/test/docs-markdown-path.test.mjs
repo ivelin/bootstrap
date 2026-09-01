@@ -76,9 +76,9 @@ describe("markdown install path (zero MCP required)", () => {
       assert.ok(firstHour.includes("https://bootstrap-os-mcp.vercel.app/mcp"));
       assert.match(firstHour, /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
       assert.ok(firstHour.includes("https://github.com/ivelin/bootstrap"));
-      assert.match(firstHour, /Not a public catalog submit/);
-      assert.match(firstHour, /Not mentee boards on our host/);
-      assert.match(firstHour, /Not a Grok Bot marketplace bot/);
+      assert.match(firstHour, /\*\*Not\*\* a public catalog submit/);
+      assert.match(firstHour, /\*\*Not\*\* mentee boards on our host/);
+      assert.match(firstHour, /\*\*Not\*\* a Grok Bot marketplace bot/);
       assert.match(firstHour, /Not another Day 0 checkbox/);
       const doneWhen = firstHour.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
       assert.ok(doneWhen, "Done when section missing");

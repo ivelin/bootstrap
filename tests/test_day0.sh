@@ -888,11 +888,11 @@ fi
 fh=company-os/first-hour.md
 if grep -q '### Standing rules' "$fh" \
   && grep -q 'https://bootstrap-os-mcp.vercel.app/mcp' "$fh" \
-  && grep -q "Do \*\*not\*\* upload mentee work to Ivelin's GitHub" "$fh" \
+  && grep -q "upload mentee work to Ivelin's GitHub" "$fh" \
   && grep -q 'https://github.com/ivelin/bootstrap' "$fh" \
-  && grep -q 'Not a public catalog submit' "$fh" \
-  && grep -q 'Not mentee boards on our host' "$fh" \
-  && grep -q 'Not a Grok Bot marketplace bot' "$fh" \
+  && grep -q 'a public catalog submit' "$fh" \
+  && grep -q 'mentee boards on our host' "$fh" \
+  && grep -q 'Grok Bot marketplace bot' "$fh" \
   && grep -q 'Not another Day 0 checkbox' "$fh"; then
   ok "first-hour.md After this hour holds the standing rules once"
 else

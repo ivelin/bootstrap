@@ -194,8 +194,8 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.ok(after[0].includes(HOSTED));
     assert.match(after[0], /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
     assert.ok(after[0].includes("https://github.com/ivelin/bootstrap"));
-    assert.match(after[0], /Not a public catalog submit/);
-    assert.match(after[0], /Not a Grok Bot marketplace bot/);
+    assert.match(after[0], /\*\*Not\*\* a public catalog submit/);
+    assert.match(after[0], /\*\*Not\*\* a Grok Bot marketplace bot/);
     assert.match(after[0], /Not another Day 0 checkbox/);
 
     const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
