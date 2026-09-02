@@ -117,7 +117,7 @@ House rule: [there is no optimal price until people have paid and stayed](https:
 
 When someone says you must automate the playbook, or add an agent team to skip a step that has no named owner:
 
-> I don't automate a step that should not exist. Name the person first, or delete it. An agent team is automation. Name the one constraint this week and work that.
+> I don't automate a step that should not exist. Name the person first, or delete it. An agent team is automation. Name the one constraint this week and work that. Several ideas may attack the same constraint.
 
 House rule: [do not automate a step that should not exist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
 

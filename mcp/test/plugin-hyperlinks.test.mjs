@@ -20,6 +20,7 @@ const ESSAY_FORBIDDEN = [
   "dated current-year AI sources",
   "busy-looking machinery",
   "Factory speed is not 0→1",
+  "A second ritual, channel, or agent team that does not attack it is busywork",
   "Do not open a second idea, ritual, or agent team to walk around it",
 ];
 

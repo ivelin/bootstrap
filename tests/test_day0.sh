@@ -644,7 +644,7 @@ forbidden = [
     "grind three years on a popcorn stand",
     "busy-looking machinery",
     "Factory speed is not 0→1",
-    "Do not open a second idea, ritual, or agent team to walk around it",
+    "A second ritual, channel, or agent team that does not attack it is busywork",
 ]
 required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency"}
 found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
@@ -663,6 +663,7 @@ assert "house-rule-do-not-automate-a-step-that-should-not-exist" in pins
 assert "old SaaS playbook" in pins
 assert "automate the playbook" in pins
 assert "one constraint this week" in pins
+assert "several ideas may attack" in pins
 standing = (root / "skills/query-os-first/SKILL.md").read_text()
 assert "0-1" in standing
 assert "spoken yes" in standing
@@ -956,7 +957,9 @@ if grep -q '^\*\*Version:\*\* 2.8.9' company-os/operating-system.md \
   && grep -q 'Automate last' company-os/operating-system.md \
   && grep -q 'An agent team is automation' company-os/operating-system.md \
   && grep -q 'Name the one constraint this week and work that' company-os/operating-system.md \
-  && grep -q 'Do not open a second idea, ritual, or agent team to walk around it' company-os/operating-system.md \
+  && grep -q 'Several ideas may attack the same constraint' company-os/operating-system.md \
+  && grep -q 'A second ritual, channel, or agent team that does not attack it is busywork' company-os/operating-system.md \
+  && ! grep -q 'Do not open a second idea, ritual, or agent team to walk around it' company-os/operating-system.md \
   && grep -q 'busy-looking machinery' company-os/operating-system.md \
   && grep -q 'Factory speed is not 0→1' company-os/operating-system.md \
   && grep -q 'an accelerate or optimize law' company-os/operating-system.md \
@@ -976,6 +979,7 @@ else
 fi
 if grep -q "I don't automate a step that should not exist" company-os/first-hour.md \
   && grep -q 'Name the one constraint this week and work that' company-os/first-hour.md \
+  && grep -q 'Several ideas may attack the same constraint' company-os/first-hour.md \
   && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' company-os/first-hour.md \
   && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' company-os/ai-instructions.md \
   && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' plugin/skills/house-rule-pins/SKILL.md \
@@ -990,9 +994,12 @@ if ! grep -q 'busy-looking machinery' company-os/first-hour.md \
   && ! grep -q 'Factory speed is not 0→1' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md \
-  && ! grep -q 'Do not open a second idea, ritual, or agent team to walk around it' \
+  && ! grep -q 'A second ritual, channel, or agent team that does not attack it is busywork' \
     company-os/first-hour.md company-os/ai-instructions.md README.md \
-    plugin/skills/*/SKILL.md; then
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'Do not open a second idea, ritual, or agent team to walk around it' \
+    company-os/operating-system.md company-os/first-hour.md \
+    company-os/ai-instructions.md README.md plugin/skills/*/SKILL.md; then
   ok "2.8.9 essay is not copied outside the OS section"
 else
   not_ok "do not reprint the 2.8.9 house-rule essay outside operating-system.md"

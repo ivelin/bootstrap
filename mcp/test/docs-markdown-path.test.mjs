@@ -70,6 +70,8 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(os, /### House rule: there is no optimal price until people have paid and stayed/);
       assert.match(os, /### House rule: do not automate a step that should not exist/);
       assert.match(os, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+      assert.match(os, /Several ideas may attack the same constraint/);
+      assert.doesNotMatch(os, /Do not open a second idea, ritual, or agent team to walk around it/);
       assert.match(os, /## Day 0: lifestyle or swinging for the fences/);
       assert.match(os, /popcorn stand/);
       assert.match(firstHour, /day-0-lifestyle-or-swinging-for-the-fences/);

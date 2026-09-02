@@ -43,7 +43,7 @@ Not extra Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Full 
 
 ## Do not automate visitor matrix
 
-Not Day 0 homework. Full rule once in the OS. Pins only here. Pass only if they delete or name the person first — not if they hire agents. Name the one constraint this week and work that.
+Not Day 0 homework. Full rule once in the OS. Pins only here. Pass only if they delete or name the person first — not if they hire agents. Name the one constraint this week and work that. Several ideas may attack the same constraint.
 
 **Human**
 
