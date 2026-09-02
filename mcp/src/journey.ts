@@ -7,6 +7,8 @@ import { JOURNEY_PHASES, LOOP_STAGES } from "./constants.js";
 import type { JourneyAclRole, JourneyActor } from "./journey-auth.js";
 
 export const SCOREBOARD_SCHEMA_VERSION = 1;
+/** Short fluid text on the idea. Not a clock. Not tickets. */
+export const CONSTRAINT_THIS_WEEK_MAX = 280;
 
 export type GateDecision = "advance" | "iterate" | "hold" | "kill";
 
@@ -27,6 +29,8 @@ export type Scoreboard = {
   progress?: string[];
   challenges?: string[];
   helpNeeded?: string[];
+  /** Fluid. Where help is required this week. Not a clock. Not tickets. */
+  constraint_this_week?: string;
 };
 
 export type CompanyRow = {
@@ -98,7 +102,29 @@ export function defaultScoreboard(): Scoreboard {
     readyForHumanEyes: { status: "unknown" },
     autonomyPosture: "strict",
     openQuestions: [],
+    constraint_this_week: "",
   };
+}
+
+export function constraintThisWeekOf(idea: IdeaRow): string {
+  const raw = idea.scoreboard.constraint_this_week;
+  return typeof raw === "string" ? raw.trim() : "";
+}
+
+export function normalizeConstraintThisWeek(
+  value: unknown,
+): { ok: true; value: string } | { ok: false; error: string } {
+  if (value == null) {
+    return { ok: true, value: "" };
+  }
+  if (typeof value !== "string") {
+    return { ok: false, error: "constraint_this_week is short text, not a clock" };
+  }
+  const trimmed = value.trim();
+  if (trimmed.length > CONSTRAINT_THIS_WEEK_MAX) {
+    return { ok: false, error: `constraint_this_week is short text (${CONSTRAINT_THIS_WEEK_MAX})` };
+  }
+  return { ok: true, value: trimmed };
 }
 
 export function normalizeSlug(raw: string): string {
@@ -211,8 +237,10 @@ export function visualFlowMermaid(idea: IdeaRow, events: GateEventRow[]): string
     loopEdges,
     "  end",
     `  gate["Gate: ${idea.currentGate}"]:::current`,
+    `  help["Constraint this week: ${escapeMermaid(constraintThisWeekOf(idea) || "none yet")}"]`,
     "  p" + idea.journeyPhase + " --> gate",
     "  l" + idea.loopStage + " --> gate",
+    "  gate --> help",
     last ? "  subgraph last [Last transitions]\n" + last + "\n  end" : "",
     "```",
   ]
@@ -228,8 +256,10 @@ export function twoMinuteSnapshot(company: CompanyRow, idea: IdeaRow, events: Ga
   const last = events.slice().sort((a, b) => a.at.localeCompare(b.at)).at(-1);
   const questions = idea.scoreboard.openQuestions ?? [];
   const eyes = idea.scoreboard.readyForHumanEyes?.status ?? "unknown";
+  const constraint = constraintThisWeekOf(idea);
   return [
     `${company.label} / ${idea.name} — two-minute read`,
+    `Constraint this week (where help is required): ${constraint || "none yet"}`,
     `Journey: ${idea.journeyPhase} ${JOURNEY_PHASES[idea.journeyPhase]} of 9`,
     `Loop: ${idea.loopStage} ${LOOP_STAGES[idea.loopStage]} of 7`,
     `Gate: ${idea.currentGate}`,
@@ -257,10 +287,17 @@ export function meetingDocView(
       ? idea.scoreboard.challenges.map((x) => `- ${x}`).join("\n")
       : (idea.scoreboard.openQuestions ?? []).map((x) => `- ${x}`).join("\n") ||
         "- None written. Do not invent.";
-  const help =
+  const constraint = constraintThisWeekOf(idea);
+  const extras =
     idea.scoreboard.helpNeeded?.length
       ? idea.scoreboard.helpNeeded.map((x) => `- ${x}`).join("\n")
-      : "- Not written. Do not invent a novel.";
+      : "";
+  const help = [
+    `- Constraint this week (where help is required): ${constraint || "none yet"}`,
+    extras,
+  ]
+    .filter(Boolean)
+    .join("\n");
   const advisorNotes = comments.length
     ? comments
         .slice()
@@ -306,6 +343,8 @@ export type JourneyIdeaPayload = {
     loopStage: number;
     currentGate: GateDecision;
   };
+  /** Fluid. Where help is required this week. Not a clock. Not tickets. */
+  constraintThisWeek: string;
   scoreboard: Scoreboard;
   lastTransitions: GateEventRow[];
   visualFlow: string;
@@ -337,6 +376,7 @@ export function ideaPayload(
       loopStage: idea.loopStage,
       currentGate: idea.currentGate,
     },
+    constraintThisWeek: constraintThisWeekOf(idea),
     scoreboard: idea.scoreboard,
     lastTransitions,
     visualFlow: visualFlowMermaid(idea, lastTransitions),
@@ -365,6 +405,7 @@ export type JourneyStore = {
       loopStage?: number;
       currentGate?: GateDecision;
       scoreboard?: Scoreboard;
+      constraintThisWeek?: string;
       why: string;
       founderYes: boolean;
       client?: string;
@@ -488,6 +529,7 @@ export class MemoryJourneyStore implements JourneyStore {
       loopStage?: number;
       currentGate?: GateDecision;
       scoreboard?: Scoreboard;
+      constraintThisWeek?: string;
       why: string;
       founderYes: boolean;
       client?: string;
@@ -527,9 +569,25 @@ export class MemoryJourneyStore implements JourneyStore {
       idea.currentGate = input.currentGate;
     }
     if (input.scoreboard) {
+      const fromBoard = normalizeConstraintThisWeek(input.scoreboard.constraint_this_week);
+      if (!fromBoard.ok) {
+        return forbidden(fromBoard.error);
+      }
       idea.scoreboard = {
         ...input.scoreboard,
         schema_version: input.scoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
+        constraint_this_week: fromBoard.value,
+      };
+    }
+    if (input.constraintThisWeek !== undefined) {
+      const normalized = normalizeConstraintThisWeek(input.constraintThisWeek);
+      if (!normalized.ok) {
+        return forbidden(normalized.error);
+      }
+      idea.scoreboard = {
+        ...idea.scoreboard,
+        schema_version: idea.scoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
+        constraint_this_week: normalized.value,
       };
     }
     const clocksChanged =
@@ -556,6 +614,7 @@ export class MemoryJourneyStore implements JourneyStore {
         journeyPhase: idea.journeyPhase,
         loopStage: idea.loopStage,
         currentGate: idea.currentGate,
+        constraint_this_week: constraintThisWeekOf(idea),
         why: input.why,
       },
     });
@@ -747,7 +806,11 @@ export function fixtureJourneyStore(): MemoryJourneyStore {
     JOURNEY_FIXTURE.acl.map((a) => ({ ...a })),
     JOURNEY_FIXTURE.ideas.map((i) => ({
       ...i,
-      scoreboard: { ...i.scoreboard, openQuestions: [...(i.scoreboard.openQuestions ?? [])] },
+      scoreboard: {
+        ...i.scoreboard,
+        openQuestions: [...(i.scoreboard.openQuestions ?? [])],
+        constraint_this_week: i.scoreboard.constraint_this_week ?? "",
+      },
     })),
     [],
     [],

@@ -615,7 +615,7 @@ function registerWriteTools(server: McpServer) {
 function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "get_journey",
-    "Where are we — company (every idea) or company/idea. Visual flow + two-minute snapshot; optional meeting-doc view. Gated. Not the production pin.",
+    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week (where help is required). Visual flow + two-minute snapshot; optional meeting-doc view. Gated. Not the production pin.",
     {
       q: z
         .string()
@@ -651,7 +651,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
 
   server.tool(
     "put_journey",
-    "Overwrite clocks and versioned jsonb for one idea. Founder or founder-authorized. One founder yes in chat — not a form, not mail.",
+    "Overwrite clocks and versioned jsonb for one idea, including constraint_this_week (where help is required; not a clock). Founder or founder-authorized. One founder yes in chat — not a form, not mail.",
     {
       company: z.string().describe("Company slug"),
       idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
@@ -659,6 +659,11 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       loopStage: z.number().int().min(1).max(7).optional(),
       currentGate: z.enum(["advance", "iterate", "hold", "kill"]).optional(),
       scoreboard: z.record(z.unknown()).optional(),
+      constraintThisWeek: z
+        .string()
+        .max(280)
+        .optional()
+        .describe("Fluid short text. Where help is required this week. Not a clock. Not tickets."),
       why: z.string().describe("Short why for the gate"),
       founderYes: z
         .boolean()
@@ -680,6 +685,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             loopStage: input.loopStage,
             currentGate: input.currentGate as import("./journey.js").GateDecision | undefined,
             scoreboard: input.scoreboard as import("./journey.js").Scoreboard | undefined,
+            constraintThisWeek: input.constraintThisWeek,
             why: input.why,
             founderYes: input.founderYes,
             client: input.client,

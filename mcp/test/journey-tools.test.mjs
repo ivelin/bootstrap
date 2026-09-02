@@ -72,6 +72,9 @@ describe("journey views + tools (memory store)", () => {
     assert.match(idea.visualFlow, /Journey 1-9/);
     assert.match(idea.visualFlow, /Loop 1-7/);
     assert.match(idea.snapshot, /two-minute read/);
+    assert.match(idea.snapshot, /Constraint this week \(where help is required\): none yet/);
+    assert.equal(idea.constraintThisWeek, "");
+    assert.match(idea.visualFlow, /Constraint this week:/);
     assert.equal(idea.meetingDoc, undefined);
     const expanded = await store.getJourney(founder, {
       companySlug: "corehaul",
@@ -79,6 +82,10 @@ describe("journey views + tools (memory store)", () => {
     });
     assert.match(expanded.ideas[0].meetingDoc, /Generated as a view/);
     assert.match(expanded.ideas[0].meetingDoc, /Where help is needed/);
+    assert.match(
+      expanded.ideas[0].meetingDoc,
+      /Constraint this week \(where help is required\): none yet/,
+    );
     assert.equal(commentsMayMutateGate(), false);
   });
 
@@ -212,5 +219,56 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(hidden.ok, false);
     const dyeView = await store.getJourney(dye, { companySlug: "dyeconverter" });
     assert.equal(dyeView.audit.length, 0);
+  });
+
+  it("constraint_this_week is fluid, surfaced by get_journey, and writes emit audit", async () => {
+    const store = fixtureJourneyStore();
+    const founder = bearer("founder-core@example.test");
+    const advisor = bearer("advisor-cos@example.test");
+
+    const empty = await store.getJourney(founder, { companySlug: "corehaul" });
+    assert.equal(empty.ideas[0].constraintThisWeek, "");
+    assert.match(empty.ideas[0].snapshot, /where help is required/);
+
+    const tooLong = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      constraintThisWeek: "x".repeat(281),
+      why: "too long",
+      founderYes: true,
+    });
+    assert.equal(tooLong.ok, false);
+
+    const written = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      constraintThisWeek: "need two operators who already pay for dispatch",
+      why: "this week's constraint",
+      founderYes: true,
+      client: "cursor-agent",
+    });
+    assert.equal(written.ok, true);
+    assert.equal(written.idea.clocks.journeyPhase, 1);
+    assert.equal(written.idea.clocks.currentGate, "hold");
+    assert.equal(
+      written.idea.constraintThisWeek,
+      "need two operators who already pay for dispatch",
+    );
+    assert.equal(written.audit.whatChanged.constraint_this_week, written.idea.constraintThisWeek);
+
+    const seen = await store.getJourney(advisor, {
+      companySlug: "corehaul",
+      expandMeetingDoc: true,
+    });
+    assert.equal(seen.ideas[0].constraintThisWeek, "need two operators who already pay for dispatch");
+    assert.match(seen.ideas[0].snapshot, /need two operators who already pay for dispatch/);
+    assert.match(seen.ideas[0].visualFlow, /need two operators who already pay for dispatch/);
+    assert.match(seen.ideas[0].meetingDoc, /need two operators who already pay for dispatch/);
+    assert.ok(
+      seen.audit.some(
+        (a) =>
+          a.whatChanged.via === "put_journey" &&
+          a.whatChanged.constraint_this_week ===
+            "need two operators who already pay for dispatch",
+      ),
+    );
   });
 });

@@ -330,4 +330,53 @@ describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, ()
     assert.ok(deleteFailed || remaining[0].n >= 3);
     assert.ok(remaining[0].n >= 3);
   });
+
+  it("constraint_this_week is short jsonb text, not a clock; write emits audit", async () => {
+    await db.query("SELECT set_config('app.client', 'cursor-agent', false)");
+    const before = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT journey_phase, current_gate FROM bootstrap_os.ideas WHERE id = 'idea-core'",
+    );
+    await asApp(
+      { email: "founder-core@example.test" },
+      `UPDATE bootstrap_os.ideas SET scoreboard = jsonb_set(
+         COALESCE(scoreboard, '{"schema_version": 1}'::jsonb),
+         '{constraint_this_week}',
+         '"need two paying operators"'
+       ) WHERE id = 'idea-core'`,
+    );
+    const after = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT journey_phase, current_gate, scoreboard->>'constraint_this_week' AS c FROM bootstrap_os.ideas WHERE id = 'idea-core'",
+    );
+    assert.equal(after[0].journey_phase, before[0].journey_phase);
+    assert.equal(after[0].current_gate, before[0].current_gate);
+    assert.equal(after[0].c, "need two paying operators");
+
+    const advisor = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT what_changed->>'constraint_this_week' AS c, what_changed->>'via' AS via FROM bootstrap_os.audit_events WHERE company_id = 'co-core' AND what_changed->>'constraint_this_week' = 'need two paying operators'",
+    );
+    assert.ok(advisor.some((r) => r.via === "put_journey" && r.c === "need two paying operators"));
+
+    let longFailed = false;
+    try {
+      await db.exec(
+        `UPDATE bootstrap_os.ideas SET scoreboard = '{"schema_version": 1, "constraint_this_week": "${"x".repeat(281)}"}' WHERE id = 'idea-core'`,
+      );
+    } catch {
+      longFailed = true;
+    }
+    assert.equal(longFailed, true);
+
+    let typeFailed = false;
+    try {
+      await db.exec(
+        `UPDATE bootstrap_os.ideas SET scoreboard = '{"schema_version": 1, "constraint_this_week": 9}' WHERE id = 'idea-core'`,
+      );
+    } catch {
+      typeFailed = true;
+    }
+    assert.equal(typeFailed, true);
+  });
 });

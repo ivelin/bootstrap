@@ -56,6 +56,14 @@ CREATE TABLE IF NOT EXISTS bootstrap_os.ideas (
   CONSTRAINT ideas_scoreboard_schema_version CHECK (
     (scoreboard ? 'schema_version')
     AND jsonb_typeof(scoreboard->'schema_version') = 'number'
+  ),
+  -- Fluid field. Not a clock. Not tickets. Short text.
+  CONSTRAINT ideas_constraint_this_week_short CHECK (
+    NOT (scoreboard ? 'constraint_this_week')
+    OR (
+      jsonb_typeof(scoreboard->'constraint_this_week') = 'string'
+      AND char_length(scoreboard->>'constraint_this_week') <= 280
+    )
   )
 );
 
@@ -333,7 +341,8 @@ BEGIN
       'via', 'put_journey',
       'journey_phase', NEW.journey_phase,
       'loop_stage', NEW.loop_stage,
-      'current_gate', NEW.current_gate
+      'current_gate', NEW.current_gate,
+      'constraint_this_week', COALESCE(NEW.scoreboard->>'constraint_this_week', '')
     )
   );
   RETURN NEW;
