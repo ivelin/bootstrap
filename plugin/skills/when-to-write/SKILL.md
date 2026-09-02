@@ -7,7 +7,7 @@ description: When a founder or mentee CoS may write the 0-1 board. Use after a g
 
 When to use: after Advance / Iterate / Hold / Kill, or a founder yes in chat. Not a form. Not mail.
 
-Company and idea are separate. One board per idea. A one-thesis company still has one default idea.
+Company and idea are separate. One board per idea. A one-thesis company still has one default idea. The weekly constraint is where help is required — not a clock, not tickets.
 
 - Write clocks only after a gate or founder yes — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md
 - Comments never mutate phase or gate.

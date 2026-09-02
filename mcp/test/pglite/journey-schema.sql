@@ -37,7 +37,14 @@ CREATE TABLE bootstrap_os.ideas (
   scoreboard jsonb NOT NULL DEFAULT '{"schema_version": 1}'::jsonb,
   UNIQUE (company_id, slug),
   CONSTRAINT ideas_scoreboard_object CHECK (jsonb_typeof(scoreboard) = 'object'),
-  CONSTRAINT ideas_scoreboard_schema_version CHECK (scoreboard ? 'schema_version')
+  CONSTRAINT ideas_scoreboard_schema_version CHECK (scoreboard ? 'schema_version'),
+  CONSTRAINT ideas_constraint_this_week_short CHECK (
+    NOT (scoreboard ? 'constraint_this_week')
+    OR (
+      jsonb_typeof(scoreboard->'constraint_this_week') = 'string'
+      AND char_length(scoreboard->>'constraint_this_week') <= 280
+    )
+  )
 );
 
 CREATE TABLE bootstrap_os.gate_events (
@@ -226,7 +233,8 @@ BEGIN
       'via', 'put_journey',
       'journey_phase', NEW.journey_phase,
       'loop_stage', NEW.loop_stage,
-      'current_gate', NEW.current_gate
+      'current_gate', NEW.current_gate,
+      'constraint_this_week', COALESCE(NEW.scoreboard->>'constraint_this_week', '')
     )
   );
   RETURN NEW;

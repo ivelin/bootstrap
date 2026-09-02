@@ -59,7 +59,7 @@ HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Ve
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 
-Company and idea are separate. Write after a gate / founder yes. Comments never mutate phase. Skills do not pick a SQL or tool menu. Plugin stays judge-only. **No human Ivelin session claimed.**
+Company and idea are separate. Write after a gate / founder yes. The weekly constraint is where help is required — not a clock, not tickets. Comments never mutate phase. Skills do not pick a SQL or tool menu. Plugin stays judge-only. **No human Ivelin session claimed.**
 
 | # | Visitor | Surface | Done means | Evidence |
 |---|---------|---------|------------|----------|

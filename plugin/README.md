@@ -29,7 +29,7 @@ Seven cases this package must support. Thin links, not essays. No auth. No datab
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 
-Write after a gate or a founder yes in chat — [`when-to-write`](skills/when-to-write/SKILL.md). Not a form. Not mail. Company and idea are separate. Comments never mutate phase. Plugin stays judge-only. Skills do not pick a database or a tool menu. No human Ivelin session claimed.
+Write after a gate or a founder yes in chat — [`when-to-write`](skills/when-to-write/SKILL.md). Not a form. Not mail. Company and idea are separate. The weekly constraint is where help is required — not a clock, not tickets. Comments never mutate phase. Plugin stays judge-only. Skills do not pick a database or a tool menu. No human Ivelin session claimed.
 
 **Human**
 

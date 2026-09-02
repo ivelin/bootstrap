@@ -71,6 +71,8 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(standing, /the-9-phases-simple-view/);
     assert.match(write, /Company and idea are separate/);
     assert.match(write, /One board per idea/);
+    assert.match(write, /weekly constraint is where help is required/);
+    assert.match(write, /not a clock, not tickets/);
   });
 
   it("H3 + A4 specialist GTM-or-not / spoken-yes refuse", () => {

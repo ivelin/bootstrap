@@ -8,6 +8,8 @@ Ivelin yes 2026-09-01 (via Cos): one source of truth for a FAST mentee 0-1 journ
 
 SQL + gated MCP tools + a thin “when to write” skill. Same payload for team / advisor / board / investor prep. Views (mermaid, two-minute snapshot, optional meeting doc) are generated. Do not store a novel. Comments never mutate phase or gate.
 
+Each idea has a fluid `constraint_this_week` (short text on versioned jsonb). Not a clock. Not tickets. `get_journey` / “Where are we” must surface it — that is where help is required. Writes emit an append-only audit row.
+
 Research/traces stay local to the founder. Do not lift `~/.bootstrap-os`.
 
 ## Schema (apply later on pirin.ai; not from this PR)
@@ -24,8 +26,8 @@ Append-only `audit_events` hang off company + optional idea (ACL is company-leve
 
 | Tool | Who | Notes |
 |------|-----|--------|
-| `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. |
-| `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb. One founder yes in chat. |
+| `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. Always surfaces `constraint_this_week`. |
+| `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb including `constraint_this_week`. One founder yes in chat. |
 | `post_comment` | advisors | Side table. Never a gate. |
 
 HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Public OS tools skip login.
