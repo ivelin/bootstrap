@@ -17,14 +17,33 @@ export const HOSTED_READ_TOOL_NAMES = [
   "bootstrap_house_rule_pins",
 ] as const;
 
-/** Resource-server gated tools. Unauthenticated calls return HTTP 401 + WWW-Authenticate. */
-export const HOSTED_GATED_TOOL_NAMES = [
+/** Resource-server gated identity. Unauthenticated calls return HTTP 401 + WWW-Authenticate. */
+export const HOSTED_GATED_IDENTITY_TOOL_NAMES = [
   "bootstrap_whoami",
   "bootstrap_list_company_labels",
 ] as const;
 
+/** Branch-only journey board. Not on the production pin until this draft merges. Public OS tools stay open. */
+export const HOSTED_GATED_JOURNEY_TOOL_NAMES = [
+  "get_journey",
+  "put_journey",
+  "post_comment",
+] as const;
+
+/** Resource-server gated tools. Unauthenticated calls return HTTP 401 + WWW-Authenticate. */
+export const HOSTED_GATED_TOOL_NAMES = [
+  ...HOSTED_GATED_IDENTITY_TOOL_NAMES,
+  ...HOSTED_GATED_JOURNEY_TOOL_NAMES,
+] as const;
+
 export function isHostedGatedToolName(name: string | undefined): boolean {
   return Boolean(name && (HOSTED_GATED_TOOL_NAMES as readonly string[]).includes(name));
+}
+
+export function isHostedGatedJourneyToolName(name: string | undefined): boolean {
+  return Boolean(
+    name && (HOSTED_GATED_JOURNEY_TOOL_NAMES as readonly string[]).includes(name),
+  );
 }
 
 export const PATH4_HONESTY =

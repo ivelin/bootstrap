@@ -8,7 +8,7 @@
 |------|----------------|---------------|
 | Typecheck | `npm run typecheck` | zero errors |
 | Build | `npm run build` | `dist/` emits index + policy + companies |
-| Unit tests | `npm run test:unit` | phase gate, isolation, policy, markdown path |
+| Unit tests | `npm run test:unit` | phase gate, isolation, policy, markdown path, PGlite journey RLS |
 | Cold-path smoke | `node test/cold-path.smoke.mjs` | multi-company + refuse external ask + no template writes |
 | **Stdio MCP client (M1 protocol)** | `node test/stdio-mcp.client.mjs` | official SDK client over stdio: tools, init, phase gate, refuse |
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |

@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
   DOC_KEYS,
+  HOSTED_GATED_JOURNEY_TOOL_NAMES,
   JOURNEY_PHASES,
   LOOP_STAGES,
   MCP_VERSION,
@@ -10,6 +11,7 @@ import {
   PUBLISHED_REPO,
   type DocKey,
 } from "./constants.js";
+import { parseJourneyQuery, resolveJourneyStore } from "./journey.js";
 import { loadOsDoc, loadOsDocList, resolveDocsBaseUrl, resolveDocsSource } from "./docs.js";
 import {
   initCompany,
@@ -120,13 +122,19 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
             identity: {
               publicTools:
                 "Open without login on the Path 1 alias. On the collab host they stay listed after auth. Empty-context agents keep working on the alias.",
-              gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels"],
+              gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels", ...HOSTED_GATED_JOURNEY_TOOL_NAMES],
               challenge: "HTTP 401 + WWW-Authenticate resource_metadata. No login UI here.",
               identityStore: hosted?.whoami.identityStore ?? "unset",
               resource: hosted?.resource ?? hostedMcpResource(),
               resourceMetadata: protectedResourceMetadataUrl(),
               stores: "Labels only on the existing pirin.ai Supabase. Not company-state. Not ~/.bootstrap-os.",
             },
+          },
+          journeyTools: {
+            names: HOSTED_GATED_JOURNEY_TOOL_NAMES,
+            gated: true,
+            onProductionPin: false,
+            note: "Branch only. Production pin stays main. Login/OAuth Hold. Public OS tools stay unauthenticated.",
           },
         });
       }
@@ -604,6 +612,112 @@ function registerWriteTools(server: McpServer) {
   );
 }
 
+function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
+  server.tool(
+    "get_journey",
+    "Where are we — company (every idea) or company/idea. Visual flow + two-minute snapshot; optional meeting-doc view. Gated. Not the production pin.",
+    {
+      q: z
+        .string()
+        .optional()
+        .describe("CoreHaul or CoreHaul / last-mile. Company and idea are separate."),
+      company: z.string().optional().describe("Company slug"),
+      idea: z.string().optional().describe("Idea slug. Omit for every idea under the company."),
+      expand: z
+        .enum(["snapshot", "meeting_doc"])
+        .optional()
+        .describe("snapshot is always returned. meeting_doc is a generated view, not stored."),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or advisor token required. Public OS tools stay open.");
+      }
+      const parsed = parseJourneyQuery(input);
+      try {
+        return text(
+          await store.getJourney(actor, {
+            companySlug: parsed.companySlug,
+            ideaSlug: parsed.ideaSlug,
+            expandMeetingDoc: input.expand === "meeting_doc",
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "put_journey",
+    "Overwrite clocks and versioned jsonb for one idea. Founder or founder-authorized. One founder yes in chat — not a form, not mail.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
+      journeyPhase: z.number().int().min(1).max(9).optional(),
+      loopStage: z.number().int().min(1).max(7).optional(),
+      currentGate: z.enum(["advance", "iterate", "hold", "kill"]).optional(),
+      scoreboard: z.record(z.unknown()).optional(),
+      why: z.string().describe("Short why for the gate"),
+      founderYes: z
+        .boolean()
+        .describe("True only after an explicit founder yes in their agent chat"),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      try {
+        return text(
+          await store.putJourney(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            journeyPhase: input.journeyPhase,
+            loopStage: input.loopStage,
+            currentGate: input.currentGate as import("./journey.js").GateDecision | undefined,
+            scoreboard: input.scoreboard as import("./journey.js").Scoreboard | undefined,
+            why: input.why,
+            founderYes: input.founderYes,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "post_comment",
+    "Advisor comment on an idea. Side table only. Never mutates phase or gate.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
+      body: z.string().describe("Comment text"),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Advisor token required.");
+      }
+      try {
+        return text(
+          await store.postComment(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            body: input.body,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+}
+
 export function createBootstrapServer(
   surface: McpSurface = "full",
   hosted?: HostedRequestContext,
@@ -614,7 +728,9 @@ export function createBootstrapServer(
   });
   registerReadTools(server, surface, hosted);
   if (surface === "hosted-read") {
-    registerGatedIdentityTools(server, hosted ?? { whoami: anonymousWhoami() });
+    const ctx = hosted ?? { whoami: anonymousWhoami() };
+    registerGatedIdentityTools(server, ctx);
+    registerJourneyTools(server, ctx);
   }
   if (surface === "full") {
     registerWriteTools(server);

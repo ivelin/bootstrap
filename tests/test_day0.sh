@@ -648,7 +648,7 @@ forbidden = [
     "weakest link",
     "slowest soldier",
 ]
-required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency"}
+required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency", "when-to-write"}
 found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
 assert required <= found, found
 for skill in (root / "skills").glob("*/SKILL.md"):
@@ -718,11 +718,23 @@ assert "NRR" not in first
 assert "NRR" not in path1
 assert "after-proof-efficiency.md" not in first
 assert "after-proof-efficiency.md" not in path1
+when = (root / "skills/when-to-write/SKILL.md").read_text()
+assert "founder yes" in when
+assert "Comments never mutate" in when
+assert "judge-only" in when
+assert "get_journey" not in when
+assert "DyeConverter" not in when
+assert "CoreHaul" not in when
+assert "@example.test" not in when
 readme = (root / "README.md").read_text()
 assert "Merge-gate visitor matrix" in readme
 assert "After-proof efficiency visitor matrix" in readme
 assert "After First Hour visitor matrix" in readme
 assert "Do not automate visitor matrix" in readme
+assert "0-1 journey visitor matrix" in readme
+assert "when-to-write" in readme
+assert "DyeConverter" not in readme
+assert "CoreHaul" not in readme
 assert "do not invent their stage" in readme
 assert "Do not upload mentee work to Ivelin's GitHub" in readme
 assert "first-hour.md#standing-rules" in readme
@@ -748,6 +760,11 @@ assert "After-proof efficiency visitor matrix" in coverage
 assert "afterProofEfficiencyPageMayOpen" in coverage
 assert "emptyContextMayInventEfficiencyMetrics" in coverage
 assert "After First Hour visitor matrix" in coverage
+assert "0-1 journey visitor matrix" in coverage
+assert "No human Ivelin session claimed" in coverage
+assert "when-to-write" in coverage
+assert "DyeConverter" not in coverage
+assert "CoreHaul" not in coverage
 assert "Do not upload mentee work to Ivelin's GitHub" in coverage
 assert "https://github.com/ivelin/bootstrap" in coverage
 assert "push mentee files to ivelin/bootstrap" in coverage

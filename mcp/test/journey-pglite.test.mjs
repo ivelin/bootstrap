@@ -1,0 +1,248 @@
+/**
+ * Isolated Postgres (PGlite). Never supabase-pirin-ai. Never prod.
+ */
+import { describe, it, before, after } from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { PGlite } from "@electric-sql/pglite";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const SCHEMA = path.join(__dirname, "pglite", "journey-schema.sql");
+const MIGRATION = path.join(
+  __dirname,
+  "..",
+  "supabase",
+  "migrations",
+  "20260902_bootstrap_os_journey.sql",
+);
+
+let db;
+
+async function asApp({ email = "", sub = "" }, sql, params = []) {
+  await db.exec("RESET ROLE");
+  await db.query("SELECT set_config('app.actor_email', $1, false)", [email]);
+  await db.query("SELECT set_config('app.actor_sub', $1, false)", [sub]);
+  await db.exec("SET ROLE journey_app");
+  const rows = await db.query(sql, params);
+  await db.exec("RESET ROLE");
+  return rows.rows;
+}
+
+describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, () => {
+  before(async () => {
+    db = new PGlite();
+    await db.exec(fs.readFileSync(SCHEMA, "utf8"));
+  });
+
+  after(async () => {
+    await db?.close();
+  });
+
+  it("fixture never names a hosted Supabase URL or real FAST emails", () => {
+    const schema = fs.readFileSync(SCHEMA, "utf8");
+    const migration = fs.readFileSync(MIGRATION, "utf8");
+    assert.match(schema, /NEVER apply this to supabase-pirin-ai/);
+    assert.match(migration, /Do not migrate\/seed\/live-probe supabase-pirin-ai/);
+    assert.doesNotMatch(schema, /supabase\.co/);
+    assert.doesNotMatch(schema, /BOOTSTRAP_SUPABASE_/);
+    assert.doesNotMatch(migration, /INSERT INTO bootstrap_os\.companies/);
+    assert.doesNotMatch(migration, /dyeconverter|corehaul/);
+    assert.match(schema, /founder-dye@example\.test/);
+    assert.doesNotMatch(schema, /@fast\./i);
+    assert.doesNotMatch(migration, /auth\.jwt\(\) ->> 'fast'/);
+  });
+
+  it("seed is one default idea per company", async () => {
+    const rows = await db.query(
+      "SELECT c.slug, count(i.id)::int AS n FROM bootstrap_os.companies c JOIN bootstrap_os.ideas i ON i.company_id = c.id GROUP BY c.slug ORDER BY c.slug",
+    );
+    assert.deepEqual(rows.rows, [
+      { slug: "corehaul", n: 1 },
+      { slug: "dyeconverter", n: 1 },
+    ]);
+  });
+
+  it("FORCE RLS: founder sees own company only; advisor both; stranger none", async () => {
+    const dye = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT slug FROM bootstrap_os.companies ORDER BY slug",
+    );
+    assert.deepEqual(
+      dye.map((r) => r.slug),
+      ["dyeconverter"],
+    );
+    const core = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT slug FROM bootstrap_os.companies ORDER BY slug",
+    );
+    assert.deepEqual(
+      core.map((r) => r.slug),
+      ["corehaul"],
+    );
+    const cos = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT slug FROM bootstrap_os.companies ORDER BY slug",
+    );
+    assert.deepEqual(
+      cos.map((r) => r.slug),
+      ["corehaul", "dyeconverter"],
+    );
+    const stranger = await asApp(
+      { email: "stranger@example.test" },
+      "SELECT slug FROM bootstrap_os.companies ORDER BY slug",
+    );
+    assert.deepEqual(stranger, []);
+    const empty = await asApp({}, "SELECT slug FROM bootstrap_os.companies");
+    assert.deepEqual(empty, []);
+  });
+
+  it("email fallback sub: sub-only founder reads CoreHaul, not DyeConverter", async () => {
+    const rows = await asApp(
+      { sub: "sub-only-corehaul" },
+      "SELECT slug FROM bootstrap_os.companies ORDER BY slug",
+    );
+    assert.deepEqual(
+      rows.map((r) => r.slug),
+      ["corehaul"],
+    );
+  });
+
+  it("company query vs idea query: extra idea is visible only under that company", async () => {
+    await db.exec("RESET ROLE");
+    await db.exec(`
+      INSERT INTO bootstrap_os.ideas (id, company_id, slug, name, journey_phase, loop_stage, current_gate, scoreboard)
+      VALUES ('idea-core-2', 'co-core', 'last-mile', 'last-mile', 1, 1, 'hold', '{"schema_version": 1}')
+    `);
+    const company = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT slug FROM bootstrap_os.ideas WHERE company_id = 'co-core' ORDER BY slug",
+    );
+    assert.deepEqual(
+      company.map((r) => r.slug),
+      ["corehaul", "last-mile"],
+    );
+    const one = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT slug FROM bootstrap_os.ideas WHERE company_id = 'co-core' AND slug = 'last-mile'",
+    );
+    assert.deepEqual(
+      one.map((r) => r.slug),
+      ["last-mile"],
+    );
+    const dyeSees = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT slug FROM bootstrap_os.ideas ORDER BY slug",
+    );
+    assert.deepEqual(
+      dyeSees.map((r) => r.slug),
+      ["dyeconverter"],
+    );
+    await db.exec("RESET ROLE");
+    await db.exec("DELETE FROM bootstrap_os.ideas WHERE id = 'idea-core-2'");
+  });
+
+  it("founder write, advisor cannot update clocks, authorized can", async () => {
+    await asApp(
+      { email: "founder-dye@example.test" },
+      "UPDATE bootstrap_os.ideas SET journey_phase = 2, current_gate = 'advance' WHERE id = 'idea-dye'",
+    );
+    const afterFounder = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT journey_phase, current_gate FROM bootstrap_os.ideas WHERE id = 'idea-dye'",
+    );
+    assert.equal(afterFounder[0].journey_phase, 2);
+    assert.equal(afterFounder[0].current_gate, "advance");
+
+    await asApp(
+      { email: "advisor-cos@example.test" },
+      "UPDATE bootstrap_os.ideas SET journey_phase = 9 WHERE id = 'idea-dye'",
+    );
+    const afterAdvisor = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT journey_phase FROM bootstrap_os.ideas WHERE id = 'idea-dye'",
+    );
+    assert.equal(afterAdvisor[0].journey_phase, 2);
+
+    await asApp(
+      { email: "authorized-dye@example.test" },
+      "UPDATE bootstrap_os.ideas SET loop_stage = 3 WHERE id = 'idea-dye'",
+    );
+    const afterAuth = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT loop_stage FROM bootstrap_os.ideas WHERE id = 'idea-dye'",
+    );
+    assert.equal(afterAuth[0].loop_stage, 3);
+  });
+
+  it("one mentee cannot write another company's clocks", async () => {
+    await asApp(
+      { email: "founder-core@example.test" },
+      "UPDATE bootstrap_os.ideas SET journey_phase = 8 WHERE id = 'idea-dye'",
+    );
+    const dye = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT journey_phase FROM bootstrap_os.ideas WHERE id = 'idea-dye'",
+    );
+    assert.equal(dye[0].journey_phase, 2);
+  });
+
+  it("advisor comment inserts; comments cannot mutate gates; founder cannot comment", async () => {
+    await asApp(
+      { email: "advisor-cos@example.test" },
+      "INSERT INTO bootstrap_os.comments (id, idea_id, body, who) VALUES ('c1', 'idea-core', 'help needed on the slice', 'advisor-cos@example.test')",
+    );
+    const comments = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT body FROM bootstrap_os.comments WHERE idea_id = 'idea-core'",
+    );
+    assert.equal(comments.length, 1);
+    let founderCommentFailed = false;
+    try {
+      await asApp(
+        { email: "founder-core@example.test" },
+        "INSERT INTO bootstrap_os.comments (id, idea_id, body, who) VALUES ('c2', 'idea-core', 'should fail', 'founder-core@example.test')",
+      );
+    } catch {
+      founderCommentFailed = true;
+    }
+    assert.equal(founderCommentFailed, true);
+    const clocks = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT journey_phase, loop_stage, current_gate FROM bootstrap_os.ideas WHERE id = 'idea-core'",
+    );
+    assert.equal(clocks[0].journey_phase, 1);
+    assert.equal(clocks[0].loop_stage, 1);
+    assert.equal(clocks[0].current_gate, "hold");
+  });
+
+  it("enums vs jsonb: clocks reject 10; scoreboard stays jsonb", async () => {
+    let phaseFailed = false;
+    try {
+      await db.exec("UPDATE bootstrap_os.ideas SET journey_phase = 10 WHERE id = 'idea-core'");
+    } catch {
+      phaseFailed = true;
+    }
+    assert.equal(phaseFailed, true);
+    let gateFailed = false;
+    try {
+      await db.exec("UPDATE bootstrap_os.ideas SET current_gate = 'maybe' WHERE id = 'idea-core'");
+    } catch {
+      gateFailed = true;
+    }
+    assert.equal(gateFailed, true);
+    await db.exec(
+      "UPDATE bootstrap_os.ideas SET scoreboard = '{\"schema_version\": 1, \"openQuestions\": [\"who pays\"]}' WHERE id = 'idea-core'",
+    );
+    const row = await db.query(
+      "SELECT scoreboard->>'schema_version' AS v, scoreboard->'openQuestions'->>0 AS q FROM bootstrap_os.ideas WHERE id = 'idea-core'",
+    );
+    assert.equal(row.rows[0].v, "1");
+    assert.equal(row.rows[0].q, "who pays");
+    const clocks = await db.query(
+      "SELECT journey_phase FROM bootstrap_os.ideas WHERE id = 'idea-core'",
+    );
+    assert.equal(clocks.rows[0].journey_phase, 1);
+  });
+});
