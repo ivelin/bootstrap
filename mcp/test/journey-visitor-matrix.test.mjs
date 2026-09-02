@@ -11,7 +11,11 @@ import {
   spokenYesIsGtm,
   spokenYesMayPromote,
 } from "../dist/house-rules.js";
-import { commentsMayMutateGate } from "../dist/journey.js";
+import {
+  agentMayRubberStampConstraint,
+  commentsMayMutateGate,
+  preferenceMayNameConstraint,
+} from "../dist/journey.js";
 import { HOSTED_GATED_JOURNEY_TOOL_NAMES } from "../dist/constants.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
@@ -71,8 +75,14 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(standing, /the-9-phases-simple-view/);
     assert.match(write, /Company and idea are separate/);
     assert.match(write, /One board per idea/);
-    assert.match(write, /weekly constraint is where help is required/);
-    assert.match(write, /not a clock, not tickets/);
+    assert.match(write, /honest biggest bottleneck/);
+    assert.match(write, /Not a fun side quest/);
+    assert.match(write, /Preference/);
+    assert.match(write, /new landing page/);
+    assert.match(write, /written override/);
+    assert.match(write, /do not rubber-stamp/i);
+    assert.equal(preferenceMayNameConstraint(), false);
+    assert.equal(agentMayRubberStampConstraint(), false);
   });
 
   it("H3 + A4 specialist GTM-or-not / spoken-yes refuse", () => {
@@ -89,6 +99,21 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(write, /unknown \/ none yet/);
     assert.equal(emptyContextMayInventStage(), false);
     assert.equal(commentsMayMutateGate(), false);
+    assert.equal(preferenceMayNameConstraint(), false);
+    assert.equal(agentMayRubberStampConstraint(), false);
+  });
+
+  it("A5 cold agent refuses “new landing page” as the weekly constraint", () => {
+    const write = skill("when-to-write");
+    const coverage = fs.readFileSync(path.join(PLUGIN, "COVERAGE.md"), "utf8");
+    const readme = fs.readFileSync(path.join(PLUGIN, "README.md"), "utf8");
+    for (const body of [write, coverage, readme]) {
+      assert.match(body, /new landing page/);
+      assert.match(body, /override/i);
+    }
+    assert.match(write, /no one has talked to customers/);
+    assert.match(coverage, /mayWriteConstraintThisWeek/);
+    assert.doesNotMatch(write, /get_journey|put_journey|post_comment/);
   });
 
   it("no FAST mentee names or emails in public markdown; no Ivelin session claimed", () => {

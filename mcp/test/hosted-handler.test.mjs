@@ -156,6 +156,9 @@ describe("Vercel fetch handler (hosted-read)", () => {
     assert.match(parsed.ideas[0].visualFlow, /mermaid/);
     assert.match(parsed.ideas[0].snapshot, /two-minute read/);
     assert.equal(parsed.ideas[0].constraintThisWeek, "");
-    assert.match(parsed.ideas[0].snapshot, /Constraint this week \(where help is required\)/);
+    assert.match(
+      parsed.ideas[0].snapshot,
+      /Constraint this week \(honest biggest bottleneck; where help is required\)/,
+    );
   });
 });

@@ -568,7 +568,7 @@ export type HostedRequestContext = {
 function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "get_journey",
-    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week (where help is required). Visual flow + two-minute snapshot; optional meeting-doc view. Gated. Not the production pin.",
+    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week as the honest biggest bottleneck (where help is required), not a fun side quest. Visual flow + two-minute snapshot; optional meeting-doc view. Gated. Not the production pin.",
     {
       q: z
         .string()
@@ -604,7 +604,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
 
   server.tool(
     "put_journey",
-    "Overwrite clocks and versioned jsonb for one idea, including constraint_this_week (where help is required; not a clock). Founder or founder-authorized. One founder yes in chat — not a form, not mail.",
+    "Overwrite clocks and versioned jsonb for one idea, including constraint_this_week (honest biggest bottleneck; not a clock; not a fun side quest). Founder or founder-authorized. One founder yes in chat — not a form, not mail. Refuse “new landing page” as the constraint when no one has talked to customers unless a written founder decision overrides.",
     {
       company: z.string().describe("Company slug"),
       idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
@@ -616,11 +616,19 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
         .string()
         .max(280)
         .optional()
-        .describe("Fluid short text. Where help is required this week. Not a clock. Not tickets."),
+        .describe(
+          "Honest biggest bottleneck this week. Not a clock. Not tickets. Not a fun side quest. Preference cannot name it.",
+        ),
       why: z.string().describe("Short why for the gate"),
       founderYes: z
         .boolean()
         .describe("True only after an explicit founder yes in their agent chat"),
+      founderWrittenDecision: z
+        .string()
+        .optional()
+        .describe(
+          "Written founder override after a challenge. Required to name “new landing page” as the constraint when no one has talked to customers. founderYes alone is not a rubber-stamp.",
+        ),
       client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
     },
     async (input) => {
@@ -641,6 +649,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             constraintThisWeek: input.constraintThisWeek,
             why: input.why,
             founderYes: input.founderYes,
+            founderWrittenDecision: input.founderWrittenDecision,
             client: input.client,
           }),
         );

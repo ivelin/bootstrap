@@ -59,7 +59,7 @@ HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Ve
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 
-Company and idea are separate. Write after a gate / founder yes. The weekly constraint is where help is required — not a clock, not tickets. Comments never mutate phase. Skills do not pick a SQL or tool menu. Plugin stays judge-only. **No human Ivelin session claimed.**
+Company and idea are separate. Write after a gate / founder yes. The weekly constraint is the honest biggest bottleneck — not a clock, not a fun side quest. Preference cannot name it. Comments never mutate phase. Skills do not pick a SQL or tool menu. Plugin stays judge-only. **No human Ivelin session claimed.**
 
 | # | Visitor | Surface | Done means | Evidence |
 |---|---------|---------|------------|----------|
@@ -70,6 +70,7 @@ Company and idea are separate. Write after a gate / founder yes. The weekly cons
 | A2 | Agent query-OS-first | `query-os-first` | Query-OS-first. | File lock |
 | A3 | Agent empty-context | `query-os-first` + `when-to-write` | Do not invent their stage. unknown / none yet. | File lock + `emptyContextMayInventStage()===false` |
 | A4 | Agent spoken-yes refuse | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
+| A5 | Agent names “new landing page” as weekly constraint, no customer talks | `when-to-write` | Refuse unless founder writes an override. Do not rubber-stamp. | File lock + `mayWriteConstraintThisWeek` |
 
 ## After First Hour visitor matrix
 

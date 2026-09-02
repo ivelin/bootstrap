@@ -29,8 +29,11 @@ export type Scoreboard = {
   progress?: string[];
   challenges?: string[];
   helpNeeded?: string[];
-  /** Fluid. Where help is required this week. Not a clock. Not tickets. */
+  /** Fluid. Honest biggest bottleneck. Not a clock. Not tickets. */
   constraint_this_week?: string;
+  /** Observed talks, not preference. Used to judge a landing-page side quest. */
+  customerConversations?: number;
+  talkedToCustomers?: boolean;
 };
 
 export type CompanyRow = {
@@ -109,6 +112,51 @@ export function defaultScoreboard(): Scoreboard {
 export function constraintThisWeekOf(idea: IdeaRow): string {
   const raw = idea.scoreboard.constraint_this_week;
   return typeof raw === "string" ? raw.trim() : "";
+}
+
+export const LANDING_PAGE_CONSTRAINT_REFUSE =
+  "Refuse: “new landing page” is a fun side quest, not the honest biggest bottleneck, when no one has talked to customers. Founder may override with a written decision. Do not rubber-stamp.";
+
+export function looksLikeNewLandingPageConstraint(text: string): boolean {
+  return /\bnew\s+landing\s+page\b/i.test(text.trim());
+}
+
+export function ideaHasTalkedToCustomers(idea: IdeaRow): boolean {
+  const n = idea.scoreboard.customerConversations;
+  if (typeof n === "number" && Number.isFinite(n) && n > 0) return true;
+  return idea.scoreboard.talkedToCustomers === true;
+}
+
+/** Preference / “this is interesting” cannot name the weekly constraint. */
+export function preferenceMayNameConstraint(): false {
+  return false;
+}
+
+/** Agent challenges; founder decides with a written override. */
+export function agentMayRubberStampConstraint(): false {
+  return false;
+}
+
+export function mayWriteConstraintThisWeek(input: {
+  constraint: string;
+  talkedToCustomers: boolean;
+  founderWrittenDecision?: string;
+}): { ok: true } | { ok: false; error: string } {
+  const constraint = input.constraint.trim();
+  if (!constraint) return { ok: true };
+  const override = input.founderWrittenDecision?.trim() ?? "";
+  if (looksLikeNewLandingPageConstraint(constraint) && !input.talkedToCustomers && !override) {
+    return { ok: false, error: LANDING_PAGE_CONSTRAINT_REFUSE };
+  }
+  return { ok: true };
+}
+
+export function constraintChallengeOf(idea: IdeaRow): string | undefined {
+  const constraint = constraintThisWeekOf(idea);
+  if (looksLikeNewLandingPageConstraint(constraint) && !ideaHasTalkedToCustomers(idea)) {
+    return "Challenge: this reads as a fun side quest, not the honest biggest bottleneck. No one has talked to customers. Preference cannot name it. Founder decides with a written override — do not rubber-stamp.";
+  }
+  return undefined;
 }
 
 export function normalizeConstraintThisWeek(
@@ -257,9 +305,12 @@ export function twoMinuteSnapshot(company: CompanyRow, idea: IdeaRow, events: Ga
   const questions = idea.scoreboard.openQuestions ?? [];
   const eyes = idea.scoreboard.readyForHumanEyes?.status ?? "unknown";
   const constraint = constraintThisWeekOf(idea);
+  const challenge = constraintChallengeOf(idea);
   return [
     `${company.label} / ${idea.name} — two-minute read`,
-    `Constraint this week (where help is required): ${constraint || "none yet"}`,
+    `Constraint this week (honest biggest bottleneck; where help is required): ${constraint || "none yet"}`,
+    "Not a fun side quest. Preference / “this is interesting” cannot name it.",
+    challenge,
     `Journey: ${idea.journeyPhase} ${JOURNEY_PHASES[idea.journeyPhase]} of 9`,
     `Loop: ${idea.loopStage} ${LOOP_STAGES[idea.loopStage]} of 7`,
     `Gate: ${idea.currentGate}`,
@@ -269,7 +320,9 @@ export function twoMinuteSnapshot(company: CompanyRow, idea: IdeaRow, events: Ga
     `Ready for human eyes: ${eyes} (not demand, not PMF)`,
     questions.length ? `Open questions: ${questions.join("; ")}` : "Open questions: none yet",
     "Company and idea are separate. This is a view, not a second app.",
-  ].join("\n");
+  ]
+    .filter((line) => line !== undefined && line !== "")
+    .join("\n");
 }
 
 export function meetingDocView(
@@ -293,7 +346,7 @@ export function meetingDocView(
       ? idea.scoreboard.helpNeeded.map((x) => `- ${x}`).join("\n")
       : "";
   const help = [
-    `- Constraint this week (where help is required): ${constraint || "none yet"}`,
+    `- Constraint this week (honest biggest bottleneck; where help is required): ${constraint || "none yet"}`,
     extras,
   ]
     .filter(Boolean)
@@ -343,8 +396,9 @@ export type JourneyIdeaPayload = {
     loopStage: number;
     currentGate: GateDecision;
   };
-  /** Fluid. Where help is required this week. Not a clock. Not tickets. */
+  /** Fluid. Honest biggest bottleneck. Not a clock. Not tickets. */
   constraintThisWeek: string;
+  constraintChallenge?: string;
   scoreboard: Scoreboard;
   lastTransitions: GateEventRow[];
   visualFlow: string;
@@ -377,6 +431,7 @@ export function ideaPayload(
       currentGate: idea.currentGate,
     },
     constraintThisWeek: constraintThisWeekOf(idea),
+    constraintChallenge: constraintChallengeOf(idea),
     scoreboard: idea.scoreboard,
     lastTransitions,
     visualFlow: visualFlowMermaid(idea, lastTransitions),
@@ -408,6 +463,7 @@ export type JourneyStore = {
       constraintThisWeek?: string;
       why: string;
       founderYes: boolean;
+      founderWrittenDecision?: string;
       client?: string;
     },
   ): Promise<unknown>;
@@ -516,7 +572,7 @@ export class MemoryJourneyStore implements JourneyStore {
         ideaPayload(company, idea, this.events, this.comments, Boolean(query.expandMeetingDoc)),
       ),
       audit: this.auditFor(company.id, query.ideaSlug ? ideas[0]?.id : undefined),
-      note: "Same payload for team / advisor / board / investor prep. Views are generated. Comments never mutate gates. Audit is append-only. Not ~/.bootstrap-os.",
+      note: "Same payload for team / advisor / board / investor prep. Views are generated. Comments never mutate gates. constraint_this_week is the honest biggest bottleneck, not a fun side quest. Audit is append-only. Not ~/.bootstrap-os.",
     };
   }
 
@@ -532,6 +588,7 @@ export class MemoryJourneyStore implements JourneyStore {
       constraintThisWeek?: string;
       why: string;
       founderYes: boolean;
+      founderWrittenDecision?: string;
       client?: string;
     },
   ): Promise<unknown> {
@@ -550,6 +607,41 @@ export class MemoryJourneyStore implements JourneyStore {
       return notFound("exactly one idea required to write");
     }
     const idea = ideas[0];
+    let nextScoreboard: Scoreboard = { ...idea.scoreboard };
+    if (input.scoreboard) {
+      const fromBoard = normalizeConstraintThisWeek(input.scoreboard.constraint_this_week);
+      if (!fromBoard.ok) {
+        return forbidden(fromBoard.error);
+      }
+      nextScoreboard = {
+        ...input.scoreboard,
+        schema_version: input.scoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
+        constraint_this_week: fromBoard.value,
+      };
+    }
+    if (input.constraintThisWeek !== undefined) {
+      const normalized = normalizeConstraintThisWeek(input.constraintThisWeek);
+      if (!normalized.ok) {
+        return forbidden(normalized.error);
+      }
+      nextScoreboard = {
+        ...nextScoreboard,
+        schema_version: nextScoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
+        constraint_this_week: normalized.value,
+      };
+    }
+    const proposed = {
+      ...idea,
+      scoreboard: nextScoreboard,
+    };
+    const constraintGate = mayWriteConstraintThisWeek({
+      constraint: constraintThisWeekOf(proposed),
+      talkedToCustomers: ideaHasTalkedToCustomers(proposed),
+      founderWrittenDecision: input.founderWrittenDecision,
+    });
+    if (!constraintGate.ok) {
+      return forbidden(constraintGate.error);
+    }
     if (input.journeyPhase !== undefined) {
       if (!isJourneyPhase(input.journeyPhase)) {
         return forbidden("journey_phase is a strict enum 1-9");
@@ -568,27 +660,8 @@ export class MemoryJourneyStore implements JourneyStore {
       }
       idea.currentGate = input.currentGate;
     }
-    if (input.scoreboard) {
-      const fromBoard = normalizeConstraintThisWeek(input.scoreboard.constraint_this_week);
-      if (!fromBoard.ok) {
-        return forbidden(fromBoard.error);
-      }
-      idea.scoreboard = {
-        ...input.scoreboard,
-        schema_version: input.scoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
-        constraint_this_week: fromBoard.value,
-      };
-    }
-    if (input.constraintThisWeek !== undefined) {
-      const normalized = normalizeConstraintThisWeek(input.constraintThisWeek);
-      if (!normalized.ok) {
-        return forbidden(normalized.error);
-      }
-      idea.scoreboard = {
-        ...idea.scoreboard,
-        schema_version: idea.scoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
-        constraint_this_week: normalized.value,
-      };
+    if (input.scoreboard || input.constraintThisWeek !== undefined) {
+      idea.scoreboard = nextScoreboard;
     }
     const clocksChanged =
       input.journeyPhase !== undefined ||
@@ -616,6 +689,7 @@ export class MemoryJourneyStore implements JourneyStore {
         currentGate: idea.currentGate,
         constraint_this_week: constraintThisWeekOf(idea),
         why: input.why,
+        founderWrittenDecision: input.founderWrittenDecision?.trim() || undefined,
       },
     });
     return {

@@ -29,7 +29,7 @@ Seven cases this package must support. Thin links, not essays. No auth. No datab
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 
-Write after a gate or a founder yes in chat — [`when-to-write`](skills/when-to-write/SKILL.md). Not a form. Not mail. Company and idea are separate. The weekly constraint is where help is required — not a clock, not tickets. Comments never mutate phase. Plugin stays judge-only. Skills do not pick a database or a tool menu. No human Ivelin session claimed.
+Write after a gate or a founder yes in chat — [`when-to-write`](skills/when-to-write/SKILL.md). Not a form. Not mail. Company and idea are separate. The weekly constraint is the honest biggest bottleneck (where help is required) — not a clock, not a fun side quest. Preference cannot name it. Comments never mutate phase. Plugin stays judge-only. Skills do not pick a database or a tool menu. No human Ivelin session claimed.
 
 **Human**
 
@@ -43,6 +43,7 @@ Write after a gate or a founder yes in chat — [`when-to-write`](skills/when-to
 2. Query-OS-first on a 0-1 placement ask.
 3. Empty-context, no founder update — do not invent their stage. unknown / none yet.
 4. Spoken-yes refuse — verbal maybe is not GTM.
+5. “New landing page” as the weekly constraint, no customer talks — refuse unless the founder writes an override. Do not rubber-stamp.
 
 ## After First Hour visitor matrix
 
@@ -132,7 +133,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 | `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; LTV:CAC 3x / T2D3 stale |
 | `first-hour` | Day 0 + install-first (plugin + this connector only) · After First Hour standing rules |
 | `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
-| `when-to-write` | After a gate / founder yes in chat. Not a form. Not mail. Comments never mutate phase. |
+| `when-to-write` | After a gate / founder yes in chat. Weekly constraint is the honest bottleneck, not a side quest. Comments never mutate phase. |
 
 ## Hosted MCP URL
 
