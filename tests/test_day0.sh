@@ -642,6 +642,11 @@ forbidden = [
     "still paying on day 90",
     "long LTV model is fiction",
     "grind three years on a popcorn stand",
+    "busy-looking machinery",
+    "Factory speed is not 0→1",
+    "A second ritual, channel, or agent team that does not attack it is busywork",
+    "weakest link",
+    "slowest soldier",
 ]
 required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency"}
 found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
@@ -656,7 +661,11 @@ pins = (root / "skills/house-rule-pins/SKILL.md").read_text()
 assert "house-rule-marketing-volume-cannot-promote" in pins
 assert "house-rule-a-security-program-cannot-promote" in pins
 assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in pins
+assert "house-rule-do-not-automate-a-step-that-should-not-exist" in pins
 assert "old SaaS playbook" in pins
+assert "automate the playbook" in pins
+assert "one bottleneck this week" in pins
+assert "new landing page" in pins
 standing = (root / "skills/query-os-first/SKILL.md").read_text()
 assert "0-1" in standing
 assert "spoken yes" in standing
@@ -671,6 +680,10 @@ assert "ivelin@pirin.ai" not in standing
 assert "is this price optimal" in standing
 assert "old SaaS playbook" in standing
 assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in standing
+assert "house-rule-do-not-automate-a-step-that-should-not-exist" in standing
+assert "automate the playbook" in standing
+assert "new landing page" in standing
+assert "written founder override" in standing
 assert "a price, or an LTV number" in standing
 assert "Exit without fences+proof" in standing
 assert "Two clocks" in standing
@@ -709,6 +722,7 @@ readme = (root / "README.md").read_text()
 assert "Merge-gate visitor matrix" in readme
 assert "After-proof efficiency visitor matrix" in readme
 assert "After First Hour visitor matrix" in readme
+assert "Do not automate visitor matrix" in readme
 assert "do not invent their stage" in readme
 assert "Do not upload mentee work to Ivelin's GitHub" in readme
 assert "first-hour.md#standing-rules" in readme
@@ -724,7 +738,11 @@ assert "GET /health" in coverage
 assert "Rollback" in coverage
 assert "SSO" in coverage
 assert "2.8.8" in coverage
+assert "2.8.9" in coverage
 assert "there is no optimal price until people have paid and stayed" in coverage
+assert "do not automate a step that should not exist" in coverage
+assert "Do not automate visitor matrix" in coverage
+assert "automate the playbook" in coverage
 assert "lifestyle or swinging for the fences" in coverage
 assert "After-proof efficiency visitor matrix" in coverage
 assert "afterProofEfficiencyPageMayOpen" in coverage
@@ -744,8 +762,7 @@ fi
 # --- s) OS 2.8.8: no-optimal-price house rule + Day 0 lifestyle/fences (do not mix) ---
 # Full house rule and full Day 0 question live once in the OS. Pointers elsewhere.
 # Path 1 / first-hour must not carry house-rule metrics or CAC/LTV targets.
-if grep -q '^\*\*Version:\*\* 2.8.8' company-os/operating-system.md \
-  && grep -q '### House rule: there is no optimal price until people have paid and stayed' company-os/operating-system.md \
+if grep -q '### House rule: there is no optimal price until people have paid and stayed' company-os/operating-system.md \
   && grep -q 'A survey of a handful of users will lie' company-os/operating-system.md \
   && grep -q 'Watch three numbers' company-os/operating-system.md \
   && grep -q 'pay on day 31' company-os/operating-system.md \
@@ -852,8 +869,8 @@ if [ -f "$eff" ] \
   && grep -q 'Wiz-sized exit is not a goal' "$eff" \
   && grep -q 'older than a year' "$eff" \
   && grep -q 'Not a house rule' "$eff" \
-  && ! grep -q '^\*\*Version:\*\* 2.8.9' company-os/operating-system.md; then
-  ok "after-proof efficiency page is dated, five instruments, stale not the aim; no OS version bump"
+  && ! grep -q 'House rule:' "$eff"; then
+  ok "after-proof efficiency page is dated, five instruments, stale not the aim; not a house rule"
 else
   not_ok "company-os/after-proof-efficiency.md must be the single dated home"
 fi
@@ -932,6 +949,104 @@ if ! grep -q 'Grok Bot marketplace bot' plugin/skills/first-hour/SKILL.md \
   ok "Grok Bot essay stays in first-hour.md, not in skills"
 else
   not_ok "do not copy the Grok Bot marketplace line into plugin skills"
+fi
+
+# --- v) OS 2.8.9: do not automate a step that should not exist ---
+# Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
+if grep -q '^\*\*Version:\*\* 2.8.9' company-os/operating-system.md \
+  && grep -q '### House rule: do not automate a step that should not exist' company-os/operating-system.md \
+  && grep -q 'Do not speed up or automate a step that should not exist' company-os/operating-system.md \
+  && grep -q "Every requirement has a person's name" company-os/operating-system.md \
+  && grep -q 'Delete the step before you simplify it' company-os/operating-system.md \
+  && grep -q 'Automate last' company-os/operating-system.md \
+  && grep -q 'An agent team is automation' company-os/operating-system.md \
+  && grep -q 'Name the one bottleneck this week and work that' company-os/operating-system.md \
+  && grep -q 'Several ideas may attack that same bottleneck' company-os/operating-system.md \
+  && grep -q 'Preference and .this is interesting. cannot name it' company-os/operating-system.md \
+  && grep -q 'fun side quest dressed as the bottleneck' company-os/operating-system.md \
+  && grep -q 'the agent does not rubber-stamp' company-os/operating-system.md \
+  && grep -q 'new landing page' company-os/operating-system.md \
+  && grep -q 'weakest link' company-os/operating-system.md \
+  && grep -q 'slowest soldier' company-os/operating-system.md \
+  && grep -q 'not extra law' company-os/operating-system.md \
+  && ! grep -q 'Name the one constraint this week and work that' company-os/operating-system.md \
+  && ! grep -q 'one constraint this week' company-os/first-hour.md README.md \
+    plugin/README.md plugin/COVERAGE.md plugin/skills/*/SKILL.md \
+    mcp/src/house-rules.ts \
+  && grep -q 'A second ritual, channel, or agent team that does not attack it is busywork' company-os/operating-system.md \
+  && ! grep -q 'Do not open a second idea, ritual, or agent team to walk around it' company-os/operating-system.md \
+  && grep -q 'busy-looking machinery' company-os/operating-system.md \
+  && grep -q 'Factory speed is not 0→1' company-os/operating-system.md \
+  && grep -q 'an accelerate or optimize law' company-os/operating-system.md \
+  && grep -q 'v2.8.9' README.md \
+  && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' README.md; then
+  ok "OS 2.8.9 house-rule section has full rule and vocabulary"
+else
+  not_ok "operating-system.md must hold the full 2.8.9 do-not-automate house rule"
+fi
+if ! grep -qiE '\bElon\b|\bMusk\b|five-step algorithm' company-os/operating-system.md \
+    company-os/first-hour.md company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md plugin/README.md plugin/COVERAGE.md \
+    mcp/src/house-rules.ts; then
+  ok "no celebrity names or five-step algorithm label"
+else
+  not_ok "do not name Elon, Musk, or a five-step algorithm"
+fi
+if grep -q "I don't automate a step that should not exist" company-os/first-hour.md \
+  && grep -q 'Name the one bottleneck this week and work that' company-os/first-hour.md \
+  && grep -q 'Several ideas may attack that same bottleneck' company-os/first-hour.md \
+  && grep -q 'new landing page' company-os/first-hour.md \
+  && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' company-os/first-hour.md \
+  && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' company-os/ai-instructions.md \
+  && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' plugin/skills/house-rule-pins/SKILL.md \
+  && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' plugin/skills/query-os-first/SKILL.md; then
+  ok "first-hour, ai-instructions, and plugin skills pin the 2.8.9 OS section"
+else
+  not_ok "first-hour, ai-instructions, and plugin skills must pin the 2.8.9 OS section"
+fi
+if ! grep -q 'busy-looking machinery' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'Factory speed is not 0→1' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'A second ritual, channel, or agent team that does not attack it is busywork' \
+    company-os/first-hour.md company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'weakest link' company-os/first-hour.md company-os/ai-instructions.md \
+    README.md plugin/skills/*/SKILL.md \
+  && ! grep -q 'slowest soldier' company-os/first-hour.md company-os/ai-instructions.md \
+    README.md plugin/skills/*/SKILL.md \
+  && ! grep -q 'Do not open a second idea, ritual, or agent team to walk around it' \
+    company-os/operating-system.md company-os/first-hour.md \
+    company-os/ai-instructions.md README.md plugin/skills/*/SKILL.md \
+  && ! grep -q 'constraint_this_week' company-os/operating-system.md \
+    company-os/first-hour.md mcp/src/house-rules.ts \
+    templates/company/state/company-state.json \
+    templates/company/state/company-state.schema.json; then
+  ok "2.8.9 essay is not copied outside the OS section"
+else
+  not_ok "do not reprint the 2.8.9 house-rule essay outside operating-system.md"
+fi
+done_when=$(sed -n '/^## Done when$/,/^## After this hour$/p' company-os/first-hour.md)
+if ! printf '%s\n' "$done_when" | grep -q 'automate a step that should not exist' \
+  && ! printf '%s\n' "$done_when" | grep -q 'automate the playbook' \
+  && ! printf '%s\n' "$done_when" | grep -q 'agent team' \
+  && ! printf '%s\n' "$done_when" | grep -q 'one constraint this week' \
+  && ! printf '%s\n' "$done_when" | grep -q 'one bottleneck this week' \
+  && ! printf '%s\n' "$done_when" | grep -q 'landing page'; then
+  ok "2.8.9 house rule is not extra Day 0 homework"
+else
+  not_ok "do not put the 2.8.9 house rule in the Day 0 Done when checklist"
+fi
+if grep -q 'Do not automate visitor matrix' plugin/README.md \
+  && grep -q 'Do not automate visitor matrix' plugin/COVERAGE.md \
+  && grep -q 'automate the playbook' plugin/README.md \
+  && grep -q 'no named owner' plugin/README.md \
+  && grep -qi 'delete or name the person first' plugin/README.md; then
+  ok "plugin README and COVERAGE name the do-not-automate visitor matrix"
+else
+  not_ok "plugin README and COVERAGE must name the do-not-automate visitor matrix"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

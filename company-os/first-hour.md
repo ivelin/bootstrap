@@ -115,6 +115,18 @@ When someone says you must find the optimal price from a handful of users, befor
 
 House rule: [there is no optimal price until people have paid and stayed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
+When someone says you must automate the playbook, or add an agent team to skip a step that has no named owner:
+
+> I don't automate a step that should not exist. Name the person first, or delete it. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck.
+
+House rule: [do not automate a step that should not exist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
+
+When someone names a new landing page as the bottleneck, and no one has talked to customers:
+
+> That is a fun side quest dressed as the bottleneck. Challenge it. Founder may override in writing.
+
+House rule: [do not automate a step that should not exist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
+
 ---
 
 *You supply the insight. AI supplies the speed.*

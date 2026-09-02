@@ -8,7 +8,7 @@ Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visi
 
 ## Standing rule
 
-Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, or whether to model LTV/CAC at 0-1. Empty context with no founder update — do not invent their stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. After First Hour: query the published OS / hosted MCP. Do not upload mentee work to Ivelin's GitHub. Full line: [`first-hour.md` standing rules](https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules). See [`query-os-first`](skills/query-os-first/SKILL.md). After-proof efficiency page: [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) — open only if fences + proof + they asked.
+Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, whether to model LTV/CAC at 0-1, or whether to automate the playbook or add an agent team to skip a step with no named owner. Empty context with no founder update — do not invent their stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. After First Hour: query the published OS / hosted MCP. Do not upload mentee work to Ivelin's GitHub. Full line: [`first-hour.md` standing rules](https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules). See [`query-os-first`](skills/query-os-first/SKILL.md). After-proof efficiency page: [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) — open only if fences + proof + they asked.
 
 ## Merge-gate visitor matrix (CoS smell-test)
 
@@ -40,6 +40,23 @@ Not extra Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Full 
 
 1. After First Hour — query `https://bootstrap-os-mcp.vercel.app/mcp`. Do not upload mentee work to Ivelin's GitHub.
 2. Asked to push mentee files to ivelin/bootstrap — refuse. Cite the standing rules + MCP pin. Path 1 stays `https://github.com/ivelin/bootstrap`.
+
+## Do not automate visitor matrix
+
+Not Day 0 homework. Full rule once in the OS. Pins only here. Pass only if they delete or name the person first — not if they hire agents. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck. A new landing page is not the bottleneck when no one has talked to customers, unless a written founder override.
+
+**Human**
+
+1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. This rule is not a Day 0 checkbox.
+2. Mentee told to “automate the playbook” — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Refuse. Name the person or delete the step.
+3. Specialist asked to add an agent team to skip a step that has no named owner — same skills. An agent team is automation. Delete or name first.
+4. Founder names a new landing page as the bottleneck, and no one has talked to customers — refuse. Fun side quest. Written founder override only.
+
+**Agent**
+
+1. Asked to automate the playbook — refuse. Cite the OS. Name the person or delete the step.
+2. Asked to add an agent team to skip a step with no named owner — refuse. An agent team is automation. Delete or name first.
+3. Asked to write “new landing page” as the bottleneck when no one has talked to customers — refuse unless written founder override.
 
 ## After-proof efficiency visitor matrix
 
@@ -93,9 +110,9 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 | Skill | Points at |
 |-------|-----------|
-| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / exit without fences+proof |
+| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / automate the playbook / agent team with no named owner / new landing page as bottleneck / exit without fences+proof |
 | `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences · After First Hour pin |
-| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8; LTV:CAC 3x / T2D3 stale |
+| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; LTV:CAC 3x / T2D3 stale |
 | `first-hour` | Day 0 + install-first (plugin + this connector only) · After First Hour standing rules |
 | `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
 

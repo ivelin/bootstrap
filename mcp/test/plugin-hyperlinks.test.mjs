@@ -18,6 +18,12 @@ const ESSAY_FORBIDDEN = [
   "grind three years on a popcorn stand",
   "Do not guide to where the puck has been",
   "dated current-year AI sources",
+  "busy-looking machinery",
+  "Factory speed is not 0→1",
+  "A second ritual, channel, or agent team that does not attack it is busywork",
+  "Do not open a second idea, ritual, or agent team to walk around it",
+  "weakest link",
+  "slowest soldier",
 ];
 
 function skillFiles() {
@@ -101,7 +107,11 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
     assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    assert.match(pins, /house-rule-do-not-automate-a-step-that-should-not-exist/);
     assert.match(pins, /old SaaS playbook/);
+    assert.match(pins, /automate the playbook/);
+    assert.match(pins, /one bottleneck this week/);
+    assert.match(pins, /new landing page/);
     const standing = fs.readFileSync(
       path.join(PLUGIN, "skills", "query-os-first", "SKILL.md"),
       "utf8",
@@ -117,6 +127,10 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(standing, /is this price optimal/);
     assert.match(standing, /old SaaS playbook/);
     assert.match(standing, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    assert.match(standing, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.match(standing, /automate the playbook/);
+    assert.match(standing, /new landing page/);
+    assert.match(standing, /written founder override/);
     assert.match(standing, /do not invent their stage, a price, or an LTV number/);
     assert.doesNotMatch(standing, /ivelin@pirin\.ai/);
     const firstHour = fs.readFileSync(path.join(PLUGIN, "skills", "first-hour", "SKILL.md"), "utf8");

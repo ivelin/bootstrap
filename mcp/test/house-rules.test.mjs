@@ -13,11 +13,14 @@ import {
   handfulSurveyMaySetOptimalPrice,
   ltvModelMayPromoteAtZeroToOne,
   emptyContextMayInventPriceOrLtv,
+  playbookMayBeAutomatedWithoutNamedOwner,
+  agentTeamMaySkipUnownedStep,
+  newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
 } from "../dist/house-rules.js";
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
 
 describe("OS house rules (adapter reminders)", () => {
-  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program, no optimal price", () => {
+  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program, no optimal price, do not automate", () => {
     const blob = HOUSE_RULE_LINES.join("\n");
     assert.match(blob, /stated, synthetic, and observed/i);
     assert.match(blob, /observed wins/i);
@@ -33,6 +36,11 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Marketing volume cannot promote/);
     assert.match(blob, /A security program cannot promote/);
     assert.match(blob, /There is no optimal price until people have paid and stayed/);
+    assert.match(blob, /Do not automate a step that should not exist/);
+    assert.match(blob, /An agent team is automation/);
+    assert.match(blob, /Name the one bottleneck this week and work that/);
+    assert.match(blob, /Several ideas may attack that same bottleneck/);
+    assert.match(blob, /fun side quest dressed as the bottleneck/);
     assert.match(blob, /SaaS 1\.0 playbooks may be outdated/);
     assert.match(blob, /Stay current/);
     assert.match(blob, /do not invent their stage/i);
@@ -44,6 +52,7 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
     assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    assert.match(pins, /house-rule-do-not-automate-a-step-that-should-not-exist/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {
@@ -68,6 +77,11 @@ describe("OS house rules (adapter reminders)", () => {
     assert.equal(handfulSurveyMaySetOptimalPrice(), false);
     assert.equal(ltvModelMayPromoteAtZeroToOne(), false);
     assert.equal(emptyContextMayInventPriceOrLtv(), false);
+    assert.equal(playbookMayBeAutomatedWithoutNamedOwner(), false);
+    assert.equal(agentTeamMaySkipUnownedStep(), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(false), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(true), true);
   });
 
   it("phase 3 / stage 1 gates refuse demo-only seed, spoken yes, Likert WTP", () => {
