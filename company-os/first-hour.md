@@ -81,6 +81,16 @@ On Day 0 you should hear something like: journey phase **1 of 9**, loop stage **
 
 ## After this hour
 
+### Standing rules
+
+Not another Day 0 checkbox. This hour stays thesis, ≥3 groups, one snapshot.
+
+After First Hour, query the published OS / hosted MCP. Pin: `https://bootstrap-os-mcp.vercel.app/mcp`.
+
+Do **not** upload mentee work to Ivelin's GitHub.
+
+Path 1 is still `https://github.com/ivelin/bootstrap` as the free install source. Team Import from Repo + that MCP pin. **Not** a public catalog submit. **Not** mentee boards on our host. **Not** a Grok Bot marketplace bot.
+
 Follow the [near-term checklist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#near-term-checklist-any-startup). Next real work is usually honest research across those groups — not a platform.
 
 Once real conversations start (later — not this hour), use the [founder-day pack](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#founder-day-pack-how-the-week-actually-runs): prep, close the call, write up. Do not add those rituals to Day 0.

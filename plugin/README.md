@@ -8,7 +8,7 @@ Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visi
 
 ## Standing rule
 
-Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, or whether to model LTV/CAC at 0-1. Empty context with no founder update — do not invent their stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. See [`query-os-first`](skills/query-os-first/SKILL.md). After-proof efficiency page: [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) — open only if fences + proof + they asked.
+Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, or whether to model LTV/CAC at 0-1. Empty context with no founder update — do not invent their stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. After First Hour: query the published OS / hosted MCP. Do not upload mentee work to Ivelin's GitHub. Full line: [`first-hour.md` standing rules](https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules). See [`query-os-first`](skills/query-os-first/SKILL.md). After-proof efficiency page: [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) — open only if fences + proof + they asked.
 
 ## Merge-gate visitor matrix (CoS smell-test)
 
@@ -26,6 +26,20 @@ Seven cases this package must support. Thin links, not essays. No auth. No datab
 2. Query-OS-first on a 0-1 placement ask — [`query-os-first`](skills/query-os-first/SKILL.md).
 3. Empty-context, no founder update — do not invent their stage. Write unknown / none yet. Same skill.
 4. Spoken-yes / verbal maybe treated as GTM — refuse and cite the OS. Same skill + house-rule pins.
+
+## After First Hour visitor matrix
+
+Not extra Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Full line once in [`first-hour.md` standing rules](https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules).
+
+**Human**
+
+1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. Connector `https://bootstrap-os-mcp.vercel.app/mcp`.
+2. After First Hour, what next — query the published OS / hosted MCP. Same pin. Not Ivelin's GitHub as a dropbox.
+
+**Agent**
+
+1. After First Hour — query `https://bootstrap-os-mcp.vercel.app/mcp`. Do not upload mentee work to Ivelin's GitHub.
+2. Asked to push mentee files to ivelin/bootstrap — refuse. Cite the standing rules + MCP pin. Path 1 stays `https://github.com/ivelin/bootstrap`.
 
 ## After-proof efficiency visitor matrix
 
@@ -80,9 +94,9 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 | Skill | Points at |
 |-------|-----------|
 | `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / exit without fences+proof |
-| `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences |
+| `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences · After First Hour pin |
 | `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8; LTV:CAC 3x / T2D3 stale |
-| `first-hour` | Day 0 + install-first (plugin + this connector only) · lifestyle or fences |
+| `first-hour` | Day 0 + install-first (plugin + this connector only) · After First Hour standing rules |
 | `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
 
 ## Hosted MCP URL

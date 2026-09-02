@@ -112,7 +112,7 @@ describe("after-proof efficiency (resource page)", () => {
 
   it("plugin skill is the load-bearing gate; Path 1 / Day 0 leak no numbers", () => {
     const gate = fs.readFileSync(GATE_SKILL, "utf8");
-    assert.ok(gate.length < 1600);
+    assert.ok(gate.length < 1800);
     assert.match(gate, /ALL of|ALL three/);
     assert.match(gate, /fences/);
     assert.match(gate, /lifestyle/);

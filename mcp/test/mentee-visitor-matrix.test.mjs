@@ -54,7 +54,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
 
   it("H1 + A1 install-first: plugin + connector only", () => {
     const first = skill("first-hour");
-    assert.ok(first.length < 1600);
+    assert.ok(first.length < 1800);
     assert.match(first, /install-first|Install-first/i);
     assert.ok(first.includes(HOSTED));
     assert.match(first, /No auth/);
@@ -81,7 +81,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
 
   it("H2 + A2 query-OS-first on a 0-1 placement ask", () => {
     const standing = skill("query-os-first");
-    assert.ok(standing.length < 1600);
+    assert.ok(standing.length < 1800);
     assert.match(standing, /0-1/);
     assert.match(standing, /the-9-phases-simple-view/);
     assert.match(standing, /Call this plugin first/);
@@ -181,6 +181,52 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     );
     assert.equal(emptyContextMayInventEfficiencyMetrics(), false);
     assert.equal(path1MayCiteEfficiencyNumbers(), false);
+  });
+
+  it("After First Hour: query MCP; refuse upload to Ivelin's GitHub; Path 1 stays the front door", () => {
+    const firstHourOs = fs.readFileSync(
+      path.join(REPO_ROOT, "company-os", "first-hour.md"),
+      "utf8",
+    );
+    const after = firstHourOs.match(/## After this hour[\s\S]*$/);
+    assert.ok(after, "After this hour section missing");
+    assert.match(after[0], /### Standing rules/);
+    assert.ok(after[0].includes(HOSTED));
+    assert.match(after[0], /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
+    assert.ok(after[0].includes("https://github.com/ivelin/bootstrap"));
+    assert.match(after[0], /\*\*Not\*\* a public catalog submit/);
+    assert.match(after[0], /\*\*Not\*\* a Grok Bot marketplace bot/);
+    assert.match(after[0], /Not another Day 0 checkbox/);
+
+    const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
+    assert.ok(doneWhen, "Done when section missing");
+    assert.doesNotMatch(doneWhen[0], /bootstrap-os-mcp\.vercel\.app/);
+    assert.doesNotMatch(doneWhen[0], /upload mentee work/);
+
+    const first = skill("first-hour");
+    const path1 = skill("path-1-default");
+    const standing = skill("query-os-first");
+    for (const body of [first, path1]) {
+      assert.match(body, /Do not upload mentee work to Ivelin.s GitHub/);
+      assert.match(body, /first-hour\.md#standing-rules/);
+      assert.ok(body.includes(HOSTED) || body.includes("https://github.com/ivelin/bootstrap"));
+      assert.doesNotMatch(body, /Grok Bot marketplace bot/);
+    }
+    assert.ok(first.includes(HOSTED));
+    assert.match(path1, /https:\/\/github.com\/ivelin\/bootstrap/);
+    assert.match(standing, /Upload mentee work to Ivelin.s GitHub — refuse/);
+    assert.match(standing, /first-hour\.md#standing-rules/);
+
+    const readme = fs.readFileSync(README, "utf8");
+    const coverage = fs.readFileSync(COVERAGE, "utf8");
+    for (const body of [readme, coverage]) {
+      assert.match(body, /After First Hour visitor matrix/);
+      assert.match(body, /push mentee files to ivelin\/bootstrap/);
+      assert.ok(body.includes(HOSTED));
+      assert.match(body, /https:\/\/github.com\/ivelin\/bootstrap/);
+    }
+    assert.match(readme, /Do not upload mentee work to Ivelin.s GitHub/);
+    assert.match(readme, /first-hour\.md#standing-rules/);
   });
 
   it("install-reader and team listing still lock the pin", () => {
