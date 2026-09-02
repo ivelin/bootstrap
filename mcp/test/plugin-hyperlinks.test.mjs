@@ -88,6 +88,7 @@ describe("preview plugin (hyperlink only)", () => {
       "first-hour",
       "query-os-first",
       "after-proof-efficiency",
+      "when-to-write",
     ];
     for (const name of required) {
       assert.ok(
@@ -161,5 +162,11 @@ describe("preview plugin (hyperlink only)", () => {
     assert.doesNotMatch(path1, /CAC payback|NRR|0\.75 stop-spend/);
     assert.doesNotMatch(firstHour, /CAC payback|NRR|0\.75 stop-spend/);
     assert.doesNotMatch(efficiency, /0\.75 stop-spend/);
+    const when = fs.readFileSync(path.join(PLUGIN, "skills", "when-to-write", "SKILL.md"), "utf8");
+    assert.match(when, /founder yes/);
+    assert.match(when, /Comments never mutate/);
+    assert.match(when, /judge-only/);
+    assert.doesNotMatch(when, /get_journey|put_journey|post_comment|subscribe_board/);
+    assert.doesNotMatch(when, /Grok Bot template/);
   });
 });

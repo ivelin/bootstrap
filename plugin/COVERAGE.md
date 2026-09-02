@@ -35,7 +35,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Production `bootstrap_os_info.pluginPreview.version` already `0.1.1` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | Mentee-ready hosted boards / founder `company-state` on the host | Out. Path 3 local stdio only. |
 | Non-maintainer MCP cold path (M2) | Still open. Human-eyes for hosted boards stays **unknown**. |
-| Database, auth, extra connectors | Not started. Do not start. |
+| Database, auth, extra connectors | Login/OAuth stays Hold. This branch ships SQL + PGlite tests only. Not the production pin. |
 | A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
 | Production `bootstrap_os_info.osVersion` already `2.8.9` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | CAC / LTV / day-31 / day-90 / NRR / magic-number numbers on Path 1 | Must stay absent. CI locks the absence. |
@@ -56,6 +56,21 @@ Seven cases. Skills/README make the four **agent** behaviors inevitable. Skip GU
 | A4 | Agent spoken-yes as GTM | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
 
 HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Vercel SSO preview, Cursor GUI, pirin.ai, `mcp.pirin.ai`.
+
+## 0-1 journey visitor matrix (this PR, not the production pin)
+
+Company and idea are separate. Write after a gate / founder yes. The weekly constraint is the honest biggest bottleneck — not a clock, not a fun side quest. Preference cannot name it. Comments never mutate phase. Skills do not pick a SQL or tool menu. Plugin stays judge-only. **No human Ivelin session claimed.**
+
+| # | Visitor | Surface | Done means | Evidence |
+|---|---------|---------|------------|----------|
+| H1 | Installing founder | `first-hour` + README | Plugin + production pin. No auth/DB on that pin. | File lock |
+| H2 | Mentee CoS on 0-1 | `query-os-first` + `when-to-write` | Query OS first. Company vs idea. Cite journey 1–9. | File lock |
+| H3 | Specialist, GTM-or-not | `query-os-first` + pins | Spoken yes cannot promote. Refuse. Cite OS. | File lock |
+| A1 | Agent install-first | `first-hour` | Plugin + connector only. Public OS: no login. | File lock |
+| A2 | Agent query-OS-first | `query-os-first` | Query-OS-first. | File lock |
+| A3 | Agent empty-context | `query-os-first` + `when-to-write` | Do not invent their stage. unknown / none yet. | File lock + `emptyContextMayInventStage()===false` |
+| A4 | Agent spoken-yes refuse | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
+| A5 | Agent names “new landing page” as weekly constraint, no customer talks | `when-to-write` | Refuse unless founder writes an override. Do not rubber-stamp. | File lock + `mayWriteConstraintThisWeek` |
 
 ## After First Hour visitor matrix
 

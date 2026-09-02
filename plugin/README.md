@@ -27,6 +27,24 @@ Seven cases this package must support. Thin links, not essays. No auth. No datab
 3. Empty-context, no founder update — do not invent their stage. Write unknown / none yet. Same skill.
 4. Spoken-yes / verbal maybe treated as GTM — refuse and cite the OS. Same skill + house-rule pins.
 
+## 0-1 journey visitor matrix (this PR, not the production pin)
+
+Write after a gate or a founder yes in chat — [`when-to-write`](skills/when-to-write/SKILL.md). Not a form. Not mail. Company and idea are separate. The weekly constraint is the honest biggest bottleneck (where help is required) — not a clock, not a fun side quest. Preference cannot name it. Comments never mutate phase. Plugin stays judge-only. Skills do not pick a database or a tool menu. No human Ivelin session claimed.
+
+**Human**
+
+1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Production pin stays `https://bootstrap-os-mcp.vercel.app/mcp`. No auth. No database.
+2. Mentee CoS on 0-1 — [`query-os-first`](skills/query-os-first/SKILL.md) + [`when-to-write`](skills/when-to-write/SKILL.md).
+3. Specialist, GTM-or-not — spoken yes cannot promote. Same standing skill + house-rule pins.
+
+**Agent**
+
+1. Install-first — plugin + connector only. Public OS tools: no login.
+2. Query-OS-first on a 0-1 placement ask.
+3. Empty-context, no founder update — do not invent their stage. unknown / none yet.
+4. Spoken-yes refuse — verbal maybe is not GTM.
+5. “New landing page” as the weekly constraint, no customer talks — refuse unless the founder writes an override. Do not rubber-stamp.
+
 ## After First Hour visitor matrix
 
 Not extra Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Full line once in [`first-hour.md` standing rules](https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules).
@@ -115,6 +133,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 | `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; LTV:CAC 3x / T2D3 stale |
 | `first-hour` | Day 0 + install-first (plugin + this connector only) · After First Hour standing rules |
 | `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
+| `when-to-write` | After a gate / founder yes in chat. Weekly constraint is the honest bottleneck, not a side quest. Comments never mutate phase. |
 
 ## Hosted MCP URL
 
