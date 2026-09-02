@@ -37,7 +37,7 @@ Override for metadata URL only: `BOOTSTRAP_OAUTH_RESOURCE_METADATA` (preview onl
 
 `https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
 
-This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` with `"resource"` equal to the preview MCP URL (not the production pin).
+This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is the #143 Sign in URL — not bare `https://pirin.ai` (prod AS root is 404). Merge / production uses `https://pirin.ai/bootstrap-os/login`.
 
 ## Web Builder
 
@@ -49,33 +49,37 @@ Protected-resource metadata URL (preview until pirin-ai #143 merges):
 
 `https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
 
-Authorize URL (authorization code + PKCE):
+Authorize URL (authorization code + PKCE) — production / merge:
 
 `https://pirin.ai/bootstrap-os/login`
+
+Authorize URL (this Hold preview — #143 Sign in):
+
+`https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login`
 
 Suggested RFC 9728 document (production / after merge):
 
 ```json
 {
   "resource": "https://bootstrap-os-mcp.vercel.app/mcp",
-  "authorization_servers": ["https://pirin.ai"],
+  "authorization_servers": ["https://pirin.ai/bootstrap-os/login"],
   "scopes_supported": ["bootstrap-os"],
   "bearer_methods_supported": ["header"]
 }
 ```
 
-Suggested RFC 9728 document (this PR preview — Web Builder #143 `resource` field must match):
+Suggested RFC 9728 document this MCP origin serves on the Hold preview (`VERCEL_ENV=preview`). `authorization_servers` must match the 401 / #143 Sign in page, not prod `https://pirin.ai`:
 
 ```json
 {
   "resource": "https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp",
-  "authorization_servers": ["https://pirin.ai"],
+  "authorization_servers": ["https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login"],
   "scopes_supported": ["bootstrap-os"],
   "bearer_methods_supported": ["header"]
 }
 ```
 
-Authorization-server metadata on pirin.ai must advertise `authorization_endpoint` as `/bootstrap-os/login` and support authorization code + PKCE. This repo does not host those documents.
+`WWW-Authenticate` `resource_metadata` still points at the #143 preview well-known. Clients that instead discover the AS from this origin well-known must still land on that same #143 login URL. This repo does not host a login UI.
 
 After the code exchange, the MCP client retries gated tools with:
 

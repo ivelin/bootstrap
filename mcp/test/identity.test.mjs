@@ -20,10 +20,14 @@ import {
 import {
   HOSTED_MCP_RESOURCE,
   isJwtAccessToken,
+  PIRIN_AUTHORIZATION_SERVER,
   PREVIEW_HOSTED_MCP_RESOURCE,
+  PREVIEW_PIRIN_AUTHORIZATION_SERVER,
   PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL,
   WWW_AUTHENTICATE_CHALLENGE,
+  authorizationServerUrl,
   hostedMcpResource,
+  protectedResourceMetadataDocument,
   wwwAuthenticateChallenge,
   wwwAuthenticateChallengeFor,
 } from "../dist/oauth.js";
@@ -230,9 +234,27 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(meta.status, 200);
     const doc = JSON.parse(await meta.text());
     assert.equal(doc.resource, PREVIEW_HOSTED_MCP_RESOURCE);
+    assert.deepEqual(doc.authorization_servers, [PREVIEW_PIRIN_AUTHORIZATION_SERVER]);
+    assert.equal(
+      doc.authorization_servers[0],
+      "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
+    );
+    const metaMcp = await handleHostedReadFetch(
+      new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource/mcp"),
+    );
+    assert.deepEqual(JSON.parse(await metaMcp.text()).authorization_servers, [
+      PREVIEW_PIRIN_AUTHORIZATION_SERVER,
+    ]);
+    assert.equal(authorizationServerUrl(previewReq), PREVIEW_PIRIN_AUTHORIZATION_SERVER);
     process.env.VERCEL_ENV = "production";
     assert.equal(wwwAuthenticateChallenge(), WWW_AUTHENTICATE_CHALLENGE);
     assert.equal(hostedMcpResource(), HOSTED_MCP_RESOURCE);
+    assert.equal(authorizationServerUrl(), PIRIN_AUTHORIZATION_SERVER);
+    const prodDoc = protectedResourceMetadataDocument(
+      new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-protected-resource"),
+    );
+    assert.equal(prodDoc.resource, HOSTED_MCP_RESOURCE);
+    assert.deepEqual(prodDoc.authorization_servers, ["https://pirin.ai/bootstrap-os/login"]);
   });
 
   it("CORS allows Authorization and exposes WWW-Authenticate", async () => {

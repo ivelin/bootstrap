@@ -4,6 +4,16 @@
  */
 export const PIRIN_ORIGIN = "https://pirin.ai";
 
+/** Production / merge authorize URL. Not the bare origin — prod pirin.ai AS root is 404. */
+export const PIRIN_AUTHORIZATION_SERVER = `${PIRIN_ORIGIN}/bootstrap-os/login`;
+
+/**
+ * Hold-preview authorize URL (#143 Sign in). Used when VERCEL_ENV=preview.
+ * Clients that read origin well-known instead of 401 resource_metadata must land here.
+ */
+export const PREVIEW_PIRIN_AUTHORIZATION_SERVER =
+  "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login";
+
 /** Production / main default. Web Builder publishes RFC 9728 here after pirin-ai merge. */
 export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   `${PIRIN_ORIGIN}/.well-known/oauth-protected-resource`;
@@ -98,6 +108,24 @@ export function protectedResourceMetadataUrl(): string {
   return PIRIN_PROTECTED_RESOURCE_METADATA_URL;
 }
 
+/**
+ * authorization_servers entry this origin well-known advertises.
+ * Preview (VERCEL_ENV=preview, or request host is this Hold preview) → #143 login.
+ * Merge / production → https://pirin.ai/bootstrap-os/login (not bare https://pirin.ai).
+ */
+export function authorizationServerUrl(req?: Request): string {
+  if (process.env.VERCEL_ENV === "preview") {
+    return PREVIEW_PIRIN_AUTHORIZATION_SERVER;
+  }
+  if (process.env.VERCEL_ENV !== "production") {
+    const fromReq = resourceFromRequest(req);
+    if (fromReq && fromReq === PREVIEW_HOSTED_MCP_RESOURCE) {
+      return PREVIEW_PIRIN_AUTHORIZATION_SERVER;
+    }
+  }
+  return PIRIN_AUTHORIZATION_SERVER;
+}
+
 export function wwwAuthenticateChallengeFor(
   metadataUrl: string,
   resourceUrl: string = HOSTED_MCP_RESOURCE,
@@ -123,7 +151,7 @@ export function protectedResourceMetadataDocument(req?: Request): {
 } {
   return {
     resource: hostedMcpResource(req),
-    authorization_servers: [PIRIN_ORIGIN],
+    authorization_servers: [authorizationServerUrl(req)],
     scopes_supported: ["bootstrap-os"],
     bearer_methods_supported: ["header"],
   };

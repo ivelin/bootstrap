@@ -84,6 +84,12 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
       identity,
       /bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp/,
     );
+    assert.match(
+      identity,
+      /"authorization_servers": \["https:\/\/v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/bootstrap-os\/login"\]/,
+    );
+    assert.match(identity, /"authorization_servers": \["https:\/\/pirin\.ai\/bootstrap-os\/login"\]/);
+    assert.doesNotMatch(identity, /"authorization_servers": \["https:\/\/pirin\.ai"\]/);
     assert.match(identity, /Vercel Authentication is \*\*off\*\*/);
     assert.doesNotMatch(readme, /SSO-gated/);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);
