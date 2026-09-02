@@ -189,7 +189,7 @@ High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROAD
 |---------|---------|
 | `npm run typecheck` | Strict TypeScript |
 | `npm run build` | Emit `dist/` |
-| `npm run test:unit` | Hard-rule unit tests (phase gate, isolation, policy, markdown path) |
+| `npm run test:unit` | Hard-rule unit tests (phase gate, isolation, policy, markdown path, PGlite journey RLS) |
 | `npm run test:smoke` | Cold-path multi-company smoke |
 | `npm run test:stdio` | Real stdio MCP client (M1 protocol) |
 | `npm run test:http` | Streamable HTTP hosted-read (no local clone) |
@@ -200,4 +200,6 @@ Merge gates and manual checklist: [`QA.md`](QA.md).
 
 GitHub Actions: `.github/workflows/mcp-ci.yml` (Node 20 + 22).
 
-Runbooks: [`docs/COLD_PATH.md`](docs/COLD_PATH.md) · [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) · [`QA.md`](QA.md)
+Runbooks: [`docs/COLD_PATH.md`](docs/COLD_PATH.md) · [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) · [`docs/JOURNEY.md`](docs/JOURNEY.md) · [`QA.md`](QA.md)
+
+**This branch:** gated `get_journey` / `put_journey` / `post_comment` + SQL (PGlite tests only). Not on the production pin. Do not merge. Login/OAuth stays Hold. See [`docs/JOURNEY.md`](docs/JOURNEY.md).

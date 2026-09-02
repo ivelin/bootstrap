@@ -17,6 +17,19 @@ export const HOSTED_READ_TOOL_NAMES = [
   "bootstrap_house_rule_pins",
 ] as const;
 
+/** Branch-only. Not on the production pin. Force login. Public OS tools stay open. */
+export const HOSTED_GATED_JOURNEY_TOOL_NAMES = [
+  "get_journey",
+  "put_journey",
+  "post_comment",
+] as const;
+
+export function isHostedGatedJourneyToolName(name: string | undefined): boolean {
+  return Boolean(
+    name && (HOSTED_GATED_JOURNEY_TOOL_NAMES as readonly string[]).includes(name),
+  );
+}
+
 export const PATH4_HONESTY =
   "Preview only. plugin/ + HTTP read adapter exist. Public preview on *.vercel.app is not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. No founder company-state on a shared server. Path 1 stays the front door.";
 

@@ -8,7 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
+import { HOSTED_GATED_JOURNEY_TOOL_NAMES, HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
 import { startHostedReadServer } from "../dist/http.js";
 
 const WRITE_TOOLS = [
@@ -107,6 +107,9 @@ async function main() {
     }
     for (const n of WRITE_TOOLS) {
       assert.ok(!names.includes(n), `hosted-read must not expose ${n}`);
+    }
+    for (const n of HOSTED_GATED_JOURNEY_TOOL_NAMES) {
+      assert.ok(names.includes(n), `this branch must list gated ${n}`);
     }
 
     const info = await call(client, "bootstrap_os_info");

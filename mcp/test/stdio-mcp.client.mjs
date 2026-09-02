@@ -82,6 +82,9 @@ async function main() {
       assert.ok(names.includes(n), `missing tool ${n}`);
     }
     assert.ok(names.length >= 15, `expected full tool surface, got ${names.length}`);
+    assert.ok(!names.includes("get_journey"), "stdio must not lift hosted journey tools");
+    assert.ok(!names.includes("put_journey"));
+    assert.ok(!names.includes("post_comment"));
 
     const info = await call(client, "bootstrap_os_info");
     assert.equal(info.mcpVersion, "0.2.0");
