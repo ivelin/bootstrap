@@ -15,6 +15,7 @@ import {
   emptyContextMayInventPriceOrLtv,
   playbookMayBeAutomatedWithoutNamedOwner,
   agentTeamMaySkipUnownedStep,
+  newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
 } from "../dist/house-rules.js";
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
 
@@ -37,8 +38,9 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /There is no optimal price until people have paid and stayed/);
     assert.match(blob, /Do not automate a step that should not exist/);
     assert.match(blob, /An agent team is automation/);
-    assert.match(blob, /Name the one constraint this week and work that/);
-    assert.match(blob, /Several ideas may attack the same constraint/);
+    assert.match(blob, /Name the one bottleneck this week and work that/);
+    assert.match(blob, /Several ideas may attack that same bottleneck/);
+    assert.match(blob, /fun side quest dressed as the bottleneck/);
     assert.match(blob, /SaaS 1\.0 playbooks may be outdated/);
     assert.match(blob, /Stay current/);
     assert.match(blob, /do not invent their stage/i);
@@ -77,6 +79,9 @@ describe("OS house rules (adapter reminders)", () => {
     assert.equal(emptyContextMayInventPriceOrLtv(), false);
     assert.equal(playbookMayBeAutomatedWithoutNamedOwner(), false);
     assert.equal(agentTeamMaySkipUnownedStep(), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(false), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(true), true);
   });
 
   it("phase 3 / stage 1 gates refuse demo-only seed, spoken yes, Likert WTP", () => {

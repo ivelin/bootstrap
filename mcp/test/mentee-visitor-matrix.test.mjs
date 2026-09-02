@@ -16,6 +16,7 @@ import {
   emptyContextMayInventPriceOrLtv,
   playbookMayBeAutomatedWithoutNamedOwner,
   agentTeamMaySkipUnownedStep,
+  newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
 } from "../dist/house-rules.js";
 import {
   afterProofEfficiencyPageMayOpen,
@@ -252,11 +253,18 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(os, /Delete the step before you simplify it/);
     assert.match(os, /Automate last/);
     assert.match(os, /An agent team is automation/);
-    assert.match(os, /Name the one constraint this week and work that/);
-    assert.match(os, /Several ideas may attack the same constraint/);
+    assert.match(os, /Name the one bottleneck this week and work that/);
+    assert.match(os, /Several ideas may attack that same bottleneck/);
     assert.match(os, /A second ritual, channel, or agent team that does not attack it is busywork/);
+    assert.match(os, /fun side quest dressed as the bottleneck/);
+    assert.match(os, /the agent does not rubber-stamp/);
+    assert.match(os, /weakest link/);
+    assert.match(os, /slowest soldier/);
+    assert.match(os, /not extra law/);
+    assert.doesNotMatch(os, /Name the one constraint this week and work that/);
     assert.doesNotMatch(os, /Do not open a second idea, ritual, or agent team to walk around it/);
     assert.doesNotMatch(os, /\bElon\b|\bMusk\b|five-step algorithm/i);
+    assert.doesNotMatch(os, /constraint_this_week/);
 
     const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
     assert.ok(doneWhen, "Done when section missing");
@@ -273,21 +281,33 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(standing, /Name the person or delete the step first/);
     assert.match(pins, /agent team to skip a step with no named owner/);
     assert.match(firstHourOs, /house-rule-do-not-automate-a-step-that-should-not-exist/);
-    assert.match(firstHourOs, /Name the one constraint this week and work that/);
-    assert.match(firstHourOs, /Several ideas may attack the same constraint/);
+    assert.match(firstHourOs, /Name the one bottleneck this week and work that/);
+    assert.match(firstHourOs, /Several ideas may attack that same bottleneck/);
+    assert.match(firstHourOs, /new landing page/);
     assert.doesNotMatch(firstHourOs, /busy-looking machinery/);
     assert.doesNotMatch(firstHourOs, /Factory speed is not 0→1/);
     assert.doesNotMatch(firstHourOs, /A second ritual, channel, or agent team that does not attack it is busywork/);
     assert.doesNotMatch(firstHourOs, /Do not open a second idea, ritual, or agent team to walk around it/);
+    assert.doesNotMatch(firstHourOs, /weakest link/);
+    assert.doesNotMatch(firstHourOs, /slowest soldier/);
+
+    for (const body of [standing, pins]) {
+      assert.match(body, /new landing page/);
+    }
+    assert.match(standing, /written founder override/);
 
     for (const body of [readme, coverage]) {
       assert.match(body, /Do not automate visitor matrix/);
       assert.match(body, /automate the playbook/);
       assert.match(body, /no named owner/);
       assert.match(body, /delete or name the person first/i);
+      assert.match(body, /one bottleneck this week/);
+      assert.match(body, /new landing page/);
     }
     assert.equal(playbookMayBeAutomatedWithoutNamedOwner(), false);
     assert.equal(agentTeamMaySkipUnownedStep(), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(), false);
+    assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(true), true);
   });
 
   it("install-reader and team listing still lock the pin", () => {
