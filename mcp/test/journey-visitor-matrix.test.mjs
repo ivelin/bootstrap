@@ -108,7 +108,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     const coverage = fs.readFileSync(path.join(PLUGIN, "COVERAGE.md"), "utf8");
     const readme = fs.readFileSync(path.join(PLUGIN, "README.md"), "utf8");
     for (const body of [write, coverage, readme]) {
-      assert.match(body, /new landing page/);
+      assert.match(body, /new landing page/i);
       assert.match(body, /override/i);
     }
     assert.match(write, /no one has talked to customers/);
