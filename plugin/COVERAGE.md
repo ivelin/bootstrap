@@ -12,10 +12,11 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Connector URL | `plugin/mcp.json` | Only `https://bootstrap-os-mcp.vercel.app/mcp`. No Gmail/Stripe/other. |
 | `${BOOTSTRAP_MCP_URL}` default | `plugin/.cursor-plugin/plugin.json` | Optional override defaults to that host. |
 | Plugin 0.1.1 + thin skills | `plugin/plugin.json`, `skills/*/SKILL.md` | Hyperlinks to the published OS. No constitution copy. |
-| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / GTM / spoken yes / empty-context / optimal price. Query this plugin first. Do not invent stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. Cite OS. |
+| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / GTM / spoken yes / empty-context / optimal price / automate the playbook. Query this plugin first. Do not invent stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. Cite OS. |
 | After-proof efficiency page | `company-os/after-proof-efficiency.md` | Dated 2026-08-24. Five instruments. Open only if fences + proof + they asked. Not a house rule. Not a version bump. |
 | After-proof efficiency gate | `plugin/skills/after-proof-efficiency/SKILL.md` + `mcp/src/after-proof-efficiency.ts` | Plugin opens the page only if ALL three. Otherwise two clocks. |
 | OS 2.8.8 house rule (once) | `company-os/operating-system.md` | Full text of *there is no optimal price until people have paid and stayed*. Pointers only elsewhere. |
+| OS 2.8.9 house rule (once) | `company-os/operating-system.md` | Full text of *do not automate a step that should not exist*. Pointers only elsewhere. |
 | Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
 | After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: query hosted MCP `https://bootstrap-os-mcp.vercel.app/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
 | Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Read tools only. No company-state. `marketplace: false`. |
@@ -36,7 +37,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Non-maintainer MCP cold path (M2) | Still open. Human-eyes for hosted boards stays **unknown**. |
 | Database, auth, extra connectors | Not started. Do not start. |
 | A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
-| Production `bootstrap_os_info.osVersion` already `2.8.8` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. No OS version bump for this resource page. |
+| Production `bootstrap_os_info.osVersion` already `2.8.9` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | CAC / LTV / day-31 / day-90 / NRR / magic-number numbers on Path 1 | Must stay absent. CI locks the absence. |
 | Old SaaS playbook tables as the aim | Must stay absent on Path 1 / Day 0. Stale (LTV:CAC 3x, T2D3) lives on the dated page only. |
 
@@ -65,6 +66,16 @@ Not extra Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot (~60 m
 | H1 | Installing founder | `first-hour` + standing rules | Day 0 is thesis / ≥3 / snapshot. Standing rules are after the hour. | File lock |
 | H2 | After First Hour, what next | `first-hour.md` standing rules | Query published OS / hosted MCP pin. | File lock |
 | A1 | Agent asked to push mentee files to ivelin/bootstrap | `query-os-first` + first-hour pin | Refuse. Cite OS/MCP pin. Path 1 stays the GitHub front door. | File lock |
+
+## Do not automate visitor matrix
+
+Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Pass only if they delete or name the person first — not if they hire agents.
+
+| # | Visitor | Surface | Done means | Evidence |
+|---|---------|---------|------------|----------|
+| H1 | Installing founder | `first-hour` + standing rules | Day 0 is thesis / ≥3 / snapshot. This rule is not a Day 0 checkbox. | File lock |
+| H2 | Mentee told to “automate the playbook” | `query-os-first` + `house-rule-pins` | Refuse. Name the person or delete the step. Cite OS. | File lock + `playbookMayBeAutomatedWithoutNamedOwner()===false` |
+| H3 | Specialist, agent team to skip a step with no named owner | same skills | Refuse. An agent team is automation. Delete or name first. | File lock + `agentTeamMaySkipUnownedStep()===false` |
 
 ## After-proof efficiency visitor matrix
 

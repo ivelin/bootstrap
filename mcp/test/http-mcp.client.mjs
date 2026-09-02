@@ -134,6 +134,7 @@ async function main() {
     assert.match(pinBlob, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pinBlob, /house-rule-a-security-program-cannot-promote/);
     assert.match(pinBlob, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
+    assert.match(pinBlob, /house-rule-do-not-automate-a-step-that-should-not-exist/);
 
     console.log(
       JSON.stringify(

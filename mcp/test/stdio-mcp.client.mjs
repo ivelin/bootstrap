@@ -85,7 +85,7 @@ async function main() {
 
     const info = await call(client, "bootstrap_os_info");
     assert.equal(info.mcpVersion, "0.2.0");
-    assert.equal(info.osVersion, "2.8.8");
+    assert.equal(info.osVersion, "2.8.9");
     assert.equal(path.resolve(info.paths.dataRoot), path.resolve(dataRoot));
     assert.match(JSON.stringify(info.adoptionOrder), /not mentee-ready boards/);
     assert.match(JSON.stringify(info.adoptionOrder), /Not pirin\.ai/);
@@ -96,6 +96,7 @@ async function main() {
     assert.match(JSON.stringify(info.houseRules), /marketing volume cannot promote/i);
     assert.match(JSON.stringify(info.houseRules), /security program cannot promote/i);
     assert.match(JSON.stringify(info.houseRules), /no optimal price until people have paid and stayed/i);
+    assert.match(JSON.stringify(info.houseRules), /do not automate a step that should not exist/i);
 
     for (const id of ["pirin", "zk0", "tokbox"]) {
       const r = await call(client, "bootstrap_init_company", {

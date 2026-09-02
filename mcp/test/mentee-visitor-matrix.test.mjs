@@ -14,6 +14,8 @@ import {
   handfulSurveyMaySetOptimalPrice,
   ltvModelMayPromoteAtZeroToOne,
   emptyContextMayInventPriceOrLtv,
+  playbookMayBeAutomatedWithoutNamedOwner,
+  agentTeamMaySkipUnownedStep,
 } from "../dist/house-rules.js";
 import {
   afterProofEfficiencyPageMayOpen,
@@ -227,6 +229,57 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     }
     assert.match(readme, /Do not upload mentee work to Ivelin.s GitHub/);
     assert.match(readme, /first-hour\.md#standing-rules/);
+  });
+
+  it("do not automate: installing founder; mentee playbook; specialist agent team", () => {
+    const standing = skill("query-os-first");
+    const pins = skill("house-rule-pins");
+    const first = skill("first-hour");
+    const firstHourOs = fs.readFileSync(
+      path.join(REPO_ROOT, "company-os", "first-hour.md"),
+      "utf8",
+    );
+    const os = fs.readFileSync(
+      path.join(REPO_ROOT, "company-os", "operating-system.md"),
+      "utf8",
+    );
+    const readme = fs.readFileSync(README, "utf8");
+    const coverage = fs.readFileSync(COVERAGE, "utf8");
+
+    assert.match(os, /### House rule: do not automate a step that should not exist/);
+    assert.match(os, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.match(os, /Every requirement has a person's name/);
+    assert.match(os, /Delete the step before you simplify it/);
+    assert.match(os, /Automate last/);
+    assert.match(os, /An agent team is automation/);
+    assert.doesNotMatch(os, /Elon|Musk|five-step algorithm/i);
+
+    const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
+    assert.ok(doneWhen, "Done when section missing");
+    assert.doesNotMatch(doneWhen[0], /automate a step that should not exist/);
+    assert.doesNotMatch(doneWhen[0], /automate the playbook/);
+    assert.doesNotMatch(doneWhen[0], /agent team/);
+    assert.match(first, /first-hour\.md#standing-rules/);
+    assert.doesNotMatch(first, /busy-looking machinery/);
+
+    for (const body of [standing, pins]) {
+      assert.match(body, /automate the playbook/);
+      assert.match(body, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    }
+    assert.match(standing, /Name the person or delete the step first/);
+    assert.match(pins, /agent team to skip a step with no named owner/);
+    assert.match(firstHourOs, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.doesNotMatch(firstHourOs, /busy-looking machinery/);
+    assert.doesNotMatch(firstHourOs, /Factory speed is not 0→1/);
+
+    for (const body of [readme, coverage]) {
+      assert.match(body, /Do not automate visitor matrix/);
+      assert.match(body, /automate the playbook/);
+      assert.match(body, /no named owner/);
+      assert.match(body, /delete or name the person first/i);
+    }
+    assert.equal(playbookMayBeAutomatedWithoutNamedOwner(), false);
+    assert.equal(agentTeamMaySkipUnownedStep(), false);
   });
 
   it("install-reader and team listing still lock the pin", () => {

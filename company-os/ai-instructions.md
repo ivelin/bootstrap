@@ -1,7 +1,7 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.8** ([there is no optimal price until people have paid and stayed](operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [a security program cannot promote](operating-system.md#house-rule-a-security-program-cannot-promote); [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); Day 0: [lifestyle or swinging for the fences](operating-system.md#day-0-lifestyle-or-swinging-for-the-fences)).  
+**Aligned to:** OS blueprint **v2.8.9** ([do not automate a step that should not exist](operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist); [there is no optimal price until people have paid and stayed](operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [a security program cannot promote](operating-system.md#house-rule-a-security-program-cannot-promote); [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); Day 0: [lifestyle or swinging for the fences](operating-system.md#day-0-lifestyle-or-swinging-for-the-fences)).  
 **Starter legal templates:** [operating-system.md](operating-system.md#starter-legal-templates) (hyperlink only; this OS does not draft or customize).  
 **Cap-table modeler:** [operating-system.md](operating-system.md#cap-table-modeler) (hyperlink only; this OS does not host copies).  
 **After-proof efficiency:** [after-proof-efficiency.md](after-proof-efficiency.md) (hyperlink only; fences + proof + they asked. Not Day 0).
@@ -47,6 +47,7 @@ Hard rules you must follow:
    House rule: marketing volume cannot promote (company-os/operating-system.md#house-rule-marketing-volume-cannot-promote).
    House rule: a security or compliance program cannot promote (company-os/operating-system.md#house-rule-a-security-program-cannot-promote).
    House rule: there is no optimal price until people have paid and stayed (company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+   House rule: do not automate a step that should not exist (company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
    Day 0: lifestyle / small good business, or swinging for the fences (company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 3. Label claims honestly:
    - outside facts

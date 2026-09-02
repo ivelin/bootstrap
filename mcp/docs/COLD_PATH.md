@@ -32,7 +32,7 @@ npm ci
 npm run ci
 ```
 
-Expected: typecheck, build, unit tests (including OS 2.8.8 house rules), cold-path smoke, **stdio MCP client smoke**, **HTTP hosted-read smoke** all pass.
+Expected: typecheck, build, unit tests (including OS 2.8.9 house rules), cold-path smoke, **stdio MCP client smoke**, **HTTP hosted-read smoke** all pass.
 
 What `npm run ci` proves without a GUI:
 

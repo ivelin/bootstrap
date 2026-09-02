@@ -62,7 +62,7 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 | `bootstrap_log_decision` | Trace under active company |
 | `bootstrap_refuse_external_ask_if_not_green` | Fail-closed external asks |
 
-Hard rules (OS 2.8.8):
+Hard rules (OS 2.8.9):
 
 - Journey phase does **not** change unless `founderApprovedPhaseChange=true`
 - Human-eyes **green** is not demand or PMF
@@ -76,6 +76,7 @@ Hard rules (OS 2.8.8):
 - Several ideas are allowed — each `companyId` is its own board; do not hide a second idea to look focused; rank and kill per board
 - Marketing volume cannot promote
 - There is no optimal price until people have paid and stayed
+- Do not automate a step that should not exist. Automate last. An agent team is automation.
 
 ---
 
