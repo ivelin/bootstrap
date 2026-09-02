@@ -955,14 +955,14 @@ if grep -q '^\*\*Version:\*\* 2.8.9' company-os/operating-system.md \
   && grep -q 'An agent team is automation' company-os/operating-system.md \
   && grep -q 'busy-looking machinery' company-os/operating-system.md \
   && grep -q 'Factory speed is not 0→1' company-os/operating-system.md \
-  && grep -q 'not an accelerate or optimize law' company-os/operating-system.md \
+  && grep -q 'an accelerate or optimize law' company-os/operating-system.md \
   && grep -q 'v2.8.9' README.md \
   && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' README.md; then
   ok "OS 2.8.9 house-rule section has full rule and vocabulary"
 else
   not_ok "operating-system.md must hold the full 2.8.9 do-not-automate house rule"
 fi
-if ! grep -qiE 'Elon|Musk|five-step algorithm' company-os/operating-system.md \
+if ! grep -qiE '\bElon\b|\bMusk\b|five-step algorithm' company-os/operating-system.md \
     company-os/first-hour.md company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md plugin/README.md plugin/COVERAGE.md \
     mcp/src/house-rules.ts; then

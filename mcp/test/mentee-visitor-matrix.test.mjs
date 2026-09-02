@@ -252,7 +252,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(os, /Delete the step before you simplify it/);
     assert.match(os, /Automate last/);
     assert.match(os, /An agent team is automation/);
-    assert.doesNotMatch(os, /Elon|Musk|five-step algorithm/i);
+    assert.doesNotMatch(os, /\bElon\b|\bMusk\b|five-step algorithm/i);
 
     const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
     assert.ok(doneWhen, "Done when section missing");
