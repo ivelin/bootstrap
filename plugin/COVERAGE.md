@@ -31,7 +31,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Cursor dashboard **Import from Repo** actually installing | Team-plan GUI. File listing is locked; the click is not. |
 | `~/.cursor/plugins/local/bootstrap-os` loading in a real Cursor window | Local copy path is documented; GUI load is not in CI. |
 | Public Cursor catalog / `/add-plugin` GitHub URL | We have **not** submitted. Do not expect it. |
-| Git-branch Vercel preview as a mentee URL | Preview is **SSO-gated**. Mentee agents are told the public pin, not the `*-git-*` preview host. |
+| Git-branch Vercel preview as the production pin | Production pin stays `https://bootstrap-os-mcp.vercel.app/mcp` on `main`. Do not promote this branch to that hostname. |
 | Production `bootstrap_os_info.pluginPreview.version` already `0.1.1` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | Mentee-ready hosted boards / founder `company-state` on the host | Out. Path 3 local stdio only. |
 | Non-maintainer MCP cold path (M2) | Still open. Human-eyes for hosted boards stays **unknown**. |
@@ -57,7 +57,7 @@ Seven cases. Skills/README make the four **agent** behaviors inevitable. Skip GU
 | A3 | Agent empty-context | `query-os-first` | No founder update → do not invent their stage. unknown / none yet. | File lock + `emptyContextMayInventStage()===false` |
 | A4 | Agent spoken-yes as GTM | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
 
-HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Vercel SSO preview, Cursor GUI, a human Ivelin whoami paste, `mcp.pirin.ai`.
+HTTP pin (`/`, `/health`, `/mcp`) stays a live check. **Not on this matrix:** Cursor GUI, a human Ivelin whoami paste, `mcp.pirin.ai`. PR #17 public preview (no Vercel SSO) is for the 401 / pirin.ai login loop only — not the production pin.
 
 ## Optional identity visitor matrix (labels only)
 
@@ -111,8 +111,8 @@ Eight cases this page must support. Thin links, not essays. No auth. No database
 Stay on Vercel Git:
 
 1. PR check **Vercel** → Ready (this branch).
-2. Public pin `https://bootstrap-os-mcp.vercel.app` — `/`, `/health`, `/mcp` (anonymous).
-3. Git preview URL exists for maintainers; **SSO redirect** means it is not a mentee visitor.
+2. Production pin `https://bootstrap-os-mcp.vercel.app` — `/`, `/health`, `/mcp` (anonymous, `main` only).
+3. PR #17 public preview (Vercel Authentication off): `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Unmodified curl: initialize 200; gated whoami is MCP 401 + WWW-Authenticate to the #143 well-known — not Vercel `{protection}`.
 
 ## Env
 

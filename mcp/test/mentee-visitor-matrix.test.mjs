@@ -76,6 +76,12 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     );
     assert.doesNotMatch(identity, /bos_/);
     assert.doesNotMatch(identity, /mint a token/i);
+    assert.match(
+      identity,
+      /bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp/,
+    );
+    assert.match(identity, /Vercel Authentication is \*\*off\*\*/);
+    assert.doesNotMatch(readme, /SSO-gated/);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "plugin", "login.html")), false);
     assert.match(mcpReadme, /Ivelin first account/);

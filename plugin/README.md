@@ -4,7 +4,7 @@ Preview package. Skills hyperlink the published OS. **Not** mentee-ready hosted 
 
 Path 1 stays default: point an AI at https://github.com/ivelin/bootstrap
 
-Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visitor matrix is only for surfaces a mentee agent is told to see. Git-branch Vercel preview is SSO-gated — use the public pin.
+Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visitor matrix is only for surfaces a mentee agent is told to see. Production pin stays `https://bootstrap-os-mcp.vercel.app/mcp` on `main`. PR #17 public (no Vercel SSO) preview for the 401 / pirin.ai login loop: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`.
 
 ## Standing rule
 
