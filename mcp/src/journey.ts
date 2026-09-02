@@ -5,6 +5,17 @@
  */
 import { JOURNEY_PHASES, LOOP_STAGES } from "./constants.js";
 import type { JourneyAclRole, JourneyActor } from "./journey-auth.js";
+import {
+  enqueueBoardNotify,
+  isHttpsWebhookUrl,
+  normalizeSubscribePrincipal,
+  sameSubscriberScope,
+  subscriberHasAclAccess,
+  summarizeBoardNotify,
+  type BoardSubscriberRow,
+  type NotifyOutboxRow,
+  type WebhookDelivery,
+} from "./journey-notify.js";
 
 export const SCOREBOARD_SCHEMA_VERSION = 1;
 /** Short fluid text on the idea. Not a clock. Not tickets. */
@@ -487,6 +498,30 @@ export type JourneyStore = {
       client?: string;
     },
   ): Promise<unknown>;
+  subscribeBoard(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      principal: string;
+      principalKind: "email" | "sub";
+      webhookUrl: string;
+      emailOptIn?: boolean;
+    },
+  ): Promise<unknown>;
+  unsubscribeBoard(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      principal: string;
+      principalKind: "email" | "sub";
+    },
+  ): Promise<unknown>;
+  listSubscribers(
+    actor: JourneyActor,
+    input: { companySlug: string },
+  ): Promise<unknown>;
 };
 
 function notFound(message: string) {
@@ -508,6 +543,9 @@ export class MemoryJourneyStore implements JourneyStore {
     private events: GateEventRow[],
     private comments: CommentRow[],
     private audit: AuditEventRow[] = [],
+    private subscribers: BoardSubscriberRow[] = [],
+    private notifyOutbox: NotifyOutboxRow[] = [],
+    readonly webhookDeliveries: WebhookDelivery[] = [],
   ) {}
 
   actorOnAllowlist(actor: JourneyActor): boolean {
@@ -697,11 +735,19 @@ export class MemoryJourneyStore implements JourneyStore {
         founderWrittenDecision: input.founderWrittenDecision?.trim() || undefined,
       },
     });
+    const notify = this.fireBoardNotify({
+      company,
+      idea,
+      event: "put_journey",
+      who: actor.principal,
+      summary: summarizeBoardNotify({ event: "put_journey", why: input.why }),
+    });
     return {
       ok: true,
       company: { slug: company.slug, label: company.label },
       idea: ideaPayload(company, idea, this.events, this.comments, false),
       audit,
+      notify,
     };
   }
 
@@ -741,11 +787,19 @@ export class MemoryJourneyStore implements JourneyStore {
       client: input.client?.trim() || "post_comment",
       whatChanged: { via: "post_comment", commentId: comment.id },
     });
+    const notify = this.fireBoardNotify({
+      company,
+      idea,
+      event: "post_comment",
+      who: actor.principal,
+      summary: summarizeBoardNotify({ event: "post_comment", commentBody: input.body }),
+    });
     return {
       ok: true,
       clocksUnchanged: before,
       comment,
       audit,
+      notify,
       note: "Comments hang off the idea. They never mutate phase or gate.",
     };
   }
@@ -808,6 +862,157 @@ export class MemoryJourneyStore implements JourneyStore {
       },
     });
     return { ok: true, audit };
+  }
+
+  private fireBoardNotify(input: {
+    company: CompanyRow;
+    idea?: IdeaRow | null;
+    event: "put_journey" | "post_comment" | "gate_event";
+    who: string;
+    summary: string;
+  }) {
+    const fired = enqueueBoardNotify({
+      subscribers: this.subscribers,
+      acl: this.acl,
+      company: input.company,
+      idea: input.idea,
+      event: input.event,
+      who: input.who,
+      summary: input.summary,
+      nextId: (prefix) => this.nextId(prefix),
+    });
+    this.notifyOutbox.push(...fired.outbox);
+    this.webhookDeliveries.push(...fired.deliveries);
+    return {
+      webhook: fired.deliveries.length,
+      emailQueued: fired.outbox.filter((row) => row.channel === "email").length,
+    };
+  }
+
+  async subscribeBoard(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      principal: string;
+      principalKind: "email" | "sub";
+      webhookUrl: string;
+      emailOptIn?: boolean;
+    },
+  ): Promise<unknown> {
+    if (!actor.authenticated || !actor.principal) {
+      return forbidden("unauthenticated");
+    }
+    const company = this.companyBySlug(input.companySlug);
+    if (!company || !canWriteJourney(this.acl, actor, company.id)) {
+      return forbidden("founder or founder-authorized grant only");
+    }
+    const principal = normalizeSubscribePrincipal(input.principal, input.principalKind);
+    if (!subscriberHasAclAccess(this.acl, company.id, principal, input.principalKind)) {
+      return forbidden("subscriber must already have ACL access");
+    }
+    if (!isHttpsWebhookUrl(input.webhookUrl)) {
+      return forbidden("webhook URL must be https");
+    }
+    let ideaId: string | null = null;
+    if (input.ideaSlug) {
+      const ideas = this.ideasFor(company.id, input.ideaSlug);
+      if (ideas.length !== 1) return notFound("idea not visible");
+      ideaId = ideas[0].id;
+    }
+    const exists = this.subscribers.some((row) =>
+      sameSubscriberScope(row, {
+        companyId: company.id,
+        ideaId,
+        principal,
+        principalKind: input.principalKind,
+      }),
+    );
+    if (!exists) {
+      this.subscribers.push({
+        id: this.nextId("sub"),
+        companyId: company.id,
+        ideaId,
+        principal,
+        principalKind: input.principalKind,
+        webhookUrl: input.webhookUrl.trim(),
+        emailOptIn: Boolean(input.emailOptIn),
+        createdBy: actor.principal,
+      });
+    }
+    return {
+      ok: true,
+      subscriber: this.subscribers.find((row) =>
+        sameSubscriberScope(row, {
+          companyId: company.id,
+          ideaId,
+          principal,
+          principalKind: input.principalKind,
+        }),
+      ),
+    };
+  }
+
+  async unsubscribeBoard(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      principal: string;
+      principalKind: "email" | "sub";
+    },
+  ): Promise<unknown> {
+    if (!actor.authenticated || !actor.principal) {
+      return forbidden("unauthenticated");
+    }
+    const company = this.companyBySlug(input.companySlug);
+    if (!company || !canWriteJourney(this.acl, actor, company.id)) {
+      return forbidden("founder or founder-authorized grant only");
+    }
+    const principal = normalizeSubscribePrincipal(input.principal, input.principalKind);
+    let ideaId: string | null = null;
+    if (input.ideaSlug) {
+      const ideas = this.ideasFor(company.id, input.ideaSlug);
+      if (ideas.length !== 1) return notFound("idea not visible");
+      ideaId = ideas[0].id;
+    }
+    const before = this.subscribers.length;
+    this.subscribers = this.subscribers.filter(
+      (row) =>
+        !sameSubscriberScope(row, {
+          companyId: company.id,
+          ideaId,
+          principal,
+          principalKind: input.principalKind,
+        }),
+    );
+    return { ok: true, removed: before - this.subscribers.length };
+  }
+
+  async listSubscribers(
+    actor: JourneyActor,
+    input: { companySlug: string },
+  ): Promise<unknown> {
+    if (!actor.authenticated || !actor.principal) {
+      return forbidden("unauthenticated");
+    }
+    const company = this.companyBySlug(input.companySlug);
+    if (!company || !canReadCompany(this.acl, actor, company.id)) {
+      return notFound("company not visible");
+    }
+    return {
+      ok: true,
+      company: { slug: company.slug, label: company.label },
+      subscribers: this.subscribers
+        .filter((row) => row.companyId === company.id)
+        .map((row) => ({
+          principal: row.principal,
+          principalKind: row.principalKind,
+          emailOptIn: row.emailOptIn,
+          ideaId: row.ideaId,
+          webhookUrl: row.webhookUrl,
+        })),
+    };
   }
 }
 

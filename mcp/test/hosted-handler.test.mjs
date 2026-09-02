@@ -107,6 +107,31 @@ describe("Vercel fetch handler (hosted-read)", () => {
     assert.equal(body.error, "invalid_token");
     assert.match(body.error_description, /Public OS tools stay open/);
     assert.equal(body.identityStore, "unset");
+
+    const subscribe = await handleHostedReadFetch(
+      new Request("https://preview.example/mcp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 41,
+          method: "tools/call",
+          params: {
+            name: "subscribe_board",
+            arguments: {
+              company: "corehaul",
+              principal: "advisor-cos@example.test",
+              principalKind: "email",
+              webhookUrl: "https://hooks.example.test/core",
+            },
+          },
+        }),
+      }),
+    );
+    assert.equal(subscribe.status, 401);
   });
 
   it("random connector JWT is 401; allowlisted founder can get_journey", async () => {

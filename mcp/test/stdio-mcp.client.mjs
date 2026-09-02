@@ -85,6 +85,9 @@ async function main() {
     assert.ok(!names.includes("get_journey"), "stdio must not lift hosted journey tools");
     assert.ok(!names.includes("put_journey"));
     assert.ok(!names.includes("post_comment"));
+    assert.ok(!names.includes("subscribe_board"));
+    assert.ok(!names.includes("unsubscribe_board"));
+    assert.ok(!names.includes("list_subscribers"));
 
     const info = await call(client, "bootstrap_os_info");
     assert.equal(info.mcpVersion, "0.2.0");

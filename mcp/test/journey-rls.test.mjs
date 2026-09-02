@@ -64,6 +64,11 @@ describe("journey RLS file lock + memory replica", () => {
     assert.match(sql, /Append-only/);
     assert.match(sql, /constraint_this_week/);
     assert.match(sql, /ideas_constraint_this_week_short/);
+    assert.match(sql, /board_subscribers/);
+    assert.match(sql, /notify_outbox/);
+    assert.match(sql, /enqueue_board_notify/);
+    assert.doesNotMatch(sql, /GRANT INSERT ON TABLE bootstrap_os\.notify_outbox TO authenticated/);
+    assert.doesNotMatch(sql, /nodemailer|smtp\.|sendEmail|CREATE EXTENSION\s+.*mail/i);
     assert.doesNotMatch(sql, /CREATE POLICY[\s\S]{0,80}audit_events[\s\S]{0,120}FOR UPDATE/i);
     assert.doesNotMatch(sql, /CREATE POLICY[\s\S]{0,80}audit_events[\s\S]{0,120}FOR DELETE/i);
     assert.doesNotMatch(sql, /GRANT INSERT ON TABLE bootstrap_os\.audit_events TO authenticated/);

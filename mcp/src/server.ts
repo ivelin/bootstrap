@@ -688,6 +688,93 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       }
     },
   );
+
+  server.tool(
+    "subscribe_board",
+    "Grant a webhook (and optional email enqueue) to an ACL member on a company board. Founder or founder-authorized. Gated. Not the production pin. Email is not sent from this host.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Optional idea scope. Omit for the whole company."),
+      principal: z.string().describe("ACL principal to notify. Must already have access."),
+      principalKind: z.enum(["email", "sub"]).describe("How the principal is stored on the ACL."),
+      webhookUrl: z.string().describe("https webhook URL. No PII dump in the payload."),
+      emailOptIn: z
+        .boolean()
+        .optional()
+        .describe("Enqueue an email contract row. Resend lives on pirin.ai — not this repo."),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      try {
+        return text(
+          await store.subscribeBoard(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            principal: input.principal,
+            principalKind: input.principalKind,
+            webhookUrl: input.webhookUrl,
+            emailOptIn: input.emailOptIn,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "unsubscribe_board",
+    "Remove a board subscriber. Founder or founder-authorized. Gated.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Optional idea scope used when the grant was idea-scoped."),
+      principal: z.string().describe("ACL principal to remove"),
+      principalKind: z.enum(["email", "sub"]),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      try {
+        return text(
+          await store.unsubscribeBoard(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            principal: input.principal,
+            principalKind: input.principalKind,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "list_subscribers",
+    "List board subscribers for a company the caller may get_journey. Gated. Public OS tools stay open.",
+    {
+      company: z.string().describe("Company slug"),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or advisor token required. Public OS tools stay open.");
+      }
+      try {
+        return text(await store.listSubscribers(actor, { companySlug: input.company }));
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
 }
 
 export function createBootstrapServer(

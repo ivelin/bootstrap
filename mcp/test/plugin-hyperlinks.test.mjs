@@ -166,7 +166,7 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(when, /founder yes/);
     assert.match(when, /Comments never mutate/);
     assert.match(when, /judge-only/);
-    assert.doesNotMatch(when, /get_journey|put_journey|post_comment/);
+    assert.doesNotMatch(when, /get_journey|put_journey|post_comment|subscribe_board/);
     assert.doesNotMatch(when, /Grok Bot template/);
   });
 });

@@ -22,6 +22,9 @@ export const HOSTED_GATED_JOURNEY_TOOL_NAMES = [
   "get_journey",
   "put_journey",
   "post_comment",
+  "subscribe_board",
+  "unsubscribe_board",
+  "list_subscribers",
 ] as const;
 
 export function isHostedGatedJourneyToolName(name: string | undefined): boolean {
