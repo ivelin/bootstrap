@@ -379,4 +379,100 @@ describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, ()
     }
     assert.equal(typeFailed, true);
   });
+
+  it("board notify: ACL-only subscribe; mentee isolation; webhook enqueue; comments do not move gates", async () => {
+    let strangerFailed = false;
+    try {
+      await asApp(
+        { email: "founder-core@example.test" },
+        "INSERT INTO bootstrap_os.board_subscribers (id, company_id, principal, principal_kind, webhook_url, email_opt_in, created_by) VALUES ('sub-stranger', 'co-core', 'stranger@example.test', 'email', 'https://hooks.example.test/x', true, 'founder-core@example.test')",
+      );
+    } catch {
+      strangerFailed = true;
+    }
+    assert.equal(strangerFailed, true);
+
+    let dyeFailed = false;
+    try {
+      await asApp(
+        { email: "founder-dye@example.test" },
+        "INSERT INTO bootstrap_os.board_subscribers (id, company_id, principal, principal_kind, webhook_url, email_opt_in, created_by) VALUES ('sub-cross', 'co-core', 'advisor-cos@example.test', 'email', 'https://hooks.example.test/x', false, 'founder-dye@example.test')",
+      );
+    } catch {
+      dyeFailed = true;
+    }
+    assert.equal(dyeFailed, true);
+
+    let advisorFailed = false;
+    try {
+      await asApp(
+        { email: "advisor-cos@example.test" },
+        "INSERT INTO bootstrap_os.board_subscribers (id, company_id, principal, principal_kind, webhook_url, email_opt_in, created_by) VALUES ('sub-self', 'co-core', 'advisor-cos@example.test', 'email', 'https://hooks.example.test/x', false, 'advisor-cos@example.test')",
+      );
+    } catch {
+      advisorFailed = true;
+    }
+    assert.equal(advisorFailed, true);
+
+    await asApp(
+      { email: "founder-core@example.test" },
+      "INSERT INTO bootstrap_os.board_subscribers (id, company_id, principal, principal_kind, webhook_url, email_opt_in, created_by) VALUES ('sub-core', 'co-core', 'advisor-cos@example.test', 'email', 'https://hooks.example.test/core', true, 'founder-core@example.test')",
+    );
+
+    const listed = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT principal, email_opt_in FROM bootstrap_os.board_subscribers WHERE company_id = 'co-core'",
+    );
+    assert.equal(listed.length, 1);
+    assert.equal(listed[0].principal, "advisor-cos@example.test");
+
+    const dyeSees = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT id FROM bootstrap_os.board_subscribers WHERE company_id = 'co-core'",
+    );
+    assert.deepEqual(dyeSees, []);
+
+    await asApp(
+      { email: "founder-core@example.test" },
+      "UPDATE bootstrap_os.ideas SET journey_phase = 2 WHERE id = 'idea-core'",
+    );
+    const outbox = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT channel, event_type, payload->>'summary' AS summary, payload->'company'->>'slug' AS slug FROM bootstrap_os.notify_outbox WHERE company_id = 'co-core' ORDER BY channel",
+    );
+    assert.ok(outbox.some((r) => r.channel === "webhook" && r.event_type === "put_journey"));
+    assert.ok(outbox.some((r) => r.channel === "email" && r.event_type === "put_journey"));
+    assert.ok(outbox.every((r) => r.slug === "corehaul"));
+
+    const clocksBefore = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT journey_phase, current_gate FROM bootstrap_os.ideas WHERE id = 'idea-core'",
+    );
+    await asApp(
+      { email: "advisor-cos@example.test" },
+      "INSERT INTO bootstrap_os.comments (id, idea_id, body, who) VALUES ('c-notify', 'idea-core', 'help on the slice', 'advisor-cos@example.test')",
+    );
+    const clocksAfter = await asApp(
+      { email: "founder-core@example.test" },
+      "SELECT journey_phase, current_gate FROM bootstrap_os.ideas WHERE id = 'idea-core'",
+    );
+    assert.equal(clocksAfter[0].journey_phase, clocksBefore[0].journey_phase);
+    assert.equal(clocksAfter[0].current_gate, clocksBefore[0].current_gate);
+    const commentOutbox = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT event_type FROM bootstrap_os.notify_outbox WHERE event_type = 'post_comment'",
+    );
+    assert.equal(commentOutbox.length >= 1, true);
+
+    let outboxInsertFailed = false;
+    try {
+      await asApp(
+        { email: "advisor-cos@example.test" },
+        "INSERT INTO bootstrap_os.notify_outbox (company_id, idea_id, subscriber_id, channel, event_type, payload) VALUES ('co-core', 'idea-core', 'sub-core', 'webhook', 'put_journey', '{\"event\":\"forged\"}'::jsonb)",
+      );
+    } catch {
+      outboxInsertFailed = true;
+    }
+    assert.equal(outboxInsertFailed, true);
+  });
 });

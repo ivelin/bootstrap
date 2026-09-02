@@ -22,6 +22,25 @@ Allowlist in SQL, fail closed. Token `email` (fallback `sub`) → ACL. No FAST c
 
 Append-only `audit_events` hang off company + optional idea (ACL is company-level). Who, when, which client, what changed. Inserts only — no update/delete policies. `put_journey`, `post_comment`, and ACL changes emit a row. Advisors may read audit for companies they can `get_journey`. They cannot write audit except via those tools.
 
+`board_subscribers` hang off the company (optional idea). After ACL: only people who already have access may be subscribed. On `put_journey` / `post_comment` / `gate_events`, emit audit then fire the webhook to subscribers who may still read that row. Email is **enqueue-only** — Resend lives on pirin.ai. This repo does not send mail.
+
+### Webhook payload (Web Builder)
+
+No PII dump. Same shape for webhook and the email contract row:
+
+```json
+{
+  "company": { "slug": "exampleco", "label": "Example Co" },
+  "idea": { "slug": "default", "name": "Default" },
+  "event": "put_journey",
+  "who": "acl-principal",
+  "at": "2026-09-02T00:00:00.000Z",
+  "summary": "short comment-or-change summary"
+}
+```
+
+`event` is `put_journey` | `post_comment` | `gate_event`. `idea` is null for company-only events. `who` is the actor already on the ACL. `summary` is ≤80 characters.
+
 ## Tools (gated; public OS tools stay unauthenticated)
 
 | Tool | Who | Notes |
@@ -29,6 +48,9 @@ Append-only `audit_events` hang off company + optional idea (ACL is company-leve
 | `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. Always surfaces `constraint_this_week`. |
 | `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb including `constraint_this_week`. One founder yes in chat. |
 | `post_comment` | advisors | Side table. Never a gate. |
+| `subscribe_board` | founder + founder-authorized | Grant webhook (+ email opt-in enqueue) to an ACL member. |
+| `unsubscribe_board` | founder + founder-authorized | Remove a subscriber. |
+| `list_subscribers` | anyone who may `get_journey` | Company the caller can read. |
 
 HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Public OS tools skip login.
 

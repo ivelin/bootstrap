@@ -3,8 +3,8 @@
  * Used by the Vercel function entry and the optional local HTTP helper.
  * Does not listen on 127.0.0.1. Does not host founder company-state.
  *
- * Journey tools (get_journey / put_journey / post_comment) are gated on this
- * branch. Public OS tools stay unauthenticated. Do not ship these gated tools
+ * Journey tools (get/put/comment + board notify) are gated on this branch.
+ * Public OS tools stay unauthenticated. Do not ship these gated tools
  * to the production pin; that host stays main.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";

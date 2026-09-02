@@ -342,4 +342,99 @@ describe("journey views + tools (memory store)", () => {
     assert.match(seen.ideas[0].snapshot, /Challenge:/);
     assert.match(seen.ideas[0].snapshot, /honest biggest bottleneck/);
   });
+
+  it("board notify: founder grants ACL members; mentee A cannot subscribe to B; webhook only to ACL; comments do not move gates", async () => {
+    const store = fixtureJourneyStore();
+    const founder = bearer("founder-core@example.test");
+    const advisor = bearer("advisor-cos@example.test");
+    const dye = bearer("founder-dye@example.test");
+
+    const strangerGrant = await store.subscribeBoard(founder, {
+      companySlug: "corehaul",
+      principal: "stranger@example.test",
+      principalKind: "email",
+      webhookUrl: "https://hooks.example.test/stranger",
+    });
+    assert.equal(strangerGrant.ok, false);
+
+    const http = await store.subscribeBoard(founder, {
+      companySlug: "corehaul",
+      principal: "advisor-cos@example.test",
+      principalKind: "email",
+      webhookUrl: "http://hooks.example.test/insecure",
+    });
+    assert.equal(http.ok, false);
+
+    const cross = await store.subscribeBoard(dye, {
+      companySlug: "corehaul",
+      principal: "advisor-cos@example.test",
+      principalKind: "email",
+      webhookUrl: "https://hooks.example.test/core",
+    });
+    assert.equal(cross.ok, false);
+
+    const advisorGrant = await store.subscribeBoard(advisor, {
+      companySlug: "corehaul",
+      principal: "advisor-cos@example.test",
+      principalKind: "email",
+      webhookUrl: "https://hooks.example.test/core",
+    });
+    assert.equal(advisorGrant.ok, false);
+
+    const granted = await store.subscribeBoard(founder, {
+      companySlug: "corehaul",
+      principal: "advisor-cos@example.test",
+      principalKind: "email",
+      webhookUrl: "https://hooks.example.test/core",
+      emailOptIn: true,
+    });
+    assert.equal(granted.ok, true);
+
+    const listed = await store.listSubscribers(advisor, { companySlug: "corehaul" });
+    assert.equal(listed.ok, true);
+    assert.equal(listed.subscribers.length, 1);
+    const hiddenList = await store.listSubscribers(dye, { companySlug: "corehaul" });
+    assert.equal(hiddenList.ok, false);
+
+    const wrote = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      journeyPhase: 2,
+      why: "founder yes",
+      founderYes: true,
+    });
+    assert.equal(wrote.ok, true);
+    assert.equal(wrote.notify.webhook, 1);
+    assert.equal(wrote.notify.emailQueued, 1);
+    assert.equal(store.webhookDeliveries.length, 1);
+    assert.equal(store.webhookDeliveries[0].url, "https://hooks.example.test/core");
+    assert.equal(store.webhookDeliveries[0].payload.event, "put_journey");
+    assert.equal(store.webhookDeliveries[0].payload.company.slug, "corehaul");
+    assert.doesNotMatch(JSON.stringify(store.webhookDeliveries[0].payload), /scoreboard|openQuestions/);
+
+    const before = wrote.idea.clocks;
+    const comment = await store.postComment(advisor, {
+      companySlug: "corehaul",
+      body: "help on the slice",
+    });
+    assert.equal(comment.ok, true);
+    assert.deepEqual(comment.clocksUnchanged, before);
+    assert.equal(comment.notify.webhook, 1);
+    assert.equal(store.webhookDeliveries.at(-1).payload.event, "post_comment");
+    assert.equal(store.webhookDeliveries.at(-1).payload.summary, "help on the slice");
+
+    await store.changeAcl(founder, {
+      companySlug: "corehaul",
+      principal: "advisor-cos@example.test",
+      principalKind: "email",
+      role: "advisor",
+      op: "revoke",
+    });
+    const afterRevoke = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      loopStage: 2,
+      why: "after revoke",
+      founderYes: true,
+    });
+    assert.equal(afterRevoke.notify.webhook, 0);
+  });
 });
