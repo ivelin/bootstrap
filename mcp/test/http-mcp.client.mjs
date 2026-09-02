@@ -138,7 +138,7 @@ async function main() {
     assert.equal(gated.status, 401);
     assert.equal(
       gated.headers.get("WWW-Authenticate"),
-      'Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", scope="bootstrap-os"',
+      'Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="https://bootstrap-os-mcp.vercel.app/mcp", scope="bootstrap-os"',
     );
 
     const listed = await call(client, "bootstrap_list_docs");

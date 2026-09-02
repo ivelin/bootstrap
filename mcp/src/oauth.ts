@@ -16,7 +16,12 @@ export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
 export const PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource";
 
+/** Public pin. Production / merge only. Never emit this as the resource on VERCEL_ENV=preview. */
 export const HOSTED_MCP_RESOURCE = "https://bootstrap-os-mcp.vercel.app/mcp";
+
+/** Canonical public no-SSO git preview for PR #17. */
+export const PREVIEW_HOSTED_MCP_RESOURCE =
+  "https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp";
 
 export const OAUTH_RESOURCE_METADATA_ENV = "BOOTSTRAP_OAUTH_RESOURCE_METADATA";
 
@@ -31,6 +36,56 @@ export function isAllowedProtectedResourceMetadataUrl(raw: string): boolean {
   }
 }
 
+function stripProto(host: string): string {
+  return host.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+}
+
+export function normalizeMcpResource(raw: string): string {
+  const host = stripProto(raw).replace(/\/mcp$/i, "");
+  return `https://${host}/mcp`;
+}
+
+export function isProdPinResource(url: string): boolean {
+  return normalizeMcpResource(url) === HOSTED_MCP_RESOURCE;
+}
+
+function resourceFromRequest(req?: Request): string | undefined {
+  if (!req) return undefined;
+  try {
+    const parsed = new URL(req.url);
+    const host = (
+      req.headers.get("x-forwarded-host") ||
+      req.headers.get("host") ||
+      parsed.host ||
+      ""
+    )
+      .split(",")[0]
+      .trim();
+    if (!host) return undefined;
+    return normalizeMcpResource(host);
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Protected-resource identifier this host advertises.
+ * Preview (VERCEL_ENV=preview) derives from the request host / Vercel preview URL.
+ * Never the production pin on preview. Merge / production is the public pin.
+ */
+export function hostedMcpResource(req?: Request): string {
+  if (process.env.VERCEL_ENV === "preview") {
+    const fromReq = resourceFromRequest(req);
+    if (fromReq && !isProdPinResource(fromReq)) return fromReq;
+    const branch = process.env.VERCEL_BRANCH_URL?.trim();
+    if (branch) return normalizeMcpResource(branch);
+    const vercelUrl = process.env.VERCEL_URL?.trim();
+    if (vercelUrl) return normalizeMcpResource(vercelUrl);
+    return PREVIEW_HOSTED_MCP_RESOURCE;
+  }
+  return HOSTED_MCP_RESOURCE;
+}
+
 /** Runtime metadata URL. Env override wins. Preview (not production) falls back to #143. */
 export function protectedResourceMetadataUrl(): string {
   const override = process.env[OAUTH_RESOURCE_METADATA_ENV]?.trim();
@@ -43,17 +98,35 @@ export function protectedResourceMetadataUrl(): string {
   return PIRIN_PROTECTED_RESOURCE_METADATA_URL;
 }
 
-export function wwwAuthenticateChallengeFor(metadataUrl: string): string {
-  return `Bearer realm="bootstrap-os-mcp", resource_metadata="${metadataUrl}", scope="bootstrap-os"`;
+export function wwwAuthenticateChallengeFor(
+  metadataUrl: string,
+  resourceUrl: string = HOSTED_MCP_RESOURCE,
+): string {
+  return `Bearer realm="bootstrap-os-mcp", resource_metadata="${metadataUrl}", resource="${resourceUrl}", scope="bootstrap-os"`;
 }
 
 /** Production / main default challenge (no env, not a Vercel preview). */
 export const WWW_AUTHENTICATE_CHALLENGE = wwwAuthenticateChallengeFor(
   PIRIN_PROTECTED_RESOURCE_METADATA_URL,
+  HOSTED_MCP_RESOURCE,
 );
 
-export function wwwAuthenticateChallenge(): string {
-  return wwwAuthenticateChallengeFor(protectedResourceMetadataUrl());
+export function wwwAuthenticateChallenge(req?: Request): string {
+  return wwwAuthenticateChallengeFor(protectedResourceMetadataUrl(), hostedMcpResource(req));
+}
+
+export function protectedResourceMetadataDocument(req?: Request): {
+  resource: string;
+  authorization_servers: string[];
+  scopes_supported: string[];
+  bearer_methods_supported: string[];
+} {
+  return {
+    resource: hostedMcpResource(req),
+    authorization_servers: [PIRIN_ORIGIN],
+    scopes_supported: ["bootstrap-os"],
+    bearer_methods_supported: ["header"],
+  };
 }
 
 export function isJwtAccessToken(token: string): boolean {

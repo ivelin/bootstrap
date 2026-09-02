@@ -5,6 +5,7 @@ import type { HostedWhoami } from "./identity.js";
 
 export type HostedRequestContext = {
   whoami: HostedWhoami;
+  resource?: string;
 };
 
 export function anonymousWhoami(): HostedWhoami {

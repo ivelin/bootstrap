@@ -6,7 +6,11 @@
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { isHostedGatedToolName } from "./constants.js";
 import { resolveHostedWhoami, type HostedWhoami } from "./identity.js";
-import { wwwAuthenticateChallenge } from "./oauth.js";
+import {
+  hostedMcpResource,
+  protectedResourceMetadataDocument,
+  wwwAuthenticateChallenge,
+} from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
 
 export function applyHostedReadEnv(): void {
@@ -34,10 +38,11 @@ function gatedToolNameFromRpc(body: unknown): string | undefined {
   return typeof name === "string" && isHostedGatedToolName(name) ? name : undefined;
 }
 
-export function unauthorizedGatedToolResponse(whoami?: HostedWhoami): Response {
+export function unauthorizedGatedToolResponse(whoami?: HostedWhoami, req?: Request): Response {
+  const resource = hostedMcpResource(req);
   const headers = {
     ...corsHeaders(),
-    "WWW-Authenticate": wwwAuthenticateChallenge(),
+    "WWW-Authenticate": wwwAuthenticateChallenge(req),
     "Content-Type": "application/json; charset=utf-8",
   };
   return new Response(
@@ -46,6 +51,7 @@ export function unauthorizedGatedToolResponse(whoami?: HostedWhoami): Response {
       error_description:
         "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
       identityStore: whoami?.identityStore ?? "unset",
+      resource,
     }),
     { status: 401, headers },
   );
@@ -79,6 +85,13 @@ function isMcpPath(pathname: string): boolean {
   return pathname === "/mcp" || pathname.endsWith("/mcp");
 }
 
+function isProtectedResourceMetadataPath(pathname: string): boolean {
+  return (
+    pathname === "/.well-known/oauth-protected-resource" ||
+    pathname === "/.well-known/oauth-protected-resource/mcp"
+  );
+}
+
 export async function handleHostedReadFetch(req: Request): Promise<Response> {
   applyHostedReadEnv();
   const pathname = pathnameOf(req);
@@ -91,6 +104,13 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     return new Response("ok", {
       status: 200,
       headers: { "Content-Type": "text/plain; charset=utf-8", ...corsHeaders() },
+    });
+  }
+
+  if (isProtectedResourceMetadataPath(pathname)) {
+    return new Response(JSON.stringify(protectedResourceMetadataDocument(req)), {
+      status: 200,
+      headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders() },
     });
   }
 
@@ -110,11 +130,14 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
       rpcBody = null;
     }
     if (gatedToolNameFromRpc(rpcBody) && !whoami.authenticated) {
-      return unauthorizedGatedToolResponse(whoami);
+      return unauthorizedGatedToolResponse(whoami, req);
     }
   }
 
-  const server = createBootstrapServer("hosted-read", { whoami });
+  const server = createBootstrapServer("hosted-read", {
+    whoami,
+    resource: hostedMcpResource(req),
+  });
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,

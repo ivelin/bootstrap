@@ -13,7 +13,7 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 | Product | MCP client follows 401 → protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
 | Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Production pin stays on `main`. Do not merge. |
-| Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Not the production pin. |
+| Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
 
 ## HTTP contract
 
@@ -27,9 +27,17 @@ WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://pi
 
 The 401 JSON also includes `identityStore` (`supabase` | `memory` | `unset`). That is not a session claim.
 
-Preview (this PR, until pirin-ai merge) may point `resource_metadata` at the #143 well-known instead. Override: `BOOTSTRAP_OAUTH_RESOURCE_METADATA` (preview only — never a prod-pin change). If that env is unset and `VERCEL_ENV=preview`, the host uses:
+Preview (this PR, until pirin-ai merge) challenge — `resource` is this preview host, `resource_metadata` is the #143 well-known:
+
+```http
+WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource", resource="https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp", scope="bootstrap-os"
+```
+
+Override for metadata URL only: `BOOTSTRAP_OAUTH_RESOURCE_METADATA` (preview only — never a prod-pin change). If that env is unset and `VERCEL_ENV=preview`, `resource_metadata` is:
 
 `https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
+
+This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` with `"resource"` equal to the preview MCP URL (not the production pin).
 
 ## Web Builder
 
@@ -45,11 +53,22 @@ Authorize URL (authorization code + PKCE):
 
 `https://pirin.ai/bootstrap-os/login`
 
-Suggested RFC 9728 document:
+Suggested RFC 9728 document (production / after merge):
 
 ```json
 {
   "resource": "https://bootstrap-os-mcp.vercel.app/mcp",
+  "authorization_servers": ["https://pirin.ai"],
+  "scopes_supported": ["bootstrap-os"],
+  "bearer_methods_supported": ["header"]
+}
+```
+
+Suggested RFC 9728 document (this PR preview — Web Builder #143 `resource` field must match):
+
+```json
+{
+  "resource": "https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp",
   "authorization_servers": ["https://pirin.ai"],
   "scopes_supported": ["bootstrap-os"],
   "bearer_methods_supported": ["header"]

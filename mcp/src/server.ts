@@ -34,7 +34,7 @@ import { buildNextEvidenceView, buildStatusView } from "./guidance.js";
 import { evaluateExternalAsk } from "./policy.js";
 import { HOUSE_RULE_LINES, HOUSE_RULE_PINS } from "./house-rules.js";
 import { anonymousWhoami, type HostedRequestContext } from "./identity-context.js";
-import { protectedResourceMetadataUrl } from "./oauth.js";
+import { hostedMcpResource, protectedResourceMetadataUrl } from "./oauth.js";
 
 export type McpSurface = "full" | "hosted-read";
 
@@ -122,6 +122,7 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
               gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels"],
               challenge: "HTTP 401 + WWW-Authenticate resource_metadata. No login UI here.",
               identityStore: hosted?.whoami.identityStore ?? "unset",
+              resource: hosted?.resource ?? hostedMcpResource(),
               resourceMetadata: protectedResourceMetadataUrl(),
               stores: "Labels only on the existing pirin.ai Supabase. Not company-state. Not ~/.bootstrap-os.",
             },

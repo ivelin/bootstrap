@@ -18,9 +18,12 @@ import {
   setIdentityStoreForTests,
 } from "../dist/identity.js";
 import {
+  HOSTED_MCP_RESOURCE,
   isJwtAccessToken,
+  PREVIEW_HOSTED_MCP_RESOURCE,
   PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL,
   WWW_AUTHENTICATE_CHALLENGE,
+  hostedMcpResource,
   wwwAuthenticateChallenge,
   wwwAuthenticateChallengeFor,
 } from "../dist/oauth.js";
@@ -71,10 +74,11 @@ async function assertGatedUnauthorized(res) {
   assert.equal(challenge, WWW_AUTHENTICATE_CHALLENGE);
   assert.equal(
     challenge,
-    'Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", scope="bootstrap-os"',
+    `Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
   );
   const body = JSON.parse(await res.text());
   assert.equal(body.error, "invalid_token");
+  assert.equal(body.resource, HOSTED_MCP_RESOURCE);
   assert.ok(body.identityStore === "memory" || body.identityStore === "supabase" || body.identityStore === "unset");
   return body;
 }
@@ -183,7 +187,7 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(res.status, 401);
     assert.equal(
       res.headers.get("WWW-Authenticate"),
-      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL),
+      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL, HOSTED_MCP_RESOURCE),
     );
     assert.match(
       res.headers.get("WWW-Authenticate") ?? "",
@@ -193,14 +197,42 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(body.identityStore, "memory");
   });
 
-  it("VERCEL_ENV=preview uses the #143 well-known when override is unset", async () => {
+  it("VERCEL_ENV=preview uses the #143 well-known and the preview resource, never the prod pin", async () => {
     process.env.VERCEL_ENV = "preview";
+    const previewReq = new Request(`${PREVIEW_HOSTED_MCP_RESOURCE}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 12,
+        method: "tools/call",
+        params: { name: "bootstrap_whoami", arguments: {} },
+      }),
+    });
+    assert.equal(hostedMcpResource(previewReq), PREVIEW_HOSTED_MCP_RESOURCE);
+    assert.notEqual(hostedMcpResource(previewReq), HOSTED_MCP_RESOURCE);
+    const challenge = wwwAuthenticateChallenge(previewReq);
     assert.equal(
-      wwwAuthenticateChallenge(),
-      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL),
+      challenge,
+      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL, PREVIEW_HOSTED_MCP_RESOURCE),
     );
+    assert.match(challenge, /resource="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp"/);
+    assert.doesNotMatch(challenge, /resource="https:\/\/bootstrap-os-mcp\.vercel\.app\/mcp"/);
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const res = await handleHostedReadFetch(previewReq);
+    assert.equal(res.status, 401);
+    assert.equal(res.headers.get("WWW-Authenticate"), challenge);
+    const body = JSON.parse(await res.text());
+    assert.equal(body.resource, PREVIEW_HOSTED_MCP_RESOURCE);
+    const meta = await handleHostedReadFetch(
+      new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource"),
+    );
+    assert.equal(meta.status, 200);
+    const doc = JSON.parse(await meta.text());
+    assert.equal(doc.resource, PREVIEW_HOSTED_MCP_RESOURCE);
     process.env.VERCEL_ENV = "production";
     assert.equal(wwwAuthenticateChallenge(), WWW_AUTHENTICATE_CHALLENGE);
+    assert.equal(hostedMcpResource(), HOSTED_MCP_RESOURCE);
   });
 
   it("CORS allows Authorization and exposes WWW-Authenticate", async () => {

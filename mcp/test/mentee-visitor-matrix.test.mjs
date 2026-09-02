@@ -78,6 +78,10 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.doesNotMatch(identity, /mint a token/i);
     assert.match(
       identity,
+      /resource="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp"/,
+    );
+    assert.match(
+      identity,
       /bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp/,
     );
     assert.match(identity, /Vercel Authentication is \*\*off\*\*/);
