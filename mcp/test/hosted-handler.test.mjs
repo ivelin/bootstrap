@@ -134,7 +134,7 @@ describe("Vercel fetch handler (hosted-read)", () => {
     assert.equal(subscribe.status, 401);
   });
 
-  it("random connector JWT is 401; allowlisted founder can get_journey", async () => {
+  it("random connector JWT is 401 on get_journey and notify tools; allowlisted founder can get_journey", async () => {
     setJourneyStoreForTests(fixtureJourneyStore());
     const stranger = await handleHostedReadFetch(
       new Request("https://preview.example/mcp", {
@@ -153,6 +153,47 @@ describe("Vercel fetch handler (hosted-read)", () => {
       }),
     );
     assert.equal(stranger.status, 401);
+
+    for (const [id, name, args] of [
+      [
+        51,
+        "subscribe_board",
+        {
+          company: "corehaul",
+          principal: "advisor-cos@example.test",
+          principalKind: "email",
+          webhookUrl: "https://hooks.example.test/core",
+        },
+      ],
+      [
+        52,
+        "unsubscribe_board",
+        {
+          company: "corehaul",
+          principal: "advisor-cos@example.test",
+          principalKind: "email",
+        },
+      ],
+      [53, "list_subscribers", { company: "corehaul" }],
+    ]) {
+      const notify = await handleHostedReadFetch(
+        new Request("https://preview.example/mcp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json, text/event-stream",
+            Authorization: `Bearer ${syntheticAccessToken({ email: "stranger@example.test", extra: { fast: true } })}`,
+          },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id,
+            method: "tools/call",
+            params: { name, arguments: args },
+          }),
+        }),
+      );
+      assert.equal(notify.status, 401, name);
+    }
 
     const founderTok = syntheticAccessToken({ email: "founder-core@example.test" });
     const founder = await handleHostedReadFetch(
