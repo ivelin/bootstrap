@@ -7,6 +7,7 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 import { isHostedGatedToolName } from "./constants.js";
 import { resolveHostedWhoami, type HostedWhoami } from "./identity.js";
 import {
+  authorizationServerMetadataDocument,
   hostedMcpResource,
   protectedResourceMetadataDocument,
   wwwAuthenticateChallenge,
@@ -92,6 +93,13 @@ function isProtectedResourceMetadataPath(pathname: string): boolean {
   );
 }
 
+function isAuthorizationServerMetadataPath(pathname: string): boolean {
+  return (
+    pathname === "/.well-known/oauth-authorization-server" ||
+    pathname === "/.well-known/oauth-authorization-server/mcp"
+  );
+}
+
 export async function handleHostedReadFetch(req: Request): Promise<Response> {
   applyHostedReadEnv();
   const pathname = pathnameOf(req);
@@ -109,6 +117,13 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
 
   if (isProtectedResourceMetadataPath(pathname)) {
     return new Response(JSON.stringify(protectedResourceMetadataDocument(req)), {
+      status: 200,
+      headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders() },
+    });
+  }
+
+  if (isAuthorizationServerMetadataPath(pathname)) {
+    return new Response(JSON.stringify(authorizationServerMetadataDocument(req)), {
       status: 200,
       headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders() },
     });

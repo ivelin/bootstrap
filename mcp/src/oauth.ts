@@ -14,6 +14,41 @@ export const PIRIN_AUTHORIZATION_SERVER = `${PIRIN_ORIGIN}/bootstrap-os/login`;
 export const PREVIEW_PIRIN_AUTHORIZATION_SERVER =
   "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login";
 
+/** #143 preview origin. Endpoints stay here — never on the MCP host. */
+export const PREVIEW_PIRIN_LOGIN_ORIGIN =
+  "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app";
+
+/**
+ * RFC 8414 document Cos fetched from the #143 preview login AS.
+ * This host only copies the JSON. It does not serve /oauth/token or /oauth/register.
+ */
+export const PREVIEW_AUTHORIZATION_SERVER_METADATA = {
+  issuer: PREVIEW_PIRIN_AUTHORIZATION_SERVER,
+  authorization_endpoint: PREVIEW_PIRIN_AUTHORIZATION_SERVER,
+  token_endpoint: `${PREVIEW_PIRIN_LOGIN_ORIGIN}/oauth/token`,
+  registration_endpoint: `${PREVIEW_PIRIN_LOGIN_ORIGIN}/oauth/register`,
+  response_types_supported: ["code"],
+  grant_types_supported: ["authorization_code"],
+  code_challenge_methods_supported: ["S256"],
+  token_endpoint_auth_methods_supported: ["none"],
+  scopes_supported: ["bootstrap-os", "openid", "profile", "email"],
+  service_documentation: PREVIEW_PIRIN_AUTHORIZATION_SERVER,
+} as const;
+
+/** Merge / production RFC 8414. Do not emit this on VERCEL_ENV=preview. */
+export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
+  issuer: PIRIN_AUTHORIZATION_SERVER,
+  authorization_endpoint: PIRIN_AUTHORIZATION_SERVER,
+  token_endpoint: `${PIRIN_ORIGIN}/oauth/token`,
+  registration_endpoint: `${PIRIN_ORIGIN}/oauth/register`,
+  response_types_supported: ["code"],
+  grant_types_supported: ["authorization_code"],
+  code_challenge_methods_supported: ["S256"],
+  token_endpoint_auth_methods_supported: ["none"],
+  scopes_supported: ["bootstrap-os", "openid", "profile", "email"],
+  service_documentation: PIRIN_AUTHORIZATION_SERVER,
+} as const;
+
 /** Production / main default. Web Builder publishes RFC 9728 here after pirin-ai merge. */
 export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   `${PIRIN_ORIGIN}/.well-known/oauth-protected-resource`;
@@ -113,17 +148,24 @@ export function protectedResourceMetadataUrl(): string {
  * Preview (VERCEL_ENV=preview, or request host is this Hold preview) → #143 login.
  * Merge / production → https://pirin.ai/bootstrap-os/login (not bare https://pirin.ai).
  */
+export function isPreviewAuthorizationIssuer(req?: Request): boolean {
+  if (process.env.VERCEL_ENV === "preview") return true;
+  if (process.env.VERCEL_ENV === "production") return false;
+  const fromReq = resourceFromRequest(req);
+  return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;
+}
+
 export function authorizationServerUrl(req?: Request): string {
-  if (process.env.VERCEL_ENV === "preview") {
-    return PREVIEW_PIRIN_AUTHORIZATION_SERVER;
-  }
-  if (process.env.VERCEL_ENV !== "production") {
-    const fromReq = resourceFromRequest(req);
-    if (fromReq && fromReq === PREVIEW_HOSTED_MCP_RESOURCE) {
-      return PREVIEW_PIRIN_AUTHORIZATION_SERVER;
-    }
-  }
-  return PIRIN_AUTHORIZATION_SERVER;
+  return isPreviewAuthorizationIssuer(req)
+    ? PREVIEW_PIRIN_AUTHORIZATION_SERVER
+    : PIRIN_AUTHORIZATION_SERVER;
+}
+
+/** RFC 8414 metadata. Preview copies the #143 document. Endpoints stay on pirin-ai. */
+export function authorizationServerMetadataDocument(req?: Request): typeof PREVIEW_AUTHORIZATION_SERVER_METADATA | typeof PIRIN_AUTHORIZATION_SERVER_METADATA {
+  return isPreviewAuthorizationIssuer(req)
+    ? PREVIEW_AUTHORIZATION_SERVER_METADATA
+    : PIRIN_AUTHORIZATION_SERVER_METADATA;
 }
 
 export function wwwAuthenticateChallengeFor(

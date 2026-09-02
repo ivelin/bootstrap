@@ -81,6 +81,27 @@ Suggested RFC 9728 document this MCP origin serves on the Hold preview (`VERCEL_
 
 `WWW-Authenticate` `resource_metadata` still points at the #143 preview well-known. Clients that instead discover the AS from this origin well-known must still land on that same #143 login URL. This repo does not host a login UI.
 
+Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. The body is a copy of the #143 preview login AS document. All endpoints stay on the pirin-ai #143 host — this repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
+
+Hold-preview RFC 8414 document (`VERCEL_ENV=preview`):
+
+```json
+{
+  "issuer": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
+  "authorization_endpoint": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
+  "token_endpoint": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/oauth/token",
+  "registration_endpoint": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/oauth/register",
+  "response_types_supported": ["code"],
+  "grant_types_supported": ["authorization_code"],
+  "code_challenge_methods_supported": ["S256"],
+  "token_endpoint_auth_methods_supported": ["none"],
+  "scopes_supported": ["bootstrap-os", "openid", "profile", "email"],
+  "service_documentation": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login"
+}
+```
+
+Merge / production later uses `https://pirin.ai/bootstrap-os/login`, `https://pirin.ai/oauth/token`, and `https://pirin.ai/oauth/register`. Do not emit those on this preview.
+
 After the code exchange, the MCP client retries gated tools with:
 
 ```http
