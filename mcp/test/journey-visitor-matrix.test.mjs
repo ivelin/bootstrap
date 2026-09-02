@@ -76,6 +76,11 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(write, /Company and idea are separate/);
     assert.match(write, /One board per idea/);
     assert.match(write, /honest biggest bottleneck/);
+    assert.match(write, /Teaching picture, not extra law/);
+    assert.match(write, /weakest link/);
+    assert.match(write, /slowest soldier/);
+    assert.match(write, /not on that link is not progress/);
+    assert.doesNotMatch(write, /Goldratt|Eliyahu|Drucker|Grove|Heraclitus/i);
     assert.match(write, /Not a fun side quest/);
     assert.match(write, /Preference/);
     assert.match(write, /new landing page/);

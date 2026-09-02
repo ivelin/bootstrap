@@ -568,7 +568,7 @@ export type HostedRequestContext = {
 function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "get_journey",
-    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week as the honest biggest bottleneck (where help is required), not a fun side quest. Visual flow + two-minute snapshot; optional meeting-doc view. Gated. Not the production pin.",
+    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week as the honest biggest bottleneck (where help is required), not a fun side quest. Teaching picture, not extra law: the company only moves as fast as its weakest link; the platoon only as fast as the slowest soldier; work off that link is not progress. Visual flow + two-minute snapshot; optional meeting-doc view. Gated. Not the production pin.",
     {
       q: z
         .string()

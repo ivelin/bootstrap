@@ -82,6 +82,10 @@ describe("journey views + tools (memory store)", () => {
     );
     assert.match(idea.snapshot, /Not a fun side quest/);
     assert.match(idea.snapshot, /Preference/);
+    assert.match(idea.snapshot, /Teaching picture, not extra law/);
+    assert.match(idea.snapshot, /weakest link/);
+    assert.match(idea.snapshot, /slowest soldier/);
+    assert.match(idea.snapshot, /not on that link is not progress/);
     assert.equal(idea.constraintThisWeek, "");
     assert.match(idea.visualFlow, /Constraint this week:/);
     assert.equal(idea.meetingDoc, undefined);

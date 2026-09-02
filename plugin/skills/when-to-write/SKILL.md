@@ -7,9 +7,9 @@ description: When a founder or mentee CoS may write the 0-1 board. Use after a g
 
 When to use: after Advance / Iterate / Hold / Kill, or a founder yes in chat. Not a form. Not mail.
 
-Company and idea are separate. One board per idea. A one-thesis company still has one default idea.
+Company and idea are separate. One board per idea.
 
-The weekly constraint is the honest biggest bottleneck — the stuck thing whose unlock this week would move the company the most. Not a fun side quest. Preference / “this is interesting” cannot name it. Challenge a side quest dressed as the bottleneck. Founder decides with a written override; do not rubber-stamp. Refuse “new landing page” as the weekly constraint when no one has talked to customers, unless the founder writes that override.
+The weekly constraint is the honest biggest bottleneck. Teaching picture, not extra law: the company only moves as fast as its weakest link. The platoon only moves as fast as the slowest soldier. Work that is not on that link is not progress. Not a fun side quest. Preference / “this is interesting” cannot name it. Challenge a side quest dressed as the bottleneck. Founder decides with a written override; do not rubber-stamp. Refuse “new landing page” when no one has talked to customers, unless the founder writes that override.
 
 - Write clocks only after a gate or founder yes — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md
 - Comments never mutate phase or gate.
