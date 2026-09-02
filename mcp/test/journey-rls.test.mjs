@@ -21,6 +21,8 @@ import {
   fixtureJourneyStore,
   parseJourneyQuery,
   roleOnCompany,
+  agentMayRubberStampConstraint,
+  preferenceMayNameConstraint,
 } from "../dist/journey.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -104,6 +106,8 @@ describe("journey RLS file lock + memory replica", () => {
     assert.equal(commentsMayMutateGate(), false);
     assert.equal(canWriteAuditDirectly(), false);
     assert.equal(auditEventsMayBeUpdated(), false);
+    assert.equal(preferenceMayNameConstraint(), false);
+    assert.equal(agentMayRubberStampConstraint(), false);
   });
 
   it("JWT FAST claim does not grant access; email then sub", () => {

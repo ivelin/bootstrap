@@ -12,6 +12,10 @@ import {
   commentsMayMutateGate,
   defaultScoreboard,
   fixtureJourneyStore,
+  LANDING_PAGE_CONSTRAINT_REFUSE,
+  agentMayRubberStampConstraint,
+  mayWriteConstraintThisWeek,
+  preferenceMayNameConstraint,
 } from "../dist/journey.js";
 
 function bearer(email, sub) {
@@ -72,7 +76,12 @@ describe("journey views + tools (memory store)", () => {
     assert.match(idea.visualFlow, /Journey 1-9/);
     assert.match(idea.visualFlow, /Loop 1-7/);
     assert.match(idea.snapshot, /two-minute read/);
-    assert.match(idea.snapshot, /Constraint this week \(where help is required\): none yet/);
+    assert.match(
+      idea.snapshot,
+      /Constraint this week \(honest biggest bottleneck; where help is required\): none yet/,
+    );
+    assert.match(idea.snapshot, /Not a fun side quest/);
+    assert.match(idea.snapshot, /Preference/);
     assert.equal(idea.constraintThisWeek, "");
     assert.match(idea.visualFlow, /Constraint this week:/);
     assert.equal(idea.meetingDoc, undefined);
@@ -84,7 +93,7 @@ describe("journey views + tools (memory store)", () => {
     assert.match(expanded.ideas[0].meetingDoc, /Where help is needed/);
     assert.match(
       expanded.ideas[0].meetingDoc,
-      /Constraint this week \(where help is required\): none yet/,
+      /Constraint this week \(honest biggest bottleneck; where help is required\): none yet/,
     );
     assert.equal(commentsMayMutateGate(), false);
   });
@@ -270,5 +279,63 @@ describe("journey views + tools (memory store)", () => {
             "need two operators who already pay for dispatch",
       ),
     );
+  });
+
+  it("cold agent refuses “new landing page” as constraint unless founder writes an override", async () => {
+    assert.equal(preferenceMayNameConstraint(), false);
+    assert.equal(agentMayRubberStampConstraint(), false);
+    const refuse = mayWriteConstraintThisWeek({
+      constraint: "new landing page",
+      talkedToCustomers: false,
+    });
+    assert.equal(refuse.ok, false);
+    assert.equal(refuse.error, LANDING_PAGE_CONSTRAINT_REFUSE);
+    const override = mayWriteConstraintThisWeek({
+      constraint: "new landing page",
+      talkedToCustomers: false,
+      founderWrittenDecision: "We already know the slice; page is the unlock this week.",
+    });
+    assert.equal(override.ok, true);
+    const afterTalks = mayWriteConstraintThisWeek({
+      constraint: "new landing page",
+      talkedToCustomers: true,
+    });
+    assert.equal(afterTalks.ok, true);
+
+    const store = fixtureJourneyStore();
+    const founder = bearer("founder-core@example.test");
+    const rubber = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      constraintThisWeek: "new landing page",
+      why: "this is interesting",
+      founderYes: true,
+    });
+    assert.equal(rubber.ok, false);
+    assert.match(rubber.error, /fun side quest/);
+    assert.match(rubber.error, /Do not rubber-stamp/);
+
+    const stillEmpty = await store.getJourney(founder, { companySlug: "corehaul" });
+    assert.equal(stillEmpty.ok, true);
+    assert.equal(stillEmpty.ideas[0].constraintThisWeek, "");
+    assert.match(stillEmpty.ideas[0].snapshot, /honest biggest bottleneck/);
+
+    const written = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      constraintThisWeek: "new landing page",
+      why: "founder override after challenge",
+      founderYes: true,
+      founderWrittenDecision:
+        "I heard the challenge. The unlock this week is still a new landing page.",
+    });
+    assert.equal(written.ok, true);
+    assert.equal(written.idea.constraintThisWeek, "new landing page");
+    assert.match(written.idea.snapshot, /new landing page/);
+    assert.match(written.idea.constraintChallenge, /fun side quest/);
+    assert.match(written.idea.constraintChallenge, /written override/);
+
+    const seen = await store.getJourney(founder, { companySlug: "corehaul" });
+    assert.equal(seen.ideas[0].constraintThisWeek, "new landing page");
+    assert.match(seen.ideas[0].snapshot, /Challenge:/);
+    assert.match(seen.ideas[0].snapshot, /honest biggest bottleneck/);
   });
 });
