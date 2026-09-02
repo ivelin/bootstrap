@@ -114,6 +114,10 @@ export function constraintThisWeekOf(idea: IdeaRow): string {
   return typeof raw === "string" ? raw.trim() : "";
 }
 
+/** Teaching picture only. Not extra law. No celebrity names. */
+export const CONSTRAINT_TEACHING_PICTURE =
+  "Teaching picture, not extra law: the company only moves as fast as its weakest link. The platoon only moves as fast as the slowest soldier. Work that is not on that link is not progress.";
+
 export const LANDING_PAGE_CONSTRAINT_REFUSE =
   "Refuse: “new landing page” is a fun side quest, not the honest biggest bottleneck, when no one has talked to customers. Founder may override with a written decision. Do not rubber-stamp.";
 
@@ -309,6 +313,7 @@ export function twoMinuteSnapshot(company: CompanyRow, idea: IdeaRow, events: Ga
   return [
     `${company.label} / ${idea.name} — two-minute read`,
     `Constraint this week (honest biggest bottleneck; where help is required): ${constraint || "none yet"}`,
+    CONSTRAINT_TEACHING_PICTURE,
     "Not a fun side quest. Preference / “this is interesting” cannot name it.",
     challenge,
     `Journey: ${idea.journeyPhase} ${JOURNEY_PHASES[idea.journeyPhase]} of 9`,
@@ -572,7 +577,7 @@ export class MemoryJourneyStore implements JourneyStore {
         ideaPayload(company, idea, this.events, this.comments, Boolean(query.expandMeetingDoc)),
       ),
       audit: this.auditFor(company.id, query.ideaSlug ? ideas[0]?.id : undefined),
-      note: "Same payload for team / advisor / board / investor prep. Views are generated. Comments never mutate gates. constraint_this_week is the honest biggest bottleneck, not a fun side quest. Audit is append-only. Not ~/.bootstrap-os.",
+      note: `Same payload for team / advisor / board / investor prep. Views are generated. Comments never mutate gates. constraint_this_week is the honest biggest bottleneck, not a fun side quest. ${CONSTRAINT_TEACHING_PICTURE} Audit is append-only. Not ~/.bootstrap-os.`,
     };
   }
 
