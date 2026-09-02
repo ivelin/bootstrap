@@ -164,7 +164,7 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 Resource page, not a house rule, not a version bump. Open only if fences + proof + they asked: [after-proof-efficiency.md](company-os/after-proof-efficiency.md).
 
 **v2.8.9 — do not automate a step that should not exist**  
-House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Name the person. Delete first. Automate last. An agent team is automation.
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Name the person. Delete first. Automate last. An agent team is automation. Name the one constraint this week and work that.
 
 **v2.8.8 — there is no optimal price until people have paid and stayed**  
 House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. Stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not this essay): [lifestyle or swinging for the fences](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).

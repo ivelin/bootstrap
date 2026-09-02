@@ -69,7 +69,7 @@ Not extra Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot (~60 m
 
 ## Do not automate visitor matrix
 
-Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Pass only if they delete or name the person first — not if they hire agents.
+Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Pass only if they delete or name the person first — not if they hire agents. Name the one constraint this week and work that.
 
 | # | Visitor | Surface | Done means | Evidence |
 |---|---------|---------|------------|----------|

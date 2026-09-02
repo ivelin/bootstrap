@@ -20,6 +20,7 @@ const ESSAY_FORBIDDEN = [
   "dated current-year AI sources",
   "busy-looking machinery",
   "Factory speed is not 0→1",
+  "Do not open a second idea, ritual, or agent team to walk around it",
 ];
 
 function skillFiles() {
@@ -106,6 +107,7 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(pins, /house-rule-do-not-automate-a-step-that-should-not-exist/);
     assert.match(pins, /old SaaS playbook/);
     assert.match(pins, /automate the playbook/);
+    assert.match(pins, /one constraint this week/);
     const standing = fs.readFileSync(
       path.join(PLUGIN, "skills", "query-os-first", "SKILL.md"),
       "utf8",

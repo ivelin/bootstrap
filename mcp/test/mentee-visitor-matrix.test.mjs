@@ -252,6 +252,8 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(os, /Delete the step before you simplify it/);
     assert.match(os, /Automate last/);
     assert.match(os, /An agent team is automation/);
+    assert.match(os, /Name the one constraint this week and work that/);
+    assert.match(os, /Do not open a second idea, ritual, or agent team to walk around it/);
     assert.doesNotMatch(os, /\bElon\b|\bMusk\b|five-step algorithm/i);
 
     const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
@@ -269,8 +271,10 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(standing, /Name the person or delete the step first/);
     assert.match(pins, /agent team to skip a step with no named owner/);
     assert.match(firstHourOs, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.match(firstHourOs, /Name the one constraint this week and work that/);
     assert.doesNotMatch(firstHourOs, /busy-looking machinery/);
     assert.doesNotMatch(firstHourOs, /Factory speed is not 0→1/);
+    assert.doesNotMatch(firstHourOs, /Do not open a second idea, ritual, or agent team to walk around it/);
 
     for (const body of [readme, coverage]) {
       assert.match(body, /Do not automate visitor matrix/);

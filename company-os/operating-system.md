@@ -1063,12 +1063,13 @@ Same family: [do not automate a step that should not exist](#house-rule-do-not-a
 
 ### House rule: do not automate a step that should not exist
 
-Someone saying you must automate the playbook, or stand up an agent team to skip a step that has no named owner, is asking for **busy-looking machinery at 0→1** — not a process. Same family as [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote) and [a security program cannot promote](#house-rule-a-security-program-cannot-promote): a playbook is not a person. Do not speed up or automate a step that should not exist. Every requirement has a person's name, not "the program" or "the playbook." Delete the step before you simplify it. Automate last. An agent team is automation.
+Someone saying you must automate the playbook, or stand up an agent team to skip a step that has no named owner, is asking for **busy-looking machinery at 0→1** — not a process. Same family as [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote) and [a security program cannot promote](#house-rule-a-security-program-cannot-promote): a playbook is not a person. Do not speed up or automate a step that should not exist. Every requirement has a person's name, not "the program" or "the playbook." Delete the step before you simplify it. Automate last. An agent team is automation. Name the one constraint this week and work that. Do not open a second idea, ritual, or agent team to walk around it.
 
 | | Do this | Not this |
 |--|---------|----------|
 | **Name first** | The requirement has a person's name. If you cannot name who asked for the step, delete it. | "The playbook says" or "the program requires." Hiring an agent team to skip a step with no owner. |
 | **Delete first** | Delete the step. If it remains, you may simplify it. Automate last. | Speeding up or automating a step that should not exist. An agent team is still automation. |
+| **One constraint** | Name the one constraint this week and work that. | Opening a second idea, ritual, or agent team to walk around it. |
 
 This rule is **not** a third clock, **not** Day 0 homework, and **not** an accelerate or optimize law. Factory speed is not 0→1.
 
@@ -1374,7 +1375,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.6 | House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointers (not house rules): [starter legal templates](#starter-legal-templates); [cap-table modeler](#cap-table-modeler). |
 | 2.8.7 | House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). Same family as 2.8.6; do not merge. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): preview plugin [`plugin/`](../plugin/) — skills hyperlink this pack; hosted MCP is a read adapter only, not mentee-ready boards, not a marketplace. |
 | 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. SaaS 1.0 playbooks may be outdated; stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
-| 2.8.9 | House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Not Day 0 homework. Not a third clock. Not an accelerate or optimize law. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.9 | House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one constraint this week and work that. Not Day 0 homework. Not a third clock. Not an accelerate or optimize law. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 

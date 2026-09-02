@@ -21,7 +21,7 @@ export const HOUSE_RULE_LINES = [
   "Marketing volume cannot promote.",
   "A security program cannot promote.",
   "There is no optimal price until people have paid and stayed.",
-  "Do not automate a step that should not exist. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation.",
+  "Do not automate a step that should not exist. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one constraint this week and work that.",
   "SaaS 1.0 playbooks may be outdated. Stay current.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
   "Empty context with no founder update: do not invent their stage, a price, or an LTV number. Write unknown / none yet.",

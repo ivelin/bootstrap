@@ -37,6 +37,7 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /There is no optimal price until people have paid and stayed/);
     assert.match(blob, /Do not automate a step that should not exist/);
     assert.match(blob, /An agent team is automation/);
+    assert.match(blob, /Name the one constraint this week and work that/);
     assert.match(blob, /SaaS 1\.0 playbooks may be outdated/);
     assert.match(blob, /Stay current/);
     assert.match(blob, /do not invent their stage/i);
