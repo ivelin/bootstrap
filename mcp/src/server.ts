@@ -663,6 +663,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       founderYes: z
         .boolean()
         .describe("True only after an explicit founder yes in their agent chat"),
+      client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
     },
     async (input) => {
       const store = resolveJourneyStore();
@@ -681,6 +682,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             scoreboard: input.scoreboard as import("./journey.js").Scoreboard | undefined,
             why: input.why,
             founderYes: input.founderYes,
+            client: input.client,
           }),
         );
       } catch (e) {
@@ -696,6 +698,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       company: z.string().describe("Company slug"),
       idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
       body: z.string().describe("Comment text"),
+      client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
     },
     async (input) => {
       const store = resolveJourneyStore();
@@ -709,6 +712,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             companySlug: input.company,
             ideaSlug: input.idea,
             body: input.body,
+            client: input.client,
           }),
         );
       } catch (e) {

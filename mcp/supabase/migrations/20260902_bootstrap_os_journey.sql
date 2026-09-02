@@ -76,6 +76,18 @@ CREATE TABLE IF NOT EXISTS bootstrap_os.comments (
   who text NOT NULL
 );
 
+-- Append-only. Company + optional idea (ACL is company-level). No UPDATE/DELETE policies.
+CREATE TABLE IF NOT EXISTS bootstrap_os.audit_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id uuid NOT NULL REFERENCES bootstrap_os.companies (id) ON DELETE CASCADE,
+  idea_id uuid REFERENCES bootstrap_os.ideas (id) ON DELETE CASCADE,
+  who text NOT NULL,
+  at timestamptz NOT NULL DEFAULT now(),
+  client text NOT NULL,
+  what_changed jsonb NOT NULL,
+  CONSTRAINT audit_events_what_changed_object CHECK (jsonb_typeof(what_changed) = 'object')
+);
+
 CREATE INDEX IF NOT EXISTS company_acl_principal_idx
   ON bootstrap_os.company_acl (principal, principal_kind);
 CREATE INDEX IF NOT EXISTS ideas_company_idx
@@ -84,6 +96,10 @@ CREATE INDEX IF NOT EXISTS gate_events_idea_idx
   ON bootstrap_os.gate_events (idea_id, at DESC);
 CREATE INDEX IF NOT EXISTS comments_idea_idx
   ON bootstrap_os.comments (idea_id, at DESC);
+CREATE INDEX IF NOT EXISTS audit_events_company_idx
+  ON bootstrap_os.audit_events (company_id, at DESC);
+CREATE INDEX IF NOT EXISTS audit_events_idea_idx
+  ON bootstrap_os.audit_events (idea_id, at DESC);
 
 -- Token email (fallback sub). No FAST claim. Fail closed.
 CREATE OR REPLACE FUNCTION bootstrap_os.actor_principal()
@@ -159,12 +175,14 @@ ALTER TABLE bootstrap_os.company_acl ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.ideas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.gate_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bootstrap_os.audit_events ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE bootstrap_os.companies FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.company_acl FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.ideas FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.gate_events FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.comments FORCE ROW LEVEL SECURITY;
+ALTER TABLE bootstrap_os.audit_events FORCE ROW LEVEL SECURITY;
 
 REVOKE ALL ON SCHEMA bootstrap_os FROM PUBLIC;
 GRANT USAGE ON SCHEMA bootstrap_os TO authenticated;
@@ -174,6 +192,7 @@ REVOKE ALL ON TABLE bootstrap_os.company_acl FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON TABLE bootstrap_os.ideas FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON TABLE bootstrap_os.gate_events FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON TABLE bootstrap_os.comments FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON TABLE bootstrap_os.audit_events FROM PUBLIC, anon, authenticated;
 
 GRANT SELECT ON TABLE bootstrap_os.companies TO authenticated;
 GRANT SELECT ON TABLE bootstrap_os.company_acl TO authenticated;
@@ -183,6 +202,8 @@ GRANT SELECT ON TABLE bootstrap_os.comments TO authenticated;
 GRANT UPDATE ON TABLE bootstrap_os.ideas TO authenticated;
 GRANT INSERT ON TABLE bootstrap_os.gate_events TO authenticated;
 GRANT INSERT ON TABLE bootstrap_os.comments TO authenticated;
+GRANT SELECT ON TABLE bootstrap_os.audit_events TO authenticated;
+-- audit_events: SELECT only for authenticated. Inserts via SECURITY DEFINER emit. No UPDATE/DELETE grant.
 
 DROP POLICY IF EXISTS companies_select_member ON bootstrap_os.companies;
 CREATE POLICY companies_select_member
@@ -248,6 +269,15 @@ CREATE POLICY comments_insert_advisor
     bootstrap_os.has_role(bootstrap_os.idea_company_id(idea_id), 'advisor')
   );
 
+DROP POLICY IF EXISTS audit_events_select_member ON bootstrap_os.audit_events;
+CREATE POLICY audit_events_select_member
+  ON bootstrap_os.audit_events
+  FOR SELECT
+  TO authenticated
+  USING (bootstrap_os.is_member(company_id));
+
+-- No INSERT/UPDATE/DELETE policies for authenticated. Append-only via emit_audit.
+
 REVOKE ALL ON FUNCTION bootstrap_os.actor_principal() FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION bootstrap_os.actor_email() FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION bootstrap_os.actor_sub() FROM PUBLIC, anon;
@@ -262,5 +292,125 @@ GRANT EXECUTE ON FUNCTION bootstrap_os.is_member(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION bootstrap_os.has_role(uuid, text[]) TO authenticated;
 GRANT EXECUTE ON FUNCTION bootstrap_os.idea_company_id(uuid) TO authenticated;
 
+CREATE OR REPLACE FUNCTION bootstrap_os.emit_audit(
+  p_company_id uuid,
+  p_idea_id uuid,
+  p_who text,
+  p_client text,
+  p_what_changed jsonb
+)
+RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+DECLARE
+  new_id uuid;
+BEGIN
+  IF p_company_id IS NULL OR p_who IS NULL OR p_client IS NULL OR p_what_changed IS NULL THEN
+    RAISE EXCEPTION 'audit_required_fields' USING ERRCODE = '23502';
+  END IF;
+  INSERT INTO bootstrap_os.audit_events (company_id, idea_id, who, client, what_changed)
+  VALUES (p_company_id, p_idea_id, p_who, p_client, p_what_changed)
+  RETURNING id INTO new_id;
+  RETURN new_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION bootstrap_os.audit_idea_write()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+BEGIN
+  PERFORM bootstrap_os.emit_audit(
+    NEW.company_id,
+    NEW.id,
+    COALESCE(bootstrap_os.actor_principal(), NEW.name),
+    COALESCE(NULLIF(current_setting('app.client', true), ''), 'put_journey'),
+    jsonb_build_object(
+      'via', 'put_journey',
+      'journey_phase', NEW.journey_phase,
+      'loop_stage', NEW.loop_stage,
+      'current_gate', NEW.current_gate
+    )
+  );
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION bootstrap_os.audit_comment_write()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+BEGIN
+  PERFORM bootstrap_os.emit_audit(
+    bootstrap_os.idea_company_id(NEW.idea_id),
+    NEW.idea_id,
+    NEW.who,
+    COALESCE(NULLIF(current_setting('app.client', true), ''), 'post_comment'),
+    jsonb_build_object('via', 'post_comment', 'comment_id', NEW.id)
+  );
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION bootstrap_os.audit_acl_write()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+DECLARE
+  cid uuid;
+  kind text;
+  role text;
+BEGIN
+  cid := COALESCE(NEW.company_id, OLD.company_id);
+  kind := COALESCE(NEW.principal_kind, OLD.principal_kind);
+  role := COALESCE(NEW.role, OLD.role);
+  PERFORM bootstrap_os.emit_audit(
+    cid,
+    NULL,
+    COALESCE(bootstrap_os.actor_principal(), 'acl'),
+    COALESCE(NULLIF(current_setting('app.client', true), ''), 'acl'),
+    jsonb_build_object(
+      'via', 'acl',
+      'op', TG_OP,
+      'principal_kind', kind,
+      'role', role
+    )
+  );
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+DROP TRIGGER IF EXISTS ideas_audit_write ON bootstrap_os.ideas;
+CREATE TRIGGER ideas_audit_write
+  AFTER UPDATE ON bootstrap_os.ideas
+  FOR EACH ROW
+  EXECUTE FUNCTION bootstrap_os.audit_idea_write();
+
+DROP TRIGGER IF EXISTS comments_audit_write ON bootstrap_os.comments;
+CREATE TRIGGER comments_audit_write
+  AFTER INSERT ON bootstrap_os.comments
+  FOR EACH ROW
+  EXECUTE FUNCTION bootstrap_os.audit_comment_write();
+
+DROP TRIGGER IF EXISTS company_acl_audit_write ON bootstrap_os.company_acl;
+CREATE TRIGGER company_acl_audit_write
+  AFTER INSERT OR UPDATE OR DELETE ON bootstrap_os.company_acl
+  FOR EACH ROW
+  EXECUTE FUNCTION bootstrap_os.audit_acl_write();
+
+REVOKE ALL ON FUNCTION bootstrap_os.emit_audit(uuid, uuid, text, text, jsonb) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION bootstrap_os.audit_idea_write() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION bootstrap_os.audit_comment_write() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION bootstrap_os.audit_acl_write() FROM PUBLIC, anon, authenticated;
+
+-- Triggers only. Authenticated cannot call emit_audit (advisors cannot write audit except via tools).
 -- No seed of company slugs or emails in this file. PGlite fixtures only.
--- Comments have no UPDATE/DELETE policy: fail closed. Comments never mutate ideas.
+-- Comments and audit_events have no UPDATE/DELETE policy: fail closed.

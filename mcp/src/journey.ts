@@ -70,6 +70,16 @@ export type CommentRow = {
   who: string;
 };
 
+export type AuditEventRow = {
+  id: string;
+  companyId: string;
+  ideaId: string | null;
+  who: string;
+  at: string;
+  client: string;
+  whatChanged: Record<string, unknown>;
+};
+
 export function isGateDecision(value: string): value is GateDecision {
   return (GATE_DECISIONS as readonly string[]).includes(value);
 }
@@ -157,6 +167,15 @@ export function canPostComment(acl: AclRow[], actor: JourneyActor, companyId: st
 }
 
 export function commentsMayMutateGate(): boolean {
+  return false;
+}
+
+/** Advisors cannot write audit except via put_journey / post_comment / ACL tools. */
+export function canWriteAuditDirectly(): boolean {
+  return false;
+}
+
+export function auditEventsMayBeUpdated(): boolean {
   return false;
 }
 
@@ -348,11 +367,23 @@ export type JourneyStore = {
       scoreboard?: Scoreboard;
       why: string;
       founderYes: boolean;
+      client?: string;
     },
   ): Promise<unknown>;
   postComment(
     actor: JourneyActor,
-    input: { companySlug: string; ideaSlug?: string; body: string },
+    input: { companySlug: string; ideaSlug?: string; body: string; client?: string },
+  ): Promise<unknown>;
+  changeAcl(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      principal: string;
+      principalKind: "email" | "sub";
+      role: JourneyAclRole;
+      op: "grant" | "revoke";
+      client?: string;
+    },
   ): Promise<unknown>;
 };
 
@@ -374,6 +405,7 @@ export class MemoryJourneyStore implements JourneyStore {
     private ideas: IdeaRow[],
     private events: GateEventRow[],
     private comments: CommentRow[],
+    private audit: AuditEventRow[] = [],
   ) {}
 
   actorOnAllowlist(actor: JourneyActor): boolean {
@@ -395,6 +427,27 @@ export class MemoryJourneyStore implements JourneyStore {
     if (!ideaSlug) return rows;
     const want = normalizeSlug(ideaSlug);
     return rows.filter((i) => i.slug === want);
+  }
+
+  private emitAudit(row: Omit<AuditEventRow, "id" | "at">): AuditEventRow {
+    const event: AuditEventRow = {
+      id: this.nextId("ae"),
+      at: new Date().toISOString(),
+      ...row,
+    };
+    this.audit.push(event);
+    return event;
+  }
+
+  private auditFor(companyId: string, ideaId?: string): AuditEventRow[] {
+    return this.audit
+      .filter((row) => {
+        if (row.companyId !== companyId) return false;
+        if (!ideaId) return true;
+        return row.ideaId === ideaId || row.ideaId === null;
+      })
+      .slice()
+      .sort((a, b) => a.at.localeCompare(b.at));
   }
 
   async getJourney(
@@ -421,7 +474,8 @@ export class MemoryJourneyStore implements JourneyStore {
       ideas: ideas.map((idea) =>
         ideaPayload(company, idea, this.events, this.comments, Boolean(query.expandMeetingDoc)),
       ),
-      note: "Same payload for team / advisor / board / investor prep. Views are generated. Comments never mutate gates. Not ~/.bootstrap-os.",
+      audit: this.auditFor(company.id, query.ideaSlug ? ideas[0]?.id : undefined),
+      note: "Same payload for team / advisor / board / investor prep. Views are generated. Comments never mutate gates. Audit is append-only. Not ~/.bootstrap-os.",
     };
   }
 
@@ -436,6 +490,7 @@ export class MemoryJourneyStore implements JourneyStore {
       scoreboard?: Scoreboard;
       why: string;
       founderYes: boolean;
+      client?: string;
     },
   ): Promise<unknown> {
     if (!actor.authenticated || !actor.principal) {
@@ -491,16 +546,30 @@ export class MemoryJourneyStore implements JourneyStore {
         who: actor.principal,
       });
     }
+    const audit = this.emitAudit({
+      companyId: company.id,
+      ideaId: idea.id,
+      who: actor.principal,
+      client: input.client?.trim() || "put_journey",
+      whatChanged: {
+        via: "put_journey",
+        journeyPhase: idea.journeyPhase,
+        loopStage: idea.loopStage,
+        currentGate: idea.currentGate,
+        why: input.why,
+      },
+    });
     return {
       ok: true,
       company: { slug: company.slug, label: company.label },
       idea: ideaPayload(company, idea, this.events, this.comments, false),
+      audit,
     };
   }
 
   async postComment(
     actor: JourneyActor,
-    input: { companySlug: string; ideaSlug?: string; body: string },
+    input: { companySlug: string; ideaSlug?: string; body: string; client?: string },
   ): Promise<unknown> {
     if (!actor.authenticated || !actor.principal) {
       return forbidden("unauthenticated");
@@ -526,12 +595,81 @@ export class MemoryJourneyStore implements JourneyStore {
       at: new Date().toISOString(),
       who: actor.principal,
     });
+    const comment = this.comments.at(-1)!;
+    const audit = this.emitAudit({
+      companyId: company.id,
+      ideaId: idea.id,
+      who: actor.principal,
+      client: input.client?.trim() || "post_comment",
+      whatChanged: { via: "post_comment", commentId: comment.id },
+    });
     return {
       ok: true,
       clocksUnchanged: before,
-      comment: this.comments.at(-1),
+      comment,
+      audit,
       note: "Comments hang off the idea. They never mutate phase or gate.",
     };
+  }
+
+  async changeAcl(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      principal: string;
+      principalKind: "email" | "sub";
+      role: JourneyAclRole;
+      op: "grant" | "revoke";
+      client?: string;
+    },
+  ): Promise<unknown> {
+    if (!actor.authenticated || !actor.principal) {
+      return forbidden("unauthenticated");
+    }
+    const company = this.companyBySlug(input.companySlug);
+    if (!company || roleOnCompany(this.acl, actor, company.id) !== "founder") {
+      return forbidden("founder only");
+    }
+    const principal =
+      input.principalKind === "email" ? input.principal.trim().toLowerCase() : input.principal.trim();
+    if (input.op === "grant") {
+      const exists = this.acl.some(
+        (row) =>
+          row.companyId === company.id &&
+          row.principal === principal &&
+          row.principalKind === input.principalKind,
+      );
+      if (!exists) {
+        this.acl.push({
+          companyId: company.id,
+          principal,
+          principalKind: input.principalKind,
+          role: input.role,
+        });
+      }
+    } else {
+      this.acl = this.acl.filter(
+        (row) =>
+          !(
+            row.companyId === company.id &&
+            row.principal === principal &&
+            row.principalKind === input.principalKind
+          ),
+      );
+    }
+    const audit = this.emitAudit({
+      companyId: company.id,
+      ideaId: null,
+      who: actor.principal,
+      client: input.client?.trim() || "acl",
+      whatChanged: {
+        via: "acl",
+        op: input.op,
+        principalKind: input.principalKind,
+        role: input.role,
+      },
+    });
+    return { ok: true, audit };
   }
 }
 

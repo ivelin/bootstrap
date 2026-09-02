@@ -15,6 +15,8 @@ import {
   canPostComment,
   canReadCompany,
   canWriteJourney,
+  auditEventsMayBeUpdated,
+  canWriteAuditDirectly,
   commentsMayMutateGate,
   fixtureJourneyStore,
   parseJourneyQuery,
@@ -54,6 +56,13 @@ describe("journey RLS file lock + memory replica", () => {
     assert.match(sql, /ideas_update_founder/);
     assert.match(sql, /comments_insert_advisor/);
     assert.match(sql, /gate_events_insert_founder/);
+    assert.match(sql, /audit_events/);
+    assert.match(sql, /audit_events_select_member/);
+    assert.match(sql, /emit_audit/);
+    assert.match(sql, /Append-only/);
+    assert.doesNotMatch(sql, /CREATE POLICY[\s\S]{0,80}audit_events[\s\S]{0,120}FOR UPDATE/i);
+    assert.doesNotMatch(sql, /CREATE POLICY[\s\S]{0,80}audit_events[\s\S]{0,120}FOR DELETE/i);
+    assert.doesNotMatch(sql, /GRANT INSERT ON TABLE bootstrap_os\.audit_events TO authenticated/);
     assert.doesNotMatch(sql, /INSERT INTO bootstrap_os\.companies/);
     assert.doesNotMatch(sql, /dyeconverter/);
     assert.doesNotMatch(sql, /corehaul/);
@@ -91,6 +100,8 @@ describe("journey RLS file lock + memory replica", () => {
     assert.equal(canReadCompany(acl, subOnly, core), true);
     assert.equal(canReadCompany(acl, subOnly, dye), false);
     assert.equal(commentsMayMutateGate(), false);
+    assert.equal(canWriteAuditDirectly(), false);
+    assert.equal(auditEventsMayBeUpdated(), false);
   });
 
   it("JWT FAST claim does not grant access; email then sub", () => {
