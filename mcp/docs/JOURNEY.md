@@ -22,7 +22,7 @@ Allowlist in SQL, fail closed. Token `email` (fallback `sub`) → ACL. No FAST c
 
 Append-only `audit_events` hang off company + optional idea (ACL is company-level). Who, when, which client, what changed. Inserts only — no update/delete policies. `put_journey`, `post_comment`, and ACL changes emit a row. Advisors may read audit for companies they can `get_journey`. They cannot write audit except via those tools.
 
-`board_subscribers` hang off the company (optional idea). After ACL: only people who already have access may be subscribed. On `put_journey` / `post_comment` / `gate_events`, emit audit then fire the webhook to subscribers who may still read that row. Email is **enqueue-only** — Resend lives on pirin.ai. This repo does not send mail.
+`board_subscribers` hang off the company (optional idea). After ACL: only people who already have access may be subscribed. Team members (employees, advisors, co-founders, investors, bots) receive only if they already have access. On `put_journey` / `post_comment` / `gate_events`, emit audit then fire the webhook to subscribers who may still read that row. Email is **enqueue-only** — Resend lives on pirin.ai. This repo does not send mail.
 
 ### Webhook payload (Web Builder)
 
