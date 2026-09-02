@@ -245,4 +245,89 @@ describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, ()
     );
     assert.equal(clocks.rows[0].journey_phase, 1);
   });
+
+  it("append-only audit: put/comment/ACL emit; advisor reads; journey_app cannot insert or mutate", async () => {
+    await db.query("SELECT set_config('app.client', 'cursor-agent', false)");
+    await asApp(
+      { email: "founder-core@example.test" },
+      "UPDATE bootstrap_os.ideas SET journey_phase = 3 WHERE id = 'idea-core'",
+    );
+    await asApp(
+      { email: "advisor-cos@example.test" },
+      "INSERT INTO bootstrap_os.comments (id, idea_id, body, who) VALUES ('c-audit', 'idea-core', 'audit me', 'advisor-cos@example.test')",
+    );
+    await db.exec("RESET ROLE");
+    await db.exec(
+      "INSERT INTO bootstrap_os.company_acl (id, company_id, principal, principal_kind, role) VALUES ('acl-core-spec', 'co-core', 'specialist@example.test', 'email', 'advisor')",
+    );
+
+    const advisorAudit = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT what_changed->>'via' AS via, client, idea_id IS NULL AS company_level FROM bootstrap_os.audit_events WHERE company_id = 'co-core' ORDER BY via",
+    );
+    const vias = advisorAudit.map((r) => r.via).sort();
+    assert.ok(vias.includes("put_journey"));
+    assert.ok(vias.includes("post_comment"));
+    assert.ok(vias.includes("acl"));
+    assert.ok(advisorAudit.some((r) => r.company_level === true && r.via === "acl"));
+    assert.ok(
+      advisorAudit.some((r) => r.via === "put_journey" && r.client === "cursor-agent"),
+    );
+    assert.ok(
+      advisorAudit.some((r) => r.via === "post_comment" && r.client === "cursor-agent"),
+    );
+
+    const dyeAudit = await asApp(
+      { email: "founder-dye@example.test" },
+      "SELECT id FROM bootstrap_os.audit_events WHERE company_id = 'co-core'",
+    );
+    assert.deepEqual(dyeAudit, []);
+    const stranger = await asApp(
+      { email: "stranger@example.test" },
+      "SELECT id FROM bootstrap_os.audit_events",
+    );
+    assert.deepEqual(stranger, []);
+
+    let insertFailed = false;
+    try {
+      await asApp(
+        { email: "advisor-cos@example.test" },
+        "INSERT INTO bootstrap_os.audit_events (company_id, idea_id, who, client, what_changed) VALUES ('co-core', 'idea-core', 'advisor-cos@example.test', 'forged', '{\"via\":\"forged\"}'::jsonb)",
+      );
+    } catch {
+      insertFailed = true;
+    }
+    assert.equal(insertFailed, true);
+
+    let updateFailed = false;
+    try {
+      await asApp(
+        { email: "advisor-cos@example.test" },
+        "UPDATE bootstrap_os.audit_events SET who = 'forged' WHERE company_id = 'co-core'",
+      );
+    } catch {
+      updateFailed = true;
+    }
+    const afterUpdate = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT count(*) FILTER (WHERE who = 'forged')::int AS n FROM bootstrap_os.audit_events",
+    );
+    assert.ok(updateFailed || afterUpdate[0].n === 0);
+
+    let deleteFailed = false;
+    try {
+      await asApp(
+        { email: "advisor-cos@example.test" },
+        "DELETE FROM bootstrap_os.audit_events WHERE company_id = 'co-core'",
+      );
+    } catch {
+      deleteFailed = true;
+    }
+    const remaining = await asApp(
+      { email: "advisor-cos@example.test" },
+      "SELECT count(*)::int AS n FROM bootstrap_os.audit_events WHERE company_id = 'co-core'",
+    );
+    assert.ok(deleteFailed || remaining[0].n >= 3);
+    assert.ok(remaining[0].n >= 3);
+  });
 });

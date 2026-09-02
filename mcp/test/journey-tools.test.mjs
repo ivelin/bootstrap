@@ -164,4 +164,53 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(after.ideas[0].clocks.currentGate, "hold");
     assert.equal(after.ideas[0].scoreboard.journeyPhase, 9);
   });
+
+  it("put_journey, post_comment, and ACL changes emit append-only audit; advisors read, cannot write", async () => {
+    const store = fixtureJourneyStore();
+    const founder = bearer("founder-core@example.test");
+    const advisor = bearer("advisor-cos@example.test");
+    const dye = bearer("founder-dye@example.test");
+
+    await store.putJourney(founder, {
+      companySlug: "corehaul",
+      journeyPhase: 2,
+      why: "founder yes",
+      founderYes: true,
+      client: "cursor-agent",
+    });
+    await store.postComment(advisor, {
+      companySlug: "corehaul",
+      body: "noted",
+      client: "cursor-agent",
+    });
+    const granted = await store.changeAcl(founder, {
+      companySlug: "corehaul",
+      principal: "specialist@example.test",
+      principalKind: "email",
+      role: "advisor",
+      op: "grant",
+      client: "cursor-agent",
+    });
+    assert.equal(granted.ok, true);
+    const advisorWriteAcl = await store.changeAcl(advisor, {
+      companySlug: "corehaul",
+      principal: "nope@example.test",
+      principalKind: "email",
+      role: "advisor",
+      op: "grant",
+    });
+    assert.equal(advisorWriteAcl.ok, false);
+
+    const seen = await store.getJourney(advisor, { companySlug: "corehaul" });
+    assert.equal(seen.ok, true);
+    const vias = seen.audit.map((a) => a.whatChanged.via).sort();
+    assert.deepEqual(vias, ["acl", "post_comment", "put_journey"]);
+    assert.ok(seen.audit.every((a) => a.client === "cursor-agent"));
+    assert.ok(seen.audit.some((a) => a.ideaId === null && a.whatChanged.via === "acl"));
+
+    const hidden = await store.getJourney(dye, { companySlug: "corehaul" });
+    assert.equal(hidden.ok, false);
+    const dyeView = await store.getJourney(dye, { companySlug: "dyeconverter" });
+    assert.equal(dyeView.audit.length, 0);
+  });
 });

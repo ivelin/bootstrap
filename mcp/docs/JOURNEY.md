@@ -18,6 +18,8 @@ Seed slugs exist **only** in the PGlite fixture: `dyeconverter`, `corehaul`. One
 
 Allowlist in SQL, fail closed. Token `email` (fallback `sub`) → ACL. No FAST claim on the JWT.
 
+Append-only `audit_events` hang off company + optional idea (ACL is company-level). Who, when, which client, what changed. Inserts only — no update/delete policies. `put_journey`, `post_comment`, and ACL changes emit a row. Advisors may read audit for companies they can `get_journey`. They cannot write audit except via those tools.
+
 ## Tools (gated; public OS tools stay unauthenticated)
 
 | Tool | Who | Notes |

@@ -57,9 +57,28 @@ CREATE TABLE bootstrap_os.comments (
   who text NOT NULL
 );
 
+CREATE TABLE bootstrap_os.audit_events (
+  id text PRIMARY KEY DEFAULT md5(random()::text || clock_timestamp()::text),
+  company_id text NOT NULL REFERENCES bootstrap_os.companies (id) ON DELETE CASCADE,
+  idea_id text REFERENCES bootstrap_os.ideas (id) ON DELETE CASCADE,
+  who text NOT NULL,
+  at timestamptz NOT NULL DEFAULT now(),
+  client text NOT NULL,
+  what_changed jsonb NOT NULL,
+  CONSTRAINT audit_events_what_changed_object CHECK (jsonb_typeof(what_changed) = 'object')
+);
+
 CREATE FUNCTION bootstrap_os.actor_email() RETURNS text
 LANGUAGE sql STABLE AS $$
   SELECT NULLIF(lower(current_setting('app.actor_email', true)), '');
+$$;
+
+CREATE FUNCTION bootstrap_os.actor_principal() RETURNS text
+LANGUAGE sql STABLE AS $$
+  SELECT COALESCE(
+    NULLIF(lower(current_setting('app.actor_email', true)), ''),
+    NULLIF(current_setting('app.actor_sub', true), '')
+  );
 $$;
 
 CREATE FUNCTION bootstrap_os.actor_sub() RETURNS text
@@ -102,11 +121,13 @@ ALTER TABLE bootstrap_os.company_acl ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.ideas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.gate_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bootstrap_os.audit_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.companies FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.company_acl FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.ideas FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.gate_events FORCE ROW LEVEL SECURITY;
 ALTER TABLE bootstrap_os.comments FORCE ROW LEVEL SECURITY;
+ALTER TABLE bootstrap_os.audit_events FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY companies_select_member ON bootstrap_os.companies
   FOR SELECT USING (bootstrap_os.is_member(id));
@@ -141,6 +162,10 @@ CREATE POLICY comments_insert_advisor ON bootstrap_os.comments
   FOR INSERT
   WITH CHECK (bootstrap_os.has_role(bootstrap_os.idea_company_id(idea_id), ARRAY['advisor']));
 
+CREATE POLICY audit_events_select_member ON bootstrap_os.audit_events
+  FOR SELECT USING (bootstrap_os.is_member(company_id));
+-- No INSERT/UPDATE/DELETE policies. Append-only via emit_audit.
+
 INSERT INTO bootstrap_os.companies (id, slug, label) VALUES
   ('co-dye', 'dyeconverter', 'DyeConverter'),
   ('co-core', 'corehaul', 'CoreHaul');
@@ -160,7 +185,104 @@ INSERT INTO bootstrap_os.ideas (id, company_id, slug, name, journey_phase, loop_
 -- Table owner bypasses RLS; queries run as journey_app.
 CREATE ROLE journey_app NOLOGIN;
 GRANT USAGE ON SCHEMA bootstrap_os TO journey_app;
-GRANT SELECT ON bootstrap_os.companies, bootstrap_os.company_acl, bootstrap_os.ideas, bootstrap_os.gate_events, bootstrap_os.comments TO journey_app;
+GRANT SELECT ON bootstrap_os.companies, bootstrap_os.company_acl, bootstrap_os.ideas, bootstrap_os.gate_events, bootstrap_os.comments, bootstrap_os.audit_events TO journey_app;
 GRANT UPDATE ON bootstrap_os.ideas TO journey_app;
 GRANT INSERT ON bootstrap_os.gate_events, bootstrap_os.comments TO journey_app;
 GRANT USAGE ON TYPE bootstrap_os.gate_decision TO journey_app;
+
+CREATE FUNCTION bootstrap_os.emit_audit(
+  p_company_id text,
+  p_idea_id text,
+  p_who text,
+  p_client text,
+  p_what_changed jsonb
+) RETURNS text
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+DECLARE
+  new_id text;
+BEGIN
+  INSERT INTO bootstrap_os.audit_events (company_id, idea_id, who, client, what_changed)
+  VALUES (p_company_id, p_idea_id, p_who, p_client, p_what_changed)
+  RETURNING id INTO new_id;
+  RETURN new_id;
+END;
+$$;
+
+CREATE FUNCTION bootstrap_os.audit_idea_write() RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+BEGIN
+  PERFORM bootstrap_os.emit_audit(
+    NEW.company_id,
+    NEW.id,
+    COALESCE(bootstrap_os.actor_principal(), 'put_journey'),
+    COALESCE(NULLIF(current_setting('app.client', true), ''), 'put_journey'),
+    jsonb_build_object(
+      'via', 'put_journey',
+      'journey_phase', NEW.journey_phase,
+      'loop_stage', NEW.loop_stage,
+      'current_gate', NEW.current_gate
+    )
+  );
+  RETURN NEW;
+END;
+$$;
+
+CREATE FUNCTION bootstrap_os.audit_comment_write() RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+BEGIN
+  PERFORM bootstrap_os.emit_audit(
+    bootstrap_os.idea_company_id(NEW.idea_id),
+    NEW.idea_id,
+    NEW.who,
+    COALESCE(NULLIF(current_setting('app.client', true), ''), 'post_comment'),
+    jsonb_build_object('via', 'post_comment', 'comment_id', NEW.id)
+  );
+  RETURN NEW;
+END;
+$$;
+
+CREATE FUNCTION bootstrap_os.audit_acl_write() RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = bootstrap_os, public
+AS $$
+BEGIN
+  PERFORM bootstrap_os.emit_audit(
+    COALESCE(NEW.company_id, OLD.company_id),
+    NULL,
+    COALESCE(bootstrap_os.actor_principal(), 'acl'),
+    COALESCE(NULLIF(current_setting('app.client', true), ''), 'acl'),
+    jsonb_build_object(
+      'via', 'acl',
+      'op', TG_OP,
+      'principal_kind', COALESCE(NEW.principal_kind, OLD.principal_kind),
+      'role', COALESCE(NEW.role, OLD.role)
+    )
+  );
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+CREATE TRIGGER ideas_audit_write
+  AFTER UPDATE ON bootstrap_os.ideas
+  FOR EACH ROW
+  EXECUTE FUNCTION bootstrap_os.audit_idea_write();
+
+CREATE TRIGGER comments_audit_write
+  AFTER INSERT ON bootstrap_os.comments
+  FOR EACH ROW
+  EXECUTE FUNCTION bootstrap_os.audit_comment_write();
+
+CREATE TRIGGER company_acl_audit_write
+  AFTER INSERT OR UPDATE OR DELETE ON bootstrap_os.company_acl
+  FOR EACH ROW
+  EXECUTE FUNCTION bootstrap_os.audit_acl_write();
