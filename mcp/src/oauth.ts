@@ -155,6 +155,18 @@ export function isPreviewAuthorizationIssuer(req?: Request): boolean {
   return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;
 }
 
+/**
+ * Hold preview only: initialize / GET SSE / tools/list 401 without a Bearer.
+ * Never true for the production pin hostname. Prod initialize stays HTTP 200.
+ */
+export function requiresPreviewHandshakeAuth(req?: Request): boolean {
+  const fromReq = resourceFromRequest(req);
+  if (fromReq && isProdPinResource(fromReq)) return false;
+  if (process.env.VERCEL_ENV === "production") return false;
+  if (process.env.VERCEL_ENV === "preview") return true;
+  return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;
+}
+
 export function authorizationServerUrl(req?: Request): string {
   return isPreviewAuthorizationIssuer(req)
     ? PREVIEW_PIRIN_AUTHORIZATION_SERVER

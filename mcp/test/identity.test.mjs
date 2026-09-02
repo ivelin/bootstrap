@@ -31,6 +31,7 @@ import {
   authorizationServerUrl,
   hostedMcpResource,
   protectedResourceMetadataDocument,
+  requiresPreviewHandshakeAuth,
   wwwAuthenticateChallenge,
   wwwAuthenticateChallengeFor,
 } from "../dist/oauth.js";
@@ -295,6 +296,104 @@ describe("hosted identity (resource server, gated)", () => {
       ),
       PIRIN_AUTHORIZATION_SERVER_METADATA,
     );
+  });
+
+  it("Hold preview cookie-less initialize / GET SSE / tools/list 401; prod pin initialize stays 200", async () => {
+    process.env.VERCEL_ENV = "preview";
+    const previewChallenge = wwwAuthenticateChallengeFor(
+      PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL,
+      PREVIEW_HOSTED_MCP_RESOURCE,
+    );
+    const previewInit = new Request(PREVIEW_HOSTED_MCP_RESOURCE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 20,
+        method: "initialize",
+        params: {
+          protocolVersion: "2025-03-26",
+          capabilities: {},
+          clientInfo: { name: "preview-handshake", version: "0.0.0" },
+        },
+      }),
+    });
+    assert.equal(requiresPreviewHandshakeAuth(previewInit), true);
+    const initRes = await handleHostedReadFetch(previewInit);
+    assert.equal(initRes.status, 401);
+    assert.equal(initRes.headers.get("WWW-Authenticate"), previewChallenge);
+    assert.equal(JSON.parse(await initRes.text()).resource, PREVIEW_HOSTED_MCP_RESOURCE);
+
+    const sse = await handleHostedReadFetch(
+      new Request(PREVIEW_HOSTED_MCP_RESOURCE, {
+        method: "GET",
+        headers: { Accept: "text/event-stream" },
+      }),
+    );
+    assert.equal(sse.status, 401);
+    assert.equal(sse.headers.get("WWW-Authenticate"), previewChallenge);
+    assert.doesNotMatch(sse.headers.get("content-type") ?? "", /text\/event-stream/i);
+
+    const listed = await handleHostedReadFetch(
+      new Request(PREVIEW_HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 21, method: "tools/list", params: {} }),
+      }),
+    );
+    assert.equal(listed.status, 401);
+    assert.equal(listed.headers.get("WWW-Authenticate"), previewChallenge);
+
+    const wk = await handleHostedReadFetch(
+      new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource"),
+    );
+    assert.equal(wk.status, 200);
+    const asWk = await handleHostedReadFetch(
+      new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-authorization-server"),
+    );
+    assert.equal(asWk.status, 200);
+
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const authedInit = await handleHostedReadFetch(
+      new Request(PREVIEW_HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          Authorization: `Bearer ${IVELIN_TOKEN}`,
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 22,
+          method: "initialize",
+          params: {
+            protocolVersion: "2025-03-26",
+            capabilities: {},
+            clientInfo: { name: "preview-handshake", version: "0.0.0" },
+          },
+        }),
+      }),
+    );
+    assert.equal(authedInit.status, 200);
+
+    process.env.VERCEL_ENV = "production";
+    const prodInit = new Request("https://bootstrap-os-mcp.vercel.app/mcp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 23,
+        method: "initialize",
+        params: {
+          protocolVersion: "2025-03-26",
+          capabilities: {},
+          clientInfo: { name: "prod-pin", version: "0.0.0" },
+        },
+      }),
+    });
+    assert.equal(requiresPreviewHandshakeAuth(prodInit), false);
+    const prodRes = await handleHostedReadFetch(prodInit);
+    assert.equal(prodRes.status, 200);
   });
 
   it("CORS allows Authorization and exposes WWW-Authenticate", async () => {

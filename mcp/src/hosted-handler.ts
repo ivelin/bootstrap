@@ -5,11 +5,12 @@
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { isHostedGatedToolName } from "./constants.js";
-import { resolveHostedWhoami, type HostedWhoami } from "./identity.js";
+import { parseBearerToken, resolveHostedWhoami, type HostedWhoami } from "./identity.js";
 import {
   authorizationServerMetadataDocument,
   hostedMcpResource,
   protectedResourceMetadataDocument,
+  requiresPreviewHandshakeAuth,
   wwwAuthenticateChallenge,
 } from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
@@ -31,12 +32,21 @@ function corsHeaders(): Record<string, string> {
   };
 }
 
-function gatedToolNameFromRpc(body: unknown): string | undefined {
+function rpcMethodOf(body: unknown): string | undefined {
   if (!body || typeof body !== "object") return undefined;
-  const msg = body as { method?: unknown; params?: { name?: unknown } };
-  if (msg.method !== "tools/call") return undefined;
-  const name = msg.params?.name;
+  const method = (body as { method?: unknown }).method;
+  return typeof method === "string" ? method : undefined;
+}
+
+function gatedToolNameFromRpc(body: unknown): string | undefined {
+  if (rpcMethodOf(body) !== "tools/call") return undefined;
+  const name = (body as { params?: { name?: unknown } }).params?.name;
   return typeof name === "string" && isHostedGatedToolName(name) ? name : undefined;
+}
+
+function isPreviewHandshakeRpc(body: unknown): boolean {
+  const method = rpcMethodOf(body);
+  return method === "initialize" || method === "tools/list";
 }
 
 export function unauthorizedGatedToolResponse(whoami?: HostedWhoami, req?: Request): Response {
@@ -137,12 +147,22 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
   }
 
   const whoami = await resolveHostedWhoami(req.headers.get("authorization"));
+  const hasBearer = Boolean(parseBearerToken(req.headers.get("authorization")));
+  const previewHandshake = requiresPreviewHandshakeAuth(req);
+
+  if (previewHandshake && !hasBearer && req.method === "GET") {
+    return unauthorizedGatedToolResponse(whoami, req);
+  }
+
   if (req.method === "POST") {
     let rpcBody: unknown = null;
     try {
       rpcBody = await req.clone().json();
     } catch {
       rpcBody = null;
+    }
+    if (previewHandshake && !hasBearer && isPreviewHandshakeRpc(rpcBody)) {
+      return unauthorizedGatedToolResponse(whoami, req);
     }
     if (gatedToolNameFromRpc(rpcBody) && !whoami.authenticated) {
       return unauthorizedGatedToolResponse(whoami, req);

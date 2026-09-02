@@ -100,6 +100,10 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
       /"token_endpoint": "https:\/\/v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/oauth\/token"/,
     );
     assert.match(identity, /does \*\*not\*\* serve `\/oauth\/token`/);
+    assert.match(identity, /Hold preview/);
+    assert.match(identity, /cookie-less `initialize`/);
+    assert.match(identity, /GET SSE/);
+    assert.match(identity, /tools\/list` return \*\*HTTP 401\*\*/);
     assert.match(identity, /Vercel Authentication is \*\*off\*\*/);
     assert.doesNotMatch(readme, /SSO-gated/);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);
