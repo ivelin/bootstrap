@@ -90,6 +90,9 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     );
     assert.match(identity, /"authorization_servers": \["https:\/\/pirin\.ai\/bootstrap-os\/login"\]/);
     assert.doesNotMatch(identity, /"authorization_servers": \["https:\/\/pirin\.ai"\]/);
+    assert.match(identity, /"issuer": "https:\/\/pirin\.ai\/bootstrap-os\/login"/);
+    assert.match(identity, /"token_endpoint": "https:\/\/pirin\.ai\/oauth\/token"/);
+    assert.match(identity, /"registration_endpoint": "https:\/\/pirin\.ai\/oauth\/register"/);
     assert.match(identity, /oauth-authorization-server/);
     assert.match(
       identity,

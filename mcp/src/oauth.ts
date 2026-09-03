@@ -4,7 +4,7 @@
  */
 export const PIRIN_ORIGIN = "https://pirin.ai";
 
-/** Production / merge authorize URL. Not the bare origin — prod pirin.ai AS root is 404. */
+/** Production / merge authorize URL. Live after pirin-ai #143 merged to main. Not the bare origin. */
 export const PIRIN_AUTHORIZATION_SERVER = `${PIRIN_ORIGIN}/bootstrap-os/login`;
 
 /**
@@ -35,7 +35,7 @@ export const PREVIEW_AUTHORIZATION_SERVER_METADATA = {
   service_documentation: PREVIEW_PIRIN_AUTHORIZATION_SERVER,
 } as const;
 
-/** Merge / production RFC 8414. Do not emit this on VERCEL_ENV=preview. */
+/** Production RFC 8414. Matches the live pirin.ai AS document. Do not emit this on VERCEL_ENV=preview. */
 export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   issuer: PIRIN_AUTHORIZATION_SERVER,
   authorization_endpoint: PIRIN_AUTHORIZATION_SERVER,
@@ -49,12 +49,12 @@ export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   service_documentation: PIRIN_AUTHORIZATION_SERVER,
 } as const;
 
-/** Production / main default. Web Builder publishes RFC 9728 here after pirin-ai merge. */
+/** Production / main. Live pirin.ai RFC 9728 after #143 merged. */
 export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   `${PIRIN_ORIGIN}/.well-known/oauth-protected-resource`;
 
 /**
- * Temporary preview target until pirin-ai #143 merges.
+ * Hold-preview #143 well-known. Cos connector still uses this issuer.
  * Used when BOOTSTRAP_OAUTH_RESOURCE_METADATA is unset and VERCEL_ENV=preview.
  * Production / main must not use this.
  */

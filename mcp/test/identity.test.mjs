@@ -22,6 +22,7 @@ import {
   isJwtAccessToken,
   PIRIN_AUTHORIZATION_SERVER,
   PIRIN_AUTHORIZATION_SERVER_METADATA,
+  PIRIN_PROTECTED_RESOURCE_METADATA_URL,
   PREVIEW_AUTHORIZATION_SERVER_METADATA,
   PREVIEW_HOSTED_MCP_RESOURCE,
   PREVIEW_PIRIN_AUTHORIZATION_SERVER,
@@ -185,6 +186,36 @@ describe("hosted identity (resource server, gated)", () => {
         10,
         "bos_not_a_real_token_xx",
       ),
+    );
+  });
+
+  it("production AS strings are live pirin.ai after #143 merged", () => {
+    assert.equal(
+      PIRIN_PROTECTED_RESOURCE_METADATA_URL,
+      "https://pirin.ai/.well-known/oauth-protected-resource",
+    );
+    assert.equal(PIRIN_AUTHORIZATION_SERVER, "https://pirin.ai/bootstrap-os/login");
+    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.issuer, "https://pirin.ai/bootstrap-os/login");
+    assert.equal(
+      PIRIN_AUTHORIZATION_SERVER_METADATA.authorization_endpoint,
+      "https://pirin.ai/bootstrap-os/login",
+    );
+    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.token_endpoint, "https://pirin.ai/oauth/token");
+    assert.equal(
+      PIRIN_AUTHORIZATION_SERVER_METADATA.registration_endpoint,
+      "https://pirin.ai/oauth/register",
+    );
+    assert.equal(
+      WWW_AUTHENTICATE_CHALLENGE,
+      `Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
+    );
+    process.env.VERCEL_ENV = "production";
+    assert.equal(wwwAuthenticateChallenge(), WWW_AUTHENTICATE_CHALLENGE);
+    assert.deepEqual(
+      authorizationServerMetadataDocument(
+        new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-authorization-server"),
+      ),
+      PIRIN_AUTHORIZATION_SERVER_METADATA,
     );
   });
 

@@ -112,7 +112,7 @@ Stay on Vercel Git:
 
 1. PR check **Vercel** → Ready (this branch).
 2. Production pin `https://bootstrap-os-mcp.vercel.app` — `/`, `/health`, `/mcp` (anonymous, `main` only).
-3. PR #17 public preview (Vercel Authentication off): `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Cookie-less initialize / GET SSE / tools/list are MCP 401 + WWW-Authenticate to the #143 well-known — not Vercel `{protection}`. Production pin initialize stays HTTP 200.
+3. PR #17 public preview (Vercel Authentication off): `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Cookie-less initialize / GET SSE / tools/list are MCP 401 + WWW-Authenticate to the #143-style well-known — not Vercel `{protection}`. Production pin initialize / tools/list stay HTTP 200. Gated whoami/labels 401 with WWW-Authenticate to live `https://pirin.ai/.well-known/oauth-protected-resource`.
 
 ## Env
 
