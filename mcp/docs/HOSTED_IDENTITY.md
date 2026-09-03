@@ -10,7 +10,7 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 |--|--|
 | Login / OAuth | **pirin.ai only.** Web Builder owns `/bootstrap-os/login` (authorize URL, authorization code + PKCE) and `/.well-known/oauth-protected-resource` |
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
-| Product | MCP client follows 401 → protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
+| Product | MCP client follows 401 → this origin's protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
 | Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Production pin stays on `main`. Do not merge. |
 | Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
@@ -29,37 +29,31 @@ WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://pi
 
 The 401 JSON also includes `identityStore` (`supabase` | `memory` | `unset`). That is not a session claim.
 
-Preview (this Hold — Cos connector) challenge — `resource` is this preview host, `resource_metadata` is the #143-style preview well-known:
+Preview (this Hold — Cos lock) challenge — `resource` is this preview MCP URL, `resource_metadata` is **this preview origin** well-known (not live pirin.ai, not the dead #143 git preview):
 
 ```http
-WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource", resource="https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp", scope="bootstrap-os"
+WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource", resource="https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp", scope="bootstrap-os"
 ```
 
-Override for metadata URL only: `BOOTSTRAP_OAUTH_RESOURCE_METADATA` (preview only — never a prod-pin change). If that env is unset and `VERCEL_ENV=preview`, `resource_metadata` is:
+Do **not** point Hold-preview `resource_metadata` at `https://pirin.ai/.well-known/oauth-protected-resource` — that JSON `resource` is the prod pin. `BOOTSTRAP_OAUTH_RESOURCE_METADATA` cannot override preview onto that live document.
 
-`https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
-
-This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is the #143-style Sign in URL. Merge / production uses live `https://pirin.ai/bootstrap-os/login`. The public pin must **not** 401 `initialize` or `tools/list`.
+This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://pirin.ai/bootstrap-os/login`. The public pin must **not** 401 `initialize` or `tools/list`.
 
 ## Web Builder
 
-pirin-ai #143 is merged to main. The live authorization server is pirin.ai. Advertise the apex URLs (the live AS document uses these). Apex `https://pirin.ai/...` 307s to `www.pirin.ai` — that is pirin furniture, not this repo.
+pirin-ai #143 is merged to main. The live authorization server is pirin.ai. Advertise the apex URLs (the live AS document uses these). Apex `https://pirin.ai/...` 307s to `www.pirin.ai` — that is pirin furniture, not this repo. Do not send Cos at the dead #143 git preview.
 
 Protected-resource metadata URL (production — live):
 
 `https://pirin.ai/.well-known/oauth-protected-resource`
 
-Protected-resource metadata URL (Hold preview — #143-style issuer for Cos):
+Protected-resource metadata URL (Hold preview — this MCP origin, Cos lock):
 
-`https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
+`https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
 
-Authorize URL (authorization code + PKCE) — production / merge:
+Authorize URL (authorization code + PKCE) — production **and** this Hold preview:
 
 `https://pirin.ai/bootstrap-os/login`
-
-Authorize URL (this Hold preview — #143-style Sign in):
-
-`https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login`
 
 Suggested RFC 9728 document (production — live):
 
@@ -72,39 +66,22 @@ Suggested RFC 9728 document (production — live):
 }
 ```
 
-Suggested RFC 9728 document this MCP origin serves on the Hold preview (`VERCEL_ENV=preview`). `authorization_servers` must match the 401 / #143-style Sign in page, not prod `https://pirin.ai`:
+Suggested RFC 9728 document this MCP origin serves on the Hold preview (`VERCEL_ENV=preview`). `resource` is this preview MCP URL. `authorization_servers` is live pirin.ai login — not the prod pin, not #143:
 
 ```json
 {
   "resource": "https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp",
-  "authorization_servers": ["https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login"],
+  "authorization_servers": ["https://pirin.ai/bootstrap-os/login"],
   "scopes_supported": ["bootstrap-os"],
   "bearer_methods_supported": ["header"]
 }
 ```
 
-`WWW-Authenticate` `resource_metadata` still points at the #143 preview well-known. Clients that instead discover the AS from this origin well-known must still land on that same #143 login URL. This repo does not host a login UI.
+`WWW-Authenticate` `resource_metadata` points at this preview origin well-known. Clients then read `authorization_servers` and land on live `https://pirin.ai/bootstrap-os/login`. This repo does not host a login UI.
 
-Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. Preview copies the #143-style login AS document. Production copies the live pirin.ai document. All endpoints stay on pirin.ai — this repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
+Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. Preview and production copy the live pirin.ai AS document. All endpoints stay on pirin.ai — this repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
 
-Hold-preview RFC 8414 document (`VERCEL_ENV=preview`):
-
-```json
-{
-  "issuer": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
-  "authorization_endpoint": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
-  "token_endpoint": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/oauth/token",
-  "registration_endpoint": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/oauth/register",
-  "response_types_supported": ["code"],
-  "grant_types_supported": ["authorization_code"],
-  "code_challenge_methods_supported": ["S256"],
-  "token_endpoint_auth_methods_supported": ["none"],
-  "scopes_supported": ["bootstrap-os", "openid", "profile", "email"],
-  "service_documentation": "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login"
-}
-```
-
-Production / merge RFC 8414 (live after #143 merged). Do not emit these on this preview:
+Hold-preview RFC 8414 document (`VERCEL_ENV=preview`) — live pirin.ai:
 
 ```json
 {

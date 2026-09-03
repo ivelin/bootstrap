@@ -72,8 +72,9 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /BOOTSTRAP_OAUTH_RESOURCE_METADATA/);
     assert.match(
       identity,
-      /v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource/,
+      /resource_metadata="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource"/,
     );
+    assert.doesNotMatch(identity, /v0-pirin-ai-founder-studio-git-be053a/);
     assert.doesNotMatch(identity, /bos_/);
     assert.doesNotMatch(identity, /mint a token/i);
     assert.match(
@@ -84,24 +85,12 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
       identity,
       /bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp/,
     );
-    assert.match(
-      identity,
-      /"authorization_servers": \["https:\/\/v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/bootstrap-os\/login"\]/,
-    );
     assert.match(identity, /"authorization_servers": \["https:\/\/pirin\.ai\/bootstrap-os\/login"\]/);
     assert.doesNotMatch(identity, /"authorization_servers": \["https:\/\/pirin\.ai"\]/);
     assert.match(identity, /"issuer": "https:\/\/pirin\.ai\/bootstrap-os\/login"/);
     assert.match(identity, /"token_endpoint": "https:\/\/pirin\.ai\/oauth\/token"/);
     assert.match(identity, /"registration_endpoint": "https:\/\/pirin\.ai\/oauth\/register"/);
     assert.match(identity, /oauth-authorization-server/);
-    assert.match(
-      identity,
-      /"issuer": "https:\/\/v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/bootstrap-os\/login"/,
-    );
-    assert.match(
-      identity,
-      /"token_endpoint": "https:\/\/v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/oauth\/token"/,
-    );
     assert.match(identity, /does \*\*not\*\* serve `\/oauth\/token`/);
     assert.match(identity, /Hold preview/);
     assert.match(identity, /cookie-less `initialize`/);

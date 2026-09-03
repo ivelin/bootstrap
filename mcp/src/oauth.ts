@@ -7,35 +7,7 @@ export const PIRIN_ORIGIN = "https://pirin.ai";
 /** Production / merge authorize URL. Live after pirin-ai #143 merged to main. Not the bare origin. */
 export const PIRIN_AUTHORIZATION_SERVER = `${PIRIN_ORIGIN}/bootstrap-os/login`;
 
-/**
- * Hold-preview authorize URL (#143 Sign in). Used when VERCEL_ENV=preview.
- * Clients that read origin well-known instead of 401 resource_metadata must land here.
- */
-export const PREVIEW_PIRIN_AUTHORIZATION_SERVER =
-  "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login";
-
-/** #143 preview origin. Endpoints stay here — never on the MCP host. */
-export const PREVIEW_PIRIN_LOGIN_ORIGIN =
-  "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app";
-
-/**
- * RFC 8414 document Cos fetched from the #143 preview login AS.
- * This host only copies the JSON. It does not serve /oauth/token or /oauth/register.
- */
-export const PREVIEW_AUTHORIZATION_SERVER_METADATA = {
-  issuer: PREVIEW_PIRIN_AUTHORIZATION_SERVER,
-  authorization_endpoint: PREVIEW_PIRIN_AUTHORIZATION_SERVER,
-  token_endpoint: `${PREVIEW_PIRIN_LOGIN_ORIGIN}/oauth/token`,
-  registration_endpoint: `${PREVIEW_PIRIN_LOGIN_ORIGIN}/oauth/register`,
-  response_types_supported: ["code"],
-  grant_types_supported: ["authorization_code"],
-  code_challenge_methods_supported: ["S256"],
-  token_endpoint_auth_methods_supported: ["none"],
-  scopes_supported: ["bootstrap-os", "openid", "profile", "email"],
-  service_documentation: PREVIEW_PIRIN_AUTHORIZATION_SERVER,
-} as const;
-
-/** Production RFC 8414. Matches the live pirin.ai AS document. Do not emit this on VERCEL_ENV=preview. */
+/** Production RFC 8414. Matches the live pirin.ai AS document. Preview copies this too — endpoints stay on pirin.ai. */
 export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   issuer: PIRIN_AUTHORIZATION_SERVER,
   authorization_endpoint: PIRIN_AUTHORIZATION_SERVER,
@@ -49,17 +21,9 @@ export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   service_documentation: PIRIN_AUTHORIZATION_SERVER,
 } as const;
 
-/** Production / main. Live pirin.ai RFC 9728 after #143 merged. */
+/** Production / main. Live pirin.ai RFC 9728. Never use this as Hold-preview resource_metadata (its resource is the prod pin). */
 export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   `${PIRIN_ORIGIN}/.well-known/oauth-protected-resource`;
-
-/**
- * Hold-preview #143 well-known. Cos connector still uses this issuer.
- * Used when BOOTSTRAP_OAUTH_RESOURCE_METADATA is unset and VERCEL_ENV=preview.
- * Production / main must not use this.
- */
-export const PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL =
-  "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource";
 
 /** Public pin. Production / merge only. Never emit this as the resource on VERCEL_ENV=preview. */
 export const HOSTED_MCP_RESOURCE = "https://bootstrap-os-mcp.vercel.app/mcp";
@@ -67,6 +31,10 @@ export const HOSTED_MCP_RESOURCE = "https://bootstrap-os-mcp.vercel.app/mcp";
 /** Canonical public no-SSO git preview for PR #17. */
 export const PREVIEW_HOSTED_MCP_RESOURCE =
   "https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp";
+
+/** Hold-preview RFC 9728 on this MCP origin — not pirin.ai live, not the dead #143 git preview. */
+export const PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL =
+  "https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource";
 
 export const OAUTH_RESOURCE_METADATA_ENV = "BOOTSTRAP_OAUTH_RESOURCE_METADATA";
 
@@ -94,6 +62,23 @@ export function isProdPinResource(url: string): boolean {
   return normalizeMcpResource(url) === HOSTED_MCP_RESOURCE;
 }
 
+export function originProtectedResourceMetadataUrl(resourceUrl: string): string {
+  return `${normalizeMcpResource(resourceUrl).replace(/\/mcp$/i, "")}/.well-known/oauth-protected-resource`;
+}
+
+function isLivePirinProtectedResourceMetadata(raw: string): boolean {
+  try {
+    const url = new URL(raw.trim());
+    const host = url.hostname.toLowerCase();
+    return (
+      (host === "pirin.ai" || host === "www.pirin.ai") &&
+      url.pathname.replace(/\/+$/, "") === "/.well-known/oauth-protected-resource"
+    );
+  } catch {
+    return false;
+  }
+}
+
 function resourceFromRequest(req?: Request): string | undefined {
   if (!req) return undefined;
   try {
@@ -111,6 +96,13 @@ function resourceFromRequest(req?: Request): string | undefined {
   } catch {
     return undefined;
   }
+}
+
+function isPreviewResourceContext(req?: Request): boolean {
+  if (process.env.VERCEL_ENV === "production") return false;
+  if (process.env.VERCEL_ENV === "preview") return true;
+  const fromReq = resourceFromRequest(req);
+  return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;
 }
 
 /**
@@ -131,28 +123,28 @@ export function hostedMcpResource(req?: Request): string {
   return HOSTED_MCP_RESOURCE;
 }
 
-/** Runtime metadata URL. Env override wins. Preview (not production) falls back to #143. */
-export function protectedResourceMetadataUrl(): string {
+/**
+ * Runtime metadata URL for WWW-Authenticate resource_metadata.
+ * Hold preview: this MCP origin well-known. Never live pirin.ai (that JSON resource is the prod pin).
+ * Never the dead #143 git preview.
+ */
+export function protectedResourceMetadataUrl(req?: Request): string {
+  if (isPreviewResourceContext(req)) {
+    const resource = hostedMcpResource(req);
+    if (resource && !isProdPinResource(resource)) {
+      return originProtectedResourceMetadataUrl(resource);
+    }
+    return PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL;
+  }
   const override = process.env[OAUTH_RESOURCE_METADATA_ENV]?.trim();
-  if (override && isAllowedProtectedResourceMetadataUrl(override)) {
+  if (
+    override &&
+    isAllowedProtectedResourceMetadataUrl(override) &&
+    !isLivePirinProtectedResourceMetadata(override)
+  ) {
     return override.replace(/\/+$/, "");
   }
-  if (process.env.VERCEL_ENV === "preview") {
-    return PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL;
-  }
   return PIRIN_PROTECTED_RESOURCE_METADATA_URL;
-}
-
-/**
- * authorization_servers entry this origin well-known advertises.
- * Preview (VERCEL_ENV=preview, or request host is this Hold preview) → #143 login.
- * Merge / production → https://pirin.ai/bootstrap-os/login (not bare https://pirin.ai).
- */
-export function isPreviewAuthorizationIssuer(req?: Request): boolean {
-  if (process.env.VERCEL_ENV === "preview") return true;
-  if (process.env.VERCEL_ENV === "production") return false;
-  const fromReq = resourceFromRequest(req);
-  return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;
 }
 
 /**
@@ -167,17 +159,14 @@ export function requiresPreviewHandshakeAuth(req?: Request): boolean {
   return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;
 }
 
-export function authorizationServerUrl(req?: Request): string {
-  return isPreviewAuthorizationIssuer(req)
-    ? PREVIEW_PIRIN_AUTHORIZATION_SERVER
-    : PIRIN_AUTHORIZATION_SERVER;
+/** Live pirin.ai login. Preview and production both advertise this — not #143, not this MCP host. */
+export function authorizationServerUrl(_req?: Request): string {
+  return PIRIN_AUTHORIZATION_SERVER;
 }
 
-/** RFC 8414 metadata. Preview copies the #143 document. Endpoints stay on pirin-ai. */
-export function authorizationServerMetadataDocument(req?: Request): typeof PREVIEW_AUTHORIZATION_SERVER_METADATA | typeof PIRIN_AUTHORIZATION_SERVER_METADATA {
-  return isPreviewAuthorizationIssuer(req)
-    ? PREVIEW_AUTHORIZATION_SERVER_METADATA
-    : PIRIN_AUTHORIZATION_SERVER_METADATA;
+/** RFC 8414 metadata. Always the live pirin.ai document. Endpoints stay on pirin.ai. */
+export function authorizationServerMetadataDocument(_req?: Request): typeof PIRIN_AUTHORIZATION_SERVER_METADATA {
+  return PIRIN_AUTHORIZATION_SERVER_METADATA;
 }
 
 export function wwwAuthenticateChallengeFor(
@@ -194,7 +183,7 @@ export const WWW_AUTHENTICATE_CHALLENGE = wwwAuthenticateChallengeFor(
 );
 
 export function wwwAuthenticateChallenge(req?: Request): string {
-  return wwwAuthenticateChallengeFor(protectedResourceMetadataUrl(), hostedMcpResource(req));
+  return wwwAuthenticateChallengeFor(protectedResourceMetadataUrl(req), hostedMcpResource(req));
 }
 
 export function protectedResourceMetadataDocument(req?: Request): {

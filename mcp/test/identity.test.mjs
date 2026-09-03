@@ -23,10 +23,8 @@ import {
   PIRIN_AUTHORIZATION_SERVER,
   PIRIN_AUTHORIZATION_SERVER_METADATA,
   PIRIN_PROTECTED_RESOURCE_METADATA_URL,
-  PREVIEW_AUTHORIZATION_SERVER_METADATA,
   PREVIEW_HOSTED_MCP_RESOURCE,
-  PREVIEW_PIRIN_AUTHORIZATION_SERVER,
-  PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL,
+  PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL,
   WWW_AUTHENTICATE_CHALLENGE,
   authorizationServerMetadataDocument,
   authorizationServerUrl,
@@ -219,24 +217,36 @@ describe("hosted identity (resource server, gated)", () => {
     );
   });
 
-  it("BOOTSTRAP_OAUTH_RESOURCE_METADATA overrides the challenge (preview #143)", async () => {
-    process.env.BOOTSTRAP_OAUTH_RESOURCE_METADATA = PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL;
-    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
-    const res = await rawRpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 11);
-    assert.equal(res.status, 401);
+  it("preview ignores live pirin.ai well-known as resource_metadata (that JSON resource is the prod pin)", async () => {
+    process.env.VERCEL_ENV = "preview";
+    process.env.BOOTSTRAP_OAUTH_RESOURCE_METADATA = PIRIN_PROTECTED_RESOURCE_METADATA_URL;
+    const previewReq = new Request(PREVIEW_HOSTED_MCP_RESOURCE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 11,
+        method: "tools/call",
+        params: { name: "bootstrap_whoami", arguments: {} },
+      }),
+    });
+    const challenge = wwwAuthenticateChallenge(previewReq);
     assert.equal(
-      res.headers.get("WWW-Authenticate"),
-      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL, HOSTED_MCP_RESOURCE),
+      challenge,
+      wwwAuthenticateChallengeFor(
+        PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL,
+        PREVIEW_HOSTED_MCP_RESOURCE,
+      ),
     );
-    assert.match(
-      res.headers.get("WWW-Authenticate") ?? "",
-      /v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource/,
-    );
-    const body = JSON.parse(await res.text());
-    assert.equal(body.identityStore, "memory");
+    assert.doesNotMatch(challenge, /resource_metadata="https:\/\/pirin\.ai\//);
+    assert.doesNotMatch(challenge, /v0-pirin-ai-founder-studio-git-be053a/);
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const res = await handleHostedReadFetch(previewReq);
+    assert.equal(res.status, 401);
+    assert.equal(res.headers.get("WWW-Authenticate"), challenge);
   });
 
-  it("VERCEL_ENV=preview uses the #143 well-known and the preview resource, never the prod pin", async () => {
+  it("VERCEL_ENV=preview uses this origin well-known + live pirin.ai login, never the prod pin", async () => {
     process.env.VERCEL_ENV = "preview";
     const previewReq = new Request(`${PREVIEW_HOSTED_MCP_RESOURCE}`, {
       method: "POST",
@@ -253,10 +263,18 @@ describe("hosted identity (resource server, gated)", () => {
     const challenge = wwwAuthenticateChallenge(previewReq);
     assert.equal(
       challenge,
-      wwwAuthenticateChallengeFor(PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL, PREVIEW_HOSTED_MCP_RESOURCE),
+      wwwAuthenticateChallengeFor(
+        PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL,
+        PREVIEW_HOSTED_MCP_RESOURCE,
+      ),
     );
     assert.match(challenge, /resource="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp"/);
+    assert.match(
+      challenge,
+      /resource_metadata="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource"/,
+    );
     assert.doesNotMatch(challenge, /resource="https:\/\/bootstrap-os-mcp\.vercel\.app\/mcp"/);
+    assert.doesNotMatch(challenge, /resource_metadata="https:\/\/pirin\.ai\//);
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
     const res = await handleHostedReadFetch(previewReq);
     assert.equal(res.status, 401);
@@ -269,49 +287,40 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(meta.status, 200);
     const doc = JSON.parse(await meta.text());
     assert.equal(doc.resource, PREVIEW_HOSTED_MCP_RESOURCE);
-    assert.deepEqual(doc.authorization_servers, [PREVIEW_PIRIN_AUTHORIZATION_SERVER]);
-    assert.equal(
-      doc.authorization_servers[0],
-      "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
-    );
+    assert.deepEqual(doc.authorization_servers, [PIRIN_AUTHORIZATION_SERVER]);
+    assert.equal(doc.authorization_servers[0], "https://pirin.ai/bootstrap-os/login");
     const metaMcp = await handleHostedReadFetch(
       new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource/mcp"),
     );
     assert.deepEqual(JSON.parse(await metaMcp.text()).authorization_servers, [
-      PREVIEW_PIRIN_AUTHORIZATION_SERVER,
+      PIRIN_AUTHORIZATION_SERVER,
     ]);
-    assert.equal(authorizationServerUrl(previewReq), PREVIEW_PIRIN_AUTHORIZATION_SERVER);
+    assert.equal(authorizationServerUrl(previewReq), PIRIN_AUTHORIZATION_SERVER);
     const asMeta = await handleHostedReadFetch(
       new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-authorization-server"),
     );
     assert.equal(asMeta.status, 200);
     const asDoc = JSON.parse(await asMeta.text());
-    assert.deepEqual(asDoc, { ...PREVIEW_AUTHORIZATION_SERVER_METADATA });
-    assert.equal(
-      asDoc.issuer,
-      "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
-    );
-    assert.equal(
-      asDoc.authorization_endpoint,
-      "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/bootstrap-os/login",
-    );
-    assert.equal(
-      asDoc.token_endpoint,
-      "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/oauth/token",
-    );
-    assert.equal(
-      asDoc.registration_endpoint,
-      "https://v0-pirin-ai-founder-studio-git-be053a-ivelins-projects-9f9b7132.vercel.app/oauth/register",
-    );
+    assert.deepEqual(asDoc, { ...PIRIN_AUTHORIZATION_SERVER_METADATA });
+    assert.equal(asDoc.issuer, "https://pirin.ai/bootstrap-os/login");
+    assert.equal(asDoc.authorization_endpoint, "https://pirin.ai/bootstrap-os/login");
+    assert.equal(asDoc.token_endpoint, "https://pirin.ai/oauth/token");
+    assert.equal(asDoc.registration_endpoint, "https://pirin.ai/oauth/register");
+    assert.equal(asDoc.service_documentation, "https://pirin.ai/bootstrap-os/login");
     assert.doesNotMatch(JSON.stringify(asDoc), /bootstrap-os-mcp/);
+    assert.doesNotMatch(JSON.stringify(asDoc), /v0-pirin-ai-founder-studio-git-be053a/);
     const asMetaMcp = await handleHostedReadFetch(
       new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-authorization-server/mcp"),
     );
-    assert.deepEqual(JSON.parse(await asMetaMcp.text()), { ...PREVIEW_AUTHORIZATION_SERVER_METADATA });
+    assert.deepEqual(JSON.parse(await asMetaMcp.text()), { ...PIRIN_AUTHORIZATION_SERVER_METADATA });
     const tokenOnMcp = await handleHostedReadFetch(
       new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/oauth/token"),
     );
     assert.equal(tokenOnMcp.status, 404);
+    const registerOnMcp = await handleHostedReadFetch(
+      new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/oauth/register"),
+    );
+    assert.equal(registerOnMcp.status, 404);
     process.env.VERCEL_ENV = "production";
     assert.equal(wwwAuthenticateChallenge(), WWW_AUTHENTICATE_CHALLENGE);
     assert.equal(hostedMcpResource(), HOSTED_MCP_RESOURCE);
@@ -332,7 +341,7 @@ describe("hosted identity (resource server, gated)", () => {
   it("Hold preview cookie-less initialize / GET SSE / tools/list 401; prod pin initialize stays 200", async () => {
     process.env.VERCEL_ENV = "preview";
     const previewChallenge = wwwAuthenticateChallengeFor(
-      PREVIEW_PIRIN_PROTECTED_RESOURCE_METADATA_URL,
+      PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL,
       PREVIEW_HOSTED_MCP_RESOURCE,
     );
     const previewInit = new Request(PREVIEW_HOSTED_MCP_RESOURCE, {
