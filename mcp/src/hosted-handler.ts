@@ -4,6 +4,15 @@
  * Does not listen on 127.0.0.1. Does not host founder company-state.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import { isHostedGatedToolName } from "./constants.js";
+import { parseBearerToken, resolveHostedWhoami, type HostedWhoami } from "./identity.js";
+import {
+  authorizationServerMetadataDocument,
+  hostedMcpResource,
+  protectedResourceMetadataDocument,
+  requiresPreviewHandshakeAuth,
+  wwwAuthenticateChallenge,
+} from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
 
 export function applyHostedReadEnv(): void {
@@ -18,8 +27,45 @@ function corsHeaders(): Record<string, string> {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
     "Access-Control-Allow-Headers":
-      "Content-Type, Accept, MCP-Session-Id, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID",
+      "Content-Type, Accept, Authorization, MCP-Session-Id, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID",
+    "Access-Control-Expose-Headers": "WWW-Authenticate",
   };
+}
+
+function rpcMethodOf(body: unknown): string | undefined {
+  if (!body || typeof body !== "object") return undefined;
+  const method = (body as { method?: unknown }).method;
+  return typeof method === "string" ? method : undefined;
+}
+
+function gatedToolNameFromRpc(body: unknown): string | undefined {
+  if (rpcMethodOf(body) !== "tools/call") return undefined;
+  const name = (body as { params?: { name?: unknown } }).params?.name;
+  return typeof name === "string" && isHostedGatedToolName(name) ? name : undefined;
+}
+
+function isPreviewHandshakeRpc(body: unknown): boolean {
+  const method = rpcMethodOf(body);
+  return method === "initialize" || method === "tools/list";
+}
+
+export function unauthorizedGatedToolResponse(whoami?: HostedWhoami, req?: Request): Response {
+  const resource = hostedMcpResource(req);
+  const headers = {
+    ...corsHeaders(),
+    "WWW-Authenticate": wwwAuthenticateChallenge(req),
+    "Content-Type": "application/json; charset=utf-8",
+  };
+  return new Response(
+    JSON.stringify({
+      error: "invalid_token",
+      error_description:
+        "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
+      identityStore: whoami?.identityStore ?? "unset",
+      resource,
+    }),
+    { status: 401, headers },
+  );
 }
 
 function withCors(res: Response): Response {
@@ -50,6 +96,20 @@ function isMcpPath(pathname: string): boolean {
   return pathname === "/mcp" || pathname.endsWith("/mcp");
 }
 
+function isProtectedResourceMetadataPath(pathname: string): boolean {
+  return (
+    pathname === "/.well-known/oauth-protected-resource" ||
+    pathname === "/.well-known/oauth-protected-resource/mcp"
+  );
+}
+
+function isAuthorizationServerMetadataPath(pathname: string): boolean {
+  return (
+    pathname === "/.well-known/oauth-authorization-server" ||
+    pathname === "/.well-known/oauth-authorization-server/mcp"
+  );
+}
+
 export async function handleHostedReadFetch(req: Request): Promise<Response> {
   applyHostedReadEnv();
   const pathname = pathnameOf(req);
@@ -65,6 +125,20 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     });
   }
 
+  if (isProtectedResourceMetadataPath(pathname)) {
+    return new Response(JSON.stringify(protectedResourceMetadataDocument(req)), {
+      status: 200,
+      headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders() },
+    });
+  }
+
+  if (isAuthorizationServerMetadataPath(pathname)) {
+    return new Response(JSON.stringify(authorizationServerMetadataDocument(req)), {
+      status: 200,
+      headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders() },
+    });
+  }
+
   if (!isMcpPath(pathname)) {
     return new Response("Preview hosted-read MCP. POST /mcp. Not mentee-ready boards.", {
       status: 404,
@@ -72,7 +146,33 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     });
   }
 
-  const server = createBootstrapServer("hosted-read");
+  const whoami = await resolveHostedWhoami(req.headers.get("authorization"));
+  const hasBearer = Boolean(parseBearerToken(req.headers.get("authorization")));
+  const previewHandshake = requiresPreviewHandshakeAuth(req);
+
+  if (previewHandshake && !hasBearer && req.method === "GET") {
+    return unauthorizedGatedToolResponse(whoami, req);
+  }
+
+  if (req.method === "POST") {
+    let rpcBody: unknown = null;
+    try {
+      rpcBody = await req.clone().json();
+    } catch {
+      rpcBody = null;
+    }
+    if (previewHandshake && !hasBearer && isPreviewHandshakeRpc(rpcBody)) {
+      return unauthorizedGatedToolResponse(whoami, req);
+    }
+    if (gatedToolNameFromRpc(rpcBody) && !whoami.authenticated) {
+      return unauthorizedGatedToolResponse(whoami, req);
+    }
+  }
+
+  const server = createBootstrapServer("hosted-read", {
+    whoami,
+    resource: hostedMcpResource(req),
+  });
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,

@@ -62,6 +62,13 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 | `bootstrap_log_decision` | Trace under active company |
 | `bootstrap_refuse_external_ask_if_not_green` | Fail-closed external asks |
 
+### Hosted-only (optional auth)
+
+| Tool | Purpose |
+|------|---------|
+| `bootstrap_whoami` | Email + company labels when `Authorization: Bearer` is a pirin.ai access token. Unauthenticated gated calls return HTTP 401 + `WWW-Authenticate`. Public OS tools stay open. |
+| `bootstrap_list_company_labels` | Same labels. Error without a token. Not `bootstrap_list_companies` (that stays path 3 / local boards). |
+
 Hard rules (OS 2.8.9):
 
 - Journey phase does **not** change unless `founderApprovedPhaseChange=true`
@@ -136,7 +143,9 @@ See [`config/mcp.stdio.example.json`](config/mcp.stdio.example.json).
 
 Same package. Production entry is the Vercel request handler (`api/mcp.ts` + `api/health.ts`). `npm run start:http` is a local helper only.
 
-Read tools only (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). Does **not** host founder `company-state`. Write / init / use-company stay stdio.
+Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). **No login** for those tools. Does **not** host founder `company-state`. Write / init / use-company stay stdio.
+
+Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Unauthenticated calls return HTTP 401 + `WWW-Authenticate` pointing at pirin.ai OAuth metadata. Login UI is `/bootstrap-os/login` (Web Builder), not this repo. Labels only — not boards. Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
 
 Public preview is `*.vercel.app` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
 
@@ -155,10 +164,23 @@ Never deploy this adapter to `v0-pirin-ai-founder-studio` or any pirin.ai host.
 
 | Data | Local MCP (path 3) | Hosted read (preview) |
 |------|--------------------|-------------------------|
-| Blueprint | Read from your clone | Fetch published GitHub repo |
+| Blueprint | Read from your clone | Fetch published GitHub repo (no login) |
 | Company state | Disk under data root, **per company** | **Not hosted** |
-| Cross-tenant | **Denied** | **Denied** |
+| Identity | None (local files) | Optional. Whoami + labels on existing pirin.ai Supabase + RLS |
+| Cross-tenant | **Denied** | **Denied** (RLS + pirin.ai access token). Tests lock it. |
 | Leaderboards | Out of scope | Never |
+
+---
+
+## Hosted vs local (same names, different write path)
+
+| | Local (path 3) | Hosted pin |
+|--|----------------|------------|
+| Public OS tool names | Same | Same. Unauthenticated. |
+| Writes / init / use-company | Founder-owned files under `BOOTSTRAP_DATA_ROOT` | **Not on the host.** Path 3 only. |
+| Replaces Path 1? | No | No |
+| Replaces Path 3? | This is Path 3 | No |
+| Ivelin first account | Local instances if he inits them | Can list three **labels** (`pirin`, `zk0`, `totbox`) after login. No boards uploaded. |
 
 ---
 
@@ -193,6 +215,7 @@ High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROAD
 | `npm run test:smoke` | Cold-path multi-company smoke |
 | `npm run test:stdio` | Real stdio MCP client (M1 protocol) |
 | `npm run test:http` | Streamable HTTP hosted-read (no local clone) |
+| unit `identity` / `identity-rls` | Optional whoami + RLS file locks (one mentee cannot read another) |
 | `npm run start:http` | Preview HTTP read adapter |
 | `npm run ci` | Full local CI mirror |
 

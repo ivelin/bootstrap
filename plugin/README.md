@@ -4,7 +4,7 @@ Preview package. Skills hyperlink the published OS. **Not** mentee-ready hosted 
 
 Path 1 stays default: point an AI at https://github.com/ivelin/bootstrap
 
-Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visitor matrix is only for surfaces a mentee agent is told to see. Git-branch Vercel preview is SSO-gated — use the public pin.
+Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visitor matrix is only for surfaces a mentee agent is told to see. Production pin stays `https://bootstrap-os-mcp.vercel.app/mcp` on `main`. PR #17 public (no Vercel SSO) preview for the 401 / pirin.ai login loop: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`.
 
 ## Standing rule
 
@@ -12,7 +12,7 @@ Mentee CoS and specialists query this plugin first when the ask is where current
 
 ## Merge-gate visitor matrix (CoS smell-test)
 
-Seven cases this package must support. Thin links, not essays. No auth. No database. No public catalog.
+Seven cases this package must support. Thin links, not essays. Install-first: no auth. No public catalog. Optional identity (whoami + labels) is a separate matrix in [`COVERAGE.md`](COVERAGE.md) — it does not change these seven.
 
 **Human**
 
@@ -120,7 +120,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 `mcp.json` pins the preview Streamable HTTP host `https://bootstrap-os-mcp.vercel.app/mcp`. `${BOOTSTRAP_MCP_URL}` may override (default is that host). Not mentee-ready boards. Not a public catalog. Do not use `mcp.pirin.ai`.
 
-Read tools only: OS info, docs, house-rule pins. Founder `company-state` stays path 3 local stdio.
+Public read tools (no login): OS info, docs, house-rule pins. Gated `bootstrap_whoami` / company labels return 401 + `WWW-Authenticate` to pirin.ai OAuth metadata. Login is `/bootstrap-os/login` on pirin.ai (Web Builder; not this repo). Founder `company-state` stays path 3 local stdio. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
 
 Deploy recipe (new Vercel project `bootstrap-os-mcp` only):
 

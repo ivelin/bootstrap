@@ -8,7 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
+import { HOSTED_GATED_TOOL_NAMES, HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
 import { startHostedReadServer } from "../dist/http.js";
 
 const WRITE_TOOLS = [
@@ -105,6 +105,9 @@ async function main() {
     for (const n of HOSTED_READ_TOOL_NAMES) {
       assert.ok(names.includes(n), `missing hosted-read tool ${n}`);
     }
+    for (const n of HOSTED_GATED_TOOL_NAMES) {
+      assert.ok(names.includes(n), `missing gated tool ${n}`);
+    }
     for (const n of WRITE_TOOLS) {
       assert.ok(!names.includes(n), `hosted-read must not expose ${n}`);
     }
@@ -118,6 +121,25 @@ async function main() {
     assert.match(JSON.stringify(info.companyState), /Not hosted/i);
     assert.equal(info.marketplace, false);
     assert.ok(!info.paths?.statePath, "hosted-read must not expose founder state paths");
+
+    const gated = await fetch(hosted.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 90,
+        method: "tools/call",
+        params: { name: "bootstrap_whoami", arguments: {} },
+      }),
+    });
+    assert.equal(gated.status, 401);
+    assert.equal(
+      gated.headers.get("WWW-Authenticate"),
+      'Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="https://bootstrap-os-mcp.vercel.app/mcp", scope="bootstrap-os"',
+    );
 
     const listed = await call(client, "bootstrap_list_docs");
     assert.ok(Array.isArray(listed));
