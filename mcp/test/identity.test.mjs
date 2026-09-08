@@ -19,7 +19,9 @@ import {
 } from "../dist/identity.js";
 import {
   HOSTED_MCP_RESOURCE,
+  HOSTED_MCP_RESOURCE_ALIAS,
   isJwtAccessToken,
+  isProdPinResource,
   PIRIN_AUTHORIZATION_SERVER,
   PIRIN_AUTHORIZATION_SERVER_METADATA,
   PIRIN_PROTECTED_RESOURCE_METADATA_URL,
@@ -188,6 +190,10 @@ describe("hosted identity (resource server, gated)", () => {
   });
 
   it("production AS strings are live pirin.ai after #143 merged", () => {
+    assert.equal(HOSTED_MCP_RESOURCE, "https://mcp.bootstrap.pirin.ai/mcp");
+    assert.equal(HOSTED_MCP_RESOURCE_ALIAS, "https://bootstrap-os-mcp.vercel.app/mcp");
+    assert.equal(isProdPinResource(HOSTED_MCP_RESOURCE), true);
+    assert.equal(isProdPinResource(HOSTED_MCP_RESOURCE_ALIAS), true);
     assert.equal(
       PIRIN_PROTECTED_RESOURCE_METADATA_URL,
       "https://pirin.ai/.well-known/oauth-protected-resource",
@@ -274,6 +280,7 @@ describe("hosted identity (resource server, gated)", () => {
       /resource_metadata="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource"/,
     );
     assert.doesNotMatch(challenge, /resource="https:\/\/bootstrap-os-mcp\.vercel\.app\/mcp"/);
+    assert.doesNotMatch(challenge, /resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp"/);
     assert.doesNotMatch(challenge, /resource_metadata="https:\/\/pirin\.ai\//);
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
     const res = await handleHostedReadFetch(previewReq);
@@ -326,16 +333,31 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(hostedMcpResource(), HOSTED_MCP_RESOURCE);
     assert.equal(authorizationServerUrl(), PIRIN_AUTHORIZATION_SERVER);
     const prodDoc = protectedResourceMetadataDocument(
-      new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-protected-resource"),
+      new Request("https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource"),
     );
     assert.equal(prodDoc.resource, HOSTED_MCP_RESOURCE);
+    assert.notEqual(prodDoc.resource, HOSTED_MCP_RESOURCE_ALIAS);
     assert.deepEqual(prodDoc.authorization_servers, ["https://pirin.ai/bootstrap-os/login"]);
+    const aliasDoc = protectedResourceMetadataDocument(
+      new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-protected-resource"),
+    );
+    assert.equal(aliasDoc.resource, HOSTED_MCP_RESOURCE);
     assert.deepEqual(
       authorizationServerMetadataDocument(
-        new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-authorization-server"),
+        new Request("https://mcp.bootstrap.pirin.ai/.well-known/oauth-authorization-server"),
       ),
       PIRIN_AUTHORIZATION_SERVER_METADATA,
     );
+    const prodWk = await handleHostedReadFetch(
+      new Request("https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource"),
+    );
+    assert.equal(prodWk.status, 200);
+    assert.equal(JSON.parse(await prodWk.text()).resource, HOSTED_MCP_RESOURCE);
+    const aliasWk = await handleHostedReadFetch(
+      new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-protected-resource"),
+    );
+    assert.equal(aliasWk.status, 200);
+    assert.equal(JSON.parse(await aliasWk.text()).resource, HOSTED_MCP_RESOURCE);
   });
 
   it("Hold preview cookie-less initialize / GET SSE / tools/list 401; prod pin initialize stays 200", async () => {
@@ -417,23 +439,32 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(authedInit.status, 200);
 
     process.env.VERCEL_ENV = "production";
-    const prodInit = new Request("https://bootstrap-os-mcp.vercel.app/mcp", {
+    const initBody = {
+      jsonrpc: "2.0",
+      id: 23,
+      method: "initialize",
+      params: {
+        protocolVersion: "2025-03-26",
+        capabilities: {},
+        clientInfo: { name: "prod-pin", version: "0.0.0" },
+      },
+    };
+    const prodInit = new Request(HOSTED_MCP_RESOURCE, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 23,
-        method: "initialize",
-        params: {
-          protocolVersion: "2025-03-26",
-          capabilities: {},
-          clientInfo: { name: "prod-pin", version: "0.0.0" },
-        },
-      }),
+      body: JSON.stringify(initBody),
     });
     assert.equal(requiresPreviewHandshakeAuth(prodInit), false);
     const prodRes = await handleHostedReadFetch(prodInit);
     assert.equal(prodRes.status, 200);
+
+    const aliasInit = new Request(HOSTED_MCP_RESOURCE_ALIAS, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+      body: JSON.stringify({ ...initBody, id: 24 }),
+    });
+    assert.equal(requiresPreviewHandshakeAuth(aliasInit), false);
+    assert.equal((await handleHostedReadFetch(aliasInit)).status, 200);
   });
 
   it("CORS allows Authorization and exposes WWW-Authenticate", async () => {

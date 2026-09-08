@@ -2,10 +2,11 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { HOSTED_MCP_RESOURCE } from "../dist/oauth.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const PLUGIN = path.join(REPO_ROOT, "plugin");
-const HOSTED_MCP_URL = "https://bootstrap-os-mcp.vercel.app/mcp";
+const HOSTED_MCP_URL = HOSTED_MCP_RESOURCE;
 const ESSAY_FORBIDDEN = [
   "Text eight people",
   "waitlist of 400",
@@ -56,7 +57,7 @@ describe("preview plugin (hyperlink only)", () => {
     const server = mcpJson.mcpServers["bootstrap-os"];
     assert.equal(server.type, "streamable-http");
     assert.equal(server.url, HOSTED_MCP_URL);
-    assert.doesNotMatch(server.url, /pirin\.ai/);
+    assert.doesNotMatch(server.url, /https:\/\/mcp\.pirin\.ai\b/);
     assert.ok(!("command" in server));
     const mcpRaw = JSON.stringify(mcpJson);
     assert.doesNotMatch(mcpRaw, /mcp\.pirin\.ai/);
@@ -135,7 +136,7 @@ describe("preview plugin (hyperlink only)", () => {
     assert.doesNotMatch(standing, /ivelin@pirin\.ai/);
     const firstHour = fs.readFileSync(path.join(PLUGIN, "skills", "first-hour", "SKILL.md"), "utf8");
     assert.match(firstHour, /Install-first|install-first/);
-    assert.match(firstHour, /bootstrap-os-mcp\.vercel\.app\/mcp/);
+    assert.match(firstHour, /mcp\.bootstrap\.pirin\.ai\/mcp/);
     assert.match(firstHour, /lifestyle or swinging for the fences/i);
     assert.match(firstHour, /day-0-lifestyle-or-swinging-for-the-fences/);
     assert.match(firstHour, /Do not upload mentee work to Ivelin.s GitHub/);

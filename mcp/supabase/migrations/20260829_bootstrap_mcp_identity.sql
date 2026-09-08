@@ -187,7 +187,7 @@ BEGIN
     'token', raw_token,
     'email', user_email,
     'labels', labels,
-    'mcpUrl', 'https://bootstrap-os-mcp.vercel.app/mcp',
+    'mcpUrl', 'https://mcp.bootstrap.pirin.ai/mcp',
     'note', 'Show the token once. Put it on the MCP connector as Authorization: Bearer <token>. Public OS tools stay open without it.'
   );
 END;

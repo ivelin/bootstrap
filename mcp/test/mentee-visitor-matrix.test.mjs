@@ -23,13 +23,14 @@ import {
   emptyContextMayInventEfficiencyMetrics,
   path1MayCiteEfficiencyNumbers,
 } from "../dist/after-proof-efficiency.js";
+import { HOSTED_MCP_RESOURCE } from "../dist/oauth.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const PLUGIN = path.join(REPO_ROOT, "plugin");
 const COVERAGE = path.join(PLUGIN, "COVERAGE.md");
 const README = path.join(PLUGIN, "README.md");
 const MARKET = path.join(REPO_ROOT, ".cursor-plugin", "marketplace.json");
-const HOSTED = "https://bootstrap-os-mcp.vercel.app/mcp";
+const HOSTED = HOSTED_MCP_RESOURCE;
 
 function skill(name) {
   return fs.readFileSync(path.join(PLUGIN, "skills", name, "SKILL.md"), "utf8");
@@ -61,7 +62,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /WWW-Authenticate/);
     assert.match(
       identity,
-      /Bearer realm="bootstrap-os-mcp", resource_metadata="https:\/\/pirin\.ai\/\.well-known\/oauth-protected-resource", scope="bootstrap-os"/,
+      /Bearer realm="bootstrap-os-mcp", resource_metadata="https:\/\/pirin\.ai\/\.well-known\/oauth-protected-resource", resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp", scope="bootstrap-os"/,
     );
     assert.match(identity, /PGlite/);
     assert.match(identity, /Authorization: Bearer/);
@@ -254,6 +255,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
     assert.ok(doneWhen, "Done when section missing");
     assert.doesNotMatch(doneWhen[0], /bootstrap-os-mcp\.vercel\.app/);
+    assert.doesNotMatch(doneWhen[0], /mcp\.bootstrap\.pirin\.ai/);
     assert.doesNotMatch(doneWhen[0], /upload mentee work/);
 
     const first = skill("first-hour");

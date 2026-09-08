@@ -26,7 +26,10 @@ export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   `${PIRIN_ORIGIN}/.well-known/oauth-protected-resource`;
 
 /** Public pin. Production / merge only. Never emit this as the resource on VERCEL_ENV=preview. */
-export const HOSTED_MCP_RESOURCE = "https://bootstrap-os-mcp.vercel.app/mcp";
+export const HOSTED_MCP_RESOURCE = "https://mcp.bootstrap.pirin.ai/mcp";
+
+/** Vercel default hostname. Still served as an alias; never advertised as the mentee pin. */
+export const HOSTED_MCP_RESOURCE_ALIAS = "https://bootstrap-os-mcp.vercel.app/mcp";
 
 /** Canonical public no-SSO git preview for PR #17. */
 export const PREVIEW_HOSTED_MCP_RESOURCE =
@@ -59,7 +62,8 @@ export function normalizeMcpResource(raw: string): string {
 }
 
 export function isProdPinResource(url: string): boolean {
-  return normalizeMcpResource(url) === HOSTED_MCP_RESOURCE;
+  const normalized = normalizeMcpResource(url);
+  return normalized === HOSTED_MCP_RESOURCE || normalized === HOSTED_MCP_RESOURCE_ALIAS;
 }
 
 export function originProtectedResourceMetadataUrl(resourceUrl: string): string {

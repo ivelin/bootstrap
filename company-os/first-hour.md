@@ -85,7 +85,7 @@ On Day 0 you should hear something like: journey phase **1 of 9**, loop stage **
 
 Not another Day 0 checkbox. This hour stays thesis, ≥3 groups, one snapshot.
 
-After First Hour, query the published OS / hosted MCP. Pin: `https://bootstrap-os-mcp.vercel.app/mcp`.
+After First Hour, query the published OS / hosted MCP. Pin: `https://mcp.bootstrap.pirin.ai/mcp`.
 
 Do **not** upload mentee work to Ivelin's GitHub.
 

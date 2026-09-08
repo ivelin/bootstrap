@@ -1,6 +1,6 @@
 ---
 name: path-1-default
-description: Default Bootstrap OS start. Use when a founder asks how to begin, which path to pick, whether they need MCP or this plugin, or lifestyle vs swinging for the fences. Point an AI at the published repo. After First Hour — query the published OS / hosted MCP; do not upload mentee work to Ivelin's GitHub. If they install, it is this plugin plus https://bootstrap-os-mcp.vercel.app/mcp only. Path 1 stays the front door.
+description: Default Bootstrap OS start. Use when a founder asks how to begin, which path to pick, whether they need MCP or this plugin, or lifestyle vs swinging for the fences. Point an AI at the published repo. After First Hour — query the published OS / hosted MCP; do not upload mentee work to Ivelin's GitHub. If they install, it is this plugin plus https://mcp.bootstrap.pirin.ai/mcp only. Path 1 stays the front door.
 ---
 
 # Path 1

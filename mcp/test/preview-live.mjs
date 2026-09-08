@@ -3,15 +3,17 @@
  * Cloud agents on PRs must not run this (it live-probes prod).
  * Hits the production pin on main. PR git preview is a separate public URL.
  *
- * Override pin with BOOTSTRAP_MCP_ORIGIN (default https://bootstrap-os-mcp.vercel.app).
+ * Override pin with BOOTSTRAP_MCP_ORIGIN (default https://mcp.bootstrap.pirin.ai).
  */
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
+import { HOSTED_MCP_RESOURCE } from "../dist/oauth.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
-const ORIGIN = (process.env.BOOTSTRAP_MCP_ORIGIN ?? "https://bootstrap-os-mcp.vercel.app").replace(
+const DEFAULT_ORIGIN = HOSTED_MCP_RESOURCE.replace(/\/mcp$/i, "");
+const ORIGIN = (process.env.BOOTSTRAP_MCP_ORIGIN ?? DEFAULT_ORIGIN).replace(
   /\/+$/,
   "",
 );

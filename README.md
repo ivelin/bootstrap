@@ -87,7 +87,7 @@ A **preview** plugin lives in [`plugin/`](plugin/): thin skills that hyperlink t
 
 The hosted slice is read-only: OS info, docs, house-rule pins (no login). Gated whoami + labels return 401 + `WWW-Authenticate` to pirin.ai; login is `/bootstrap-os/login` (Web Builder; not this repo). Markdown on GitHub remains the constitution. Founder `company-state` stays on path 3 local stdio — not on a shared server.
 
-There is a **preview** public read adapter on `*.vercel.app` (not mentee-ready boards, not a public catalog submit, not pirin.ai). No day-one SaaS boards. Founder `company-state` stays path 3. Pin is in [`plugin/mcp.json`](plugin/mcp.json); `${BOOTSTRAP_MCP_URL}` can override (defaults to that host). Do not use `mcp.pirin.ai` (dead).
+There is a **preview** public read adapter on `*.vercel.app` (not mentee-ready boards, not a public catalog submit, not pirin.ai). Production pin is `https://mcp.bootstrap.pirin.ai/mcp`. No day-one SaaS boards. Founder `company-state` stays path 3. Pin is in [`plugin/mcp.json`](plugin/mcp.json); `${BOOTSTRAP_MCP_URL}` can override (defaults to that host). Do not use `mcp.pirin.ai` (dead).
 
 ---
 

@@ -10,6 +10,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { HOSTED_GATED_TOOL_NAMES, HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
 import { startHostedReadServer } from "../dist/http.js";
+import { WWW_AUTHENTICATE_CHALLENGE } from "../dist/oauth.js";
 
 const WRITE_TOOLS = [
   "bootstrap_init_company",
@@ -136,10 +137,8 @@ async function main() {
       }),
     });
     assert.equal(gated.status, 401);
-    assert.equal(
-      gated.headers.get("WWW-Authenticate"),
-      'Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="https://bootstrap-os-mcp.vercel.app/mcp", scope="bootstrap-os"',
-    );
+    assert.equal(gated.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+    assert.match(WWW_AUTHENTICATE_CHALLENGE, /resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp"/);
 
     const listed = await call(client, "bootstrap_list_docs");
     assert.ok(Array.isArray(listed));
