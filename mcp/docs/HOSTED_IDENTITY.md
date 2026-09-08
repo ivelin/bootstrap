@@ -12,7 +12,7 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
 | Product | MCP client follows 401 → this origin's protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
-| Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Production pin stays on `main`. Do not merge. |
+| Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Production pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. `bootstrap-os-mcp.vercel.app` is a served alias. Do not merge. |
 | Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
 
 ## HTTP contract
@@ -24,7 +24,7 @@ On this **Hold preview** (`VERCEL_ENV=preview`, not the prod hostname), cookie-l
 Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_company_labels` (and any later gated tool) return **HTTP 401**. Production / main uses this exact header (live pirin.ai after #143 merged):
 
 ```http
-WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", scope="bootstrap-os"
+WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="https://mcp.bootstrap.pirin.ai/mcp", scope="bootstrap-os"
 ```
 
 The 401 JSON also includes `identityStore` (`supabase` | `memory` | `unset`). That is not a session claim.
@@ -59,7 +59,7 @@ Suggested RFC 9728 document (production — live):
 
 ```json
 {
-  "resource": "https://bootstrap-os-mcp.vercel.app/mcp",
+  "resource": "https://mcp.bootstrap.pirin.ai/mcp",
   "authorization_servers": ["https://pirin.ai/bootstrap-os/login"],
   "scopes_supported": ["bootstrap-os"],
   "bearer_methods_supported": ["header"]

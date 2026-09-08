@@ -5,6 +5,7 @@ import path from "node:path";
 import { REPO_ROOT, makeTempEnv, rmrf } from "./helpers.mjs";
 import { clearSession } from "../dist/companies.js";
 import { listOsDocs, readOsDoc } from "../dist/docs.js";
+import { HOSTED_MCP_RESOURCE } from "../dist/oauth.js";
 
 describe("markdown install path (zero MCP required)", () => {
   it("portable docs exist on disk without node mcp runtime", () => {
@@ -79,7 +80,7 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(firstHour, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
       assert.match(firstHour, /house-rule-do-not-automate-a-step-that-should-not-exist/);
       assert.match(firstHour, /### Standing rules/);
-      assert.ok(firstHour.includes("https://bootstrap-os-mcp.vercel.app/mcp"));
+      assert.ok(firstHour.includes(HOSTED_MCP_RESOURCE));
       assert.match(firstHour, /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
       assert.ok(firstHour.includes("https://github.com/ivelin/bootstrap"));
       assert.match(firstHour, /\*\*Not\*\* a public catalog submit/);
@@ -92,6 +93,7 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(doneWhen[0], /≥3 customer groups/);
       assert.match(doneWhen[0], /Where are we/);
       assert.doesNotMatch(doneWhen[0], /bootstrap-os-mcp\.vercel\.app/);
+      assert.doesNotMatch(doneWhen[0], /mcp\.bootstrap\.pirin\.ai/);
       assert.doesNotMatch(doneWhen[0], /upload mentee work/);
       assert.doesNotMatch(doneWhen[0], /automate a step that should not exist/);
       assert.doesNotMatch(doneWhen[0], /automate the playbook/);

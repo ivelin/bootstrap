@@ -594,13 +594,13 @@ assert plugin["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.sche
 cursor_plugin = json.loads((root / ".cursor-plugin/plugin.json").read_text())
 assert cursor_plugin["version"] == "0.1.1"
 default_url = cursor_plugin["variables"]["properties"]["BOOTSTRAP_MCP_URL"]["default"]
-assert default_url == "https://bootstrap-os-mcp.vercel.app/mcp"
+assert default_url == "https://mcp.bootstrap.pirin.ai/mcp"
 mcp = json.loads((root / "mcp.json").read_text())
 assert list(mcp["mcpServers"]) == ["bootstrap-os"]
 server = mcp["mcpServers"]["bootstrap-os"]
 assert server["type"] == "streamable-http"
-assert server["url"] == "https://bootstrap-os-mcp.vercel.app/mcp"
-assert "pirin.ai" not in server["url"]
+assert server["url"] == "https://mcp.bootstrap.pirin.ai/mcp"
+assert "mcp.pirin.ai" not in server["url"]
 assert "command" not in server
 raw = (root / "mcp.json").read_text()
 assert "mcp.pirin.ai" not in raw
@@ -617,7 +617,7 @@ readme = (root / "README.md").read_text()
 assert "0.1.1" in readme
 assert "Import from Repo" in readme
 assert "https://github.com/ivelin/bootstrap" in readme
-assert "https://bootstrap-os-mcp.vercel.app/mcp" in readme
+assert "https://mcp.bootstrap.pirin.ai/mcp" in readme
 assert "~/.cursor/plugins/local/bootstrap-os" in readme
 assert "/add-plugin" in readme
 assert "we have not submitted" in readme.lower() or "We have not submitted" in readme
@@ -696,7 +696,7 @@ assert "after-proof-efficiency.md" in gate
 assert "0.75 stop-spend" not in gate
 first = (root / "skills/first-hour/SKILL.md").read_text()
 assert "Install-first" in first or "install-first" in first
-assert "https://bootstrap-os-mcp.vercel.app/mcp" in first
+assert "https://mcp.bootstrap.pirin.ai/mcp" in first
 assert "No auth" in first
 assert "No database" in first
 assert "day-0-lifestyle-or-swinging-for-the-fences" in first
@@ -733,7 +733,7 @@ assert "## Not locked" in coverage
 assert "## Visitor matrix" in coverage
 assert "do not invent their stage" in coverage
 assert "H1" in coverage and "A4" in coverage
-assert "https://bootstrap-os-mcp.vercel.app/mcp" in coverage
+assert "https://mcp.bootstrap.pirin.ai/mcp" in coverage
 assert "GET /health" in coverage
 assert "Rollback" in coverage
 assert "SSO" in coverage
@@ -756,7 +756,7 @@ PY
 then
   ok "plugin skills only hyperlink the published OS; team Import from Repo listed"
 else
-  not_ok "plugin must stay thin hyperlinks; one vercel.app connector; team marketplace.json at plugin/"
+  not_ok "plugin must stay thin hyperlinks; one hosted MCP connector; team marketplace.json at plugin/"
 fi
 
 # --- s) OS 2.8.8: no-optimal-price house rule + Day 0 lifestyle/fences (do not mix) ---
@@ -904,7 +904,7 @@ fi
 # Exact MCP URL and Path 1 GitHub stay unmodified. Skills pin + link only.
 fh=company-os/first-hour.md
 if grep -q '### Standing rules' "$fh" \
-  && grep -q 'https://bootstrap-os-mcp.vercel.app/mcp' "$fh" \
+  && grep -q 'https://mcp.bootstrap.pirin.ai/mcp' "$fh" \
   && grep -q "upload mentee work to Ivelin's GitHub" "$fh" \
   && grep -q 'https://github.com/ivelin/bootstrap' "$fh" \
   && grep -q 'a public catalog submit' "$fh" \
@@ -927,6 +927,7 @@ fi
 # Done when (Day 0 homework) must not grow the standing rules.
 done_when=$(sed -n '/^## Done when$/,/^## After this hour$/p' "$fh")
 if ! printf '%s\n' "$done_when" | grep -q 'bootstrap-os-mcp.vercel.app' \
+  && ! printf '%s\n' "$done_when" | grep -q 'mcp.bootstrap.pirin.ai' \
   && ! printf '%s\n' "$done_when" | grep -q 'upload mentee work'; then
   ok "standing rules are not extra Day 0 homework"
 else

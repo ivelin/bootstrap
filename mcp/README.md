@@ -9,7 +9,7 @@
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
 | **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
-| **4. Hosted MCP** | Preview only | HTTP read adapter on `*.vercel.app` + [`../plugin/`](../plugin/). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
+| **4. Hosted MCP** | Preview only | HTTP read adapter. Production pin `https://mcp.bootstrap.pirin.ai/mcp`. Git-branch previews on `*.vercel.app` + [`../plugin/`](../plugin/). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
@@ -147,7 +147,7 @@ Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins
 
 Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Unauthenticated calls return HTTP 401 + `WWW-Authenticate` pointing at pirin.ai OAuth metadata. Login UI is `/bootstrap-os/login` (Web Builder), not this repo. Labels only — not boards. Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
 
-Public preview is `*.vercel.app` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
+Production pin is `https://mcp.bootstrap.pirin.ai/mcp` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`; `bootstrap-os-mcp.vercel.app` is a served alias). Git-branch public preview is `*.vercel.app`. Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
 
 ```bash
 cd mcp

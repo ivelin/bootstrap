@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "bootstrap-os-hosted-read": {
-      "url": "https://bootstrap-os-mcp.vercel.app/mcp",
-      "_comment": "Preview read adapter on *.vercel.app. Override with BOOTSTRAP_MCP_URL if needed. DEAD do-not-use: https://mcp.pirin.ai/bootstrap-os. Write/init/use-company stays path 3 stdio. Not mentee-ready hosted boards."
+      "url": "https://mcp.bootstrap.pirin.ai/mcp",
+      "_comment": "Production pin on mcp.bootstrap.pirin.ai. Git-branch previews stay on *.vercel.app. Override with BOOTSTRAP_MCP_URL if needed. DEAD do-not-use: https://mcp.pirin.ai/bootstrap-os. Write/init/use-company stays path 3 stdio. Not mentee-ready hosted boards."
     }
   }
 }
