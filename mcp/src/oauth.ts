@@ -21,7 +21,11 @@ export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   service_documentation: PIRIN_AUTHORIZATION_SERVER,
 } as const;
 
-/** Production / main. Live pirin.ai RFC 9728. Never use this as Hold-preview resource_metadata (its resource is the prod pin). */
+/**
+ * Live pirin.ai RFC 9728. Do not emit as WWW-Authenticate resource_metadata.
+ * That document still advertises resource=bootstrap-os-mcp.vercel.app until pirin-ai updates.
+ * Never use as Hold-preview resource_metadata (its resource is not the preview pin).
+ */
 export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   `${PIRIN_ORIGIN}/.well-known/oauth-protected-resource`;
 
@@ -69,6 +73,10 @@ export function isProdPinResource(url: string): boolean {
 export function originProtectedResourceMetadataUrl(resourceUrl: string): string {
   return `${normalizeMcpResource(resourceUrl).replace(/\/mcp$/i, "")}/.well-known/oauth-protected-resource`;
 }
+
+/** Production / main RFC 9728 on this MCP origin. Matches HOSTED_MCP_RESOURCE. */
+export const HOSTED_PROTECTED_RESOURCE_METADATA_URL =
+  originProtectedResourceMetadataUrl(HOSTED_MCP_RESOURCE);
 
 function isLivePirinProtectedResourceMetadata(raw: string): boolean {
   try {
@@ -129,8 +137,9 @@ export function hostedMcpResource(req?: Request): string {
 
 /**
  * Runtime metadata URL for WWW-Authenticate resource_metadata.
- * Hold preview: this MCP origin well-known. Never live pirin.ai (that JSON resource is the prod pin).
- * Never the dead #143 git preview.
+ * Production / main: this MCP origin well-known (derived from HOSTED_MCP_RESOURCE).
+ * Hold preview: this MCP origin well-known. Never live pirin.ai (stale resource=vercel.app alias).
+ * Never the dead #143 git preview. authorization_servers stay on pirin.ai login.
  */
 export function protectedResourceMetadataUrl(req?: Request): string {
   if (isPreviewResourceContext(req)) {
@@ -148,7 +157,7 @@ export function protectedResourceMetadataUrl(req?: Request): string {
   ) {
     return override.replace(/\/+$/, "");
   }
-  return PIRIN_PROTECTED_RESOURCE_METADATA_URL;
+  return originProtectedResourceMetadataUrl(hostedMcpResource(req));
 }
 
 /**
@@ -182,7 +191,7 @@ export function wwwAuthenticateChallengeFor(
 
 /** Production / main default challenge (no env, not a Vercel preview). */
 export const WWW_AUTHENTICATE_CHALLENGE = wwwAuthenticateChallengeFor(
-  PIRIN_PROTECTED_RESOURCE_METADATA_URL,
+  HOSTED_PROTECTED_RESOURCE_METADATA_URL,
   HOSTED_MCP_RESOURCE,
 );
 

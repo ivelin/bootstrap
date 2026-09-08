@@ -62,7 +62,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /WWW-Authenticate/);
     assert.match(
       identity,
-      /Bearer realm="bootstrap-os-mcp", resource_metadata="https:\/\/pirin\.ai\/\.well-known\/oauth-protected-resource", resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp", scope="bootstrap-os"/,
+      /Bearer realm="bootstrap-os-mcp", resource_metadata="https:\/\/mcp\.bootstrap\.pirin\.ai\/\.well-known\/oauth-protected-resource", resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp", scope="bootstrap-os"/,
     );
     assert.match(identity, /PGlite/);
     assert.match(identity, /Authorization: Bearer/);

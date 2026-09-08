@@ -1,7 +1,7 @@
 /** Portable journey + loop labels (aligned to company-os v2.8.9). */
 
 export const OS_VERSION = "2.8.9";
-export const MCP_VERSION = "0.3.2";
+export const MCP_VERSION = "0.3.3";
 
 /** Published constitution. Hosted read adapter fetches from here; do not embed copies. */
 export const PUBLISHED_REPO = "https://github.com/ivelin/bootstrap";
@@ -28,7 +28,7 @@ export function isHostedGatedToolName(name: string | undefined): boolean {
 }
 
 export const PATH4_HONESTY =
-  "Preview only. plugin/ + HTTP read adapter exist. Public OS tools stay unauthenticated. Gated whoami + labels: 401 + WWW-Authenticate to pirin.ai OAuth metadata (not a login UI here). Production pin is https://mcp.bootstrap.pirin.ai/mcp. Public preview on *.vercel.app is not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. No founder company-state on a shared server. Path 1 stays the front door.";
+  "Preview only. plugin/ + HTTP read adapter exist. Public OS tools stay unauthenticated. Gated whoami + labels: 401 + WWW-Authenticate to this MCP origin RFC 9728 (authorization_servers = pirin.ai login; not a login UI here). Production pin is https://mcp.bootstrap.pirin.ai/mcp. Public preview on *.vercel.app is not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. No founder company-state on a shared server. Path 1 stays the front door.";
 
 export const JOURNEY_PHASES: Record<number, string> = {
   1: "Thesis",

@@ -22,6 +22,7 @@ import {
   HOSTED_MCP_RESOURCE_ALIAS,
   isJwtAccessToken,
   isProdPinResource,
+  HOSTED_PROTECTED_RESOURCE_METADATA_URL,
   PIRIN_AUTHORIZATION_SERVER,
   PIRIN_AUTHORIZATION_SERVER_METADATA,
   PIRIN_PROTECTED_RESOURCE_METADATA_URL,
@@ -83,8 +84,9 @@ async function assertGatedUnauthorized(res) {
   assert.equal(challenge, WWW_AUTHENTICATE_CHALLENGE);
   assert.equal(
     challenge,
-    `Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
+    `Bearer realm="bootstrap-os-mcp", resource_metadata="${HOSTED_PROTECTED_RESOURCE_METADATA_URL}", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
   );
+  assert.doesNotMatch(challenge, /resource_metadata="https:\/\/pirin\.ai\//);
   const body = JSON.parse(await res.text());
   assert.equal(body.error, "invalid_token");
   assert.equal(body.resource, HOSTED_MCP_RESOURCE);
@@ -198,6 +200,10 @@ describe("hosted identity (resource server, gated)", () => {
       PIRIN_PROTECTED_RESOURCE_METADATA_URL,
       "https://pirin.ai/.well-known/oauth-protected-resource",
     );
+    assert.equal(
+      HOSTED_PROTECTED_RESOURCE_METADATA_URL,
+      "https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource",
+    );
     assert.equal(PIRIN_AUTHORIZATION_SERVER, "https://pirin.ai/bootstrap-os/login");
     assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.issuer, "https://pirin.ai/bootstrap-os/login");
     assert.equal(
@@ -211,10 +217,14 @@ describe("hosted identity (resource server, gated)", () => {
     );
     assert.equal(
       WWW_AUTHENTICATE_CHALLENGE,
-      `Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
+      `Bearer realm="bootstrap-os-mcp", resource_metadata="${HOSTED_PROTECTED_RESOURCE_METADATA_URL}", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
     );
     process.env.VERCEL_ENV = "production";
     assert.equal(wwwAuthenticateChallenge(), WWW_AUTHENTICATE_CHALLENGE);
+    assert.doesNotMatch(WWW_AUTHENTICATE_CHALLENGE, /resource_metadata="https:\/\/pirin\.ai\//);
+    process.env.BOOTSTRAP_OAUTH_RESOURCE_METADATA = PIRIN_PROTECTED_RESOURCE_METADATA_URL;
+    assert.equal(wwwAuthenticateChallenge(), WWW_AUTHENTICATE_CHALLENGE);
+    delete process.env.BOOTSTRAP_OAUTH_RESOURCE_METADATA;
     assert.deepEqual(
       authorizationServerMetadataDocument(
         new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-authorization-server"),
@@ -223,7 +233,7 @@ describe("hosted identity (resource server, gated)", () => {
     );
   });
 
-  it("preview ignores live pirin.ai well-known as resource_metadata (that JSON resource is the prod pin)", async () => {
+  it("preview ignores live pirin.ai well-known as resource_metadata (that JSON resource is the vercel.app alias)", async () => {
     process.env.VERCEL_ENV = "preview";
     process.env.BOOTSTRAP_OAUTH_RESOURCE_METADATA = PIRIN_PROTECTED_RESOURCE_METADATA_URL;
     const previewReq = new Request(PREVIEW_HOSTED_MCP_RESOURCE, {
@@ -349,10 +359,16 @@ describe("hosted identity (resource server, gated)", () => {
       PIRIN_AUTHORIZATION_SERVER_METADATA,
     );
     const prodWk = await handleHostedReadFetch(
-      new Request("https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource"),
+      new Request(HOSTED_PROTECTED_RESOURCE_METADATA_URL),
     );
     assert.equal(prodWk.status, 200);
-    assert.equal(JSON.parse(await prodWk.text()).resource, HOSTED_MCP_RESOURCE);
+    const prodWkDoc = JSON.parse(await prodWk.text());
+    assert.equal(prodWkDoc.resource, HOSTED_MCP_RESOURCE);
+    assert.deepEqual(prodWkDoc.authorization_servers, [PIRIN_AUTHORIZATION_SERVER]);
+    assert.match(
+      wwwAuthenticateChallenge(),
+      /resource_metadata="https:\/\/mcp\.bootstrap\.pirin\.ai\/\.well-known\/oauth-protected-resource"/,
+    );
     const aliasWk = await handleHostedReadFetch(
       new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-protected-resource"),
     );
@@ -465,6 +481,30 @@ describe("hosted identity (resource server, gated)", () => {
     });
     assert.equal(requiresPreviewHandshakeAuth(aliasInit), false);
     assert.equal((await handleHostedReadFetch(aliasInit)).status, 200);
+
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const prodWhoami = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 25,
+          method: "tools/call",
+          params: { name: "bootstrap_whoami", arguments: {} },
+        }),
+      }),
+    );
+    assert.equal(prodWhoami.status, 401);
+    assert.equal(prodWhoami.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+    assert.match(
+      prodWhoami.headers.get("WWW-Authenticate") ?? "",
+      /resource_metadata="https:\/\/mcp\.bootstrap\.pirin\.ai\/\.well-known\/oauth-protected-resource"/,
+    );
+    assert.match(
+      prodWhoami.headers.get("WWW-Authenticate") ?? "",
+      /resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp"/,
+    );
   });
 
   it("CORS allows Authorization and exposes WWW-Authenticate", async () => {
