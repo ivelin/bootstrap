@@ -1,7 +1,7 @@
 /**
  * Merge-gate visitor matrix (CoS smell-test).
  * Seven cases the package must support. File locks only.
- * Live HTTP is mcp/test/preview-live.mjs. Not a Cursor GUI test.
+ * File locks only. PR CI does not live-probe the production pin.
  */
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
@@ -49,10 +49,60 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     }
     assert.match(coverage, /emptyContextMayInventStage/);
     assert.match(coverage, /spokenYesMayPromote/);
+    assert.match(coverage, /Optional identity visitor matrix/);
+    assert.match(coverage, /pirin.*zk0.*totbox|ivelin fixture whoami/i);
+    assert.match(coverage, /one mentee cannot read another|Cannot see Ivelin labels/i);
     const mcpRaw = fs.readFileSync(path.join(PLUGIN, "mcp.json"), "utf8");
     assert.doesNotMatch(mcpRaw, /mcp\.pirin\.ai/);
     assert.doesNotMatch(mcpRaw, /gmail/i);
     assert.doesNotMatch(mcpRaw, /stripe/i);
+    const identity = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "HOSTED_IDENTITY.md"), "utf8");
+    const mcpReadme = fs.readFileSync(path.join(REPO_ROOT, "mcp", "README.md"), "utf8");
+    assert.match(identity, /WWW-Authenticate/);
+    assert.match(
+      identity,
+      /Bearer realm="bootstrap-os-mcp", resource_metadata="https:\/\/pirin\.ai\/\.well-known\/oauth-protected-resource", scope="bootstrap-os"/,
+    );
+    assert.match(identity, /PGlite/);
+    assert.match(identity, /Authorization: Bearer/);
+    assert.match(identity, /Founder lock/);
+    assert.match(identity, /\/bootstrap-os\/login/);
+    assert.match(identity, /authorization code \+ PKCE/i);
+    assert.match(identity, /Do \*\*not\*\* add a login UI/);
+    assert.match(identity, /BOOTSTRAP_OAUTH_RESOURCE_METADATA/);
+    assert.match(
+      identity,
+      /resource_metadata="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/\.well-known\/oauth-protected-resource"/,
+    );
+    assert.doesNotMatch(identity, /v0-pirin-ai-founder-studio-git-be053a/);
+    assert.doesNotMatch(identity, /bos_/);
+    assert.doesNotMatch(identity, /mint a token/i);
+    assert.match(
+      identity,
+      /resource="https:\/\/bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp"/,
+    );
+    assert.match(
+      identity,
+      /bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132\.vercel\.app\/mcp/,
+    );
+    assert.match(identity, /"authorization_servers": \["https:\/\/pirin\.ai\/bootstrap-os\/login"\]/);
+    assert.doesNotMatch(identity, /"authorization_servers": \["https:\/\/pirin\.ai"\]/);
+    assert.match(identity, /"issuer": "https:\/\/pirin\.ai\/bootstrap-os\/login"/);
+    assert.match(identity, /"token_endpoint": "https:\/\/pirin\.ai\/oauth\/token"/);
+    assert.match(identity, /"registration_endpoint": "https:\/\/pirin\.ai\/oauth\/register"/);
+    assert.match(identity, /oauth-authorization-server/);
+    assert.match(identity, /does \*\*not\*\* serve `\/oauth\/token`/);
+    assert.match(identity, /Hold preview/);
+    assert.match(identity, /cookie-less `initialize`/);
+    assert.match(identity, /GET SSE/);
+    assert.match(identity, /tools\/list` return \*\*HTTP 401\*\*/);
+    assert.match(identity, /Vercel Authentication is \*\*off\*\*/);
+    assert.doesNotMatch(readme, /SSO-gated/);
+    assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);
+    assert.equal(fs.existsSync(path.join(REPO_ROOT, "plugin", "login.html")), false);
+    assert.match(mcpReadme, /Ivelin first account/);
+    assert.match(mcpReadme, /pirin.*zk0.*totbox/s);
+    assert.match(mcpReadme, /Replaces Path 1\?/);
   });
 
   it("H1 + A1 install-first: plugin + connector only", () => {

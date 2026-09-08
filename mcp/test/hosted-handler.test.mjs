@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { handleHostedReadFetch } from "../dist/hosted-handler.js";
-import { HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
+import { HOSTED_GATED_TOOL_NAMES, HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
 
 async function rpc(method, params, id = 1) {
   const res = await handleHostedReadFetch(
@@ -49,7 +49,11 @@ describe("Vercel fetch handler (hosted-read)", () => {
     for (const n of HOSTED_READ_TOOL_NAMES) {
       assert.ok(names.includes(n), `missing ${n}`);
     }
+    for (const n of HOSTED_GATED_TOOL_NAMES) {
+      assert.ok(names.includes(n), `missing gated ${n}`);
+    }
     assert.ok(!names.includes("bootstrap_init_company"));
     assert.ok(!names.includes("bootstrap_update_state"));
+    assert.ok(!names.includes("bootstrap_get_state"));
   });
 });
