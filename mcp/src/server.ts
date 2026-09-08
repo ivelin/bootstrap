@@ -116,7 +116,7 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
             localMcpMultiCompany:
               "Path 3. One stdio server; bootstrap_init_company / list / use_company; state under BOOTSTRAP_DATA_ROOT/instances/<id>.",
             hostedReadPreview:
-              "Path 4 preview. Read-only: os info, docs, house-rule pins. Gated whoami + labels: 401 + WWW-Authenticate to pirin.ai. Fetch published repo. No shared founder boards.",
+              "Path 4 preview. Read-only: os info, docs, house-rule pins. Gated whoami + labels: 401 + WWW-Authenticate to this MCP origin RFC 9728 (authorization_servers = pirin.ai login). Fetch published repo. No shared founder boards.",
             identity: {
               publicTools: "Unauthenticated. Install-first and empty-context agents keep working.",
               gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels"],

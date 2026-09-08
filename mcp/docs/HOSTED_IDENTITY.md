@@ -8,7 +8,7 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 
 | | |
 |--|--|
-| Login / OAuth | **pirin.ai only.** Web Builder owns `/bootstrap-os/login` (authorize URL, authorization code + PKCE) and `/.well-known/oauth-protected-resource` |
+| Login / OAuth | **pirin.ai only.** Web Builder owns `/bootstrap-os/login` (authorize URL, authorization code + PKCE) and RFC 8414. This MCP origin serves RFC 9728; `authorization_servers` stay on pirin.ai. |
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
 | Product | MCP client follows 401 → this origin's protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
@@ -21,10 +21,10 @@ On the **production pin**, public tools (`bootstrap_os_info`, docs, house-rule p
 
 On this **Hold preview** (`VERCEL_ENV=preview`, not the prod hostname), cookie-less `initialize`, GET SSE `/mcp`, and `tools/list` return **HTTP 401** with the same `WWW-Authenticate` as gated whoami. Public OS tools still work **with a Bearer**. RFC 8414 / RFC 9728 well-known GETs stay 200.
 
-Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_company_labels` (and any later gated tool) return **HTTP 401**. Production / main uses this exact header (live pirin.ai after #143 merged):
+Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_company_labels` (and any later gated tool) return **HTTP 401**. Production / main uses this exact header (`resource_metadata` is **this MCP origin** well-known — not live pirin.ai, whose RFC 9728 `resource` is still the vercel.app alias until pirin-ai updates):
 
 ```http
-WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://pirin.ai/.well-known/oauth-protected-resource", resource="https://mcp.bootstrap.pirin.ai/mcp", scope="bootstrap-os"
+WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource", resource="https://mcp.bootstrap.pirin.ai/mcp", scope="bootstrap-os"
 ```
 
 The 401 JSON also includes `identityStore` (`supabase` | `memory` | `unset`). That is not a session claim.
@@ -35,7 +35,7 @@ Preview (this Hold — Cos lock) challenge — `resource` is this preview MCP UR
 WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource", resource="https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp", scope="bootstrap-os"
 ```
 
-Do **not** point Hold-preview `resource_metadata` at `https://pirin.ai/.well-known/oauth-protected-resource` — that JSON `resource` is the prod pin. `BOOTSTRAP_OAUTH_RESOURCE_METADATA` cannot override preview onto that live document.
+Do **not** point production or Hold-preview `resource_metadata` at `https://pirin.ai/.well-known/oauth-protected-resource` — that JSON `resource` is still `https://bootstrap-os-mcp.vercel.app/mcp`. `BOOTSTRAP_OAUTH_RESOURCE_METADATA` cannot override onto that live document.
 
 This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://pirin.ai/bootstrap-os/login`. The public pin must **not** 401 `initialize` or `tools/list`.
 
@@ -43,9 +43,11 @@ This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and t
 
 pirin-ai #143 is merged to main. The live authorization server is pirin.ai. Advertise the apex URLs (the live AS document uses these). Apex `https://pirin.ai/...` 307s to `www.pirin.ai` — that is pirin furniture, not this repo. Do not send Cos at the dead #143 git preview.
 
-Protected-resource metadata URL (production — live):
+Protected-resource metadata URL (production — this MCP origin):
 
-`https://pirin.ai/.well-known/oauth-protected-resource`
+`https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource`
+
+pirin.ai still publishes its own RFC 9728 at `https://pirin.ai/.well-known/oauth-protected-resource`. Do not send that URL as `resource_metadata` until that document's `resource` matches `https://mcp.bootstrap.pirin.ai/mcp`.
 
 Protected-resource metadata URL (Hold preview — this MCP origin, Cos lock):
 
@@ -77,7 +79,7 @@ Suggested RFC 9728 document this MCP origin serves on the Hold preview (`VERCEL_
 }
 ```
 
-`WWW-Authenticate` `resource_metadata` points at this preview origin well-known. Clients then read `authorization_servers` and land on live `https://pirin.ai/bootstrap-os/login`. This repo does not host a login UI.
+`WWW-Authenticate` `resource_metadata` points at this MCP origin well-known (production pin origin on main; this preview origin on Hold). Clients then read `authorization_servers` and land on live `https://pirin.ai/bootstrap-os/login`. This repo does not host a login UI.
 
 Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. Preview and production copy the live pirin.ai AS document. All endpoints stay on pirin.ai — this repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
 

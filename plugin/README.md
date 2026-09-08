@@ -120,7 +120,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 `mcp.json` pins the production Streamable HTTP host `https://mcp.bootstrap.pirin.ai/mcp`. `${BOOTSTRAP_MCP_URL}` may override (default is that host). Git-branch previews stay on `*.vercel.app`. Not mentee-ready boards. Not a public catalog. Do not use `mcp.pirin.ai`.
 
-Public read tools (no login): OS info, docs, house-rule pins. Gated `bootstrap_whoami` / company labels return 401 + `WWW-Authenticate` to pirin.ai OAuth metadata. Login is `/bootstrap-os/login` on pirin.ai (Web Builder; not this repo). Founder `company-state` stays path 3 local stdio. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
+Public read tools (no login): OS info, docs, house-rule pins. Gated `bootstrap_whoami` / company labels return 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login is `/bootstrap-os/login` on pirin.ai (Web Builder; not this repo). Founder `company-state` stays path 3 local stdio. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
 
 Deploy recipe (new Vercel project `bootstrap-os-mcp` only):
 

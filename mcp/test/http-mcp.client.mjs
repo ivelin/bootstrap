@@ -139,6 +139,11 @@ async function main() {
     assert.equal(gated.status, 401);
     assert.equal(gated.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
     assert.match(WWW_AUTHENTICATE_CHALLENGE, /resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp"/);
+    assert.match(
+      WWW_AUTHENTICATE_CHALLENGE,
+      /resource_metadata="https:\/\/mcp\.bootstrap\.pirin\.ai\/\.well-known\/oauth-protected-resource"/,
+    );
+    assert.doesNotMatch(WWW_AUTHENTICATE_CHALLENGE, /resource_metadata="https:\/\/pirin\.ai\//);
 
     const listed = await call(client, "bootstrap_list_docs");
     assert.ok(Array.isArray(listed));

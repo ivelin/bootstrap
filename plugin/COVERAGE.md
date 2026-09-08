@@ -66,7 +66,7 @@ Does **not** replace the seven-case matrix. Login is optional. Install-first sti
 | # | Visitor | Surface | Done means | Evidence |
 |---|---------|---------|------------|----------|
 | I1 | Installing founder / install-first agent | `first-hour` + public `/mcp` | Still no login required. Published OS tools work. | File lock + hosted-handler |
-| I2 | Empty-context agent | `bootstrap_whoami` with no header | HTTP 401 + WWW-Authenticate to pirin.ai. Does not invent their stage. | `identity.test.mjs` |
+| I2 | Empty-context agent | `bootstrap_whoami` with no header | HTTP 401 + WWW-Authenticate to this MCP origin RFC 9728. Does not invent their stage. | `identity.test.mjs` |
 | I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
 | I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
 
@@ -112,7 +112,7 @@ Stay on Vercel Git:
 
 1. PR check **Vercel** → Ready (this branch).
 2. Production pin `https://mcp.bootstrap.pirin.ai` — `/`, `/health`, `/mcp` (anonymous, `main` only). `bootstrap-os-mcp.vercel.app` remains a served alias.
-3. PR #17 public preview (Vercel Authentication off): `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Cookie-less initialize / GET SSE / tools/list are MCP 401 + WWW-Authenticate to **this preview origin** well-known (`resource` = this preview MCP URL, `authorization_servers` = live `https://pirin.ai/bootstrap-os/login`). Not Vercel `{protection}`. Not live pirin.ai RFC 9728 (that `resource` is the prod pin). Not the dead #143 git preview. Production pin initialize / tools/list stay HTTP 200. Production gated whoami/labels 401 with WWW-Authenticate to live `https://pirin.ai/.well-known/oauth-protected-resource`.
+3. PR #17 public preview (Vercel Authentication off): `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Cookie-less initialize / GET SSE / tools/list are MCP 401 + WWW-Authenticate to **this preview origin** well-known (`resource` = this preview MCP URL, `authorization_servers` = live `https://pirin.ai/bootstrap-os/login`). Not Vercel `{protection}`. Not live pirin.ai RFC 9728 (that `resource` is still the vercel.app alias). Not the dead #143 git preview. Production pin initialize / tools/list stay HTTP 200. Production gated whoami/labels 401 with WWW-Authenticate to **this MCP origin** well-known (`https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource`, `resource` = `https://mcp.bootstrap.pirin.ai/mcp`).
 
 ## Env
 
