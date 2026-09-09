@@ -210,7 +210,7 @@ AS $$
 DECLARE
   uid uuid := auth.uid();
   user_email text;
-  mentee_id uuid;
+  found_id uuid;
   labels jsonb;
 BEGIN
   IF uid IS NULL THEN
@@ -218,11 +218,11 @@ BEGIN
   END IF;
 
   SELECT lower(email) INTO user_email FROM auth.users WHERE id = uid;
-  SELECT id INTO mentee_id
+  SELECT id INTO found_id
   FROM public.bootstrap_mcp_mentees
   WHERE auth_user_id = uid OR email = user_email;
 
-  IF mentee_id IS NULL THEN
+  IF found_id IS NULL THEN
     RETURN jsonb_build_object(
       'authenticated', false,
       'email', user_email,
@@ -234,7 +234,7 @@ BEGIN
   -- Bind auth_user_id on first match of an email-only SQL invite.
   UPDATE public.bootstrap_mcp_mentees
   SET auth_user_id = uid
-  WHERE id = mentee_id
+  WHERE id = found_id
     AND auth_user_id IS NULL
     AND NOT EXISTS (
       SELECT 1 FROM public.bootstrap_mcp_mentees m2 WHERE m2.auth_user_id = uid
@@ -243,7 +243,7 @@ BEGIN
   SELECT coalesce(jsonb_agg(l.label ORDER BY l.label), '[]'::jsonb)
   INTO labels
   FROM public.bootstrap_company_labels l
-  WHERE l.mentee_id = mentee_id;
+  WHERE l.mentee_id = found_id;
 
   RETURN jsonb_build_object(
     'authenticated', true,

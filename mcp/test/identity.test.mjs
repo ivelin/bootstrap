@@ -216,7 +216,7 @@ describe("hosted identity (resource server, gated)", () => {
     const origFetch = globalThis.fetch;
     globalThis.fetch = async (url) => {
       const u = String(url);
-      const invited = u.includes("invited.example");
+      const invited = u.includes("https://invited.example");
       if (u.endsWith("/auth/v1/user")) {
         return new Response(
           JSON.stringify({ email: invited ? IVELIN_SEED_EMAIL : "stranger@example.test" }),

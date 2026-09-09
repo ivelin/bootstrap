@@ -57,18 +57,18 @@ AS $$
 DECLARE
   uid text := current_setting('app.auth_uid', true);
   user_email text := lower(nullif(current_setting('app.auth_email', true), ''));
-  mentee_id text;
+  found_id text;
   labels jsonb;
 BEGIN
   IF uid IS NULL OR uid = '' THEN
     RAISE EXCEPTION 'not_authenticated';
   END IF;
 
-  SELECT id INTO mentee_id
+  SELECT id INTO found_id
   FROM bootstrap_mcp_mentees
   WHERE auth_user_id = uid OR (user_email IS NOT NULL AND email = user_email);
 
-  IF mentee_id IS NULL THEN
+  IF found_id IS NULL THEN
     RETURN jsonb_build_object(
       'authenticated', false,
       'email', user_email,
@@ -79,7 +79,7 @@ BEGIN
 
   UPDATE bootstrap_mcp_mentees
   SET auth_user_id = uid
-  WHERE id = mentee_id
+  WHERE id = found_id
     AND auth_user_id IS NULL
     AND NOT EXISTS (
       SELECT 1 FROM bootstrap_mcp_mentees m2 WHERE m2.auth_user_id = uid
@@ -88,11 +88,11 @@ BEGIN
   SELECT coalesce(jsonb_agg(l.label ORDER BY l.label), '[]'::jsonb)
   INTO labels
   FROM bootstrap_company_labels l
-  WHERE l.mentee_id = mentee_id;
+  WHERE l.mentee_id = found_id;
 
   RETURN jsonb_build_object(
     'authenticated', true,
-    'email', COALESCE(user_email, (SELECT email FROM bootstrap_mcp_mentees WHERE id = mentee_id)),
+    'email', COALESCE(user_email, (SELECT email FROM bootstrap_mcp_mentees WHERE id = found_id)),
     'labels', labels,
     'note', 'Labels only. Not boards. Not company-state.'
   );

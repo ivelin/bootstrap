@@ -62,6 +62,7 @@ describe("RLS: one mentee cannot read another", () => {
     assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_mint_token\(\) TO authenticated/);
     assert.doesNotMatch(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_mint_token\(\) TO anon/);
     assert.match(sql, /'reason', 'not_invited'/);
+    assert.doesNotMatch(sql, /found_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
     assert.doesNotMatch(sql, /mentee_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
     assert.match(sql, /RAISE EXCEPTION 'not_invited'/);
     assert.doesNotMatch(
@@ -78,6 +79,7 @@ describe("RLS: one mentee cannot read another", () => {
     const followSql = fs.readFileSync(followOn, "utf8");
     assert.match(followSql, /'reason', 'not_invited'/);
     assert.match(followSql, /RAISE EXCEPTION 'not_invited'/);
+    assert.doesNotMatch(followSql, /found_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
     assert.doesNotMatch(followSql, /mentee_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
     assert.doesNotMatch(followSql, /supabase\.co/);
   });
