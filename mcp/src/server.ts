@@ -615,7 +615,7 @@ function registerWriteTools(server: McpServer) {
 function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "get_journey",
-    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week and ACL owners (not a free-text owner). Prefer webhook notify over polling. Comments never Advance. Gated. Dual-URL pins in HOSTED_IDENTITY.md.",
+    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week and ACL owners (not a free-text owner). Prefer webhook notify over polling. Comments never Advance. Gated. Invite-only collab pin in HOSTED_IDENTITY.md.",
     {
       q: z
         .string()

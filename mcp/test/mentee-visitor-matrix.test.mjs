@@ -99,7 +99,8 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /GET SSE/);
     assert.match(identity, /tools\/list` return \*\*HTTP 401\*\*/);
     assert.match(identity, /Collab \/ Grok \/ whoami/);
-    assert.match(identity, /Path 1 \/ first-hour \/ apply OS with no account/);
+    assert.match(identity, /undeclared deploy-only/);
+    assert.doesNotMatch(identity, /Path 1 \/ first-hour \/ apply OS with no account/);
     assert.ok(identity.includes(PATH1));
     assert.match(identity, /Vercel Authentication is \*\*off\*\*/);
     assert.doesNotMatch(readme, /SSO-gated/);
@@ -115,7 +116,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.ok(first.length < 1800);
     assert.match(first, /install-first|Install-first/i);
     assert.ok(first.includes(HOSTED));
-    assert.ok(first.includes(PATH1));
+    assert.ok(!first.includes(PATH1));
     assert.match(first, /No auth/);
     assert.match(first, /No database/);
     assert.match(first, /No other connectors/);
@@ -251,7 +252,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.ok(after, "After this hour section missing");
     assert.match(after[0], /### Standing rules/);
     assert.ok(after[0].includes(HOSTED));
-    assert.ok(after[0].includes(PATH1));
+    assert.ok(!after[0].includes(PATH1));
     assert.match(after[0], /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
     assert.ok(after[0].includes("https://github.com/ivelin/bootstrap"));
     assert.match(after[0], /\*\*Not\*\* a public catalog submit/);

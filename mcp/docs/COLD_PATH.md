@@ -3,7 +3,7 @@
 **Goal:** On a clean machine, go from zero → working multi-company control plane in under 15 minutes.  
 **Pass criteria for gate M2:** someone who did **not** write this code completes the path and records evidence below.
 
-This is **optional path 3**. Path 1 is still point an AI at https://github.com/ivelin/bootstrap (no install). Path 2 is optional instance/CLI. Hosted read adapter is preview only — no public mentee-ready host.
+This is **optional path 3**. Path 1 is still point an AI at https://github.com/ivelin/bootstrap (no install, no hosted MCP URL). Path 2 is optional instance/CLI. Invite-only hosted MCP is [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md) — not a Path 1 door. No public mentee-ready host.
 
 ---
 

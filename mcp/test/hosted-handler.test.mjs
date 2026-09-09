@@ -67,7 +67,7 @@ describe("Vercel fetch handler (hosted-read)", () => {
     assert.ok(!names.includes("bootstrap_get_state"));
   });
 
-  it("collab host cookie-less handshake 401; Path 1 alias stays 200", async () => {
+  it("collab host and vercel.app deploy Host cookie-less handshake 401 (same WWW-Authenticate)", async () => {
     const initBody = {
       jsonrpc: "2.0",
       id: 3,
@@ -95,7 +95,8 @@ describe("Vercel fetch handler (hosted-read)", () => {
         body: JSON.stringify({ ...initBody, id: 4 }),
       }),
     );
-    assert.equal(alias.status, 200);
+    assert.equal(alias.status, 401);
+    assert.equal(alias.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
   });
 
   afterEach(() => {

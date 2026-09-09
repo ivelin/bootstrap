@@ -24,7 +24,7 @@ import { HOSTED_GATED_JOURNEY_TOOL_NAMES } from "../dist/constants.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const PLUGIN = path.join(REPO_ROOT, "plugin");
-const HOSTED = "https://bootstrap-os-mcp.vercel.app/mcp";
+const HOSTED = "https://mcp.bootstrap.pirin.ai/mcp";
 const PUBLIC_SURFACES = [
   path.join(REPO_ROOT, "README.md"),
   path.join(REPO_ROOT, "company-os", "first-hour.md"),

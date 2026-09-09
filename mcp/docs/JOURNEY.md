@@ -1,6 +1,6 @@
 # FAST 0-1 journey (this branch, not production)
 
-**Do not merge.** Dual-URL pins (collab / OAuth / whoami vs Path 1 public alias): [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md). Login UI stays on pirin.ai only. No prod DB writes. No migrate/seed/live-probe of supabase-pirin-ai. Tests are **PGlite only**.
+**Do not merge.** Invite-only collab pin (say once): [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md). Free docs are GitHub + install-os + local — not a hosted MCP connector. Login UI stays on pirin.ai only. No prod DB writes. No migrate/seed/live-probe of supabase-pirin-ai. Tests are **PGlite only**.
 
 Ivelin yes 2026-09-01 (via Cos): one source of truth for a FAST mentee 0-1 journey. **Company and idea are separate abstractions**, not a flattened composite key.
 
@@ -47,7 +47,7 @@ No PII dump. Same shape for webhook and the email contract row:
 
 `event` is `put_journey` | `post_comment` | `gate_event`. `idea` is null for company-only events. `who` is the actor already on the ACL. `summary` is ≤80 characters.
 
-## Tools (gated; public OS tools stay unauthenticated)
+## Tools (gated; public OS tools stay listed after auth on the collab host)
 
 | Tool | Who | Notes |
 |------|-----|--------|
@@ -58,7 +58,7 @@ No PII dump. Same shape for webhook and the email contract row:
 | `unsubscribe_board` | founder + founder-authorized | Remove a subscriber. |
 | `list_subscribers` | anyone who may `get_journey` | Company the caller can read. |
 
-HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Public OS tools skip login.
+HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Cookie-less handshake on the invite-only collab host is also 401. Path 1 founders use GitHub + local — they are not told to connect this host.
 
 These tools are **not** on the production pin. Stdio/path 3 does not register them (do not lift local traces).
 

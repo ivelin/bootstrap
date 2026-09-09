@@ -9,7 +9,7 @@
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
 | **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
-| **4. Hosted MCP** | Preview only | HTTP read adapter. Collab / Grok pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Path 1 public pin `https://bootstrap-os-mcp.vercel.app/mcp`. Git-branch previews on `*.vercel.app` + [`../plugin/`](../plugin/). Dual-URL: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
+| **4. Hosted MCP** | Preview only | HTTP read adapter. Invite-only collab pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Free docs = GitHub + install-os + local — not a hosted MCP connector. Git-branch previews on `*.vercel.app` (same 401 as collab, not a silent 200). Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
@@ -143,11 +143,11 @@ See [`config/mcp.stdio.example.json`](config/mcp.stdio.example.json).
 
 Same package. Production entry is the Vercel request handler (`api/mcp.ts` + `api/health.ts`). `npm run start:http` is a local helper only.
 
-Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). **No login** for those tools on the Path 1 alias. Collab host 401s cookie-less `initialize` / `tools/list` / GET SSE. Does **not** host founder `company-state`. Write / init / use-company stay stdio.
+Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). Invite-only collab host 401s cookie-less `initialize` / `tools/list` / GET SSE; public OS tools stay listed **after** auth. Does **not** host founder `company-state`. Write / init / use-company stay stdio. Free docs are GitHub + install-os + local — not this host.
 
-Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Unauthenticated calls return HTTP 401 + `WWW-Authenticate` pointing at this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login UI is `/bootstrap-os/login` (Web Builder), not this repo. Labels only — not boards. Dual-URL contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
+Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Unauthenticated calls return HTTP 401 + `WWW-Authenticate` pointing at this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login UI is `/bootstrap-os/login` (Web Builder), not this repo. Labels only — not boards. Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
 
-Collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp`. Path 1 public pin is `https://bootstrap-os-mcp.vercel.app/mcp` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Git-branch public preview is `*.vercel.app`. Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
+Invite-only collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp`. Git-branch public preview is `*.vercel.app` (undeclared deploy-only, not a pin). Project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`. Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
 
 ```bash
 cd mcp
@@ -225,4 +225,4 @@ GitHub Actions: `.github/workflows/mcp-ci.yml` (Node 20 + 22).
 
 Runbooks: [`docs/COLD_PATH.md`](docs/COLD_PATH.md) · [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) · [`docs/JOURNEY.md`](docs/JOURNEY.md) · [`QA.md`](QA.md)
 
-**This branch:** gated journey tools + SQL (PGlite tests only). Not on the production pin. Do not merge. Dual-URL pins: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Journey contract: [`docs/JOURNEY.md`](docs/JOURNEY.md).
+**This branch:** gated journey tools + SQL (PGlite tests only). Not on the production pin. Do not merge. Invite-only collab pin: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Journey contract: [`docs/JOURNEY.md`](docs/JOURNEY.md).
