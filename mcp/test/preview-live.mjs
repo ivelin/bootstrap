@@ -2,7 +2,8 @@
  * Optional maintainer check of the two production URLs. Not PR CI.
  * Cloud agents on PRs must not run this (it live-probes prod).
  *
- * Default: collab host handshake 401 + Path 1 alias initialize 200.
+ * Default: invite-only collab host handshake 401. Undeclared deploy alias
+ * is the same 401 (not a Path 1 pin).
  * Override a single origin with BOOTSTRAP_MCP_ORIGIN.
  */
 import assert from "node:assert/strict";
@@ -146,11 +147,16 @@ async function assertPublicPin(origin) {
   return names;
 }
 
+function isInviteOnlyOrigin(origin) {
+  const trimmed = origin.replace(/\/+$/, "");
+  return trimmed === COLLAB_ORIGIN || trimmed === ALIAS_ORIGIN;
+}
+
 async function main() {
   const origins = ORIGIN_OVERRIDE ? [ORIGIN_OVERRIDE] : [COLLAB_ORIGIN, ALIAS_ORIGIN];
   const namesByOrigin = {};
   for (const origin of origins) {
-    if (isCollabOrigin(origin)) {
+    if (isInviteOnlyOrigin(origin) || isCollabOrigin(origin)) {
       const root = await fetchRetry(`${origin}/`);
       assert.equal(root.status, 200, `GET / ${root.status}`);
       const health = await fetchRetry(`${origin}/health`);

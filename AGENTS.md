@@ -8,7 +8,7 @@ This repository is the **portable Bootstrap OS template** only.
    - **Path 1 — Point an AI** at https://github.com/ivelin/bootstrap — no install. Default front door.
    - **Path 2 — Optional instance/CLI** (`./scripts/install-instance.sh`) + optional `.grok/workflows`.
    - **Path 3 — Optional local MCP** under [`mcp/`](mcp/) when they run several ideas — one connector, isolated instances. Do not require MCP or install.
-   - **Path 4 — Preview only.** [`plugin/`](plugin/) + HTTP read adapter. Collab / Grok pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Path 1 public pin `https://bootstrap-os-mcp.vercel.app/mcp`. Git-branch previews on `*.vercel.app`. Dual-URL: [`mcp/docs/HOSTED_IDENTITY.md`](mcp/docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
+   - **Path 4 — Preview only.** [`plugin/`](plugin/) + HTTP read adapter. Invite-only collab pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Free Path 1 = GitHub + local/plugin — not a hosted MCP connector. Git-branch previews on `*.vercel.app` (undeclared deploy-only, not a pin). Contract: [`mcp/docs/HOSTED_IDENTITY.md`](mcp/docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
 4. Hard company-control rules for founders live in [`company-os/ai-instructions.md`](company-os/ai-instructions.md) — paste that block into *their* `AGENTS.md` (or keep via MCP + short pointer).
 
 See [README.md](README.md#template-change-policy).

@@ -4,7 +4,7 @@
  * Does not listen on 127.0.0.1. Does not host founder company-state.
  *
  * Journey tools (get/put/comment + board notify) are gated on this branch.
- * Public OS tools stay unauthenticated. Dual-URL pins: oauth.ts / HOSTED_IDENTITY.md.
+ * Public OS tools stay listed after auth on the invite-only collab host. Pin: oauth.ts / HOSTED_IDENTITY.md.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { isHostedGatedJourneyToolName, isHostedGatedToolName } from "./constants.js";

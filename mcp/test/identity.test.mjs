@@ -22,7 +22,7 @@ import {
   HOSTED_MCP_RESOURCE_ALIAS,
   isCollabHostedResource,
   isJwtAccessToken,
-  isPath1PublicAlias,
+  isUndeclaredDeployAlias,
   isProdPinResource,
   HOSTED_PROTECTED_RESOURCE_METADATA_URL,
   PIRIN_AUTHORIZATION_SERVER,
@@ -200,8 +200,8 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(isProdPinResource(HOSTED_MCP_RESOURCE_ALIAS), true);
     assert.equal(isCollabHostedResource(HOSTED_MCP_RESOURCE), true);
     assert.equal(isCollabHostedResource(HOSTED_MCP_RESOURCE_ALIAS), false);
-    assert.equal(isPath1PublicAlias(HOSTED_MCP_RESOURCE_ALIAS), true);
-    assert.equal(isPath1PublicAlias(HOSTED_MCP_RESOURCE), false);
+    assert.equal(isUndeclaredDeployAlias(HOSTED_MCP_RESOURCE_ALIAS), true);
+    assert.equal(isUndeclaredDeployAlias(HOSTED_MCP_RESOURCE), false);
     assert.equal(
       PIRIN_PROTECTED_RESOURCE_METADATA_URL,
       "https://pirin.ai/.well-known/oauth-protected-resource",
@@ -382,7 +382,7 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(JSON.parse(await aliasWk.text()).resource, HOSTED_MCP_RESOURCE);
   });
 
-  it("Hold preview cookie-less initialize / GET SSE / tools/list 401; Path 1 alias stays 200; collab host handshake 401", async () => {
+  it("Hold preview cookie-less initialize / GET SSE / tools/list 401; undeclared deploy alias and collab host handshake 401", async () => {
     process.env.VERCEL_ENV = "preview";
     const previewChallenge = wwwAuthenticateChallengeFor(
       PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL,
@@ -506,8 +506,10 @@ describe("hosted identity (resource server, gated)", () => {
       headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
       body: JSON.stringify({ ...initBody, id: 25 }),
     });
-    assert.equal(requiresHandshakeAuth(aliasInit), false);
-    assert.equal((await handleHostedReadFetch(aliasInit)).status, 200);
+    assert.equal(requiresHandshakeAuth(aliasInit), true);
+    const aliasInitRes = await handleHostedReadFetch(aliasInit);
+    assert.equal(aliasInitRes.status, 401);
+    assert.equal(aliasInitRes.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
 
     const aliasList = await handleHostedReadFetch(
       new Request(HOSTED_MCP_RESOURCE_ALIAS, {
@@ -516,14 +518,8 @@ describe("hosted identity (resource server, gated)", () => {
         body: JSON.stringify({ jsonrpc: "2.0", id: 26, method: "tools/list", params: {} }),
       }),
     );
-    assert.equal(aliasList.status, 200);
-    const aliasNames = JSON.parse(await aliasList.text()).result.tools.map((t) => t.name);
-    for (const n of HOSTED_READ_TOOL_NAMES) {
-      assert.ok(aliasNames.includes(n), `alias missing public ${n}`);
-    }
-    for (const n of HOSTED_GATED_TOOL_NAMES) {
-      assert.ok(aliasNames.includes(n), `alias missing gated ${n}`);
-    }
+    assert.equal(aliasList.status, 401);
+    assert.equal(aliasList.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
 
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
     const prodWhoami = await handleHostedReadFetch(

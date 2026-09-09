@@ -1,6 +1,6 @@
 ---
 name: path-1-default
-description: Default Bootstrap OS start. Use when a founder asks how to begin, which path to pick, whether they need MCP or this plugin, or lifestyle vs swinging for the fences. Point an AI at the published repo. After First Hour — query the published OS / hosted MCP; do not upload mentee work to Ivelin's GitHub. If they install, Path 1 pin is https://bootstrap-os-mcp.vercel.app/mcp. Path 1 stays the front door.
+description: Default Bootstrap OS start. Use when a founder asks how to begin, which path to pick, whether they need MCP or this plugin, or lifestyle vs swinging for the fences. Point an AI at the published repo. After First Hour — query the published OS on GitHub / local; do not upload mentee work to Ivelin's GitHub. Path 1 is GitHub + local/plugin — not a hosted MCP connector. Path 1 stays the front door.
 ---
 
 # Path 1
@@ -11,7 +11,7 @@ Point the AI at https://github.com/ivelin/bootstrap — no install, no MCP, no p
 
 Day 0: https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md
 
-After First Hour: query the published OS / hosted MCP. Do not upload mentee work to Ivelin's GitHub. https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules
+After First Hour: query the published OS on GitHub / local. Do not upload mentee work to Ivelin's GitHub. https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules
 
 Lifestyle or swinging for the fences (not a house rule) — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences
 

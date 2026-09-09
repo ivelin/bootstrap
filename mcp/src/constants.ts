@@ -50,7 +50,7 @@ export function isHostedGatedJourneyToolName(name: string | undefined): boolean 
 }
 
 export const PATH4_HONESTY =
-  "Preview only. plugin/ + HTTP read adapter exist. Collab pin https://mcp.bootstrap.pirin.ai/mcp: handshake + gated whoami/labels 401 + WWW-Authenticate (authorization_servers = pirin.ai login; not a login UI here). Path 1 public pin https://bootstrap-os-mcp.vercel.app/mcp: cookie-less initialize stays 200; public OS tools stay unauthenticated. Public preview on *.vercel.app is not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. No founder company-state on a shared server. Path 1 stays the front door.";
+  "Preview only. plugin/ + HTTP read adapter exist. Invite-only collab pin https://mcp.bootstrap.pirin.ai/mcp: handshake + gated whoami/labels 401 + WWW-Authenticate (authorization_servers = pirin.ai login; not a login UI here). Free Path 1 is GitHub + local/plugin/stdio — not a hosted MCP connector. Git-branch preview on *.vercel.app is undeclared deploy-only, not a pin. No public catalog submit (team Import from Repo only). Not pirin.ai. No founder company-state on a shared server. Path 1 stays the front door.";
 
 export const JOURNEY_PHASES: Record<number, string> = {
   1: "Thesis",

@@ -968,6 +968,17 @@ if ! grep -q 'Grok Bot marketplace bot' plugin/skills/first-hour/SKILL.md \
 else
   not_ok "do not copy the Grok Bot marketplace line into plugin skills"
 fi
+if ! grep -q 'bootstrap-os-mcp.vercel.app' plugin/skills/first-hour/SKILL.md \
+    plugin/skills/path-1-default/SKILL.md \
+    plugin/skills/when-to-write/SKILL.md \
+    company-os/first-hour.md \
+    README.md \
+    AGENTS.md \
+    ROADMAP.md; then
+  ok "Path 1 / first-hour / discovery do not advertise vercel.app as a hosted MCP pin"
+else
+  not_ok "do not advertise bootstrap-os-mcp.vercel.app as a Path 1 hosted MCP pin"
+fi
 
 # --- v) OS 2.8.9: do not automate a step that should not exist ---
 # Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.

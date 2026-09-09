@@ -5,7 +5,7 @@ description: When a founder or mentee CoS may write the 0-1 board. After a gate 
 
 # When to write the 0-1 board
 
-When to use: after Advance / Iterate / Hold / Kill, or a founder yes in chat. Not a form. Not mail.
+When to use: after Advance / Iterate / Hold / Kill, or a founder yes in chat. Not a form.
 
 Company and idea are separate. One board per idea.
 
@@ -19,6 +19,6 @@ Owner comes from the ACL, not a name you invent. Prefer a material-change notify
 - Empty context, no founder update: do not invent their stage. Write unknown / none yet — https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md
 - Spoken yes cannot promote — https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md
 - Plugin stays judge-only. Skills do not pick a database or a tool menu.
-- Path 1 pin `https://bootstrap-os-mcp.vercel.app/mcp` (no login). Dual-URL: https://github.com/ivelin/bootstrap/blob/main/mcp/docs/HOSTED_IDENTITY.md — Gated journey write is not that pin.
+- Path 1: GitHub + local, not a hosted MCP URL. Collab `https://mcp.bootstrap.pirin.ai/mcp`. https://github.com/ivelin/bootstrap/blob/main/mcp/docs/HOSTED_IDENTITY.md — Gated journey write is not that pin.
 
 Do not speak as Ivelin. Do not host a snapshot UI.

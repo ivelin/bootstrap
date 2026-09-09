@@ -81,7 +81,7 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(firstHour, /house-rule-do-not-automate-a-step-that-should-not-exist/);
       assert.match(firstHour, /### Standing rules/);
       assert.ok(firstHour.includes(HOSTED_MCP_RESOURCE));
-      assert.ok(firstHour.includes(HOSTED_MCP_RESOURCE_ALIAS));
+      assert.ok(!firstHour.includes(HOSTED_MCP_RESOURCE_ALIAS));
       assert.match(firstHour, /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
       assert.ok(firstHour.includes("https://github.com/ivelin/bootstrap"));
       assert.match(firstHour, /\*\*Not\*\* a public catalog submit/);
