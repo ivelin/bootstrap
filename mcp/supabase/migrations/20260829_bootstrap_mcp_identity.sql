@@ -167,11 +167,19 @@ BEGIN
     RAISE EXCEPTION 'email_required' USING ERRCODE = '22023';
   END IF;
 
-  INSERT INTO public.bootstrap_mcp_mentees (email, auth_user_id)
-  VALUES (user_email, uid)
-  ON CONFLICT (email) DO UPDATE
-    SET auth_user_id = COALESCE(public.bootstrap_mcp_mentees.auth_user_id, EXCLUDED.auth_user_id)
-  RETURNING id INTO mentee_id;
+  -- Leftover hashed-token path. Must not auto-insert — that is open login.
+  SELECT id INTO mentee_id
+  FROM public.bootstrap_mcp_mentees
+  WHERE auth_user_id = uid OR email = user_email;
+
+  IF mentee_id IS NULL THEN
+    RAISE EXCEPTION 'not_invited' USING ERRCODE = '42501';
+  END IF;
+
+  UPDATE public.bootstrap_mcp_mentees
+  SET auth_user_id = COALESCE(auth_user_id, uid)
+  WHERE id = mentee_id
+    AND (auth_user_id IS NULL OR auth_user_id = uid);
 
   raw_token := 'bos_' || encode(gen_random_bytes(24), 'hex');
 
@@ -215,8 +223,22 @@ BEGIN
   WHERE auth_user_id = uid OR email = user_email;
 
   IF mentee_id IS NULL THEN
-    RETURN jsonb_build_object('authenticated', true, 'email', user_email, 'labels', '[]'::jsonb);
+    RETURN jsonb_build_object(
+      'authenticated', false,
+      'email', user_email,
+      'labels', '[]'::jsonb,
+      'reason', 'not_invited'
+    );
   END IF;
+
+  -- Bind auth_user_id on first match of an email-only SQL invite.
+  UPDATE public.bootstrap_mcp_mentees
+  SET auth_user_id = uid
+  WHERE id = mentee_id
+    AND auth_user_id IS NULL
+    AND NOT EXISTS (
+      SELECT 1 FROM public.bootstrap_mcp_mentees m2 WHERE m2.auth_user_id = uid
+    );
 
   SELECT coalesce(jsonb_agg(l.label ORDER BY l.label), '[]'::jsonb)
   INTO labels

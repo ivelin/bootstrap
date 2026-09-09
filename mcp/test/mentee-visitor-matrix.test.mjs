@@ -54,6 +54,9 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(coverage, /Optional identity visitor matrix/);
     assert.match(coverage, /pirin.*zk0.*totbox|ivelin fixture whoami/i);
     assert.match(coverage, /one mentee cannot read another|Cannot see Ivelin labels/i);
+    assert.match(coverage, /I5/);
+    assert.match(coverage, /not_invited/);
+    assert.match(coverage, /Valid JWT, no mentee row/);
     const mcpRaw = fs.readFileSync(path.join(PLUGIN, "mcp.json"), "utf8");
     assert.doesNotMatch(mcpRaw, /mcp\.pirin\.ai/);
     assert.doesNotMatch(mcpRaw, /gmail/i);
@@ -71,6 +74,11 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /\/bootstrap-os\/login/);
     assert.match(identity, /authorization code \+ PKCE/i);
     assert.match(identity, /Do \*\*not\*\* add a login UI/);
+    assert.match(identity, /First user \(rebuild from GitHub\)/);
+    assert.match(identity, /bootstrap_mcp_mentees/);
+    assert.match(identity, /not_invited/);
+    assert.match(identity, /lower\('founder@example.com'\)/);
+    assert.match(identity, /Invite-from-existing-user/);
     assert.match(identity, /BOOTSTRAP_OAUTH_RESOURCE_METADATA/);
     assert.match(
       identity,

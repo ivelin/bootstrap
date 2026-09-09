@@ -16,7 +16,10 @@ import {
   IVELIN_SEED_LABELS,
   parseBearerToken,
   setIdentityStoreForTests,
+  SupabaseIdentityStore,
+  whoamiFromLabelsRpc,
 } from "../dist/identity.js";
+import { syntheticAccessToken } from "../dist/journey-auth.js";
 import {
   HOSTED_MCP_RESOURCE,
   HOSTED_MCP_RESOURCE_ALIAS,
@@ -176,6 +179,138 @@ describe("hosted identity (resource server, gated)", () => {
     assert.ok(!who.labels.includes("pirin"));
     assert.ok(!who.labels.includes("zk0"));
     assert.ok(!who.labels.includes("totbox"));
+  });
+
+  it("labels RPC fail-closed: invited authenticates; uninvited is not_invited", () => {
+    const invited = whoamiFromLabelsRpc(
+      IVELIN_SEED_EMAIL,
+      {
+        authenticated: true,
+        email: IVELIN_SEED_EMAIL,
+        labels: [...IVELIN_SEED_LABELS],
+        note: "Labels only. Not boards. Not company-state.",
+      },
+      true,
+    );
+    assert.equal(invited.authenticated, true);
+    assert.equal(invited.email, IVELIN_SEED_EMAIL);
+    assert.deepEqual(invited.labels, [...IVELIN_SEED_LABELS]);
+
+    const uninvited = whoamiFromLabelsRpc(
+      "stranger@example.test",
+      { authenticated: false, email: "stranger@example.test", labels: [], reason: "not_invited" },
+      true,
+    );
+    assert.equal(uninvited.authenticated, false);
+    assert.equal(uninvited.reason, "not_invited");
+    assert.deepEqual(uninvited.labels, []);
+
+    const failed = whoamiFromLabelsRpc("x@y.test", null, false);
+    assert.equal(failed.authenticated, false);
+    assert.equal(failed.reason, "identity_lookup_failed");
+  });
+
+  it("SupabaseIdentityStore: invited JWT authenticates; uninvited JWT does not", async () => {
+    const invitedJwt = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: "auth-ivelin" });
+    const uninvitedJwt = syntheticAccessToken({ email: "stranger@example.test", sub: "auth-stranger" });
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = async (url) => {
+      const u = String(url);
+      const invited = u.includes("invited.example");
+      if (u.endsWith("/auth/v1/user")) {
+        return new Response(
+          JSON.stringify({ email: invited ? IVELIN_SEED_EMAIL : "stranger@example.test" }),
+          { status: 200 },
+        );
+      }
+      if (u.includes("bootstrap_mcp_my_labels")) {
+        return new Response(
+          JSON.stringify(
+            invited
+              ? {
+                  authenticated: true,
+                  email: IVELIN_SEED_EMAIL,
+                  labels: [...IVELIN_SEED_LABELS],
+                  note: "Labels only. Not boards. Not company-state.",
+                }
+              : {
+                  authenticated: false,
+                  email: "stranger@example.test",
+                  labels: [],
+                  reason: "not_invited",
+                },
+          ),
+          { status: 200 },
+        );
+      }
+      throw new Error(`unexpected fetch ${u}`);
+    };
+    try {
+      const invitedStore = new SupabaseIdentityStore("https://invited.example", "anon-key-fixture-xx");
+      const invited = await invitedStore.whoami(invitedJwt);
+      assert.equal(invited.authenticated, true);
+      assert.equal(invited.email, IVELIN_SEED_EMAIL);
+      assert.deepEqual(invited.labels, [...IVELIN_SEED_LABELS]);
+
+      const uninvitedStore = new SupabaseIdentityStore("https://uninvited.example", "anon-key-fixture-xx");
+      const uninvited = await uninvitedStore.whoami(uninvitedJwt);
+      assert.equal(uninvited.authenticated, false);
+      assert.equal(uninvited.reason, "not_invited");
+      assert.deepEqual(uninvited.labels, []);
+    } finally {
+      globalThis.fetch = origFetch;
+    }
+  });
+
+  it("uninvited JWT keeps gated tools 401; missing token still 401s handshake", async () => {
+    const uninvitedJwt = syntheticAccessToken({ email: "stranger@example.test", sub: "auth-stranger" });
+    setIdentityStoreForTests({
+      kind: "supabase",
+      async whoami(token) {
+        if (!token) {
+          return {
+            authenticated: false,
+            labels: [],
+            reason: "missing_or_short_token",
+            identityStore: "supabase",
+          };
+        }
+        return {
+          authenticated: false,
+          email: "stranger@example.test",
+          labels: [],
+          reason: "not_invited",
+          identityStore: "supabase",
+        };
+      },
+    });
+    const gated = await assertGatedUnauthorized(
+      await rawRpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 40, uninvitedJwt),
+    );
+    assert.equal(gated.reason, "not_invited");
+
+    process.env.VERCEL_ENV = "production";
+    const handshake = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 41,
+          method: "initialize",
+          params: {
+            protocolVersion: "2025-03-26",
+            capabilities: {},
+            clientInfo: { name: "uninvited-handshake", version: "0.0.0" },
+          },
+        }),
+      }),
+    );
+    assert.equal(handshake.status, 401);
+    assert.equal(handshake.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+    const handshakeBody = JSON.parse(await handshake.text());
+    assert.equal(handshakeBody.error, "invalid_token");
+    assert.equal(handshakeBody.reason, "missing_or_short_token");
   });
 
   it("invalid token does not leak labels and still challenges to pirin.ai", async () => {

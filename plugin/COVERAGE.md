@@ -70,6 +70,7 @@ Does **not** replace the seven-case matrix. Login is optional. Install-first sti
 | I2 | Empty-context agent | `bootstrap_whoami` with no header | HTTP 401 + WWW-Authenticate to this MCP origin RFC 9728. Does not invent their stage. | `identity.test.mjs` |
 | I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
 | I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
+| I5 | Valid JWT, no mentee row | gated whoami | `authenticated: false`, `reason: not_invited`, HTTP 401. Not open login. First user is a SQL insert — [`HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md#first-user-rebuild-from-github). | `identity.test.mjs` + PGlite RPC |
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 

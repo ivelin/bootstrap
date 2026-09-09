@@ -68,4 +68,36 @@ describe("PGlite identity RLS (isolated, never prod)", () => {
     assert.ok(!ivelin.includes("alpha"));
     assert.ok(!ivelin.includes("bravo"));
   });
+
+  it("fail-closed labels RPC: invited JWT shape authenticates; uninvited does not", async () => {
+    await db.exec("RESET ROLE");
+    await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    const invited = (await db.query("SELECT bootstrap_mcp_my_labels() AS body")).rows[0].body;
+    assert.equal(invited.authenticated, true);
+    assert.equal(invited.email, "ivelin@pirin.ai");
+    assert.deepEqual(invited.labels, ["pirin", "totbox", "zk0"]);
+
+    await db.exec("SELECT set_config('app.auth_uid', '99999999-9999-9999-9999-999999999999', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'stranger@example.test', false)");
+    const uninvited = (await db.query("SELECT bootstrap_mcp_my_labels() AS body")).rows[0].body;
+    assert.equal(uninvited.authenticated, false);
+    assert.equal(uninvited.reason, "not_invited");
+    assert.deepEqual(uninvited.labels, []);
+    assert.ok(!JSON.stringify(uninvited).includes("pirin"));
+  });
+
+  it("email-only first-user SQL insert then OAuth binds auth_user_id", async () => {
+    await db.exec("RESET ROLE");
+    await db.exec("SELECT set_config('app.auth_uid', '44444444-4444-4444-4444-444444444444', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'first@example.test', false)");
+    const first = (await db.query("SELECT bootstrap_mcp_my_labels() AS body")).rows[0].body;
+    assert.equal(first.authenticated, true);
+    assert.equal(first.email, "first@example.test");
+    assert.deepEqual(first.labels, ["beachhead"]);
+    const bound = (
+      await db.query("SELECT auth_user_id FROM bootstrap_mcp_mentees WHERE email = 'first@example.test'")
+    ).rows[0];
+    assert.equal(bound.auth_user_id, "44444444-4444-4444-4444-444444444444");
+  });
 });

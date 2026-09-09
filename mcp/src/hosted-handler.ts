@@ -65,13 +65,17 @@ export function unauthorizedGatedToolResponse(
     "WWW-Authenticate": wwwAuthenticateChallenge(req),
     "Content-Type": "application/json; charset=utf-8",
   };
+  const reason = whoami?.reason ?? actor?.reason;
+  const notInvited = reason === "not_invited";
   return new Response(
     JSON.stringify({
       error: "invalid_token",
-      error_description:
-        "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
+      error_description: notInvited
+        ? "This pirin.ai account is not on the hosted MCP allowlist. A valid JWT is not enough."
+        : "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
       identityStore: actor?.identityStore ?? whoami?.identityStore ?? "unset",
       resource,
+      reason: reason ?? null,
     }),
     { status: 401, headers },
   );
