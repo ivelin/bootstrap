@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { handleHostedReadFetch } from "../dist/hosted-handler.js";
 import { HOSTED_GATED_TOOL_NAMES, HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
+import { HOSTED_MCP_RESOURCE, HOSTED_MCP_RESOURCE_ALIAS, WWW_AUTHENTICATE_CHALLENGE } from "../dist/oauth.js";
 
 async function rpc(method, params, id = 1) {
   const res = await handleHostedReadFetch(
@@ -55,5 +56,36 @@ describe("Vercel fetch handler (hosted-read)", () => {
     assert.ok(!names.includes("bootstrap_init_company"));
     assert.ok(!names.includes("bootstrap_update_state"));
     assert.ok(!names.includes("bootstrap_get_state"));
+  });
+
+  it("collab host cookie-less handshake 401; Path 1 alias stays 200", async () => {
+    const initBody = {
+      jsonrpc: "2.0",
+      id: 3,
+      method: "initialize",
+      params: {
+        protocolVersion: "2025-03-26",
+        capabilities: {},
+        clientInfo: { name: "host-split", version: "0.0.0" },
+      },
+    };
+    const collab = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify(initBody),
+      }),
+    );
+    assert.equal(collab.status, 401);
+    assert.equal(collab.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+
+    const alias = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE_ALIAS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify({ ...initBody, id: 4 }),
+      }),
+    );
+    assert.equal(alias.status, 200);
   });
 });

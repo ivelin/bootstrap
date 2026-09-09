@@ -1,13 +1,13 @@
 ---
 name: first-hour
-description: Bootstrap OS Day 0 and install-first. Use when a founder is installing this plugin plus the MCP connector, or needs thesis, lifestyle vs swinging for the fences, at least three customer groups, and the first Where are we. After First Hour — query the published OS / hosted MCP; do not upload mentee work to Ivelin's GitHub. Plugin + https://mcp.bootstrap.pirin.ai/mcp only. No auth. No database. No other connectors. Link the published first-hour.
+description: Bootstrap OS Day 0 and install-first. Use when a founder is installing this plugin plus the MCP connector, or needs thesis, lifestyle vs swinging for the fences, at least three customer groups, and the first Where are we. After First Hour — query the published OS / hosted MCP; do not upload mentee work to Ivelin's GitHub. Path 1 pin https://bootstrap-os-mcp.vercel.app/mcp. Collab / Grok pin https://mcp.bootstrap.pirin.ai/mcp. No auth on Path 1. No database. No other connectors. Link the published first-hour.
 ---
 
 # First hour
 
 When to use: Day 0, or installing this plugin.
 
-Install-first is this plugin + `https://mcp.bootstrap.pirin.ai/mcp` only. No auth. No database. No other connectors.
+Install-first / Path 1 public pin: `https://bootstrap-os-mcp.vercel.app/mcp`. No auth. No database. No other connectors. Collab / Grok / whoami: `https://mcp.bootstrap.pirin.ai/mcp` — https://github.com/ivelin/bootstrap/blob/main/mcp/docs/HOSTED_IDENTITY.md
 
 https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md
 

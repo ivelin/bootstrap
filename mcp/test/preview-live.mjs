@@ -1,22 +1,24 @@
 /**
- * Optional maintainer check of the production pin. Not PR CI.
+ * Optional maintainer check of the two production URLs. Not PR CI.
  * Cloud agents on PRs must not run this (it live-probes prod).
- * Hits the production pin on main. PR git preview is a separate public URL.
  *
- * Override pin with BOOTSTRAP_MCP_ORIGIN (default https://mcp.bootstrap.pirin.ai).
+ * Default: collab host handshake 401 + Path 1 alias initialize 200.
+ * Override a single origin with BOOTSTRAP_MCP_ORIGIN.
  */
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
-import { HOSTED_MCP_RESOURCE } from "../dist/oauth.js";
+import {
+  HOSTED_MCP_RESOURCE,
+  HOSTED_MCP_RESOURCE_ALIAS,
+  WWW_AUTHENTICATE_CHALLENGE,
+} from "../dist/oauth.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
-const DEFAULT_ORIGIN = HOSTED_MCP_RESOURCE.replace(/\/mcp$/i, "");
-const ORIGIN = (process.env.BOOTSTRAP_MCP_ORIGIN ?? DEFAULT_ORIGIN).replace(
-  /\/+$/,
-  "",
-);
+const COLLAB_ORIGIN = HOSTED_MCP_RESOURCE.replace(/\/mcp$/i, "");
+const ALIAS_ORIGIN = HOSTED_MCP_RESOURCE_ALIAS.replace(/\/mcp$/i, "");
+const ORIGIN_OVERRIDE = process.env.BOOTSTRAP_MCP_ORIGIN?.replace(/\/+$/, "");
 const WRITE_TOOLS = [
   "bootstrap_init_company",
   "bootstrap_use_company",
@@ -40,8 +42,8 @@ async function fetchRetry(url, init = {}, attempts = 3) {
   throw last;
 }
 
-async function rpc(method, params, id) {
-  const res = await fetchRetry(`${ORIGIN}/mcp`, {
+async function rpc(origin, method, params, id) {
+  const res = await fetchRetry(`${origin}/mcp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -54,6 +56,10 @@ async function rpc(method, params, id) {
   return JSON.parse(text);
 }
 
+function isCollabOrigin(origin) {
+  return origin.replace(/\/+$/, "") === COLLAB_ORIGIN;
+}
+
 function parseTool(result) {
   const text = result.result.content.map((c) => c.text ?? "").join("\n");
   try {
@@ -63,8 +69,30 @@ function parseTool(result) {
   }
 }
 
-async function main() {
-  const root = await fetchRetry(`${ORIGIN}/`);
+async function assertHandshake401(origin) {
+  const init = await fetchRetry(`${origin}/mcp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "initialize",
+      params: {
+        protocolVersion: "2025-03-26",
+        capabilities: {},
+        clientInfo: { name: "bootstrap-os-preview-live", version: "0.0.0" },
+      },
+    }),
+  });
+  assert.equal(init.status, 401, `${origin} initialize ${init.status}`);
+  assert.equal(init.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+}
+
+async function assertPublicPin(origin) {
+  const root = await fetchRetry(`${origin}/`);
   assert.equal(root.status, 200, `GET / ${root.status}`);
   const rootText = await root.text();
   assert.match(rootText, /Not mentee-ready boards/);
@@ -74,11 +102,12 @@ async function main() {
   assert.doesNotMatch(rootText, /sign in/i);
   assert.doesNotMatch(rootText, /company-state/i);
 
-  const health = await fetchRetry(`${ORIGIN}/health`);
+  const health = await fetchRetry(`${origin}/health`);
   assert.equal(health.status, 200, `GET /health ${health.status}`);
   assert.equal((await health.text()).trim(), "ok");
 
   const init = await rpc(
+    origin,
     "initialize",
     {
       protocolVersion: "2025-03-26",
@@ -89,7 +118,7 @@ async function main() {
   );
   assert.equal(init.result.serverInfo.name, "bootstrap-os");
 
-  const listed = await rpc("tools/list", {}, 2);
+  const listed = await rpc(origin, "tools/list", {}, 2);
   const names = listed.result.tools.map((t) => t.name).sort();
   for (const n of HOSTED_READ_TOOL_NAMES) {
     assert.ok(names.includes(n), `missing live tool ${n}`);
@@ -98,7 +127,7 @@ async function main() {
     assert.ok(!names.includes(n), `live pin must not expose ${n}`);
   }
 
-  const infoRaw = await rpc("tools/call", { name: "bootstrap_os_info", arguments: {} }, 3);
+  const infoRaw = await rpc(origin, "tools/call", { name: "bootstrap_os_info", arguments: {} }, 3);
   const info = parseTool(infoRaw);
   assert.equal(info.surface, "hosted-read");
   assert.equal(info.marketplace, false);
@@ -107,10 +136,28 @@ async function main() {
   assert.match(JSON.stringify(info.adoptionOrder), /Not pirin\.ai/);
   assert.ok(!info.paths?.statePath, "live pin must not expose founder state paths");
 
-  const pinsRaw = await rpc("tools/call", { name: "bootstrap_house_rule_pins", arguments: {} }, 4);
+  const pinsRaw = await rpc(origin, "tools/call", { name: "bootstrap_house_rule_pins", arguments: {} }, 4);
   const pins = JSON.stringify(parseTool(pinsRaw));
   assert.match(pins, /github.com\/ivelin\/bootstrap/);
   assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
+  return names;
+}
+
+async function main() {
+  const origins = ORIGIN_OVERRIDE ? [ORIGIN_OVERRIDE] : [COLLAB_ORIGIN, ALIAS_ORIGIN];
+  const namesByOrigin = {};
+  for (const origin of origins) {
+    if (isCollabOrigin(origin)) {
+      const root = await fetchRetry(`${origin}/`);
+      assert.equal(root.status, 200, `GET / ${root.status}`);
+      const health = await fetchRetry(`${origin}/health`);
+      assert.equal(health.status, 200, `GET /health ${health.status}`);
+      await assertHandshake401(origin);
+      namesByOrigin[origin] = ["handshake-401"];
+      continue;
+    }
+    namesByOrigin[origin] = await assertPublicPin(origin);
+  }
 
   const skillsDir = path.join(REPO_ROOT, "plugin", "skills");
   const urls = new Set();
@@ -142,8 +189,8 @@ async function main() {
       {
         ok: true,
         gate: "preview-live-public-pin",
-        origin: ORIGIN,
-        tools: names,
+        origins,
+        tools: namesByOrigin,
         menteeVisible: true,
         gitPreviewSso: "not-claimed-as-mentee-surface",
         note: "Production pluginPreview version may lag this draft until merge + Vercel production.",

@@ -13,7 +13,7 @@
 | **Stdio MCP client (M1 protocol)** | `node test/stdio-mcp.client.mjs` | official SDK client over stdio: tools, init, phase gate, refuse |
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
-| **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Public OS stays open; gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
+| **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Path 1 alias stays open; collab-host handshake + gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 
 Local full CI mirror:

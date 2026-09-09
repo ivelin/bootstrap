@@ -5,7 +5,7 @@ import path from "node:path";
 import { REPO_ROOT, makeTempEnv, rmrf } from "./helpers.mjs";
 import { clearSession } from "../dist/companies.js";
 import { listOsDocs, readOsDoc } from "../dist/docs.js";
-import { HOSTED_MCP_RESOURCE } from "../dist/oauth.js";
+import { HOSTED_MCP_RESOURCE, HOSTED_MCP_RESOURCE_ALIAS } from "../dist/oauth.js";
 
 describe("markdown install path (zero MCP required)", () => {
   it("portable docs exist on disk without node mcp runtime", () => {
@@ -81,6 +81,7 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(firstHour, /house-rule-do-not-automate-a-step-that-should-not-exist/);
       assert.match(firstHour, /### Standing rules/);
       assert.ok(firstHour.includes(HOSTED_MCP_RESOURCE));
+      assert.ok(firstHour.includes(HOSTED_MCP_RESOURCE_ALIAS));
       assert.match(firstHour, /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
       assert.ok(firstHour.includes("https://github.com/ivelin/bootstrap"));
       assert.match(firstHour, /\*\*Not\*\* a public catalog submit/);

@@ -29,10 +29,10 @@ export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
 export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
   `${PIRIN_ORIGIN}/.well-known/oauth-protected-resource`;
 
-/** Public pin. Production / merge only. Never emit this as the resource on VERCEL_ENV=preview. */
+/** Collab / Grok / whoami pin. Cookie-less initialize / tools/list / GET SSE 401. Never emit on VERCEL_ENV=preview. */
 export const HOSTED_MCP_RESOURCE = "https://mcp.bootstrap.pirin.ai/mcp";
 
-/** Vercel default hostname. Still served as an alias; never advertised as the mentee pin. */
+/** Path 1 / first-hour / apply OS with no account. Cookie-less initialize stays 200. Not the Grok connector pin. */
 export const HOSTED_MCP_RESOURCE_ALIAS = "https://bootstrap-os-mcp.vercel.app/mcp";
 
 /** Canonical public no-SSO git preview for PR #17. */
@@ -68,6 +68,14 @@ export function normalizeMcpResource(raw: string): string {
 export function isProdPinResource(url: string): boolean {
   const normalized = normalizeMcpResource(url);
   return normalized === HOSTED_MCP_RESOURCE || normalized === HOSTED_MCP_RESOURCE_ALIAS;
+}
+
+export function isCollabHostedResource(url: string): boolean {
+  return normalizeMcpResource(url) === HOSTED_MCP_RESOURCE;
+}
+
+export function isPath1PublicAlias(url: string): boolean {
+  return normalizeMcpResource(url) === HOSTED_MCP_RESOURCE_ALIAS;
 }
 
 export function originProtectedResourceMetadataUrl(resourceUrl: string): string {
@@ -161,12 +169,15 @@ export function protectedResourceMetadataUrl(req?: Request): string {
 }
 
 /**
- * Hold preview only: initialize / GET SSE / tools/list 401 without a Bearer.
- * Never true for the production pin hostname. Prod initialize stays HTTP 200.
+ * Cookie-less initialize / GET SSE / tools/list 401 without a Bearer on:
+ * - collab / custom host (mcp.bootstrap.pirin.ai) — Grok Bot OAuth
+ * - Hold preview origins
+ * Never on Path 1 alias (bootstrap-os-mcp.vercel.app).
  */
-export function requiresPreviewHandshakeAuth(req?: Request): boolean {
+export function requiresHandshakeAuth(req?: Request): boolean {
   const fromReq = resourceFromRequest(req);
-  if (fromReq && isProdPinResource(fromReq)) return false;
+  if (fromReq && isPath1PublicAlias(fromReq)) return false;
+  if (fromReq && isCollabHostedResource(fromReq)) return true;
   if (process.env.VERCEL_ENV === "production") return false;
   if (process.env.VERCEL_ENV === "preview") return true;
   return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;

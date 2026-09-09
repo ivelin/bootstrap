@@ -23,7 +23,7 @@ import {
   emptyContextMayInventEfficiencyMetrics,
   path1MayCiteEfficiencyNumbers,
 } from "../dist/after-proof-efficiency.js";
-import { HOSTED_MCP_RESOURCE } from "../dist/oauth.js";
+import { HOSTED_MCP_RESOURCE, HOSTED_MCP_RESOURCE_ALIAS } from "../dist/oauth.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const PLUGIN = path.join(REPO_ROOT, "plugin");
@@ -31,6 +31,7 @@ const COVERAGE = path.join(PLUGIN, "COVERAGE.md");
 const README = path.join(PLUGIN, "README.md");
 const MARKET = path.join(REPO_ROOT, ".cursor-plugin", "marketplace.json");
 const HOSTED = HOSTED_MCP_RESOURCE;
+const PATH1 = HOSTED_MCP_RESOURCE_ALIAS;
 
 function skill(name) {
   return fs.readFileSync(path.join(PLUGIN, "skills", name, "SKILL.md"), "utf8");
@@ -97,6 +98,9 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /cookie-less `initialize`/);
     assert.match(identity, /GET SSE/);
     assert.match(identity, /tools\/list` return \*\*HTTP 401\*\*/);
+    assert.match(identity, /Collab \/ Grok \/ whoami/);
+    assert.match(identity, /Path 1 \/ first-hour \/ apply OS with no account/);
+    assert.ok(identity.includes(PATH1));
     assert.match(identity, /Vercel Authentication is \*\*off\*\*/);
     assert.doesNotMatch(readme, /SSO-gated/);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);
@@ -111,6 +115,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.ok(first.length < 1800);
     assert.match(first, /install-first|Install-first/i);
     assert.ok(first.includes(HOSTED));
+    assert.ok(first.includes(PATH1));
     assert.match(first, /No auth/);
     assert.match(first, /No database/);
     assert.match(first, /No other connectors/);
@@ -246,6 +251,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.ok(after, "After this hour section missing");
     assert.match(after[0], /### Standing rules/);
     assert.ok(after[0].includes(HOSTED));
+    assert.ok(after[0].includes(PATH1));
     assert.match(after[0], /Do \*\*not\*\* upload mentee work to Ivelin.s GitHub/);
     assert.ok(after[0].includes("https://github.com/ivelin/bootstrap"));
     assert.match(after[0], /\*\*Not\*\* a public catalog submit/);
