@@ -8,14 +8,19 @@ import { syntheticAccessToken } from "../dist/journey-auth.js";
 import { actorFromAuthorizationHeader } from "../dist/journey-auth.js";
 import {
   JOURNEY_FIXTURE,
+  JOURNEY_DIGEST_CONTRACT,
   MemoryJourneyStore,
   commentsMayMutateGate,
   defaultScoreboard,
+  digestMayAdvanceGate,
+  digestMayInventStage,
   fixtureJourneyStore,
   LANDING_PAGE_CONSTRAINT_REFUSE,
   agentMayRubberStampConstraint,
   mayWriteConstraintThisWeek,
   preferenceMayNameConstraint,
+  preferWebhookOverPoll,
+  scoreboardMayCarryOwner,
 } from "../dist/journey.js";
 
 function bearer(email, sub) {
@@ -76,6 +81,7 @@ describe("journey views + tools (memory store)", () => {
     assert.match(idea.visualFlow, /Journey 1-9/);
     assert.match(idea.visualFlow, /Loop 1-7/);
     assert.match(idea.snapshot, /two-minute read/);
+    assert.match(idea.snapshot, /Owner \(from ACL\): founder-core@example.test, sub-only-corehaul/);
     assert.match(
       idea.snapshot,
       /Constraint this week \(honest biggest bottleneck; where help is required\): none yet/,
@@ -436,5 +442,48 @@ describe("journey views + tools (memory store)", () => {
       founderYes: true,
     });
     assert.equal(afterRevoke.notify.webhook, 0);
+  });
+
+  it("owner comes from ACL; Cos-invented owner fields are stripped; digest cannot Advance", async () => {
+    const store = fixtureJourneyStore();
+    const founder = bearer("founder-core@example.test");
+    const seen = await store.getJourney(founder, { companySlug: "corehaul" });
+    assert.deepEqual(
+      seen.owners.map((row) => row.principal).sort(),
+      ["founder-core@example.test", "sub-only-corehaul"],
+    );
+    assert.ok(seen.owners.every((row) => row.role === "founder"));
+    assert.ok(seen.acl.some((row) => row.role === "advisor"));
+    assert.deepEqual(seen.digest, JOURNEY_DIGEST_CONTRACT);
+    assert.match(seen.note, /Owner comes from ACL/);
+    assert.match(seen.note, /webhook notify over polling/);
+
+    const written = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      scoreboard: {
+        schema_version: 1,
+        owner: "Cos invented this",
+        owners: ["not-an-acl-principal"],
+        ownerName: "Fake Founder",
+        ownerEmail: "fake@example.test",
+        openQuestions: ["who already has this job"],
+      },
+      why: "founder yes",
+      founderYes: true,
+    });
+    assert.equal(written.ok, true);
+    assert.equal(written.idea.scoreboard.owner, undefined);
+    assert.equal(written.idea.scoreboard.owners, undefined);
+    assert.equal(written.idea.scoreboard.ownerName, undefined);
+    assert.equal(written.idea.scoreboard.ownerEmail, undefined);
+    assert.deepEqual(written.owners.map((row) => row.principal).sort(), [
+      "founder-core@example.test",
+      "sub-only-corehaul",
+    ]);
+    assert.equal(scoreboardMayCarryOwner(), false);
+    assert.equal(digestMayInventStage(), false);
+    assert.equal(digestMayAdvanceGate(), false);
+    assert.equal(preferWebhookOverPoll(), true);
+    assert.equal(commentsMayMutateGate(), false);
   });
 });

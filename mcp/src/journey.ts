@@ -259,6 +259,73 @@ export function commentsMayMutateGate(): boolean {
   return false;
 }
 
+/** Cos digest / board “owner” is ACL founders — not a free-text field Cos invents. */
+export function scoreboardMayCarryOwner(): false {
+  return false;
+}
+
+/** Digests may not invent journey stage. Empty context stays unknown / none yet. */
+export function digestMayInventStage(): false {
+  return false;
+}
+
+/** Digests may not Advance. Advance / Iterate / Hold / Kill stay founder labels. */
+export function digestMayAdvanceGate(): false {
+  return false;
+}
+
+/** Prefer board_subscribers / notify_outbox over polling get_journey for Cos digests. */
+export function preferWebhookOverPoll(): true {
+  return true;
+}
+
+export const INVENTED_OWNER_KEYS = ["owner", "owners", "ownerName", "ownerEmail"] as const;
+
+export type JourneyOwner = {
+  principal: string;
+  principalKind: AclRow["principalKind"];
+  role: "founder";
+};
+
+export function ownersFromAcl(acl: AclRow[], companyId: string): JourneyOwner[] {
+  return acl
+    .filter((row) => row.companyId === companyId && row.role === "founder")
+    .map((row) => ({
+      principal: row.principal,
+      principalKind: row.principalKind,
+      role: "founder" as const,
+    }));
+}
+
+export function companyAclView(
+  acl: AclRow[],
+  companyId: string,
+): Array<{ principal: string; principalKind: AclRow["principalKind"]; role: JourneyAclRole }> {
+  return acl
+    .filter((row) => row.companyId === companyId)
+    .map((row) => ({
+      principal: row.principal,
+      principalKind: row.principalKind,
+      role: row.role,
+    }));
+}
+
+export function stripInventedOwnerFields(scoreboard: Scoreboard): Scoreboard {
+  const next: Record<string, unknown> = { ...scoreboard };
+  for (const key of INVENTED_OWNER_KEYS) {
+    delete next[key];
+  }
+  return next as Scoreboard;
+}
+
+export const JOURNEY_DIGEST_CONTRACT = {
+  ownerSource: "acl",
+  prefer: "webhook",
+  poll: false,
+  commentsNeverAdvance: true,
+  inventStage: false,
+} as const;
+
 /** Advisors cannot write audit except via put_journey / post_comment / ACL tools. */
 export function canWriteAuditDirectly(): boolean {
   return false;
@@ -315,14 +382,23 @@ function escapeMermaid(text: string): string {
   return text.replace(/["[\]]/g, " ").slice(0, 80);
 }
 
-export function twoMinuteSnapshot(company: CompanyRow, idea: IdeaRow, events: GateEventRow[]): string {
+export function twoMinuteSnapshot(
+  company: CompanyRow,
+  idea: IdeaRow,
+  events: GateEventRow[],
+  owners: JourneyOwner[] = [],
+): string {
   const last = events.slice().sort((a, b) => a.at.localeCompare(b.at)).at(-1);
   const questions = idea.scoreboard.openQuestions ?? [];
   const eyes = idea.scoreboard.readyForHumanEyes?.status ?? "unknown";
   const constraint = constraintThisWeekOf(idea);
   const challenge = constraintChallengeOf(idea);
+  const ownerLine = owners.length
+    ? owners.map((row) => row.principal).join(", ")
+    : "none on ACL — do not invent";
   return [
     `${company.label} / ${idea.name} — two-minute read`,
+    `Owner (from ACL): ${ownerLine}`,
     `Constraint this week (honest biggest bottleneck; where help is required): ${constraint || "none yet"}`,
     CONSTRAINT_TEACHING_PICTURE,
     "Not a fun side quest. Preference / “this is interesting” cannot name it.",
@@ -346,6 +422,7 @@ export function meetingDocView(
   idea: IdeaRow,
   events: GateEventRow[],
   comments: CommentRow[],
+  owners: JourneyOwner[] = [],
 ): string {
   const progress =
     idea.scoreboard.progress?.length
@@ -383,7 +460,7 @@ export function meetingDocView(
   return [
     `# Where we are — ${company.label} / ${idea.name}`,
     "",
-    twoMinuteSnapshot(company, idea, events),
+    twoMinuteSnapshot(company, idea, events, owners),
     "",
     "## Progress",
     progress,
@@ -429,6 +506,7 @@ export function ideaPayload(
   events: GateEventRow[],
   comments: CommentRow[],
   expandMeetingDoc: boolean,
+  owners: JourneyOwner[] = [],
 ): JourneyIdeaPayload {
   const lastTransitions = events
     .filter((e) => e.ideaId === idea.id)
@@ -451,10 +529,10 @@ export function ideaPayload(
     scoreboard: idea.scoreboard,
     lastTransitions,
     visualFlow: visualFlowMermaid(idea, lastTransitions),
-    snapshot: twoMinuteSnapshot(company, idea, lastTransitions),
+    snapshot: twoMinuteSnapshot(company, idea, lastTransitions, owners),
   };
   if (expandMeetingDoc) {
-    payload.meetingDoc = meetingDocView(company, idea, lastTransitions, ideaComments);
+    payload.meetingDoc = meetingDocView(company, idea, lastTransitions, ideaComments, owners);
     payload.comments = ideaComments;
   }
   return payload;
@@ -608,14 +686,25 @@ export class MemoryJourneyStore implements JourneyStore {
     if (query.ideaSlug && ideas.length === 0) {
       return notFound("idea not visible");
     }
+    const owners = ownersFromAcl(this.acl, company.id);
     return {
       ok: true,
       company: { slug: company.slug, label: company.label },
+      owners,
+      acl: companyAclView(this.acl, company.id),
+      digest: JOURNEY_DIGEST_CONTRACT,
       ideas: ideas.map((idea) =>
-        ideaPayload(company, idea, this.events, this.comments, Boolean(query.expandMeetingDoc)),
+        ideaPayload(
+          company,
+          idea,
+          this.events,
+          this.comments,
+          Boolean(query.expandMeetingDoc),
+          owners,
+        ),
       ),
       audit: this.auditFor(company.id, query.ideaSlug ? ideas[0]?.id : undefined),
-      note: `Same payload for team / advisor / board / investor prep. Views are generated. Comments never mutate gates. constraint_this_week is the honest biggest bottleneck, not a fun side quest. ${CONSTRAINT_TEACHING_PICTURE} Audit is append-only. Not ~/.bootstrap-os.`,
+      note: `Same payload for team / advisor / board / investor prep. Views are generated. Owner comes from ACL — do not invent. Prefer webhook notify over polling. Comments never mutate gates or Advance. constraint_this_week is the honest biggest bottleneck, not a fun side quest. ${CONSTRAINT_TEACHING_PICTURE} Audit is append-only. Not ~/.bootstrap-os.`,
     };
   }
 
@@ -657,7 +746,7 @@ export class MemoryJourneyStore implements JourneyStore {
         return forbidden(fromBoard.error);
       }
       nextScoreboard = {
-        ...input.scoreboard,
+        ...stripInventedOwnerFields(input.scoreboard),
         schema_version: input.scoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
         constraint_this_week: fromBoard.value,
       };
@@ -745,7 +834,15 @@ export class MemoryJourneyStore implements JourneyStore {
     return {
       ok: true,
       company: { slug: company.slug, label: company.label },
-      idea: ideaPayload(company, idea, this.events, this.comments, false),
+      owners: ownersFromAcl(this.acl, company.id),
+      idea: ideaPayload(
+        company,
+        idea,
+        this.events,
+        this.comments,
+        false,
+        ownersFromAcl(this.acl, company.id),
+      ),
       audit,
       notify,
     };

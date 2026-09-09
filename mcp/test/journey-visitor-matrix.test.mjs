@@ -14,7 +14,11 @@ import {
 import {
   agentMayRubberStampConstraint,
   commentsMayMutateGate,
+  digestMayAdvanceGate,
+  digestMayInventStage,
   preferenceMayNameConstraint,
+  preferWebhookOverPoll,
+  scoreboardMayCarryOwner,
 } from "../dist/journey.js";
 import { HOSTED_GATED_JOURNEY_TOOL_NAMES } from "../dist/constants.js";
 import { REPO_ROOT } from "./helpers.mjs";
@@ -56,7 +60,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(write, /Spoken yes cannot promote/);
     assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers/);
     assert.doesNotMatch(write, /bootstrap_os\.|SELECT |PGlite/);
-    assert.ok(write.length < 1800);
+    assert.ok(write.length < 2000);
     assert.ok(write.includes(HOSTED));
   });
 
@@ -67,6 +71,10 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.ok(first.includes(HOSTED));
     const write = skill("when-to-write");
     assert.match(write, /Gated journey write is not that pin/);
+    assert.match(write, /HOSTED_IDENTITY\.md/);
+    assert.match(write, /from the ACL/);
+    assert.match(write, /notify over polling/);
+    assert.match(write, /do not invent stage or Advance/i);
   });
 
   it("H2 + A2 mentee CoS on 0-1: query OS first; company vs idea", () => {
@@ -102,6 +110,10 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(write, /unknown \/ none yet/);
     assert.equal(emptyContextMayInventStage(), false);
     assert.equal(commentsMayMutateGate(), false);
+    assert.equal(digestMayInventStage(), false);
+    assert.equal(digestMayAdvanceGate(), false);
+    assert.equal(scoreboardMayCarryOwner(), false);
+    assert.equal(preferWebhookOverPoll(), true);
     assert.equal(preferenceMayNameConstraint(), false);
     assert.equal(agentMayRubberStampConstraint(), false);
   });

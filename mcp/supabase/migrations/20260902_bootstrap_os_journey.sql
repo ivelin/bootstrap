@@ -1,7 +1,7 @@
 -- Bootstrap OS FAST 0-1 journey (companies ≠ ideas).
 -- DO NOT apply from a PR cloud agent. Do not migrate/seed/live-probe supabase-pirin-ai.
 -- Local/CI use mcp/test/pglite/journey-schema.sql. Tests are PGlite only.
--- Login/OAuth stays Hold. No FAST claim on the JWT. Token email (fallback sub) → ACL.
+-- Login lives on pirin.ai. This host is the resource server. No FAST claim on the JWT. Token email (fallback sub) → ACL.
 
 CREATE SCHEMA IF NOT EXISTS bootstrap_os;
 

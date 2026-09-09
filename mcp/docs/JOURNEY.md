@@ -1,6 +1,6 @@
 # FAST 0-1 journey (this branch, not production)
 
-**Do not merge.** Production pin stays `https://bootstrap-os-mcp.vercel.app/mcp` on `main`. Login/OAuth stays Hold. No prod DB writes. No migrate/seed/live-probe of supabase-pirin-ai. Tests are **PGlite only**.
+**Do not merge.** Dual-URL pins (collab / OAuth / whoami vs Path 1 public alias): [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md). Login UI stays on pirin.ai only. No prod DB writes. No migrate/seed/live-probe of supabase-pirin-ai. Tests are **PGlite only**.
 
 Ivelin yes 2026-09-01 (via Cos): one source of truth for a FAST mentee 0-1 journey. **Company and idea are separate abstractions**, not a flattened composite key.
 
@@ -24,6 +24,12 @@ Append-only `audit_events` hang off company + optional idea (ACL is company-leve
 
 `board_subscribers` hang off the company (optional idea). After ACL: only people who already have access may be subscribed. Team members (employees, advisors, co-founders, investors, bots) receive only if they already have access. On `put_journey` / `post_comment` / `gate_events`, emit audit then fire the webhook to subscribers who may still read that row. Email is **enqueue-only** — Resend lives on pirin.ai. This repo does not send mail.
 
+### Cos digest (smell-check)
+
+`get_journey` returns `owners` and `acl` from the company ACL. Digest / board “owner” is those founder principals — not a free-text `owner` field Cos invents. `put_journey` strips invented owner keys from scoreboard jsonb.
+
+Prefer webhook / material-change notify (`board_subscribers` / `notify_outbox`) over polling `get_journey`. Digests must not invent stage or Advance. Comments never move gates. Advance / Iterate / Hold / Kill stay human founder labels.
+
 ### Webhook payload (Web Builder)
 
 No PII dump. Same shape for webhook and the email contract row:
@@ -45,7 +51,7 @@ No PII dump. Same shape for webhook and the email contract row:
 
 | Tool | Who | Notes |
 |------|-----|--------|
-| `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. Always surfaces `constraint_this_week`. |
+| `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. Surfaces `constraint_this_week` and ACL `owners`. |
 | `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb including `constraint_this_week`. One founder yes in chat. |
 | `post_comment` | advisors | Side table. Never a gate. |
 | `subscribe_board` | founder + founder-authorized | Grant webhook (+ email opt-in enqueue) to an ACL member. |

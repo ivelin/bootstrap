@@ -225,4 +225,4 @@ GitHub Actions: `.github/workflows/mcp-ci.yml` (Node 20 + 22).
 
 Runbooks: [`docs/COLD_PATH.md`](docs/COLD_PATH.md) · [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) · [`docs/JOURNEY.md`](docs/JOURNEY.md) · [`QA.md`](QA.md)
 
-**This branch:** gated `get_journey` / `put_journey` / `post_comment` + SQL (PGlite tests only). Not on the production pin. Do not merge. Login/OAuth stays Hold. See [`docs/JOURNEY.md`](docs/JOURNEY.md).
+**This branch:** gated journey tools + SQL (PGlite tests only). Not on the production pin. Do not merge. Dual-URL pins: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Journey contract: [`docs/JOURNEY.md`](docs/JOURNEY.md).

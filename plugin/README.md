@@ -33,7 +33,7 @@ Write after a gate or a founder yes in chat — [`when-to-write`](skills/when-to
 
 **Human**
 
-1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Production pin stays `https://bootstrap-os-mcp.vercel.app/mcp`. No auth. No database.
+1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Path 1 public pin `https://bootstrap-os-mcp.vercel.app/mcp`. No auth. No database.
 2. Mentee CoS on 0-1 — [`query-os-first`](skills/query-os-first/SKILL.md) + [`when-to-write`](skills/when-to-write/SKILL.md).
 3. Specialist, GTM-or-not — spoken yes cannot promote. Same standing skill + house-rule pins.
 
