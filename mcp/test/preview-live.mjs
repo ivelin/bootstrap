@@ -8,7 +8,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
+import { HOSTED_GATED_JOURNEY_TOOL_NAMES, HOSTED_READ_TOOL_NAMES } from "../dist/constants.js";
 import {
   HOSTED_MCP_RESOURCE,
   HOSTED_MCP_RESOURCE_ALIAS,
@@ -125,6 +125,9 @@ async function assertPublicPin(origin) {
   }
   for (const n of WRITE_TOOLS) {
     assert.ok(!names.includes(n), `live pin must not expose ${n}`);
+  }
+  for (const n of HOSTED_GATED_JOURNEY_TOOL_NAMES) {
+    assert.ok(!names.includes(n), `production pin must not expose gated ${n}`);
   }
 
   const infoRaw = await rpc(origin, "tools/call", { name: "bootstrap_os_info", arguments: {} }, 3);

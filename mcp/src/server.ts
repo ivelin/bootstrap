@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
   DOC_KEYS,
+  HOSTED_GATED_JOURNEY_TOOL_NAMES,
   JOURNEY_PHASES,
   LOOP_STAGES,
   MCP_VERSION,
@@ -10,6 +11,7 @@ import {
   PUBLISHED_REPO,
   type DocKey,
 } from "./constants.js";
+import { parseJourneyQuery, resolveJourneyStore } from "./journey.js";
 import { loadOsDoc, loadOsDocList, resolveDocsBaseUrl, resolveDocsSource } from "./docs.js";
 import {
   initCompany,
@@ -120,13 +122,19 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
             identity: {
               publicTools:
                 "Open without login on the Path 1 alias. On the collab host they stay listed after auth. Empty-context agents keep working on the alias.",
-              gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels"],
+              gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels", ...HOSTED_GATED_JOURNEY_TOOL_NAMES],
               challenge: "HTTP 401 + WWW-Authenticate resource_metadata. No login UI here.",
               identityStore: hosted?.whoami.identityStore ?? "unset",
               resource: hosted?.resource ?? hostedMcpResource(),
               resourceMetadata: protectedResourceMetadataUrl(),
               stores: "Labels only on the existing pirin.ai Supabase. Not company-state. Not ~/.bootstrap-os.",
             },
+          },
+          journeyTools: {
+            names: HOSTED_GATED_JOURNEY_TOOL_NAMES,
+            gated: true,
+            onProductionPin: false,
+            note: "Branch only. Production pin stays main. Login/OAuth Hold. Public OS tools stay unauthenticated.",
           },
         });
       }
@@ -604,6 +612,218 @@ function registerWriteTools(server: McpServer) {
   );
 }
 
+function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
+  server.tool(
+    "get_journey",
+    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week and ACL owners (not a free-text owner). Prefer webhook notify over polling. Comments never Advance. Gated. Dual-URL pins in HOSTED_IDENTITY.md.",
+    {
+      q: z
+        .string()
+        .optional()
+        .describe("CoreHaul or CoreHaul / last-mile. Company and idea are separate."),
+      company: z.string().optional().describe("Company slug"),
+      idea: z.string().optional().describe("Idea slug. Omit for every idea under the company."),
+      expand: z
+        .enum(["snapshot", "meeting_doc"])
+        .optional()
+        .describe("snapshot is always returned. meeting_doc is a generated view, not stored."),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or advisor token required. Public OS tools stay open.");
+      }
+      const parsed = parseJourneyQuery(input);
+      try {
+        return text(
+          await store.getJourney(actor, {
+            companySlug: parsed.companySlug,
+            ideaSlug: parsed.ideaSlug,
+            expandMeetingDoc: input.expand === "meeting_doc",
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "put_journey",
+    "Overwrite clocks and versioned jsonb for one idea, including constraint_this_week (honest biggest bottleneck; not a clock; not a fun side quest). Founder or founder-authorized. One founder yes in chat — not a form, not mail. Refuse “new landing page” as the constraint when no one has talked to customers unless a written founder decision overrides.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
+      journeyPhase: z.number().int().min(1).max(9).optional(),
+      loopStage: z.number().int().min(1).max(7).optional(),
+      currentGate: z.enum(["advance", "iterate", "hold", "kill"]).optional(),
+      scoreboard: z.record(z.unknown()).optional(),
+      constraintThisWeek: z
+        .string()
+        .max(280)
+        .optional()
+        .describe(
+          "Honest biggest bottleneck this week. Not a clock. Not tickets. Not a fun side quest. Preference cannot name it.",
+        ),
+      why: z.string().describe("Short why for the gate"),
+      founderYes: z
+        .boolean()
+        .describe("True only after an explicit founder yes in their agent chat"),
+      founderWrittenDecision: z
+        .string()
+        .optional()
+        .describe(
+          "Written founder override after a challenge. Required to name “new landing page” as the constraint when no one has talked to customers. founderYes alone is not a rubber-stamp.",
+        ),
+      client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      try {
+        return text(
+          await store.putJourney(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            journeyPhase: input.journeyPhase,
+            loopStage: input.loopStage,
+            currentGate: input.currentGate as import("./journey.js").GateDecision | undefined,
+            scoreboard: input.scoreboard as import("./journey.js").Scoreboard | undefined,
+            constraintThisWeek: input.constraintThisWeek,
+            why: input.why,
+            founderYes: input.founderYes,
+            founderWrittenDecision: input.founderWrittenDecision,
+            client: input.client,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "post_comment",
+    "Advisor comment on an idea. Side table only. Never mutates phase or gate.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
+      body: z.string().describe("Comment text"),
+      client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Advisor token required.");
+      }
+      try {
+        return text(
+          await store.postComment(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            body: input.body,
+            client: input.client,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "subscribe_board",
+    "Grant a webhook (and optional email enqueue) to an ACL member on a company board. Founder or founder-authorized. Gated. Not the production pin. Email is not sent from this host.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Optional idea scope. Omit for the whole company."),
+      principal: z.string().describe("ACL principal to notify. Must already have access."),
+      principalKind: z.enum(["email", "sub"]).describe("How the principal is stored on the ACL."),
+      webhookUrl: z.string().describe("https webhook URL. No PII dump in the payload."),
+      emailOptIn: z
+        .boolean()
+        .optional()
+        .describe("Enqueue an email contract row. Resend lives on pirin.ai — not this repo."),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      try {
+        return text(
+          await store.subscribeBoard(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            principal: input.principal,
+            principalKind: input.principalKind,
+            webhookUrl: input.webhookUrl,
+            emailOptIn: input.emailOptIn,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "unsubscribe_board",
+    "Remove a board subscriber. Founder or founder-authorized. Gated.",
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Optional idea scope used when the grant was idea-scoped."),
+      principal: z.string().describe("ACL principal to remove"),
+      principalKind: z.enum(["email", "sub"]),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      try {
+        return text(
+          await store.unsubscribeBoard(actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+            principal: input.principal,
+            principalKind: input.principalKind,
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "list_subscribers",
+    "List board subscribers for a company the caller may get_journey. Gated. Public OS tools stay open.",
+    {
+      company: z.string().describe("Company slug"),
+    },
+    async (input) => {
+      const store = resolveJourneyStore();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or advisor token required. Public OS tools stay open.");
+      }
+      try {
+        return text(await store.listSubscribers(actor, { companySlug: input.company }));
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+}
+
 export function createBootstrapServer(
   surface: McpSurface = "full",
   hosted?: HostedRequestContext,
@@ -614,7 +834,9 @@ export function createBootstrapServer(
   });
   registerReadTools(server, surface, hosted);
   if (surface === "hosted-read") {
-    registerGatedIdentityTools(server, hosted ?? { whoami: anonymousWhoami() });
+    const ctx = hosted ?? { whoami: anonymousWhoami() };
+    registerGatedIdentityTools(server, ctx);
+    registerJourneyTools(server, ctx);
   }
   if (surface === "full") {
     registerWriteTools(server);

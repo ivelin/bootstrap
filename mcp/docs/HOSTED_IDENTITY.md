@@ -1,6 +1,6 @@
 # Hosted MCP identity (resource server)
 
-This host is the **resource server only**. Path 1 public OS tools stay **unauthenticated** on the vercel.app alias. The collab host 401s the handshake so Grok Bot starts OAuth. Gated tools accept **access tokens issued by pirin.ai login**.
+This host is the **resource server only**. Path 1 public OS tools stay **unauthenticated** on the vercel.app alias. The collab host 401s the handshake so Grok Bot starts OAuth. Gated tools accept **access tokens issued by pirin.ai login**. This draft also gates journey tools — contract: [`JOURNEY.md`](JOURNEY.md).
 
 Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write path.
 

@@ -38,6 +38,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | A human actually signed in as Ivelin and called whoami on the live pin | File/fixture lock only. Do not claim a paste that is not in this PR. |
 | pirin.ai `/bootstrap-os/login` | Contract in `mcp/docs/HOSTED_IDENTITY.md`. Login + OAuth + protected-resource metadata live on pirin.ai (Web Builder). This host returns 401 + `WWW-Authenticate`. Not this repo. Do not add a login UI here. |
 | Extra connectors / mentee roster / usage analytics as proof | Out. |
+| Journey SQL on pirin.ai / mentee-ready boards | This branch ships SQL + PGlite tests only. Not the production pin. Do not merge. |
 | A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
 | Production `bootstrap_os_info.osVersion` already `2.8.9` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | CAC / LTV / day-31 / day-90 / NRR / magic-number numbers on Path 1 | Must stay absent. CI locks the absence. |
@@ -69,6 +70,21 @@ Does **not** replace the seven-case matrix. Login is optional. Install-first sti
 | I2 | Empty-context agent | `bootstrap_whoami` with no header | HTTP 401 + WWW-Authenticate to this MCP origin RFC 9728. Does not invent their stage. | `identity.test.mjs` |
 | I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
 | I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
+
+## 0-1 journey visitor matrix (this PR, not the production pin)
+
+Company and idea are separate. Write after a gate / founder yes. The weekly constraint is the honest biggest bottleneck — not a clock, not a fun side quest. Preference cannot name it. Comments never mutate phase. Skills do not pick a SQL or tool menu. Plugin stays judge-only. **No human Ivelin session claimed.**
+
+| # | Visitor | Surface | Done means | Evidence |
+|---|---------|---------|------------|----------|
+| H1 | Installing founder | `first-hour` + README | Plugin + production pin. No auth/DB on that pin. | File lock |
+| H2 | Mentee CoS on 0-1 | `query-os-first` + `when-to-write` | Query OS first. Company vs idea. Owner from ACL. Notify over poll. Cite journey 1–9. | File lock + `scoreboardMayCarryOwner()===false` |
+| H3 | Specialist, GTM-or-not | `query-os-first` + pins | Spoken yes cannot promote. Refuse. Cite OS. | File lock |
+| A1 | Agent install-first | `first-hour` | Plugin + connector only. Public OS: no login. | File lock |
+| A2 | Agent query-OS-first | `query-os-first` | Query-OS-first. | File lock |
+| A3 | Agent empty-context | `query-os-first` + `when-to-write` | Do not invent their stage. unknown / none yet. | File lock + `emptyContextMayInventStage()===false` |
+| A4 | Agent spoken-yes refuse | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
+| A5 | Agent names “new landing page” as weekly constraint, no customer talks | `when-to-write` | Refuse unless founder writes an override. Do not rubber-stamp. | File lock + `mayWriteConstraintThisWeek` |
 
 ## After First Hour visitor matrix
 

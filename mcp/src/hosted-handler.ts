@@ -2,10 +2,15 @@
  * Web-standard request handler for the hosted-read MCP surface.
  * Used by the Vercel function entry and the optional local HTTP helper.
  * Does not listen on 127.0.0.1. Does not host founder company-state.
+ *
+ * Journey tools (get/put/comment + board notify) are gated on this branch.
+ * Public OS tools stay unauthenticated. Dual-URL pins: oauth.ts / HOSTED_IDENTITY.md.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { isHostedGatedToolName } from "./constants.js";
+import { isHostedGatedJourneyToolName, isHostedGatedToolName } from "./constants.js";
 import { parseBearerToken, resolveHostedWhoami, type HostedWhoami } from "./identity.js";
+import { actorFromAuthorizationHeader, type JourneyActor } from "./journey-auth.js";
+import { resolveJourneyStore } from "./journey.js";
 import {
   authorizationServerMetadataDocument,
   hostedMcpResource,
@@ -49,7 +54,11 @@ function isHandshakeRpc(body: unknown): boolean {
   return method === "initialize" || method === "tools/list";
 }
 
-export function unauthorizedGatedToolResponse(whoami?: HostedWhoami, req?: Request): Response {
+export function unauthorizedGatedToolResponse(
+  whoami?: HostedWhoami,
+  req?: Request,
+  actor?: JourneyActor,
+): Response {
   const resource = hostedMcpResource(req);
   const headers = {
     ...corsHeaders(),
@@ -61,7 +70,7 @@ export function unauthorizedGatedToolResponse(whoami?: HostedWhoami, req?: Reque
       error: "invalid_token",
       error_description:
         "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
-      identityStore: whoami?.identityStore ?? "unset",
+      identityStore: actor?.identityStore ?? whoami?.identityStore ?? "unset",
       resource,
     }),
     { status: 401, headers },
@@ -110,6 +119,30 @@ function isAuthorizationServerMetadataPath(pathname: string): boolean {
   );
 }
 
+function resolveGatedActor(authorization: string | null): JourneyActor {
+  const store = resolveJourneyStore();
+  const actor = actorFromAuthorizationHeader(authorization, store?.kind ?? "unset");
+  if (!actor.authenticated) return actor;
+  if (!store) {
+    return {
+      authenticated: false,
+      identityStore: "unset",
+      reason: "identity_store_unset",
+    };
+  }
+  if (!store.actorOnAllowlist(actor)) {
+    return {
+      authenticated: false,
+      email: actor.email,
+      sub: actor.sub,
+      principal: actor.principal,
+      identityStore: store.kind,
+      reason: "not_on_allowlist",
+    };
+  }
+  return actor;
+}
+
 export async function handleHostedReadFetch(req: Request): Promise<Response> {
   applyHostedReadEnv();
   const pathname = pathnameOf(req);
@@ -149,6 +182,7 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
   const whoami = await resolveHostedWhoami(req.headers.get("authorization"));
   const hasBearer = Boolean(parseBearerToken(req.headers.get("authorization")));
   const handshakeAuth = requiresHandshakeAuth(req);
+  let actor: JourneyActor | undefined;
 
   if (handshakeAuth && !hasBearer && req.method === "GET") {
     return unauthorizedGatedToolResponse(whoami, req);
@@ -164,14 +198,23 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     if (handshakeAuth && !hasBearer && isHandshakeRpc(rpcBody)) {
       return unauthorizedGatedToolResponse(whoami, req);
     }
-    if (gatedToolNameFromRpc(rpcBody) && !whoami.authenticated) {
-      return unauthorizedGatedToolResponse(whoami, req);
+    const gatedName = gatedToolNameFromRpc(rpcBody);
+    if (gatedName) {
+      if (isHostedGatedJourneyToolName(gatedName)) {
+        actor = resolveGatedActor(req.headers.get("authorization"));
+        if (!actor.authenticated) {
+          return unauthorizedGatedToolResponse(whoami, req, actor);
+        }
+      } else if (!whoami.authenticated) {
+        return unauthorizedGatedToolResponse(whoami, req);
+      }
     }
   }
 
   const server = createBootstrapServer("hosted-read", {
     whoami,
     resource: hostedMcpResource(req),
+    actor,
   });
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
