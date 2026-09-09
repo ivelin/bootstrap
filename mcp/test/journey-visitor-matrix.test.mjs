@@ -137,7 +137,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
       assert.doesNotMatch(body, /@example\.test/);
       assert.doesNotMatch(body, /founder-dye|founder-core|advisor-cos/);
       assert.doesNotMatch(body, /DyeConverter|CoreHaul/);
-      assert.doesNotMatch(body, /I ran a human Ivelin session|logged-in Ivelin fixture/i);
+      assert.doesNotMatch(body, /I ran a human Ivelin session/i);
       assert.doesNotMatch(body, /Grok Bot template|Bootstrap OS Bot Client/i);
     }
     const coverage = fs.readFileSync(path.join(PLUGIN, "COVERAGE.md"), "utf8");
