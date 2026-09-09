@@ -1,6 +1,6 @@
 # FAST 0-1 journey (this branch, not production)
 
-**Do not merge.** Invite-only collab pin (say once): [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md). Free Path 1 is GitHub + local/plugin — not a hosted MCP connector. Login UI stays on pirin.ai only. No prod DB writes. No migrate/seed/live-probe of supabase-pirin-ai. Tests are **PGlite only**.
+**Do not merge.** Invite-only collab pin (say once): [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md). Free docs are GitHub + install-os + local — not a hosted MCP connector. Login UI stays on pirin.ai only. No prod DB writes. No migrate/seed/live-probe of supabase-pirin-ai. Tests are **PGlite only**.
 
 Ivelin yes 2026-09-01 (via Cos): one source of truth for a FAST mentee 0-1 journey. **Company and idea are separate abstractions**, not a flattened composite key.
 

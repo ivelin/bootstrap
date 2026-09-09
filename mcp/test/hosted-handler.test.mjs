@@ -67,7 +67,7 @@ describe("Vercel fetch handler (hosted-read)", () => {
     assert.ok(!names.includes("bootstrap_get_state"));
   });
 
-  it("collab host and undeclared deploy alias cookie-less handshake 401", async () => {
+  it("collab host and vercel.app deploy Host cookie-less handshake 401 (same WWW-Authenticate)", async () => {
     const initBody = {
       jsonrpc: "2.0",
       id: 3,

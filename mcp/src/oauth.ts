@@ -33,9 +33,9 @@ export const PIRIN_PROTECTED_RESOURCE_METADATA_URL =
 export const HOSTED_MCP_RESOURCE = "https://mcp.bootstrap.pirin.ai/mcp";
 
 /**
- * Undeclared Vercel production deploy hostname. Not a Path 1 pin. Not advertised.
- * Same cookie-less initialize 401 as the collab host. Keep only so preview
- * protection and CI can recognize the Host.
+ * Vercel production deploy Host. Not a Path 1 pin. Not advertised.
+ * Cos HARD 2026-09-09: treat exactly like collab — cookie-less initialize
+ * / tools/list HTTP 401 + WWW-Authenticate. Not a silent 200 alias.
  */
 export const HOSTED_MCP_RESOURCE_ALIAS = "https://bootstrap-os-mcp.vercel.app/mcp";
 
@@ -74,11 +74,13 @@ export function isProdPinResource(url: string): boolean {
   return normalized === HOSTED_MCP_RESOURCE || normalized === HOSTED_MCP_RESOURCE_ALIAS;
 }
 
+/** Invite-only hosted Hosts: advertised pin and the vercel.app deploy Host. Same 401. */
 export function isCollabHostedResource(url: string): boolean {
-  return normalizeMcpResource(url) === HOSTED_MCP_RESOURCE;
+  const normalized = normalizeMcpResource(url);
+  return normalized === HOSTED_MCP_RESOURCE || normalized === HOSTED_MCP_RESOURCE_ALIAS;
 }
 
-/** Vercel production deploy Host. Not a pin. Same handshake 401 as collab. */
+/** Vercel production deploy Host. Not the advertised pin. Same handshake 401 as collab. */
 export function isUndeclaredDeployAlias(url: string): boolean {
   return normalizeMcpResource(url) === HOSTED_MCP_RESOURCE_ALIAS;
 }
@@ -175,15 +177,13 @@ export function protectedResourceMetadataUrl(req?: Request): string {
 
 /**
  * Cookie-less initialize / GET SSE / tools/list 401 without a Bearer on:
- * - invite-only collab host (mcp.bootstrap.pirin.ai)
- * - undeclared Vercel deploy alias (same behavior; not a Path 1 door)
+ * - invite-only collab pin (mcp.bootstrap.pirin.ai)
+ * - vercel.app deploy Host (same 401; not a Path 1 door, not a silent 200)
  * - Hold preview origins
  */
 export function requiresHandshakeAuth(req?: Request): boolean {
   const fromReq = resourceFromRequest(req);
-  if (fromReq && (isCollabHostedResource(fromReq) || isUndeclaredDeployAlias(fromReq))) {
-    return true;
-  }
+  if (fromReq && isCollabHostedResource(fromReq)) return true;
   if (process.env.VERCEL_ENV === "production") return false;
   if (process.env.VERCEL_ENV === "preview") return true;
   return fromReq === PREVIEW_HOSTED_MCP_RESOURCE;

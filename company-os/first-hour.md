@@ -85,7 +85,7 @@ On Day 0 you should hear something like: journey phase **1 of 9**, loop stage **
 
 Not another Day 0 checkbox. This hour stays thesis, ≥3 groups, one snapshot.
 
-After First Hour, query the published OS on GitHub or local/plugin. Free Path 1 does not use a hosted MCP connector. Invite-only collab / Grok / whoami: `https://mcp.bootstrap.pirin.ai/mcp` ([hosted identity](https://github.com/ivelin/bootstrap/blob/main/mcp/docs/HOSTED_IDENTITY.md)).
+After First Hour, query the published OS on GitHub, [install-os](https://pirin.ai/install-os), or local. Free Path 1 does not use a hosted MCP connector. Invite-only collab / Grok / whoami: `https://mcp.bootstrap.pirin.ai/mcp` ([hosted identity](https://github.com/ivelin/bootstrap/blob/main/mcp/docs/HOSTED_IDENTITY.md)).
 
 Do **not** upload mentee work to Ivelin's GitHub.
 

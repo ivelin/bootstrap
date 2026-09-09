@@ -2,7 +2,7 @@
 
 This host is the **resource server only**. There is **one** invite-only hosted MCP pin: `https://mcp.bootstrap.pirin.ai/mcp`. Cookie-less `initialize` / GET SSE / `tools/list` **401** so Grok Bot starts OAuth. Gated tools accept **access tokens issued by pirin.ai login**. This draft also gates journey tools — contract: [`JOURNEY.md`](JOURNEY.md).
 
-Free Path 1 is GitHub + local/plugin/stdio — **not** a hosted MCP connector. Do not invent `os.bootstrap.pirin.ai` or a second public Path 1 hostname. Path 3 local stdio stays the write path.
+Free docs are GitHub + [install-os](https://pirin.ai/install-os) + local — **not** a hosted MCP connector. Do not invent `os.bootstrap.pirin.ai` or a second public Path 1 hostname. Path 3 local stdio stays the write path.
 
 ## Founder lock
 
@@ -14,7 +14,7 @@ Free Path 1 is GitHub + local/plugin/stdio — **not** a hosted MCP connector. D
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
 | Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Invite-only collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. Do not merge. |
 | Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
-| Undeclared deploy Host | `https://bootstrap-os-mcp.vercel.app/mcp` is the Vercel production deploy hostname. **Not a pin.** Not Path 1. Not advertised. Same cookie-less handshake **401** as collab (undeclared deploy-only). |
+| Deploy Host (not a pin) | `https://bootstrap-os-mcp.vercel.app/mcp` is the Vercel production Host. **Not a pin.** Not Path 1. Not advertised. Cos HARD 2026-09-09: treat this Host **exactly like collab** — cookie-less `initialize` / `tools/list` **HTTP 401** + `WWW-Authenticate`. Not a silent 200 alias (undeclared deploy-only). |
 
 ## HTTP contract
 
@@ -42,7 +42,7 @@ WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://bo
 
 Do **not** point production or Hold-preview `resource_metadata` at `https://pirin.ai/.well-known/oauth-protected-resource` — that JSON `resource` is still `https://bootstrap-os-mcp.vercel.app/mcp`. `BOOTSTRAP_OAUTH_RESOURCE_METADATA` cannot override onto that live document.
 
-This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://pirin.ai/bootstrap-os/login`. The undeclared deploy Host must **401** cookie-less `initialize` and `tools/list` the same as collab.
+This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://pirin.ai/bootstrap-os/login`. The vercel.app deploy Host must **401** cookie-less `initialize` and `tools/list` exactly like collab — not a silent 200.
 
 ## Web Builder
 

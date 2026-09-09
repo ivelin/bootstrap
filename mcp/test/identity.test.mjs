@@ -199,7 +199,7 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(isProdPinResource(HOSTED_MCP_RESOURCE), true);
     assert.equal(isProdPinResource(HOSTED_MCP_RESOURCE_ALIAS), true);
     assert.equal(isCollabHostedResource(HOSTED_MCP_RESOURCE), true);
-    assert.equal(isCollabHostedResource(HOSTED_MCP_RESOURCE_ALIAS), false);
+    assert.equal(isCollabHostedResource(HOSTED_MCP_RESOURCE_ALIAS), true);
     assert.equal(isUndeclaredDeployAlias(HOSTED_MCP_RESOURCE_ALIAS), true);
     assert.equal(isUndeclaredDeployAlias(HOSTED_MCP_RESOURCE), false);
     assert.equal(

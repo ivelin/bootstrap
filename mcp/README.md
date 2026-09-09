@@ -9,7 +9,7 @@
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
 | **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
-| **4. Hosted MCP** | Preview only | HTTP read adapter. Invite-only collab pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Free Path 1 = GitHub + local/plugin — not a hosted MCP connector. Git-branch previews on `*.vercel.app` (undeclared deploy-only) + [`../plugin/`](../plugin/). Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
+| **4. Hosted MCP** | Preview only | HTTP read adapter. Invite-only collab pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Free docs = GitHub + install-os + local — not a hosted MCP connector. Git-branch previews on `*.vercel.app` (same 401 as collab, not a silent 200). Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
@@ -143,7 +143,7 @@ See [`config/mcp.stdio.example.json`](config/mcp.stdio.example.json).
 
 Same package. Production entry is the Vercel request handler (`api/mcp.ts` + `api/health.ts`). `npm run start:http` is a local helper only.
 
-Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). Invite-only collab host 401s cookie-less `initialize` / `tools/list` / GET SSE; public OS tools stay listed **after** auth. Does **not** host founder `company-state`. Write / init / use-company stay stdio. Free Path 1 is GitHub + local — not this host.
+Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). Invite-only collab host 401s cookie-less `initialize` / `tools/list` / GET SSE; public OS tools stay listed **after** auth. Does **not** host founder `company-state`. Write / init / use-company stay stdio. Free docs are GitHub + install-os + local — not this host.
 
 Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Unauthenticated calls return HTTP 401 + `WWW-Authenticate` pointing at this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login UI is `/bootstrap-os/login` (Web Builder), not this repo. Labels only — not boards. Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
 

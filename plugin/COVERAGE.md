@@ -1,6 +1,6 @@
 # Plugin 0.1.1 — coverage story (this PR, not a product)
 
-Process bar stays on **Vercel’s current** Git integration, preview, env, and tests. No second CI host. Free Path 1 is GitHub + local/plugin — not a hosted MCP connector. Invite-only collab / Grok pin `https://mcp.bootstrap.pirin.ai/mcp`: handshake 401. Optional gated identity (whoami + labels) uses the existing pirin.ai Supabase — not a new Neon, not company-state. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
+Process bar stays on **Vercel’s current** Git integration, preview, env, and tests. No second CI host. Free Path 1 is GitHub + install-os + local — not a hosted MCP connector. Invite-only collab / Grok pin `https://mcp.bootstrap.pirin.ai/mcp`: handshake 401. Optional gated identity (whoami + labels) uses the existing pirin.ai Supabase — not a new Neon, not company-state. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
 
 This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the front door.
 
@@ -18,7 +18,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | OS 2.8.8 house rule (once) | `company-os/operating-system.md` | Full text of *there is no optimal price until people have paid and stayed*. Pointers only elsewhere. |
 | OS 2.8.9 house rule (once) | `company-os/operating-system.md` | Full text of *do not automate a step that should not exist*. One bottleneck this week. Pointers only elsewhere. |
 | Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
-| After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: Path 1 is GitHub + local/plugin — not a hosted MCP connector; invite-only collab / Grok / whoami `https://mcp.bootstrap.pirin.ai/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
+| After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: Path 1 is GitHub + install-os + local — not a hosted MCP connector; invite-only collab / Grok / whoami `https://mcp.bootstrap.pirin.ai/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
 | Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Public read tools. Gated whoami/labels 401 + WWW-Authenticate. No company-state. `marketplace: false`. |
 | Optional identity + RLS | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | 401 + exact pirin.ai challenge. PGlite FORCE RLS (never the live project). Ivelin fixture labels. |
 | Skill OS links | plugin-hyperlinks unit | Skills only hyperlink the published OS. |
