@@ -9,7 +9,7 @@
 | **1. Point an AI** | Everyone (default) | None |
 | **2. Optional instance / CLI** | When you want files in your repo | `./scripts/install-instance.sh` |
 | **3. Local MCP (this package)** | Several ideas, isolated boards | Node 20+, this package, local data root |
-| **4. Hosted MCP** | Preview only | HTTP read adapter. Production pin `https://mcp.bootstrap.pirin.ai/mcp`. Git-branch previews on `*.vercel.app` + [`../plugin/`](../plugin/). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
+| **4. Hosted MCP** | Preview only | HTTP read adapter. Collab / Grok pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Path 1 public pin `https://bootstrap-os-mcp.vercel.app/mcp`. Git-branch previews on `*.vercel.app` + [`../plugin/`](../plugin/). Dual-URL: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. |
 
 Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is hard: no shared phase/evidence across `companyId`. MCP never writes `company-os/` template files.
 
@@ -66,7 +66,7 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 
 | Tool | Purpose |
 |------|---------|
-| `bootstrap_whoami` | Email + company labels when `Authorization: Bearer` is a pirin.ai access token. Unauthenticated gated calls return HTTP 401 + `WWW-Authenticate`. Public OS tools stay open. |
+| `bootstrap_whoami` | Email + company labels when `Authorization: Bearer` is a pirin.ai access token. Unauthenticated gated calls return HTTP 401 + `WWW-Authenticate`. Public OS tools stay open on the Path 1 alias and after auth on the collab host. |
 | `bootstrap_list_company_labels` | Same labels. Error without a token. Not `bootstrap_list_companies` (that stays path 3 / local boards). |
 
 Hard rules (OS 2.8.9):
@@ -143,11 +143,11 @@ See [`config/mcp.stdio.example.json`](config/mcp.stdio.example.json).
 
 Same package. Production entry is the Vercel request handler (`api/mcp.ts` + `api/health.ts`). `npm run start:http` is a local helper only.
 
-Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). **No login** for those tools. Does **not** host founder `company-state`. Write / init / use-company stay stdio.
+Same public read tool names as today (`bootstrap_os_info`, docs, house-rule pins). Fetches the published GitHub repo (`BOOTSTRAP_OS_DOCS_SOURCE=published`). **No login** for those tools on the Path 1 alias. Collab host 401s cookie-less `initialize` / `tools/list` / GET SSE. Does **not** host founder `company-state`. Write / init / use-company stay stdio.
 
-Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Unauthenticated calls return HTTP 401 + `WWW-Authenticate` pointing at this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login UI is `/bootstrap-os/login` (Web Builder), not this repo. Labels only — not boards. Contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
+Optional gated tools on this host only: `bootstrap_whoami` and `bootstrap_list_company_labels`. Unauthenticated calls return HTTP 401 + `WWW-Authenticate` pointing at this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login UI is `/bootstrap-os/login` (Web Builder), not this repo. Labels only — not boards. Dual-URL contract: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md).
 
-Production pin is `https://mcp.bootstrap.pirin.ai/mcp` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`; `bootstrap-os-mcp.vercel.app` is a served alias). Git-branch public preview is `*.vercel.app`. Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
+Collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp`. Path 1 public pin is `https://bootstrap-os-mcp.vercel.app/mcp` (project `bootstrap-os-mcp` under `ivelins-projects-9f9b7132`). Git-branch public preview is `*.vercel.app`. Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
 
 ```bash
 cd mcp
@@ -176,7 +176,7 @@ Never deploy this adapter to `v0-pirin-ai-founder-studio` or any pirin.ai host.
 
 | | Local (path 3) | Hosted pin |
 |--|----------------|------------|
-| Public OS tool names | Same | Same. Unauthenticated. |
+| Public OS tool names | Same | Same. Unauthenticated on the Path 1 alias; listed after auth on the collab host. |
 | Writes / init / use-company | Founder-owned files under `BOOTSTRAP_DATA_ROOT` | **Not on the host.** Path 3 only. |
 | Replaces Path 1? | No | No |
 | Replaces Path 3? | This is Path 3 | No |

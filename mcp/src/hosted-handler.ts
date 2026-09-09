@@ -10,7 +10,7 @@ import {
   authorizationServerMetadataDocument,
   hostedMcpResource,
   protectedResourceMetadataDocument,
-  requiresPreviewHandshakeAuth,
+  requiresHandshakeAuth,
   wwwAuthenticateChallenge,
 } from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
@@ -44,7 +44,7 @@ function gatedToolNameFromRpc(body: unknown): string | undefined {
   return typeof name === "string" && isHostedGatedToolName(name) ? name : undefined;
 }
 
-function isPreviewHandshakeRpc(body: unknown): boolean {
+function isHandshakeRpc(body: unknown): boolean {
   const method = rpcMethodOf(body);
   return method === "initialize" || method === "tools/list";
 }
@@ -148,9 +148,9 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
 
   const whoami = await resolveHostedWhoami(req.headers.get("authorization"));
   const hasBearer = Boolean(parseBearerToken(req.headers.get("authorization")));
-  const previewHandshake = requiresPreviewHandshakeAuth(req);
+  const handshakeAuth = requiresHandshakeAuth(req);
 
-  if (previewHandshake && !hasBearer && req.method === "GET") {
+  if (handshakeAuth && !hasBearer && req.method === "GET") {
     return unauthorizedGatedToolResponse(whoami, req);
   }
 
@@ -161,7 +161,7 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     } catch {
       rpcBody = null;
     }
-    if (previewHandshake && !hasBearer && isPreviewHandshakeRpc(rpcBody)) {
+    if (handshakeAuth && !hasBearer && isHandshakeRpc(rpcBody)) {
       return unauthorizedGatedToolResponse(whoami, req);
     }
     if (gatedToolNameFromRpc(rpcBody) && !whoami.authenticated) {

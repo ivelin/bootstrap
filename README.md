@@ -85,9 +85,9 @@ One stdio connector, many `companyId`s: [`mcp/README.md`](mcp/README.md). MCP ne
 
 A **preview** plugin lives in [`plugin/`](plugin/): thin skills that hyperlink this repo, plus an optional Streamable HTTP **read** adapter in [`mcp/`](mcp/). Team Import from Repo only — not a public catalog submit. It is not a second front door. Path 1 stays default.
 
-The hosted slice is read-only: OS info, docs, house-rule pins (no login). Gated whoami + labels return 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login); login is `/bootstrap-os/login` (Web Builder; not this repo). Markdown on GitHub remains the constitution. Founder `company-state` stays on path 3 local stdio — not on a shared server.
+The hosted slice is read-only: OS info, docs, house-rule pins. Path 1 public pin `https://bootstrap-os-mcp.vercel.app/mcp` stays cookie-less. Collab / Grok pin `https://mcp.bootstrap.pirin.ai/mcp` 401s the handshake. Gated whoami + labels return 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login); login is `/bootstrap-os/login` (Web Builder; not this repo). Dual-URL contract: [`mcp/docs/HOSTED_IDENTITY.md`](mcp/docs/HOSTED_IDENTITY.md). Markdown on GitHub remains the constitution. Founder `company-state` stays on path 3 local stdio — not on a shared server.
 
-There is a **preview** public read adapter on `*.vercel.app` (not mentee-ready boards, not a public catalog submit, not pirin.ai). Production pin is `https://mcp.bootstrap.pirin.ai/mcp`. No day-one SaaS boards. Founder `company-state` stays path 3. Pin is in [`plugin/mcp.json`](plugin/mcp.json); `${BOOTSTRAP_MCP_URL}` can override (defaults to that host). Do not use `mcp.pirin.ai` (dead).
+There is a **preview** public read adapter on `*.vercel.app` (not mentee-ready boards, not a public catalog submit, not pirin.ai). `plugin/mcp.json` pins the collab host; `${BOOTSTRAP_MCP_URL}` can override. No day-one SaaS boards. Do not use `mcp.pirin.ai` (dead).
 
 ---
 

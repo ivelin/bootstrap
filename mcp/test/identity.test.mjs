@@ -20,7 +20,9 @@ import {
 import {
   HOSTED_MCP_RESOURCE,
   HOSTED_MCP_RESOURCE_ALIAS,
+  isCollabHostedResource,
   isJwtAccessToken,
+  isPath1PublicAlias,
   isProdPinResource,
   HOSTED_PROTECTED_RESOURCE_METADATA_URL,
   PIRIN_AUTHORIZATION_SERVER,
@@ -33,7 +35,7 @@ import {
   authorizationServerUrl,
   hostedMcpResource,
   protectedResourceMetadataDocument,
-  requiresPreviewHandshakeAuth,
+  requiresHandshakeAuth,
   wwwAuthenticateChallenge,
   wwwAuthenticateChallengeFor,
 } from "../dist/oauth.js";
@@ -196,6 +198,10 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(HOSTED_MCP_RESOURCE_ALIAS, "https://bootstrap-os-mcp.vercel.app/mcp");
     assert.equal(isProdPinResource(HOSTED_MCP_RESOURCE), true);
     assert.equal(isProdPinResource(HOSTED_MCP_RESOURCE_ALIAS), true);
+    assert.equal(isCollabHostedResource(HOSTED_MCP_RESOURCE), true);
+    assert.equal(isCollabHostedResource(HOSTED_MCP_RESOURCE_ALIAS), false);
+    assert.equal(isPath1PublicAlias(HOSTED_MCP_RESOURCE_ALIAS), true);
+    assert.equal(isPath1PublicAlias(HOSTED_MCP_RESOURCE), false);
     assert.equal(
       PIRIN_PROTECTED_RESOURCE_METADATA_URL,
       "https://pirin.ai/.well-known/oauth-protected-resource",
@@ -376,7 +382,7 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(JSON.parse(await aliasWk.text()).resource, HOSTED_MCP_RESOURCE);
   });
 
-  it("Hold preview cookie-less initialize / GET SSE / tools/list 401; prod pin initialize stays 200", async () => {
+  it("Hold preview cookie-less initialize / GET SSE / tools/list 401; Path 1 alias stays 200; collab host handshake 401", async () => {
     process.env.VERCEL_ENV = "preview";
     const previewChallenge = wwwAuthenticateChallengeFor(
       PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL,
@@ -396,7 +402,7 @@ describe("hosted identity (resource server, gated)", () => {
         },
       }),
     });
-    assert.equal(requiresPreviewHandshakeAuth(previewInit), true);
+    assert.equal(requiresHandshakeAuth(previewInit), true);
     const initRes = await handleHostedReadFetch(previewInit);
     assert.equal(initRes.status, 401);
     assert.equal(initRes.headers.get("WWW-Authenticate"), previewChallenge);
@@ -470,17 +476,54 @@ describe("hosted identity (resource server, gated)", () => {
       headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
       body: JSON.stringify(initBody),
     });
-    assert.equal(requiresPreviewHandshakeAuth(prodInit), false);
+    assert.equal(requiresHandshakeAuth(prodInit), true);
     const prodRes = await handleHostedReadFetch(prodInit);
-    assert.equal(prodRes.status, 200);
+    assert.equal(prodRes.status, 401);
+    assert.equal(prodRes.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+    assert.equal(JSON.parse(await prodRes.text()).resource, HOSTED_MCP_RESOURCE);
+
+    const collabSse = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "GET",
+        headers: { Accept: "text/event-stream" },
+      }),
+    );
+    assert.equal(collabSse.status, 401);
+    assert.equal(collabSse.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+
+    const collabList = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 24, method: "tools/list", params: {} }),
+      }),
+    );
+    assert.equal(collabList.status, 401);
+    assert.equal(collabList.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
 
     const aliasInit = new Request(HOSTED_MCP_RESOURCE_ALIAS, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
-      body: JSON.stringify({ ...initBody, id: 24 }),
+      body: JSON.stringify({ ...initBody, id: 25 }),
     });
-    assert.equal(requiresPreviewHandshakeAuth(aliasInit), false);
+    assert.equal(requiresHandshakeAuth(aliasInit), false);
     assert.equal((await handleHostedReadFetch(aliasInit)).status, 200);
+
+    const aliasList = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE_ALIAS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 26, method: "tools/list", params: {} }),
+      }),
+    );
+    assert.equal(aliasList.status, 200);
+    const aliasNames = JSON.parse(await aliasList.text()).result.tools.map((t) => t.name);
+    for (const n of HOSTED_READ_TOOL_NAMES) {
+      assert.ok(aliasNames.includes(n), `alias missing public ${n}`);
+    }
+    for (const n of HOSTED_GATED_TOOL_NAMES) {
+      assert.ok(aliasNames.includes(n), `alias missing gated ${n}`);
+    }
 
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
     const prodWhoami = await handleHostedReadFetch(
@@ -489,7 +532,7 @@ describe("hosted identity (resource server, gated)", () => {
         headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
         body: JSON.stringify({
           jsonrpc: "2.0",
-          id: 25,
+          id: 27,
           method: "tools/call",
           params: { name: "bootstrap_whoami", arguments: {} },
         }),
@@ -505,6 +548,79 @@ describe("hosted identity (resource server, gated)", () => {
       prodWhoami.headers.get("WWW-Authenticate") ?? "",
       /resource="https:\/\/mcp\.bootstrap\.pirin\.ai\/mcp"/,
     );
+
+    const aliasWhoami = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE_ALIAS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 28,
+          method: "tools/call",
+          params: { name: "bootstrap_whoami", arguments: {} },
+        }),
+      }),
+    );
+    assert.equal(aliasWhoami.status, 401);
+    assert.equal(aliasWhoami.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+
+    const authedCollabInit = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          Authorization: `Bearer ${IVELIN_TOKEN}`,
+        },
+        body: JSON.stringify({ ...initBody, id: 29 }),
+      }),
+    );
+    assert.equal(authedCollabInit.status, 200);
+
+    const authedCollabList = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          Authorization: `Bearer ${IVELIN_TOKEN}`,
+        },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 30, method: "tools/list", params: {} }),
+      }),
+    );
+    assert.equal(authedCollabList.status, 200);
+    const collabNames = JSON.parse(await authedCollabList.text()).result.tools.map((t) => t.name);
+    for (const n of HOSTED_READ_TOOL_NAMES) {
+      assert.ok(collabNames.includes(n), `authed collab missing public ${n}`);
+    }
+    for (const n of HOSTED_GATED_TOOL_NAMES) {
+      assert.ok(collabNames.includes(n), `authed collab missing gated ${n}`);
+    }
+
+    const authedWho = parseTool(
+      JSON.parse(
+        await (
+          await handleHostedReadFetch(
+            new Request(HOSTED_MCP_RESOURCE, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json, text/event-stream",
+                Authorization: `Bearer ${IVELIN_TOKEN}`,
+              },
+              body: JSON.stringify({
+                jsonrpc: "2.0",
+                id: 31,
+                method: "tools/call",
+                params: { name: "bootstrap_whoami", arguments: {} },
+              }),
+            }),
+          )
+        ).text(),
+      ),
+    );
+    assert.equal(authedWho.authenticated, true);
+    assert.equal(authedWho.email, IVELIN_SEED_EMAIL);
   });
 
   it("CORS allows Authorization and exposes WWW-Authenticate", async () => {

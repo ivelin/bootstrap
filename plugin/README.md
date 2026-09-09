@@ -4,7 +4,7 @@ Preview package. Skills hyperlink the published OS. **Not** mentee-ready hosted 
 
 Path 1 stays default: point an AI at https://github.com/ivelin/bootstrap
 
-Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visitor matrix is only for surfaces a mentee agent is told to see. Production pin stays `https://mcp.bootstrap.pirin.ai/mcp` on `main` (`bootstrap-os-mcp.vercel.app` remains a served alias). PR #17 public (no Vercel SSO) preview for the 401 / pirin.ai login loop: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`.
+Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visitor matrix is only for surfaces a mentee agent is told to see. Two pins: Path 1 / first-hour `https://bootstrap-os-mcp.vercel.app/mcp`; collab / Grok / whoami `https://mcp.bootstrap.pirin.ai/mcp`. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md). PR #17 public (no Vercel SSO) preview for the 401 / pirin.ai login loop: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`.
 
 ## Standing rule
 
@@ -16,7 +16,7 @@ Seven cases this package must support. Thin links, not essays. Install-first: no
 
 **Human**
 
-1. Installing founder, first hour, plugin + MCP connector — [`first-hour`](skills/first-hour/SKILL.md) + this README (a)(b)(c). Connector only `https://mcp.bootstrap.pirin.ai/mcp`.
+1. Installing founder, first hour, plugin + MCP connector — [`first-hour`](skills/first-hour/SKILL.md) + this README (a)(b)(c). Path 1 pin `https://bootstrap-os-mcp.vercel.app/mcp`. Collab pin `https://mcp.bootstrap.pirin.ai/mcp`.
 2. Mentee CoS asking where current work sits on 0-1 — [`query-os-first`](skills/query-os-first/SKILL.md).
 3. Specialist asking whether a customer conversation counts as GTM/traction — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Spoken yes cannot promote.
 
@@ -33,12 +33,12 @@ Not extra Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Full 
 
 **Human**
 
-1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. Connector `https://mcp.bootstrap.pirin.ai/mcp`.
-2. After First Hour, what next — query the published OS / hosted MCP. Same pin. Not Ivelin's GitHub as a dropbox.
+1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. Path 1 pin `https://bootstrap-os-mcp.vercel.app/mcp`.
+2. After First Hour, what next — query the published OS / hosted MCP. Path 1 pin above; collab pin in [`HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md). Not Ivelin's GitHub as a dropbox.
 
 **Agent**
 
-1. After First Hour — query `https://mcp.bootstrap.pirin.ai/mcp`. Do not upload mentee work to Ivelin's GitHub.
+1. After First Hour — query `https://bootstrap-os-mcp.vercel.app/mcp`. Do not upload mentee work to Ivelin's GitHub.
 2. Asked to push mentee files to ivelin/bootstrap — refuse. Cite the standing rules + MCP pin. Path 1 stays `https://github.com/ivelin/bootstrap`.
 
 ## Do not automate visitor matrix
@@ -88,9 +88,9 @@ The repo-root [`.cursor-plugin/marketplace.json`](../.cursor-plugin/marketplace.
 
 **(b) Add the remote MCP**
 
-`https://mcp.bootstrap.pirin.ai/mcp`
+Collab / Grok / whoami: `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401 → pirin.ai login). Path 1 / no account: `https://bootstrap-os-mcp.vercel.app/mcp`. See [`HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
 
-Optional `${BOOTSTRAP_MCP_URL}` override; it defaults to that host. Read tools only. Do not use `mcp.pirin.ai`.
+Optional `${BOOTSTRAP_MCP_URL}` override; it defaults to the collab pin. Read tools only. Do not use `mcp.pirin.ai`.
 
 **(c) Local copy**
 
@@ -118,9 +118,9 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 ## Hosted MCP URL
 
-`mcp.json` pins the production Streamable HTTP host `https://mcp.bootstrap.pirin.ai/mcp`. `${BOOTSTRAP_MCP_URL}` may override (default is that host). Git-branch previews stay on `*.vercel.app`. Not mentee-ready boards. Not a public catalog. Do not use `mcp.pirin.ai`.
+`mcp.json` pins the collab / Grok Streamable HTTP host `https://mcp.bootstrap.pirin.ai/mcp`. Path 1 / first-hour public pin is `https://bootstrap-os-mcp.vercel.app/mcp`. `${BOOTSTRAP_MCP_URL}` may override (default is the collab pin). Git-branch previews stay on `*.vercel.app`. Not mentee-ready boards. Not a public catalog. Do not use `mcp.pirin.ai`. Dual-URL contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
 
-Public read tools (no login): OS info, docs, house-rule pins. Gated `bootstrap_whoami` / company labels return 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login is `/bootstrap-os/login` on pirin.ai (Web Builder; not this repo). Founder `company-state` stays path 3 local stdio. Contract: [`mcp/docs/HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md).
+Path 1 alias: public OS tools with no login. Collab host: cookie-less handshake 401; public OS tools stay listed after auth. Gated `bootstrap_whoami` / company labels return 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). Login is `/bootstrap-os/login` on pirin.ai (Web Builder; not this repo). Founder `company-state` stays path 3 local stdio.
 
 Deploy recipe (new Vercel project `bootstrap-os-mcp` only):
 

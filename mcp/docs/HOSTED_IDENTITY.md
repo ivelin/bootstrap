@@ -1,6 +1,6 @@
 # Hosted MCP identity (resource server)
 
-This host is the **resource server only**. Public OS tools stay **unauthenticated**. Gated tools accept **access tokens issued by pirin.ai login**.
+This host is the **resource server only**. Path 1 public OS tools stay **unauthenticated** on the vercel.app alias. The collab host 401s the handshake so Grok Bot starts OAuth. Gated tools accept **access tokens issued by pirin.ai login**.
 
 Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write path.
 
@@ -12,14 +12,19 @@ Path 1 (point an AI at GitHub) stays enough. Path 3 local stdio stays the write 
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
 | Product | MCP client follows 401 → this origin's protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
-| Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Production pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. `bootstrap-os-mcp.vercel.app` is a served alias. Do not merge. |
+| Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. Path 1 public pin is `https://bootstrap-os-mcp.vercel.app/mcp`. Do not merge. |
 | Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
 
 ## HTTP contract
 
-On the **production pin**, public tools (`bootstrap_os_info`, docs, house-rule pins), `initialize`, and `tools/list` stay **200** with no `Authorization` header.
+Two production URLs (Neil / Cos lock — Grok Bot OAuth vs Path 1):
 
-On this **Hold preview** (`VERCEL_ENV=preview`, not the prod hostname), cookie-less `initialize`, GET SSE `/mcp`, and `tools/list` return **HTTP 401** with the same `WWW-Authenticate` as gated whoami. Public OS tools still work **with a Bearer**. RFC 8414 / RFC 9728 well-known GETs stay 200.
+| Pin | URL | Cookie-less `initialize` / GET SSE / `tools/list` |
+|-----|-----|---------------------------------------------------|
+| Collab / Grok / whoami | `https://mcp.bootstrap.pirin.ai/mcp` | **HTTP 401** + `WWW-Authenticate` (same as gated whoami). Public OS tools stay listed **after** auth. |
+| Path 1 / first-hour / apply OS with no account | `https://bootstrap-os-mcp.vercel.app/mcp` | **HTTP 200**. Public OS tools stay open. Gated whoami/labels still 401. |
+
+On this **Hold preview** (`VERCEL_ENV=preview`, not a prod hostname), cookie-less `initialize`, GET SSE `/mcp`, and `tools/list` return **HTTP 401** with the same `WWW-Authenticate` as gated whoami. Public OS tools still work **with a Bearer**. RFC 8414 / RFC 9728 well-known GETs stay 200.
 
 Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_company_labels` (and any later gated tool) return **HTTP 401**. Production / main uses this exact header (`resource_metadata` is **this MCP origin** well-known — not live pirin.ai, whose RFC 9728 `resource` is still the vercel.app alias until pirin-ai updates):
 
@@ -37,7 +42,7 @@ WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://bo
 
 Do **not** point production or Hold-preview `resource_metadata` at `https://pirin.ai/.well-known/oauth-protected-resource` — that JSON `resource` is still `https://bootstrap-os-mcp.vercel.app/mcp`. `BOOTSTRAP_OAUTH_RESOURCE_METADATA` cannot override onto that live document.
 
-This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://pirin.ai/bootstrap-os/login`. The public pin must **not** 401 `initialize` or `tools/list`.
+This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://pirin.ai/bootstrap-os/login`. The Path 1 alias must **not** 401 `initialize` or `tools/list`.
 
 ## Web Builder
 
@@ -106,7 +111,7 @@ After the code exchange, the MCP client retries gated tools with:
 Authorization: Bearer <access_token issued by pirin.ai>
 ```
 
-Install-first clients omit `Authorization`. They still get the published OS. They receive 401 only if they call a gated tool.
+Path 1 / alias clients omit `Authorization`. They still get the published OS. They receive 401 only if they call a gated tool. Collab-host clients get 401 on the first handshake and follow `WWW-Authenticate`.
 
 ## Tests (PGlite / isolated)
 

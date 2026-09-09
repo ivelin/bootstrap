@@ -137,6 +137,7 @@ describe("preview plugin (hyperlink only)", () => {
     const firstHour = fs.readFileSync(path.join(PLUGIN, "skills", "first-hour", "SKILL.md"), "utf8");
     assert.match(firstHour, /Install-first|install-first/);
     assert.match(firstHour, /mcp\.bootstrap\.pirin\.ai\/mcp/);
+    assert.match(firstHour, /bootstrap-os-mcp\.vercel\.app\/mcp/);
     assert.match(firstHour, /lifestyle or swinging for the fences/i);
     assert.match(firstHour, /day-0-lifestyle-or-swinging-for-the-fences/);
     assert.match(firstHour, /Do not upload mentee work to Ivelin.s GitHub/);
