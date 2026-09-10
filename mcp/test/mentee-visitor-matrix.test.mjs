@@ -108,6 +108,13 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /tools\/list` return \*\*HTTP 401\*\*/);
     assert.match(identity, /Collab \/ Grok \/ whoami/);
     assert.match(identity, /undeclared deploy-only/);
+    assert.match(identity, /E2E_ROLEPLAY\.md/);
+    const e2e = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "E2E_ROLEPLAY.md"), "utf8");
+    assert.match(e2e, /accept_invite/);
+    assert.match(e2e, /Mail round-trip/);
+    assert.match(e2e, /Draft prod synthetic SRE/);
+    assert.match(e2e, /GET \/health/);
+    assert.match(coverage, /I6/);
     assert.doesNotMatch(identity, /Path 1 \/ first-hour \/ apply OS with no account/);
     assert.ok(identity.includes(PATH1));
     assert.match(identity, /Vercel Authentication is \*\*off\*\*/);

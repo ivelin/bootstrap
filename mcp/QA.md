@@ -14,6 +14,7 @@
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
 | **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Path 1 alias stays open; collab-host handshake + gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
+| **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation. Invite/accept/mail **pending**. PGlite only. |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 
 Local full CI mirror:
@@ -52,6 +53,7 @@ cd mcp && npm ci && npm run ci
 - **Secrets:** do not put API keys in company state; traces may be shared carefully (no PII). Identity tests use PGlite. Supabase env is live on `bootstrap-os-mcp` — do not print it. Never service role.
 - **Rollback:** Vercel → Deployments → Redeploy / previous production on `bootstrap-os-mcp`. Path 1 (point an AI) remains the default forever; disable MCP client config to fall back. Hosted read adapter is preview only. Logs: Vercel project logs. Liveness: `GET /health`.
 - **Runbooks:** [`docs/COLD_PATH.md`](docs/COLD_PATH.md), [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md)
+- **E2E / draft prod synthetic SRE:** [`docs/E2E_ROLEPLAY.md`](docs/E2E_ROLEPLAY.md) (say once). Not PR live-probe.
 
 ## Exit criteria for this PR
 
