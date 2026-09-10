@@ -21,7 +21,15 @@ export const HOSTED_READ_TOOL_NAMES = [
 export const HOSTED_GATED_IDENTITY_TOOL_NAMES = [
   "bootstrap_whoami",
   "bootstrap_list_company_labels",
+  "invite_member",
+  "accept_invite",
 ] as const;
+
+/**
+ * Valid JWT required; allowlist is not. Invitee accepts before they have a mentee row.
+ * Other identity tools stay allowlist-gated.
+ */
+export const HOSTED_PRE_ALLOWLIST_TOOL_NAMES = ["accept_invite"] as const;
 
 /** Branch-only journey board. Not on the production pin until this draft merges. Public OS tools stay open. */
 export const HOSTED_GATED_JOURNEY_TOOL_NAMES = [
@@ -46,6 +54,12 @@ export function isHostedGatedToolName(name: string | undefined): boolean {
 export function isHostedGatedJourneyToolName(name: string | undefined): boolean {
   return Boolean(
     name && (HOSTED_GATED_JOURNEY_TOOL_NAMES as readonly string[]).includes(name),
+  );
+}
+
+export function isHostedPreAllowlistToolName(name: string | undefined): boolean {
+  return Boolean(
+    name && (HOSTED_PRE_ALLOWLIST_TOOL_NAMES as readonly string[]).includes(name),
   );
 }
 

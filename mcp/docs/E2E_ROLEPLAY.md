@@ -1,8 +1,8 @@
 # E2E role-play matrix + draft prod synthetic SRE
 
-Say it **once** here. Other files link. First-user SQL stays in [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md#first-user-rebuild-from-github). HTTP challenge strings stay there too.
+Say it **once** here. Other files link. First-user SQL stays in [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Invite/accept contract stays in [`INVITE.md`](INVITE.md). HTTP challenge strings stay in HOSTED_IDENTITY.
 
-This is **test/docs infrastructure**. PGlite / unit only. Dev and test never touch prod. PR cloud agents do **not** migrate, seed, or live-probe `supabase-pirin-ai`. Do not invent `invite` / `accept_invite` tools here. Full invite path (outsider-identical dogfood, zk0 preferred) is later.
+This is **test/docs infrastructure**. PGlite / unit only. Dev and test never touch prod. PR cloud agents do **not** migrate, seed, or live-probe `supabase-pirin-ai`.
 
 ## Role-play matrix (CI now vs pending)
 
@@ -16,11 +16,11 @@ Critical paths run in CI on **PGlite** before any prod synthetic. Evidence: `mcp
 | R4 | Wrong token | Non-JWT / unusable Bearer → gated **401** (`not_a_pirin_access_token` or `invalid_or_revoked_token`). No label leak. | Yes |
 | R5 | Expired token | JWT `exp` in the past → gated **401** `invalid_or_revoked_token`. Fixture-allowed only — this host does not verify JWKS. | Yes |
 | R6 | Cross-company labels | Fixture A sees `alpha` only; B sees `bravo` only; Ivelin sees `pirin` / `zk0` / `totbox`. | Yes |
-| P1 | `invite` tool | Existing user invites another | **Pending** until that tool ships. Do not invent it here. |
-| P2 | `accept_invite` | Invitee accepts and lands on the allowlist | **Pending** until that tool ships. Do not invent it here. |
-| P3 | Mail round-trip | Invite body / mailer | **Pending**. Follow-on. Not this PR. |
+| P1 | `invite_member` | Allowlisted inviter (Ivelin) invites Bill to a label they hold (`zk0`). Accept card (DraftExternalMessage). Uninvited cannot invite. Cross-company label refused. | Yes |
+| P2 | `accept_invite` | Bill accepts → allowlist + `zk0`. Wrong email, expired, replay, bad token fail closed. | Yes |
+| P3 | Mail round-trip | Invite body / mailer / QR / SMS | **Pending**. Follow-on. Not this PR. |
 
-Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github).
+Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later mentees: [INVITE.md](INVITE.md).
 
 ## Draft prod synthetic SRE (Cos only — not PR CI)
 

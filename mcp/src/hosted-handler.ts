@@ -7,9 +7,17 @@
  * Public OS tools stay listed after auth on the invite-only collab host. Pin: oauth.ts / HOSTED_IDENTITY.md.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { isHostedGatedJourneyToolName, isHostedGatedToolName } from "./constants.js";
+import {
+  isHostedGatedJourneyToolName,
+  isHostedGatedToolName,
+  isHostedPreAllowlistToolName,
+} from "./constants.js";
 import { parseBearerToken, resolveHostedWhoami, type HostedWhoami } from "./identity.js";
-import { actorFromAuthorizationHeader, type JourneyActor } from "./journey-auth.js";
+import {
+  actorClaimsFromAccessToken,
+  actorFromAuthorizationHeader,
+  type JourneyActor,
+} from "./journey-auth.js";
 import { resolveJourneyStore } from "./journey.js";
 import {
   authorizationServerMetadataDocument,
@@ -204,7 +212,12 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     }
     const gatedName = gatedToolNameFromRpc(rpcBody);
     if (gatedName) {
-      if (isHostedGatedJourneyToolName(gatedName)) {
+      if (isHostedPreAllowlistToolName(gatedName)) {
+        // accept_invite: valid JWT required; allowlist is not (invitee is not_invited yet).
+        if (!whoami.authenticated && whoami.reason !== "not_invited") {
+          return unauthorizedGatedToolResponse(whoami, req);
+        }
+      } else if (isHostedGatedJourneyToolName(gatedName)) {
         actor = resolveGatedActor(req.headers.get("authorization"));
         if (!actor.authenticated) {
           return unauthorizedGatedToolResponse(whoami, req, actor);
@@ -215,10 +228,15 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     }
   }
 
+  const accessToken = parseBearerToken(req.headers.get("authorization"));
+  const inviteClaims = accessToken ? actorClaimsFromAccessToken(accessToken) : null;
+
   const server = createBootstrapServer("hosted-read", {
     whoami,
     resource: hostedMcpResource(req),
     actor,
+    inviteActor: inviteClaims ?? (whoami.email ? { email: whoami.email } : undefined),
+    accessToken,
   });
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,

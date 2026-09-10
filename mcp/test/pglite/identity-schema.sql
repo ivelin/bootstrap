@@ -99,8 +99,38 @@ BEGIN
 END;
 $$;
 
+CREATE TABLE bootstrap_mcp_invites (
+  id text PRIMARY KEY,
+  invitee_email text NOT NULL,
+  company_label text NOT NULL,
+  invited_by_mentee_id text NOT NULL REFERENCES bootstrap_mcp_mentees (id) ON DELETE CASCADE,
+  invited_by_email text NOT NULL,
+  token_hash text NOT NULL UNIQUE,
+  expires_at timestamptz NOT NULL,
+  accepted_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE bootstrap_mcp_invite_outbox (
+  id text PRIMARY KEY,
+  invite_id text NOT NULL REFERENCES bootstrap_mcp_invites (id) ON DELETE CASCADE,
+  channel text NOT NULL CHECK (channel = 'in_chat'),
+  payload jsonb NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE bootstrap_mcp_invites ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bootstrap_mcp_invite_outbox ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bootstrap_mcp_invites FORCE ROW LEVEL SECURITY;
+ALTER TABLE bootstrap_mcp_invite_outbox FORCE ROW LEVEL SECURITY;
+
+-- No policies: mentee_reader cannot see invite rows or the raw token hash.
+-- Table owner (PGliteInviteStore) bypasses RLS.
+
 -- Table owner bypasses RLS in this engine; queries run as mentee_reader.
 CREATE ROLE mentee_reader NOLOGIN;
 GRANT SELECT ON bootstrap_mcp_mentees TO mentee_reader;
 GRANT SELECT ON bootstrap_company_labels TO mentee_reader;
+GRANT SELECT ON bootstrap_mcp_invites TO mentee_reader;
+GRANT SELECT ON bootstrap_mcp_invite_outbox TO mentee_reader;
 GRANT EXECUTE ON FUNCTION bootstrap_mcp_my_labels() TO mentee_reader;

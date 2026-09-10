@@ -14,7 +14,7 @@
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
 | **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Path 1 alias stays open; collab-host handshake + gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
-| **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation. Invite/accept/mail **pending**. PGlite only. |
+| **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation; `invite_member` / `accept_invite` (Bill / wrong email / expired / replay / cross-company). Mail **pending**. PGlite only. |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 
 Local full CI mirror:
