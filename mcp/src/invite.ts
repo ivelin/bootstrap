@@ -373,145 +373,42 @@ export class MemoryInviteStore implements InviteStore {
   }
 }
 
+/**
+ * Isolated PGlite adapter. Calls the same RPC names as prod (`bootstrap_mcp_invite_member` /
+ * `bootstrap_mcp_accept_invite`) on mcp/test/pglite/identity-schema.sql. Never supabase-pirin-ai.
+ */
 export class PgliteInviteStore implements InviteStore {
   readonly kind = "pglite" as const;
   constructor(private readonly db: SqlClient) {}
 
-  async inviteMember(actor: InviteActor, input: InviteCreateInput): Promise<InviteResult> {
-    const inviterEmail = normalizeInviteEmail(actor.email ?? "");
-    const inviteeEmail = normalizeInviteEmail(input.email);
-    const companyLabel = normalizeCompanyLabel(input.companyLabel);
-    if (!inviterEmail) return { ok: false, reason: "inviter_not_on_allowlist" };
-    if (!inviteeEmail) return { ok: false, reason: "invalid_email" };
-    if (!companyLabel) return { ok: false, reason: "invalid_label" };
+  private async setActor(actor: InviteActor): Promise<void> {
     await this.db.exec("RESET ROLE");
-    const inviter = (
-      await this.db.query(
-        "SELECT id, email FROM bootstrap_mcp_mentees WHERE email = $1 OR auth_user_id = $2",
-        [inviterEmail, actor.sub ?? ""],
-      )
-    ).rows[0];
-    if (!inviter) return { ok: false, reason: "inviter_not_on_allowlist" };
-    const labels = (
-      await this.db.query(
-        "SELECT label FROM bootstrap_company_labels WHERE mentee_id = $1 ORDER BY label",
-        [inviter.id],
-      )
-    ).rows.map((row) => String(row.label));
-    const held = decideInviteCreate(labels, companyLabel);
-    if (!held.ok) return held;
-    const token = mintInviteToken();
-    const now = inviteNow();
-    const expiresAt = new Date(now + INVITE_TTL_MS).toISOString();
-    const id = newId("inv");
-    const card = buildAcceptCard({
-      fromEmail: String(inviter.email),
-      toEmail: inviteeEmail,
-      companyWorkspace: companyLabel,
-      inviteToken: token,
-      expiresAt,
-    });
-    await this.db.query(
-      `INSERT INTO bootstrap_mcp_invites
-        (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at, accepted_at, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NULL, $8)`,
-      [
-        id,
-        inviteeEmail,
-        companyLabel,
-        inviter.id,
-        inviter.email,
-        hashMcpToken(token),
-        expiresAt,
-        new Date(now).toISOString(),
-      ],
-    );
-    const queued = enqueueInviteInChat(id, card);
-    await this.db.query(
-      `INSERT INTO bootstrap_mcp_invite_outbox (id, invite_id, channel, payload)
-       VALUES ($1, $2, 'in_chat', $3::jsonb)`,
-      [queued.id, id, JSON.stringify(queued.payload)],
-    );
-    return { ok: true, card, queued: { channel: "in_chat", id: queued.id } };
+    await this.db.query("SELECT set_config('app.auth_uid', $1, false)", [actor.sub ?? ""]);
+    await this.db.query("SELECT set_config('app.auth_email', $1, false)", [actor.email ?? ""]);
+  }
+
+  async inviteMember(actor: InviteActor, input: InviteCreateInput): Promise<InviteResult> {
+    await this.setActor(actor);
+    const body = (
+      await this.db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
+        input.email,
+        input.companyLabel,
+      ])
+    ).rows[0]?.body;
+    if (!body || typeof body !== "object" || !("ok" in body)) {
+      return { ok: false, reason: "invite_store_unset" };
+    }
+    return body as InviteResult;
   }
 
   async acceptInvite(actor: InviteActor, token: string): Promise<AcceptResult> {
-    const actorEmail = normalizeInviteEmail(actor.email ?? "");
-    if (!actorEmail) return { ok: false, reason: "email_required" };
-    if (!token || token.length < 16) return { ok: false, reason: "invite_not_found" };
-    await this.db.exec("RESET ROLE");
-    const found = (
-      await this.db.query("SELECT * FROM bootstrap_mcp_invites WHERE token_hash = $1", [
-        hashMcpToken(token),
-      ])
-    ).rows[0];
-    const invite = found
-      ? {
-          id: String(found.id),
-          inviteeEmail: String(found.invitee_email),
-          companyLabel: String(found.company_label),
-          invitedByMenteeId: String(found.invited_by_mentee_id),
-          invitedByEmail: String(found.invited_by_email),
-          tokenHash: String(found.token_hash),
-          expiresAt:
-            found.expires_at instanceof Date
-              ? found.expires_at.toISOString()
-              : String(found.expires_at),
-          acceptedAt: found.accepted_at
-            ? found.accepted_at instanceof Date
-              ? found.accepted_at.toISOString()
-              : String(found.accepted_at)
-            : null,
-          createdAt:
-            found.created_at instanceof Date
-              ? found.created_at.toISOString()
-              : String(found.created_at),
-        }
-      : undefined;
-    const decided = decideInviteAccept({ now: inviteNow(), actorEmail, invite });
-    if (!decided.ok) return decided;
-    const row = invite as InviteRow;
-    await this.db.query(
-      "UPDATE bootstrap_mcp_invites SET accepted_at = $1 WHERE id = $2 AND accepted_at IS NULL",
-      [new Date(inviteNow()).toISOString(), row.id],
-    );
-    let mentee = (
-      await this.db.query("SELECT id, email, auth_user_id FROM bootstrap_mcp_mentees WHERE email = $1", [
-        row.inviteeEmail,
-      ])
-    ).rows[0];
-    if (!mentee) {
-      const menteeId = newId("mentee");
-      await this.db.query(
-        "INSERT INTO bootstrap_mcp_mentees (id, email, auth_user_id) VALUES ($1, $2, $3)",
-        [menteeId, row.inviteeEmail, actor.sub ?? null],
-      );
-      mentee = { id: menteeId, email: row.inviteeEmail, auth_user_id: actor.sub ?? null };
-    } else if (!mentee.auth_user_id && actor.sub) {
-      await this.db.query(
-        "UPDATE bootstrap_mcp_mentees SET auth_user_id = $1 WHERE id = $2 AND auth_user_id IS NULL",
-        [actor.sub, mentee.id],
-      );
+    await this.setActor(actor);
+    const body = (await this.db.query("SELECT bootstrap_mcp_accept_invite($1) AS body", [token]))
+      .rows[0]?.body;
+    if (!body || typeof body !== "object" || !("ok" in body)) {
+      return { ok: false, reason: "invite_not_found" };
     }
-    await this.db.query(
-      `INSERT INTO bootstrap_company_labels (id, mentee_id, label)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (mentee_id, label) DO NOTHING`,
-      [newId("lbl"), mentee.id, row.companyLabel],
-    );
-    const labels = (
-      await this.db.query(
-        "SELECT label FROM bootstrap_company_labels WHERE mentee_id = $1 ORDER BY label",
-        [mentee.id],
-      )
-    ).rows.map((r) => String(r.label));
-    return {
-      ok: true,
-      email: String(mentee.email),
-      labels,
-      companyWorkspace: row.companyLabel,
-      note: "Allowlist + label bound. Labels only. Not boards. Not company-state.",
-    };
+    return body as AcceptResult;
   }
 }
 

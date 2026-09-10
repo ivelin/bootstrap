@@ -48,7 +48,7 @@ Single-use. Expires in 7 days. Hash only in the table. Fail closed on wrong emai
 
 ## Rebuild from GitHub (Cos — never a PR agent)
 
-1. Identity + fail-closed + invite migrations, in order: `20260829_bootstrap_mcp_identity.sql`, `20260909_bootstrap_mcp_fail_closed_invite.sql`, `20260910_bootstrap_mcp_invite_accept.sql`.
+1. Identity + fail-closed + invite migrations, in order: `20260829_bootstrap_mcp_identity.sql`, `20260909_bootstrap_mcp_fail_closed_invite.sql`, `20260910_bootstrap_mcp_invite_accept.sql`, then the label-qualify fix `20260910_bootstrap_mcp_invite_qualify_label.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member` — shipped accept file is not edited).
 2. First user = SQL insert (link above). Do **not** apply `mcp/test/pglite/identity-schema.sql` to prod.
 3. Later mentees use `invite_member` / `accept_invite`. Do not invent journey stage or Advance.
 
@@ -64,4 +64,4 @@ PR CI is **PGlite only**. Do not migrate, seed, or live-probe `supabase-pirin-ai
 
 ## Tests
 
-PGlite role-play: [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` · `mcp/test/invite.test.mjs` (unset store vs RPC status/body).
+PGlite role-play: [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` · `mcp/test/invite.test.mjs` (unset store vs RPC status/body) · `mcp/test/identity-pglite.test.mjs` (`SELECT bootstrap_mcp_invite_member` — no 42702).
