@@ -97,6 +97,16 @@ describe("RLS: one mentee cannot read another", () => {
     assert.doesNotMatch(inviteSql, /CREATE POLICY[\s\S]{0,200}USING\s*\(\s*true\s*\)/i);
     assert.doesNotMatch(inviteSql, /smtp|nodemailer|sendgrid/i);
     assert.doesNotMatch(inviteSql, /supabase\.co/);
+    const qualifySql = fs.readFileSync(
+      path.join(__dirname, "..", "supabase", "migrations", "20260910_bootstrap_mcp_invite_qualify_label.sql"),
+      "utf8",
+    );
+    assert.match(qualifySql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.match(qualifySql, /cl\.label = company_label/);
+    assert.doesNotMatch(qualifySql, /AND label = label/);
+    assert.match(qualifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member\(text, text\) TO authenticated/);
+    assert.doesNotMatch(qualifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
+    assert.doesNotMatch(qualifySql, /supabase\.co/);
   });
 
   it("authenticated A cannot see B labels or mentee row", () => {

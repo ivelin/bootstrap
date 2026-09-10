@@ -101,6 +101,66 @@ describe("PGlite identity RLS (isolated, never prod)", () => {
     assert.equal(bound.auth_user_id, "44444444-4444-4444-4444-444444444444");
   });
 
+  it("invite_member SQL RPC: unqualified label is 42702; qualified label invites zk0", async () => {
+    await db.exec("RESET ROLE");
+    await db.exec(`
+CREATE OR REPLACE FUNCTION bootstrap_mcp_invite_member_ambiguous(p_email text, p_company_label text)
+RETURNS jsonb
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  inviter_id text;
+  label text;
+BEGIN
+  SELECT id INTO inviter_id FROM bootstrap_mcp_mentees WHERE email = 'ivelin@pirin.ai';
+  label := lower(p_company_label);
+  IF NOT EXISTS (
+    SELECT 1 FROM bootstrap_company_labels
+    WHERE mentee_id = inviter_id AND label = label
+  ) THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'label_not_held');
+  END IF;
+  RETURN jsonb_build_object('ok', true, 'email', p_email);
+END;
+$$;
+`);
+    try {
+      await db.query("SELECT bootstrap_mcp_invite_member_ambiguous($1, $2) AS body", [
+        "ivelin@zk0.bot",
+        "zk0",
+      ]);
+      assert.fail("ambiguous label = label must raise 42702");
+    } catch (e) {
+      assert.match(String(e.message), /column reference "label" is ambiguous/);
+      assert.equal(e.code, "42702");
+    }
+
+    await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    const invited = (
+      await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
+        "ivelin@zk0.bot",
+        "zk0",
+      ])
+    ).rows[0].body;
+    assert.equal(invited.ok, true, JSON.stringify(invited));
+    assert.equal(invited.card.card, "accept_invite");
+    assert.equal(invited.card.companyWorkspace, "zk0");
+    assert.equal(invited.card.to.email, "ivelin@zk0.bot");
+    assert.match(invited.card.inviteToken, /^inv_/);
+    assert.doesNotMatch(JSON.stringify(invited), /42702|ambiguous/);
+
+    await db.exec("SELECT set_config('app.auth_uid', '11111111-1111-1111-1111-111111111111', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'mentee-a@example.test', false)");
+    const cross = (
+      await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
+        "other@example.test",
+        "bravo",
+      ])
+    ).rows[0].body;
+    assert.deepEqual(cross, { ok: false, reason: "label_not_held" });
+  });
+
   it("FORCE RLS: mentee_reader cannot see invite rows or outbox", async () => {
     await db.exec("RESET ROLE");
     await db.query(

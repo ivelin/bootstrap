@@ -36,6 +36,14 @@ const SQL = path.join(
   "migrations",
   "20260910_bootstrap_mcp_invite_accept.sql",
 );
+const QUALIFY_SQL = path.join(
+  REPO_ROOT,
+  "mcp",
+  "supabase",
+  "migrations",
+  "20260910_bootstrap_mcp_invite_qualify_label.sql",
+);
+const PGLITE_SCHEMA = path.join(REPO_ROOT, "mcp", "test", "pglite", "identity-schema.sql");
 
 afterEach(() => {
   setInviteStoreForTests(undefined);
@@ -76,6 +84,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(invite, /Not `\/bootstrap-os\/login`/);
     assert.match(invite, /HOSTED_IDENTITY\.md#first-user-rebuild-from-github/);
     assert.match(invite, /20260910_bootstrap_mcp_invite_accept\.sql/);
+    assert.match(invite, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
     assert.match(invite, /PGlite/);
     assert.match(invite, /supabase-pirin-ai/);
     assert.match(invite, /invite_store_unset/);
@@ -83,6 +92,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.doesNotMatch(invite, /INSERT INTO public\.bootstrap_mcp_mentees/);
     assert.match(hosted, /INVITE\.md/);
     assert.match(hosted, /First user \(rebuild from GitHub\)/);
+    assert.match(hosted, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
     const sql = fs.readFileSync(SQL, "utf8");
     assert.match(sql, /DO NOT apply from a PR cloud agent/);
     assert.match(sql, /bootstrap_mcp_invite_member/);
@@ -92,6 +102,19 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.doesNotMatch(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,40}anon/);
     assert.doesNotMatch(sql, /smtp|nodemailer|sendgrid/i);
     assert.doesNotMatch(sql, /supabase\.co/);
+    const qualify = fs.readFileSync(QUALIFY_SQL, "utf8");
+    const pglite = fs.readFileSync(PGLITE_SCHEMA, "utf8");
+    assert.match(qualify, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.match(qualify, /cl\.label = company_label/);
+    assert.doesNotMatch(qualify, /AND label = label/);
+    assert.match(qualify, /DO NOT apply from a PR cloud agent/);
+    assert.doesNotMatch(qualify, /supabase\.co/);
+    assert.match(pglite, /SELECT bootstrap_mcp_invite_member|bootstrap_mcp_invite_member\(p_email/);
+    assert.match(pglite, /cl\.label = company_label/);
+    assert.doesNotMatch(pglite, /AND label = label/);
+    const storeSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
+    assert.match(storeSrc, /SELECT bootstrap_mcp_invite_member\(\$1, \$2\)/);
+    assert.match(storeSrc, /SELECT bootstrap_mcp_accept_invite\(\$1\)/);
   });
 
   it("normalizes email/label and refuses a label the inviter does not hold", () => {
