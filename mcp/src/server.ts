@@ -309,7 +309,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
           { email: who.email, sub: ctx.inviteActor?.sub, labels: who.labels },
           { email, companyLabel },
         );
-        if (!result.ok) return err(inviteFailMessage(result.reason));
+        if (!result.ok) return err(inviteFailMessage(result));
         return text(result);
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));
@@ -334,7 +334,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
       }
       try {
         const result = await store.acceptInvite({ email, sub: ctx.inviteActor?.sub }, token);
-        if (!result.ok) return err(inviteFailMessage(result.reason));
+        if (!result.ok) return err(inviteFailMessage(result));
         return text(result);
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));

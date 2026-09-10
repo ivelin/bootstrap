@@ -16,7 +16,7 @@ Critical paths run in CI on **PGlite** before any prod synthetic. Evidence: `mcp
 | R4 | Wrong token | Non-JWT / unusable Bearer → gated **401** (`not_a_pirin_access_token` or `invalid_or_revoked_token`). No label leak. | Yes |
 | R5 | Expired token | JWT `exp` in the past → gated **401** `invalid_or_revoked_token`. Fixture-allowed only — this host does not verify JWKS. | Yes |
 | R6 | Cross-company labels | Fixture A sees `alpha` only; B sees `bravo` only; Ivelin sees `pirin` / `zk0` / `totbox`. | Yes |
-| P1 | `invite_member` | Allowlisted inviter (Ivelin) invites Bill to a label they hold (`zk0`). Accept card (DraftExternalMessage). Uninvited cannot invite. Cross-company label refused. | Yes |
+| P1 | `invite_member` | Allowlisted inviter (Ivelin) invites Bill to a label they hold (`zk0`). Accept card (DraftExternalMessage). Uninvited cannot invite. Cross-company label refused. Unset store ≠ failed RPC (HTTP status + body, not `invite_store_unset`). | Yes |
 | P2 | `accept_invite` | Bill accepts → allowlist + `zk0`. Wrong email, expired, replay, bad token fail closed. | Yes |
 | P3 | Mail round-trip | Invite body / mailer / QR / SMS | **Pending**. Follow-on. Not this PR. |
 

@@ -27,6 +27,7 @@ import { actorClaimsFromAccessToken, syntheticAccessToken } from "../dist/journe
 import { HOSTED_MCP_RESOURCE, WWW_AUTHENTICATE_CHALLENGE, isJwtAccessToken } from "../dist/oauth.js";
 import {
   PgliteInviteStore,
+  SupabaseInviteStore,
   setInviteClockForTests,
   setInviteStoreForTests,
 } from "../dist/invite.js";
@@ -203,6 +204,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(e2e, /First-user|first-user/);
     assert.match(e2e, /zk0/);
     assert.match(e2e, /invite_member/);
+    assert.match(e2e, /invite_store_unset/);
     assert.match(e2e, /accept_invite/);
     assert.match(e2e, /P1/);
     assert.match(e2e, /P2/);
@@ -385,6 +387,51 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.ok(outbox.length >= 1);
     assert.equal(outbox[outbox.length - 1].channel, "in_chat");
     assert.equal(outbox[outbox.length - 1].payload.inviteToken, null);
+  });
+
+  it("P1 invite_member: unset store vs RPC failure are distinct user-facing errors", async () => {
+    process.env.VERCEL_ENV = "production";
+    setIdentityStoreForTests(pgliteIdentityStore(db));
+    const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
+
+    setInviteStoreForTests(null);
+    const unset = await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "zk0" }, ivelin);
+    assert.equal(unset.res.status, 200, unset.text);
+    assert.equal(unset.body.result.isError, true);
+    const unsetMsg = unset.body.result.content.map((c) => c.text).join("\n");
+    assert.match(unsetMsg, /Invite store unset/);
+    assert.doesNotMatch(unsetMsg, /Invite RPC failed/);
+
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = async (url) => {
+      const u = String(url);
+      if (u.includes("/rest/v1/rpc/bootstrap_mcp_invite_member")) {
+        return new Response(
+          JSON.stringify({
+            code: "PGRST202",
+            message:
+              "Could not find the function public.bootstrap_mcp_invite_member(p_email, p_company_label) in the schema cache",
+          }),
+          { status: 404 },
+        );
+      }
+      throw new Error(`unexpected fetch ${u}`);
+    };
+    try {
+      setInviteStoreForTests(
+        new SupabaseInviteStore("https://rpc-fail.example", "anon-key-fixture-xx", ivelin),
+      );
+      const failed = await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "zk0" }, ivelin);
+      assert.equal(failed.res.status, 200, failed.text);
+      assert.equal(failed.body.result.isError, true);
+      const msg = failed.body.result.content.map((c) => c.text).join("\n");
+      assert.match(msg, /Invite RPC failed \(HTTP 404\)/);
+      assert.match(msg, /PGRST202/);
+      assert.match(msg, /schema cache/);
+      assert.doesNotMatch(msg, /Invite store unset/);
+    } finally {
+      globalThis.fetch = origFetch;
+    }
   });
 
   it("P2 accept_invite: Bill lands on zk0; wrong email / expired / replay / bad token fail", async () => {
