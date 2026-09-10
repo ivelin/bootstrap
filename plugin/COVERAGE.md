@@ -140,7 +140,7 @@ Gated whoami env is live on `bootstrap-os-mcp` (do not print values). PR CI uses
 
 ## SRE already in play
 
-Liveness / handshake / invited-uninvited whoami / Vercel rollback: say once in [`mcp/docs/E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md). Path 1 stays the front door.
+Full checklist (whoami invited/uninvited, handshake 401, `GET /health`, Vercel **Rollback**) lives once in [`mcp/docs/E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md). Path 1 stays the front door. Do not invent a second host.
 
 ## Honesty
 

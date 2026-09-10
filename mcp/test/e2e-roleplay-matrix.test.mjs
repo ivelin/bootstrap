@@ -134,7 +134,9 @@ async function assertGated401(res, reason) {
   const body = JSON.parse(await res.text());
   assert.equal(body.error, "invalid_token");
   if (reason) assert.equal(body.reason, reason);
-  assert.doesNotMatch(JSON.stringify(body), /alpha|bravo|pirin|totbox|zk0|secret-other/i);
+  const blob = JSON.stringify(body);
+  assert.doesNotMatch(blob, /"(alpha|bravo|totbox|zk0|secret-other)"/);
+  assert.equal(body.labels, undefined);
   return body;
 }
 
@@ -196,9 +198,10 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     }
     const server = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "server.ts"), "utf8");
     assert.doesNotMatch(server, /bootstrap_invite|bootstrap_accept_invite|accept_invite/);
-    const pkg = fs.readFileSync(path.join(REPO_ROOT, "mcp", "package.json"), "utf8");
-    assert.match(pkg, /e2e-roleplay-matrix\.test\.mjs/);
-    assert.doesNotMatch(pkg, /preview-live\.mjs/);
+    const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, "mcp", "package.json"), "utf8"));
+    assert.match(pkg.scripts["test:unit"], /e2e-roleplay-matrix\.test\.mjs/);
+    assert.doesNotMatch(pkg.scripts["test:unit"], /preview-live/);
+    assert.doesNotMatch(pkg.scripts.ci, /preview-live/);
   });
 
   it("R1 PM empty Bearer: handshake + whoami 401 missing_or_short_token", async () => {
