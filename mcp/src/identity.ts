@@ -1,5 +1,6 @@
 /**
  * Hosted-MCP identity: pirin.ai access token → whoami + company labels.
+ * Fail-closed: a valid JWT is not enough; email/auth_user must be on bootstrap_mcp_mentees.
  * Public OS tools do not use this module. No company-state. No boards.
  * Product path is a JWT issued by pirin.ai login (authorization code + PKCE).
  */
@@ -81,6 +82,54 @@ export function whoamiFromMentee(mentee: MenteeRecord | undefined, store: Hosted
     labels: [...mentee.labels].sort(),
     note: "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os.",
     identityStore: store,
+  };
+}
+
+export type LabelsRpcBody = {
+  authenticated?: unknown;
+  email?: unknown;
+  labels?: unknown;
+  reason?: unknown;
+  note?: unknown;
+};
+
+/**
+ * Fail-closed: a valid pirin JWT is not enough. RPC must say authenticated: true
+ * (row on bootstrap_mcp_mentees). Mirrors SQL bootstrap_mcp_my_labels.
+ */
+export function whoamiFromLabelsRpc(
+  userEmail: string | undefined,
+  raw: LabelsRpcBody | null,
+  rpcOk: boolean,
+): HostedWhoami {
+  if (!rpcOk || !raw) {
+    return {
+      authenticated: false,
+      labels: [],
+      reason: "identity_lookup_failed",
+      identityStore: "supabase",
+    };
+  }
+  const email = typeof raw.email === "string" ? raw.email : userEmail;
+  if (raw.authenticated !== true) {
+    return {
+      authenticated: false,
+      email,
+      labels: [],
+      reason: typeof raw.reason === "string" && raw.reason ? raw.reason : "not_invited",
+      identityStore: "supabase",
+    };
+  }
+  const labels = Array.isArray(raw.labels) ? raw.labels.map(String).sort() : [];
+  return {
+    authenticated: true,
+    email,
+    labels,
+    note:
+      typeof raw.note === "string" && raw.note
+        ? raw.note
+        : "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os.",
+    identityStore: "supabase",
   };
 }
 
@@ -190,18 +239,11 @@ export class SupabaseIdentityStore implements IdentityStore {
       body: "{}",
       signal: AbortSignal.timeout(10_000),
     });
-    let labels: string[] = [];
+    let raw: LabelsRpcBody | null = null;
     if (labelsRes.ok) {
-      const raw = (await labelsRes.json()) as { labels?: unknown };
-      labels = Array.isArray(raw.labels) ? raw.labels.map(String).sort() : [];
+      raw = (await labelsRes.json()) as LabelsRpcBody;
     }
-    return {
-      authenticated: true,
-      email: user.email,
-      labels,
-      note: "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os.",
-      identityStore: "supabase",
-    };
+    return whoamiFromLabelsRpc(user.email, raw, labelsRes.ok);
   }
 }
 

@@ -12,6 +12,7 @@ Free docs are GitHub + [install-os](https://pirin.ai/install-os) + local — **n
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
 | Product | MCP client follows 401 → this origin's protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
+| Allowlist | A valid pirin.ai JWT is **not** enough. Hosted MCP whoami is `authenticated: true` only if email/`auth_user_id` is on `bootstrap_mcp_mentees`. Uninvited → `not_invited`; gated tools stay 401. First user is a SQL insert — [First user (rebuild from GitHub)](#first-user-rebuild-from-github). |
 | Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Invite-only collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. Do not merge. |
 | Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
 | Deploy Host (not a pin) | `https://bootstrap-os-mcp.vercel.app/mcp` is the Vercel production Host. **Not a pin.** Not Path 1. Not advertised. Cos HARD 2026-09-09: treat this Host **exactly like collab** — cookie-less `initialize` / `tools/list` **HTTP 401** + `WWW-Authenticate`. Not a silent 200 alias (undeclared deploy-only). |
@@ -32,7 +33,7 @@ Unauthenticated or invalid-token calls to `bootstrap_whoami` or `bootstrap_list_
 WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource", resource="https://mcp.bootstrap.pirin.ai/mcp", scope="bootstrap-os"
 ```
 
-The 401 JSON also includes `identityStore` (`supabase` | `memory` | `unset`). That is not a session claim.
+The 401 JSON also includes `identityStore` (`supabase` | `memory` | `unset`) and `reason` (`missing_or_short_token` | `not_invited` | …). Those are not session claims.
 
 Preview (this Hold — Cos lock) challenge — `resource` is this preview MCP URL, `resource_metadata` is **this preview origin** well-known (not live pirin.ai, not the dead #143 git preview):
 
@@ -113,11 +114,38 @@ Authorization: Bearer <access_token issued by pirin.ai>
 
 Collab-host and undeclared-deploy-Host clients get 401 on the first handshake and follow `WWW-Authenticate`. Path 1 founders are not told to connect a hosted MCP URL.
 
+## First user (rebuild from GitHub)
+
+Say it **once** here. Other files link.
+
+A valid pirin.ai JWT alone must **not** grant hosted MCP access. There is **no login UI in this repo**. Invite-from-existing-user (body/mailer) is a follow-on. First user is a **direct SQL insert** into `bootstrap_mcp_mentees` (email **lowercased**) plus optional `bootstrap_company_labels`.
+
+On a rebuild (empty project / Cos applying migrations — **never from a PR cloud agent**):
+
+1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql` then `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`. PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
+2. Insert the first mentee. The identity migration already seeds `ivelin@pirin.ai` + labels `pirin`, `zk0`, `totbox`. Additional mentees use the same shape:
+
+```sql
+INSERT INTO public.bootstrap_mcp_mentees (email)
+VALUES (lower('founder@example.com'));
+
+INSERT INTO public.bootstrap_company_labels (mentee_id, label)
+SELECT m.id, x.label
+FROM public.bootstrap_mcp_mentees m
+CROSS JOIN (VALUES ('pirin')) AS x(label)
+WHERE m.email = lower('founder@example.com');
+```
+
+3. That person signs in at pirin.ai `/bootstrap-os/login`. OAuth then works. `bootstrap_mcp_my_labels` binds `auth_user_id` on the first email match.
+
+Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools stay HTTP 401. Missing token still 401s the collab handshake.
+
 ## Tests (PGlite / isolated)
 
 | | |
 |--|--|
 | HTTP 401 + exact `WWW-Authenticate` | `mcp/test/identity.test.mjs` |
+| Invited JWT authenticates; uninvited → `not_invited` | `mcp/test/identity.test.mjs` + `identity-pglite.test.mjs` |
 | FORCE RLS | `mcp/test/identity-pglite.test.mjs` |
 | SQL file locks | `mcp/test/identity-rls.test.mjs` (no network) |
 
@@ -125,4 +153,4 @@ Do not run `preview-live.mjs` on PR cloud agents.
 
 ## Out
 
-No mentee roster. No usage analytics as proof. No founder-update write. No WebMCP. No marketplace. No billing. No login UI in this repo. Insights/Apply stay email-only. No public Path 1 hosted MCP pin.
+No mentee roster. No usage analytics as proof. No founder-update write. No WebMCP. No marketplace. No billing. No login UI in this repo. Insights/Apply stay email-only. No public Path 1 hosted MCP pin. No open login (JWT without a mentee row). Invite-from-existing-user body/mailer is a follow-on.

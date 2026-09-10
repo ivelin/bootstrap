@@ -61,6 +61,27 @@ describe("RLS: one mentee cannot read another", () => {
     assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_my_labels\(\) TO authenticated/);
     assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_mint_token\(\) TO authenticated/);
     assert.doesNotMatch(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_mint_token\(\) TO anon/);
+    assert.match(sql, /'reason', 'not_invited'/);
+    assert.doesNotMatch(sql, /found_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
+    assert.doesNotMatch(sql, /mentee_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
+    assert.match(sql, /RAISE EXCEPTION 'not_invited'/);
+    assert.doesNotMatch(
+      sql,
+      /INSERT INTO public\.bootstrap_mcp_mentees \(email, auth_user_id\)[\s\S]{0,80}ON CONFLICT \(email\)/,
+    );
+    const followOn = path.join(
+      __dirname,
+      "..",
+      "supabase",
+      "migrations",
+      "20260909_bootstrap_mcp_fail_closed_invite.sql",
+    );
+    const followSql = fs.readFileSync(followOn, "utf8");
+    assert.match(followSql, /'reason', 'not_invited'/);
+    assert.match(followSql, /RAISE EXCEPTION 'not_invited'/);
+    assert.doesNotMatch(followSql, /found_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
+    assert.doesNotMatch(followSql, /mentee_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
+    assert.doesNotMatch(followSql, /supabase\.co/);
   });
 
   it("authenticated A cannot see B labels or mentee row", () => {
@@ -88,5 +109,6 @@ describe("RLS: one mentee cannot read another", () => {
     assert.match(sql, /IF uid IS NULL THEN\s+RAISE EXCEPTION 'not_authenticated'/);
     assert.match(sql, /token_hash = public\.bootstrap_mcp_hash_token\(p_token\)/);
     assert.match(sql, /revoked_at IS NULL/);
+    assert.match(sql, /Must not auto-insert/);
   });
 });
