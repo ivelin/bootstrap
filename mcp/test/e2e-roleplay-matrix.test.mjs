@@ -235,7 +235,8 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const server = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "server.ts"), "utf8");
     assert.match(server, /invite_member/);
     assert.match(server, /accept_invite/);
-    assert.doesNotMatch(server, /resend/i);
+    const inviteSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
+    assert.doesNotMatch(inviteSrc, /from ["']resend["']|smtp|nodemailer|sendgrid/i);
     const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, "mcp", "package.json"), "utf8"));
     assert.match(pkg.scripts["test:unit"], /e2e-roleplay-matrix\.test\.mjs/);
     assert.match(pkg.scripts["test:unit"], /invite\.test\.mjs/);

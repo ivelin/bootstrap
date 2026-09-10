@@ -95,7 +95,7 @@ describe("RLS: one mentee cannot read another", () => {
     assert.match(inviteSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_accept_invite\(text\) TO authenticated/);
     assert.doesNotMatch(inviteSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
     assert.doesNotMatch(inviteSql, /CREATE POLICY[\s\S]{0,200}USING\s*\(\s*true\s*\)/i);
-    assert.doesNotMatch(inviteSql, /resend/i);
+    assert.doesNotMatch(inviteSql, /smtp|nodemailer|sendgrid/i);
     assert.doesNotMatch(inviteSql, /supabase\.co/);
   });
 

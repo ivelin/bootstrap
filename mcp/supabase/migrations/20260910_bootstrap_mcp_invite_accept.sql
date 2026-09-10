@@ -2,7 +2,7 @@
 -- DO NOT apply from a PR cloud agent. Local/CI use mcp/test/pglite/identity-schema.sql.
 -- First user remains a direct SQL insert (HOSTED_IDENTITY.md). This unlocks mentee rows
 -- after an allowlisted inviter. OAuth alone is not enough.
--- In-chat Accept only. No Resend. Mail/QR/SMS later.
+-- In-chat Accept only. Mail sender is not this database. Mail/QR/SMS later.
 
 CREATE TABLE IF NOT EXISTS public.bootstrap_mcp_invites (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

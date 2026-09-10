@@ -2,7 +2,7 @@
  * Hosted MCP invite + accept (Grok-first, in-chat Accept).
  * Fail-closed allowlist: invite creates/unlocks mentee rows. OAuth alone is not enough.
  * First user stays a SQL insert — HOSTED_IDENTITY.md. Mail / QR / SMS are later.
- * No Resend. Optional in_chat outbox enqueue only. Never supabase-pirin-ai from PR CI.
+ * Mail sender is not this repo. Optional in_chat outbox enqueue only. Never supabase-pirin-ai from PR CI.
  */
 import { randomBytes } from "node:crypto";
 import { hashMcpToken } from "./identity.js";

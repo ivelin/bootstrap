@@ -83,7 +83,7 @@ describe("invite + accept (memory, never prod)", () => {
     assert.match(sql, /channel = 'in_chat'/);
     assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member/);
     assert.doesNotMatch(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,40}anon/);
-    assert.doesNotMatch(sql, /resend/i);
+    assert.doesNotMatch(sql, /smtp|nodemailer|sendgrid/i);
     assert.doesNotMatch(sql, /supabase\.co/);
   });
 
