@@ -148,8 +148,9 @@ Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools 
 | Invited JWT authenticates; uninvited → `not_invited` | `mcp/test/identity.test.mjs` + `identity-pglite.test.mjs` |
 | FORCE RLS | `mcp/test/identity-pglite.test.mjs` |
 | SQL file locks | `mcp/test/identity-rls.test.mjs` (no network) |
+| CTO/PM role-play matrix + draft prod synthetic SRE | [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` |
 
-Do not run `preview-live.mjs` on PR cloud agents.
+Do not run `preview-live.mjs` on PR cloud agents. Draft prod synthetic checks are Cos-only — same doc.
 
 ## Out
 

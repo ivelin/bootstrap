@@ -71,6 +71,7 @@ Does **not** replace the seven-case matrix. Login is optional. Install-first sti
 | I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
 | I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
 | I5 | Valid JWT, no mentee row | gated whoami | `authenticated: false`, `reason: not_invited`, HTTP 401. Not open login. First user is a SQL insert — [`HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md#first-user-rebuild-from-github). | `identity.test.mjs` + PGlite RPC |
+| I6 | CTO/PM role-play (empty, first-user insert, wrong/expired, isolation) | PGlite E2E | Same paths as I2–I5 plus first-user SQL insert → invited whoami (`zk0`). Invite / `accept_invite` / mail **pending**. | [`E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md) · `e2e-roleplay-matrix.test.mjs` |
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 
@@ -139,12 +140,7 @@ Gated whoami env is live on `bootstrap-os-mcp` (do not print values). PR CI uses
 
 ## SRE already in play
 
-| Control | How |
-|---------|-----|
-| Liveness | `GET /health` → `ok` |
-| Logs | Vercel project `bootstrap-os-mcp` → Logs |
-| Rollback | Vercel → Deployments → Redeploy / promote previous production. Do not invent a second host. |
-| Fallback | Path 1: point an AI at https://github.com/ivelin/bootstrap |
+Liveness / handshake / invited-uninvited whoami / Vercel rollback: say once in [`mcp/docs/E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md). Path 1 stays the front door.
 
 ## Honesty
 

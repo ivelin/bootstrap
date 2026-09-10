@@ -215,7 +215,7 @@ High-impact plan, dogfood protocol, and kill criteria: [`../ROADMAP.md`](../ROAD
 | `npm run test:smoke` | Cold-path multi-company smoke |
 | `npm run test:stdio` | Real stdio MCP client (M1 protocol) |
 | `npm run test:http` | Streamable HTTP hosted-read (no local clone) |
-| unit `identity` / `identity-rls` | Optional whoami + RLS file locks (one mentee cannot read another) |
+| unit `identity` / `identity-rls` / `e2e-roleplay-matrix` | Optional whoami + RLS + CTO/PM role-play (PGlite). Invite tools pending. |
 | `npm run start:http` | Preview HTTP read adapter |
 | `npm run ci` | Full local CI mirror |
 
@@ -223,6 +223,6 @@ Merge gates and manual checklist: [`QA.md`](QA.md).
 
 GitHub Actions: `.github/workflows/mcp-ci.yml` (Node 20 + 22).
 
-Runbooks: [`docs/COLD_PATH.md`](docs/COLD_PATH.md) · [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) · [`docs/JOURNEY.md`](docs/JOURNEY.md) · [`QA.md`](QA.md)
+Runbooks: [`docs/COLD_PATH.md`](docs/COLD_PATH.md) · [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) · [`docs/JOURNEY.md`](docs/JOURNEY.md) · [`docs/E2E_ROLEPLAY.md`](docs/E2E_ROLEPLAY.md) · [`QA.md`](QA.md)
 
 **This branch:** gated journey tools + SQL (PGlite tests only). Not on the production pin. Do not merge. Invite-only collab pin: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md). Journey contract: [`docs/JOURNEY.md`](docs/JOURNEY.md).
