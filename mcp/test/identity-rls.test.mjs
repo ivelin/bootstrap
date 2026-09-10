@@ -82,6 +82,21 @@ describe("RLS: one mentee cannot read another", () => {
     assert.doesNotMatch(followSql, /found_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
     assert.doesNotMatch(followSql, /mentee_id IS NULL THEN[\s\S]{0,200}'authenticated',\s*true/);
     assert.doesNotMatch(followSql, /supabase\.co/);
+    const inviteSql = fs.readFileSync(
+      path.join(__dirname, "..", "supabase", "migrations", "20260910_bootstrap_mcp_invite_accept.sql"),
+      "utf8",
+    );
+    assert.match(inviteSql, /DO NOT apply from a PR cloud agent/);
+    assert.match(inviteSql, /FORCE ROW LEVEL SECURITY/);
+    assert.match(inviteSql, /REVOKE ALL ON TABLE public\.bootstrap_mcp_invites/);
+    assert.match(inviteSql, /REVOKE ALL ON TABLE public\.bootstrap_mcp_invite_outbox/);
+    assert.match(inviteSql, /channel = 'in_chat'/);
+    assert.match(inviteSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member\(text, text\) TO authenticated/);
+    assert.match(inviteSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_accept_invite\(text\) TO authenticated/);
+    assert.doesNotMatch(inviteSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
+    assert.doesNotMatch(inviteSql, /CREATE POLICY[\s\S]{0,200}USING\s*\(\s*true\s*\)/i);
+    assert.doesNotMatch(inviteSql, /resend/i);
+    assert.doesNotMatch(inviteSql, /supabase\.co/);
   });
 
   it("authenticated A cannot see B labels or mentee row", () => {

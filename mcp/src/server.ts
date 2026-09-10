@@ -37,6 +37,7 @@ import { evaluateExternalAsk } from "./policy.js";
 import { HOUSE_RULE_LINES, HOUSE_RULE_PINS } from "./house-rules.js";
 import { anonymousWhoami, type HostedRequestContext } from "./identity-context.js";
 import { hostedMcpResource, protectedResourceMetadataUrl } from "./oauth.js";
+import { inviteFailMessage, resolveInviteStore } from "./invite.js";
 
 export type McpSurface = "full" | "hosted-read";
 
@@ -122,7 +123,13 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
             identity: {
               publicTools:
                 "Open without login on the Path 1 alias. On the collab host they stay listed after auth. Empty-context agents keep working on the alias.",
-              gatedTools: ["bootstrap_whoami", "bootstrap_list_company_labels", ...HOSTED_GATED_JOURNEY_TOOL_NAMES],
+              gatedTools: [
+                "bootstrap_whoami",
+                "bootstrap_list_company_labels",
+                "invite_member",
+                "accept_invite",
+                ...HOSTED_GATED_JOURNEY_TOOL_NAMES,
+              ],
               challenge: "HTTP 401 + WWW-Authenticate resource_metadata. No login UI here.",
               identityStore: hosted?.whoami.identityStore ?? "unset",
               resource: hosted?.resource ?? hostedMcpResource(),
@@ -274,6 +281,64 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
         email: who.email,
         note: "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os. Writes stay on path 3 local files.",
       });
+    },
+  );
+}
+
+function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
+  server.tool(
+    "invite_member",
+    "Allowlisted founder/authorized invites a mentee (email + company workspace label). Returns an in-chat Accept card (DraftExternalMessage shape: who invited / to whom / workspace → Accept). Not /bootstrap-os/login. Mail/QR/SMS later. First user stays SQL — HOSTED_IDENTITY.md.",
+    {
+      email: z.string().describe("Invitee email. Lowercased. Must match their pirin.ai login when they accept."),
+      companyLabel: z
+        .string()
+        .describe("Company workspace label the inviter already holds (e.g. zk0). Not a board."),
+    },
+    async ({ email, companyLabel }) => {
+      const who = ctx.whoami;
+      if (!who.authenticated || !who.email) {
+        return err("Allowlisted founder or authorized mentee required.");
+      }
+      const store = resolveInviteStore(ctx.accessToken);
+      if (!store) {
+        return err(inviteFailMessage("invite_store_unset"));
+      }
+      try {
+        const result = await store.inviteMember(
+          { email: who.email, sub: ctx.inviteActor?.sub, labels: who.labels },
+          { email, companyLabel },
+        );
+        if (!result.ok) return err(inviteFailMessage(result.reason));
+        return text(result);
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "accept_invite",
+    "Invitee accepts with the one-time token from the in-chat Accept card. JWT email must match. Binds mentee allowlist + company workspace label. Fail-closed on wrong email, expired, or replay. Grok-first — mail later.",
+    {
+      token: z.string().describe("One-time invite token from the Accept card (inv_…). Shown once."),
+    },
+    async ({ token }) => {
+      const email = ctx.inviteActor?.email ?? ctx.whoami.email;
+      if (!email) {
+        return err(inviteFailMessage("email_required"));
+      }
+      const store = resolveInviteStore(ctx.accessToken);
+      if (!store) {
+        return err(inviteFailMessage("invite_store_unset"));
+      }
+      try {
+        const result = await store.acceptInvite({ email, sub: ctx.inviteActor?.sub }, token);
+        if (!result.ok) return err(inviteFailMessage(result.reason));
+        return text(result);
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
     },
   );
 }
@@ -836,6 +901,7 @@ export function createBootstrapServer(
   if (surface === "hosted-read") {
     const ctx = hosted ?? { whoami: anonymousWhoami() };
     registerGatedIdentityTools(server, ctx);
+    registerInviteTools(server, ctx);
     registerJourneyTools(server, ctx);
   }
   if (surface === "full") {

@@ -9,6 +9,10 @@ export type HostedRequestContext = {
   resource?: string;
   /** Journey ACL actor. Separate from whoami labels. Owner comes from ACL, not free text. */
   actor?: JourneyActor;
+  /** JWT email/sub for invite/accept. Present even when whoami is not_invited. */
+  inviteActor?: { email?: string; sub?: string };
+  /** Raw pirin.ai access token. Invite RPCs use it. Never log. */
+  accessToken?: string;
 };
 
 export function anonymousWhoami(): HostedWhoami {

@@ -110,8 +110,13 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /undeclared deploy-only/);
     assert.match(identity, /E2E_ROLEPLAY\.md/);
     const e2e = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "E2E_ROLEPLAY.md"), "utf8");
+    assert.match(e2e, /invite_member/);
     assert.match(e2e, /accept_invite/);
     assert.match(e2e, /Mail round-trip/);
+    assert.match(e2e, /INVITE\.md/);
+    const inviteDoc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "INVITE.md"), "utf8");
+    assert.match(inviteDoc, /DraftExternalMessage/);
+    assert.match(inviteDoc, /Bill/);
     assert.match(e2e, /Draft prod synthetic SRE/);
     assert.match(e2e, /GET \/health/);
     assert.match(coverage, /I6/);

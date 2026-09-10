@@ -146,6 +146,16 @@ describe("hosted identity (resource server, gated)", () => {
     await assertGatedUnauthorized(
       await rawRpc("tools/call", { name: "bootstrap_list_company_labels", arguments: {} }, 5),
     );
+    await assertGatedUnauthorized(
+      await rawRpc(
+        "tools/call",
+        { name: "invite_member", arguments: { email: "bill@example.test", companyLabel: "zk0" } },
+        51,
+      ),
+    );
+    await assertGatedUnauthorized(
+      await rawRpc("tools/call", { name: "accept_invite", arguments: { token: "inv_placeholder_token_xx" } }, 52),
+    );
   });
 
   it("logged-in Ivelin fixture whoami sees pirin, zk0, totbox only", async () => {

@@ -100,4 +100,23 @@ describe("PGlite identity RLS (isolated, never prod)", () => {
     ).rows[0];
     assert.equal(bound.auth_user_id, "44444444-4444-4444-4444-444444444444");
   });
+
+  it("FORCE RLS: mentee_reader cannot see invite rows or outbox", async () => {
+    await db.exec("RESET ROLE");
+    await db.query(
+      `INSERT INTO bootstrap_mcp_invites
+        (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at)
+       VALUES ('inv-hidden', 'bill@example.test', 'zk0', 'mentee-ivelin', 'ivelin@pirin.ai', 'hash-hidden', now() + interval '1 day')`,
+    );
+    const hiddenInvites = await asReader(
+      "33333333-3333-3333-3333-333333333333",
+      "SELECT id FROM bootstrap_mcp_invites",
+    );
+    assert.deepEqual(hiddenInvites, []);
+    const outbox = await asReader(
+      "33333333-3333-3333-3333-333333333333",
+      "SELECT id FROM bootstrap_mcp_invite_outbox",
+    );
+    assert.deepEqual(outbox, []);
+  });
 });
