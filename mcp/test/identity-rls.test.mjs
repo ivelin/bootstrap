@@ -103,7 +103,7 @@ describe("RLS: one mentee cannot read another", () => {
     );
     assert.match(qualifySql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
     assert.match(qualifySql, /cl\.label = company_label/);
-    assert.doesNotMatch(qualifySql, /AND label = label/);
+    assert.doesNotMatch(qualifySql.replace(/--[^\n]*/g, ""), /AND label = label/);
     assert.match(qualifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member\(text, text\) TO authenticated/);
     assert.doesNotMatch(qualifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
     assert.doesNotMatch(qualifySql, /supabase\.co/);

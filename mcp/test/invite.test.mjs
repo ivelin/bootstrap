@@ -104,14 +104,15 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.doesNotMatch(sql, /supabase\.co/);
     const qualify = fs.readFileSync(QUALIFY_SQL, "utf8");
     const pglite = fs.readFileSync(PGLITE_SCHEMA, "utf8");
+    const withoutComments = (sql) => sql.replace(/--[^\n]*/g, "");
     assert.match(qualify, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
     assert.match(qualify, /cl\.label = company_label/);
-    assert.doesNotMatch(qualify, /AND label = label/);
+    assert.doesNotMatch(withoutComments(qualify), /AND label = label/);
     assert.match(qualify, /DO NOT apply from a PR cloud agent/);
     assert.doesNotMatch(qualify, /supabase\.co/);
     assert.match(pglite, /SELECT bootstrap_mcp_invite_member|bootstrap_mcp_invite_member\(p_email/);
     assert.match(pglite, /cl\.label = company_label/);
-    assert.doesNotMatch(pglite, /AND label = label/);
+    assert.doesNotMatch(withoutComments(pglite), /AND label = label/);
     const storeSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
     assert.match(storeSrc, /SELECT bootstrap_mcp_invite_member\(\$1, \$2\)/);
     assert.match(storeSrc, /SELECT bootstrap_mcp_accept_invite\(\$1\)/);
