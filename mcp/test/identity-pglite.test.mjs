@@ -148,7 +148,8 @@ $$;
     assert.equal(invited.card.companyWorkspace, "zk0");
     assert.equal(invited.card.to.email, "ivelin@zk0.bot");
     assert.match(invited.card.inviteToken, /^inv_/);
-    assert.doesNotMatch(JSON.stringify(invited), /42702|ambiguous/);
+    assert.equal(invited.card.inviteToken.length, 4 + 48);
+    assert.doesNotMatch(JSON.stringify(invited), /42702|ambiguous|42883|gen_random_bytes/);
 
     await db.exec("SELECT set_config('app.auth_uid', '11111111-1111-1111-1111-111111111111', false)");
     await db.exec("SELECT set_config('app.auth_email', 'mentee-a@example.test', false)");
@@ -159,6 +160,53 @@ $$;
       ])
     ).rows[0].body;
     assert.deepEqual(cross, { ok: false, reason: "label_not_held" });
+  });
+
+  it("invite_member token generation: public-only search_path is 42883; extensions path succeeds", async () => {
+    const schema = fs.readFileSync(SCHEMA, "utf8");
+    assert.match(schema, /CREATE SCHEMA IF NOT EXISTS extensions/);
+    assert.match(schema, /CREATE OR REPLACE FUNCTION extensions\.gen_random_bytes/);
+    assert.match(schema, /SET search_path = public, extensions/);
+    assert.match(schema, /encode\(extensions\.gen_random_bytes\(24\), 'hex'\)/);
+    assert.doesNotMatch(schema, /CREATE OR REPLACE FUNCTION (public\.)?gen_random_bytes/);
+
+    await db.exec("RESET ROLE");
+    await db.exec(`
+CREATE OR REPLACE FUNCTION bootstrap_mcp_invite_member_public_only_bytes()
+RETURNS text
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+  RETURN encode(gen_random_bytes(24), 'hex');
+END;
+$$;
+`);
+    try {
+      await db.query("SELECT bootstrap_mcp_invite_member_public_only_bytes() AS token");
+      assert.fail("public-only search_path must not see extensions.gen_random_bytes");
+    } catch (e) {
+      assert.match(String(e.message), /gen_random_bytes/);
+      assert.equal(e.code, "42883");
+    }
+
+    const qualified = (
+      await db.query("SELECT encode(extensions.gen_random_bytes(24), 'hex') AS token")
+    ).rows[0].token;
+    assert.equal(qualified.length, 48);
+
+    await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    const invited = (
+      await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
+        "bill@example.test",
+        "zk0",
+      ])
+    ).rows[0].body;
+    assert.equal(invited.ok, true, JSON.stringify(invited));
+    assert.match(invited.card.inviteToken, /^inv_/);
+    assert.equal(invited.card.inviteToken.length, 4 + 48);
+    assert.doesNotMatch(JSON.stringify(invited), /42883|gen_random_bytes does not exist/);
   });
 
   it("FORCE RLS: mentee_reader cannot see invite rows or outbox", async () => {

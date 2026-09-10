@@ -135,7 +135,7 @@ GRANT SELECT ON bootstrap_mcp_invites TO mentee_reader;
 GRANT SELECT ON bootstrap_mcp_invite_outbox TO mentee_reader;
 GRANT EXECUTE ON FUNCTION bootstrap_mcp_my_labels() TO mentee_reader;
 
--- SHA-256 hex, same digest as JS hashMcpToken / prod digest(). No pgcrypto in PGlite.
+-- SHA-256 hex, same digest as JS hashMcpToken / prod digest().
 CREATE OR REPLACE FUNCTION bootstrap_mcp_hash_token(p_token text)
 RETURNS text
 LANGUAGE sql
@@ -144,13 +144,29 @@ AS $$
   SELECT encode(sha256(convert_to(p_token, 'UTF8')), 'hex');
 $$;
 
+-- PGlite analog of Supabase pgcrypto in the extensions schema.
+-- Do not create public.gen_random_bytes — public-only search_path must 42883.
+CREATE SCHEMA IF NOT EXISTS extensions;
+
+CREATE OR REPLACE FUNCTION extensions.gen_random_bytes(p_len integer)
+RETURNS bytea
+LANGUAGE sql
+VOLATILE
+AS $$
+  SELECT substring(
+    sha256(convert_to(gen_random_uuid()::text || clock_timestamp()::text, 'UTF8'))
+    FROM 1 FOR p_len
+  );
+$$;
+
 -- PGlite analog of public.bootstrap_mcp_invite_member. Session via app.auth_*.
 -- Variable is company_label; column is cl.label. Never AND label = label (42702).
+-- search_path includes extensions so gen_random_bytes is visible (not 42883).
 CREATE OR REPLACE FUNCTION bootstrap_mcp_invite_member(p_email text, p_company_label text)
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 DECLARE
   uid text := current_setting('app.auth_uid', true);
@@ -201,7 +217,7 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'label_not_held');
   END IF;
 
-  raw_token := 'inv_' || encode(sha256(convert_to(gen_random_uuid()::text || clock_timestamp()::text, 'UTF8')), 'hex');
+  raw_token := 'inv_' || encode(extensions.gen_random_bytes(24), 'hex');
   expires := now() + interval '7 days';
   invite_id := gen_random_uuid()::text;
   outbox_id := gen_random_uuid()::text;
