@@ -107,6 +107,18 @@ describe("RLS: one mentee cannot read another", () => {
     assert.match(qualifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member\(text, text\) TO authenticated/);
     assert.doesNotMatch(qualifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
     assert.doesNotMatch(qualifySql, /supabase\.co/);
+    const pgcryptoSql = fs.readFileSync(
+      path.join(__dirname, "..", "supabase", "migrations", "20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql"),
+      "utf8",
+    );
+    assert.match(pgcryptoSql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.match(pgcryptoSql, /SET search_path = public, extensions/);
+    assert.match(pgcryptoSql, /extensions\.gen_random_bytes\(24\)/);
+    assert.match(pgcryptoSql, /CREATE EXTENSION IF NOT EXISTS pgcrypto/);
+    assert.match(pgcryptoSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member\(text, text\) TO authenticated/);
+    assert.doesNotMatch(pgcryptoSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
+    assert.doesNotMatch(pgcryptoSql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_accept_invite/);
+    assert.doesNotMatch(pgcryptoSql, /supabase\.co/);
   });
 
   it("authenticated A cannot see B labels or mentee row", () => {

@@ -122,7 +122,7 @@ A valid pirin.ai JWT alone must **not** grant hosted MCP access. There is **no l
 
 On a rebuild (empty project / Cos applying migrations — **never from a PR cloud agent**):
 
-1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql`, `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`, `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_accept.sql`, then `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_qualify_label.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member`). PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
+1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql`, `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`, `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_accept.sql`, then `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_qualify_label.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member` — `SET search_path = public, extensions`). PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
 2. Insert the first mentee. The identity migration already seeds `ivelin@pirin.ai` + labels `pirin`, `zk0`, `totbox`. Additional mentees use the same shape:
 
 ```sql
@@ -149,7 +149,7 @@ Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools 
 | FORCE RLS | `mcp/test/identity-pglite.test.mjs` |
 | SQL file locks | `mcp/test/identity-rls.test.mjs` (no network) |
 | CTO/PM role-play matrix + draft prod synthetic SRE | [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` |
-| Invite / accept (in-chat) | [`INVITE.md`](INVITE.md) · `mcp/test/invite.test.mjs` + role-play P1–P2 + `identity-pglite.test.mjs` (SQL `invite_member` RPC, no 42702) |
+| Invite / accept (in-chat) | [`INVITE.md`](INVITE.md) · `mcp/test/invite.test.mjs` + role-play P1–P2 + `identity-pglite.test.mjs` (SQL `invite_member` RPC, no 42702 / no 42883) |
 
 Do not run `preview-live.mjs` on PR cloud agents. Draft prod synthetic checks are Cos-only — same doc.
 

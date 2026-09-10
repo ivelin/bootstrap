@@ -43,6 +43,13 @@ const QUALIFY_SQL = path.join(
   "migrations",
   "20260910_bootstrap_mcp_invite_qualify_label.sql",
 );
+const PGCRYPTO_SQL = path.join(
+  REPO_ROOT,
+  "mcp",
+  "supabase",
+  "migrations",
+  "20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql",
+);
 const PGLITE_SCHEMA = path.join(REPO_ROOT, "mcp", "test", "pglite", "identity-schema.sql");
 
 afterEach(() => {
@@ -85,6 +92,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(invite, /HOSTED_IDENTITY\.md#first-user-rebuild-from-github/);
     assert.match(invite, /20260910_bootstrap_mcp_invite_accept\.sql/);
     assert.match(invite, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
+    assert.match(invite, /20260911_bootstrap_mcp_invite_pgcrypto_search_path\.sql/);
     assert.match(invite, /PGlite/);
     assert.match(invite, /supabase-pirin-ai/);
     assert.match(invite, /invite_store_unset/);
@@ -93,6 +101,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(hosted, /INVITE\.md/);
     assert.match(hosted, /First user \(rebuild from GitHub\)/);
     assert.match(hosted, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
+    assert.match(hosted, /20260911_bootstrap_mcp_invite_pgcrypto_search_path\.sql/);
     const sql = fs.readFileSync(SQL, "utf8");
     assert.match(sql, /DO NOT apply from a PR cloud agent/);
     assert.match(sql, /bootstrap_mcp_invite_member/);
@@ -113,6 +122,21 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(pglite, /SELECT bootstrap_mcp_invite_member|bootstrap_mcp_invite_member\(p_email/);
     assert.match(pglite, /cl\.label = company_label/);
     assert.doesNotMatch(withoutComments(pglite), /AND label = label/);
+    assert.match(pglite, /SET search_path = public, extensions/);
+    assert.match(pglite, /extensions\.gen_random_bytes\(24\)/);
+    const pgcrypto = fs.readFileSync(PGCRYPTO_SQL, "utf8");
+    assert.match(pgcrypto, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.match(pgcrypto, /SET search_path = public, extensions/);
+    assert.match(pgcrypto, /extensions\.gen_random_bytes\(24\)/);
+    assert.match(pgcrypto, /CREATE EXTENSION IF NOT EXISTS pgcrypto/);
+    assert.match(pgcrypto, /DO NOT apply from a PR cloud agent/);
+    assert.match(pgcrypto, /42883/);
+    assert.doesNotMatch(withoutComments(pgcrypto), /AND label = label/);
+    assert.match(pgcrypto, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.doesNotMatch(pgcrypto, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,40}anon/);
+    assert.doesNotMatch(pgcrypto, /supabase\.co/);
+    assert.doesNotMatch(pgcrypto, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_accept_invite/);
+    assert.doesNotMatch(pgcrypto, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_mint_token/);
     const storeSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
     assert.match(storeSrc, /SELECT bootstrap_mcp_invite_member\(\$1, \$2\)/);
     assert.match(storeSrc, /SELECT bootstrap_mcp_accept_invite\(\$1\)/);
