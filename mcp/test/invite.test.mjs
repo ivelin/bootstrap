@@ -8,13 +8,18 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   MemoryInviteStore,
+  SupabaseInviteStore,
   buildAcceptCard,
+  createInviteStore,
   decideInviteAccept,
   decideInviteCreate,
   enqueueInviteInChat,
+  inviteFailMessage,
   inviteOutboxPayload,
+  inviteRpcFailed,
   normalizeCompanyLabel,
   normalizeInviteEmail,
+  parseInviteRpcJson,
   setInviteClockForTests,
   setInviteEnqueueHook,
   setInviteStoreForTests,
@@ -55,7 +60,7 @@ function ivelinStore() {
   ]);
 }
 
-describe("invite + accept (memory, never prod)", () => {
+describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
   it("docs say invite once and keep first-user SQL on HOSTED_IDENTITY", () => {
     const invite = fs.readFileSync(INVITE_DOC, "utf8");
     const hosted = fs.readFileSync(HOSTED_DOC, "utf8");
@@ -73,6 +78,8 @@ describe("invite + accept (memory, never prod)", () => {
     assert.match(invite, /20260910_bootstrap_mcp_invite_accept\.sql/);
     assert.match(invite, /PGlite/);
     assert.match(invite, /supabase-pirin-ai/);
+    assert.match(invite, /invite_store_unset/);
+    assert.match(invite, /invite_rpc_failed/);
     assert.doesNotMatch(invite, /INSERT INTO public\.bootstrap_mcp_mentees/);
     assert.match(hosted, /INVITE\.md/);
     assert.match(hosted, /First user \(rebuild from GitHub\)/);
@@ -202,5 +209,125 @@ describe("invite + accept (memory, never prod)", () => {
       invited.card.inviteToken,
     );
     assert.deepEqual(replay, { ok: false, reason: "invite_already_used" });
+  });
+
+  it("invite_store_unset is missing env/client only; failed RPC keeps status+body", async () => {
+    const src = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
+    const serverSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "server.ts"), "utf8");
+    const rpcFn = src.match(/private async rpc\([\s\S]*?^  \}/m);
+    assert.ok(rpcFn, "rpc() must exist");
+    assert.doesNotMatch(rpcFn[0], /invite_store_unset/);
+    assert.match(rpcFn[0], /inviteRpcFailed/);
+    assert.match(src, /if \(!url \|\| !key \|\| !accessToken\) return null/);
+    assert.match(serverSrc, /inviteFailMessage\(result\)/);
+    assert.doesNotMatch(serverSrc, /inviteFailMessage\(result\.reason\)/);
+
+    const prev = {
+      BOOTSTRAP_SUPABASE_URL: process.env.BOOTSTRAP_SUPABASE_URL,
+      BOOTSTRAP_SUPABASE_ANON_KEY: process.env.BOOTSTRAP_SUPABASE_ANON_KEY,
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    };
+    delete process.env.BOOTSTRAP_SUPABASE_URL;
+    delete process.env.BOOTSTRAP_SUPABASE_ANON_KEY;
+    delete process.env.SUPABASE_URL;
+    delete process.env.SUPABASE_ANON_KEY;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    try {
+      assert.equal(createInviteStore("tok"), null);
+      process.env.BOOTSTRAP_SUPABASE_URL = "https://example.supabase.co";
+      assert.equal(createInviteStore("tok"), null);
+      process.env.BOOTSTRAP_SUPABASE_ANON_KEY = "anon-key-fixture-xx";
+      assert.equal(createInviteStore(undefined), null);
+      const configured = createInviteStore("tok");
+      assert.ok(configured);
+      assert.equal(configured.kind, "supabase");
+    } finally {
+      for (const [key, value] of Object.entries(prev)) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
+
+    assert.match(inviteFailMessage("invite_store_unset"), /Invite store unset/);
+    const rpcMsg = inviteFailMessage(
+      inviteRpcFailed(404, '{"code":"PGRST202","message":"schema cache"}'),
+    );
+    assert.match(rpcMsg, /Invite RPC failed \(HTTP 404\)/);
+    assert.match(rpcMsg, /PGRST202/);
+    assert.doesNotMatch(rpcMsg, /Invite store unset/);
+    assert.deepEqual(parseInviteRpcJson(JSON.stringify({ ok: false, reason: "invalid_email" })), {
+      ok: false,
+      reason: "invalid_email",
+    });
+    assert.deepEqual(
+      parseInviteRpcJson(JSON.stringify(JSON.stringify({ ok: false, reason: "invalid_email" }))),
+      { ok: false, reason: "invalid_email" },
+    );
+
+    const origFetch = globalThis.fetch;
+    const store = new SupabaseInviteStore(
+      "https://rpc-fail.example",
+      "anon-key-fixture-xx",
+      "access-token-fixture",
+    );
+    try {
+      globalThis.fetch = async (url) => {
+        const u = String(url);
+        assert.match(u, /https:\/\/rpc-fail\.example\/rest\/v1\/rpc\//);
+        if (u.endsWith("/bootstrap_mcp_invite_member")) {
+          return new Response(
+            JSON.stringify({
+              code: "PGRST202",
+              message:
+                "Could not find the function public.bootstrap_mcp_invite_member(p_email, p_company_label) in the schema cache",
+            }),
+            { status: 404 },
+          );
+        }
+        if (u.endsWith("/bootstrap_mcp_accept_invite")) {
+          return new Response(
+            JSON.stringify({
+              code: "42501",
+              message: "permission denied for function bootstrap_mcp_accept_invite",
+            }),
+            { status: 403 },
+          );
+        }
+        throw new Error(`unexpected fetch ${u}`);
+      };
+      const invited = await store.inviteMember(
+        { email: IVELIN_SEED_EMAIL },
+        { email: "bill@example.test", companyLabel: "zk0" },
+      );
+      assert.equal(invited.ok, false);
+      if (invited.ok) return;
+      assert.equal(invited.reason, "invite_rpc_failed");
+      assert.equal(invited.status, 404);
+      assert.match(invited.body, /PGRST202/);
+      assert.match(invited.body, /schema cache/);
+      assert.doesNotMatch(inviteFailMessage(invited), /Invite store unset/);
+
+      const accepted = await store.acceptInvite({ email: "bill@example.test" }, "inv_fixture_token_xxxx");
+      assert.equal(accepted.ok, false);
+      if (accepted.ok) return;
+      assert.equal(accepted.reason, "invite_rpc_failed");
+      assert.equal(accepted.status, 403);
+      assert.match(accepted.body, /42501/);
+      assert.notEqual(accepted.reason, "invite_not_found");
+
+      globalThis.fetch = async () =>
+        new Response(JSON.stringify({ ok: false, reason: "label_not_held" }), { status: 200 });
+      assert.deepEqual(
+        await store.inviteMember(
+          { email: IVELIN_SEED_EMAIL },
+          { email: "bill@example.test", companyLabel: "bravo" },
+        ),
+        { ok: false, reason: "label_not_held" },
+      );
+    } finally {
+      globalThis.fetch = origFetch;
+    }
   });
 });

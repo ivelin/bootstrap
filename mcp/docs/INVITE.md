@@ -13,6 +13,8 @@ Fail-closed allowlist is already on. Invites **create/unlock mentee rows**. A va
 
 `accept_invite` is the only gated tool that does **not** require an allowlist row (the invitee is `not_invited` until they accept). It still needs a usable JWT. Empty / wrong / expired Bearer stays HTTP 401.
 
+`invite_store_unset` means this host has no Supabase URL / anon key / access token. A failed invite RPC (schema cache, grants, SQL) is `invite_rpc_failed` — HTTP status + body. Do not collapse those.
+
 ## Accept card (in-chat)
 
 Shaped like **DraftExternalMessage**. Grok shows **who invited / to whom / company workspace → Accept**. Not `/bootstrap-os/login` as the product path.
@@ -62,4 +64,4 @@ PR CI is **PGlite only**. Do not migrate, seed, or live-probe `supabase-pirin-ai
 
 ## Tests
 
-PGlite role-play: [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` · `mcp/test/invite.test.mjs`.
+PGlite role-play: [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` · `mcp/test/invite.test.mjs` (unset store vs RPC status/body).

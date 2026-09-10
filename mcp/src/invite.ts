@@ -50,7 +50,8 @@ export type InviteFailReason =
   | "invalid_email"
   | "invalid_label"
   | "label_not_held"
-  | "invite_store_unset";
+  | "invite_store_unset"
+  | "invite_rpc_failed";
 
 export type AcceptOk = {
   ok: true;
@@ -66,10 +67,62 @@ export type AcceptFailReason =
   | "invite_already_used"
   | "invite_email_mismatch"
   | "email_required"
-  | "invite_store_unset";
+  | "invite_store_unset"
+  | "invite_rpc_failed";
 
-export type InviteResult = InviteOk | { ok: false; reason: InviteFailReason };
-export type AcceptResult = AcceptOk | { ok: false; reason: AcceptFailReason };
+/** PostgREST / HTTP failure. Not “store unset” — that is missing env/client only. */
+export type InviteRpcFail = {
+  ok: false;
+  reason: "invite_rpc_failed";
+  status: number;
+  body: string;
+};
+
+export type InviteFail = { ok: false; reason: InviteFailReason } | InviteRpcFail;
+export type AcceptFail = { ok: false; reason: AcceptFailReason } | InviteRpcFail;
+
+export type InviteResult = InviteOk | InviteFail;
+export type AcceptResult = AcceptOk | AcceptFail;
+
+export const INVITE_RPC_BODY_CLIP = 800;
+
+export function clipInviteRpcBody(text: string): string {
+  const clipped = text.replace(/\s+/g, " ").trim();
+  if (!clipped) return "";
+  return clipped.length > INVITE_RPC_BODY_CLIP ? `${clipped.slice(0, INVITE_RPC_BODY_CLIP)}…` : clipped;
+}
+
+export function inviteRpcFailed(status: number, body: string): InviteRpcFail {
+  return { ok: false, reason: "invite_rpc_failed", status, body: clipInviteRpcBody(body) };
+}
+
+export function parseInviteRpcJson(text: string): unknown {
+  if (!text) return null;
+  try {
+    let parsed: unknown = JSON.parse(text);
+    if (typeof parsed === "string") {
+      try {
+        parsed = JSON.parse(parsed);
+      } catch {
+        /* keep the string — PostgREST sometimes wraps jsonb */
+      }
+    }
+    return parsed;
+  } catch {
+    return text;
+  }
+}
+
+function isInviteRpcFail(raw: unknown): raw is InviteRpcFail {
+  return Boolean(raw && typeof raw === "object" && (raw as InviteRpcFail).reason === "invite_rpc_failed");
+}
+
+function coerceRpcResult<T extends { ok: boolean }>(raw: unknown, status: number): T | InviteRpcFail {
+  if (isInviteRpcFail(raw)) return raw;
+  if (raw && typeof raw === "object" && "ok" in raw) return raw as T;
+  const body = typeof raw === "string" ? raw : raw == null ? "" : JSON.stringify(raw);
+  return inviteRpcFailed(status, body);
+}
 
 export type InviteRow = {
   id: string;
@@ -477,6 +530,8 @@ function supabaseAnonKey(): string | undefined {
 
 /**
  * Prod adapter. Calls SECURITY DEFINER RPCs. PR agents must not live-probe supabase-pirin-ai.
+ * HTTP / schema-cache / SQL failures stay invite_rpc_failed (status + body).
+ * invite_store_unset is only createInviteStore() === null (url / anon key / access token missing).
  */
 export class SupabaseInviteStore implements InviteStore {
   readonly kind = "supabase" as const;
@@ -486,7 +541,10 @@ export class SupabaseInviteStore implements InviteStore {
     private readonly accessToken: string,
   ) {}
 
-  private async rpc(name: string, body: Record<string, unknown>): Promise<unknown> {
+  private async rpc(
+    name: string,
+    body: Record<string, unknown>,
+  ): Promise<{ status: number; raw: unknown } | InviteRpcFail> {
     const base = this.url.replace(/\/+$/, "");
     const res = await fetch(`${base}/rest/v1/rpc/${name}`, {
       method: "POST",
@@ -494,33 +552,29 @@ export class SupabaseInviteStore implements InviteStore {
         apikey: this.anonKey,
         Authorization: `Bearer ${this.accessToken}`,
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(10_000),
     });
-    if (!res.ok) {
-      return { ok: false, reason: name === "bootstrap_mcp_invite_member" ? "invite_store_unset" : "invite_not_found" };
-    }
-    return res.json();
+    const text = await res.text();
+    if (!res.ok) return inviteRpcFailed(res.status, text);
+    return { status: res.status, raw: parseInviteRpcJson(text) };
   }
 
   async inviteMember(_actor: InviteActor, input: InviteCreateInput): Promise<InviteResult> {
-    const raw = (await this.rpc("bootstrap_mcp_invite_member", {
+    const hit = await this.rpc("bootstrap_mcp_invite_member", {
       p_email: input.email,
       p_company_label: input.companyLabel,
-    })) as InviteResult;
-    if (!raw || typeof raw !== "object" || !("ok" in raw)) {
-      return { ok: false, reason: "invite_store_unset" };
-    }
-    return raw;
+    });
+    if (isInviteRpcFail(hit)) return hit;
+    return coerceRpcResult<InviteResult>(hit.raw, hit.status);
   }
 
   async acceptInvite(_actor: InviteActor, token: string): Promise<AcceptResult> {
-    const raw = (await this.rpc("bootstrap_mcp_accept_invite", { p_token: token })) as AcceptResult;
-    if (!raw || typeof raw !== "object" || !("ok" in raw)) {
-      return { ok: false, reason: "invite_not_found" };
-    }
-    return raw;
+    const hit = await this.rpc("bootstrap_mcp_accept_invite", { p_token: token });
+    if (isInviteRpcFail(hit)) return hit;
+    return coerceRpcResult<AcceptResult>(hit.raw, hit.status);
   }
 }
 
@@ -536,8 +590,14 @@ export function resolveInviteStore(accessToken?: string): InviteStore | null {
   return createInviteStore(accessToken);
 }
 
-export function inviteFailMessage(reason: InviteFailReason | AcceptFailReason): string {
-  switch (reason) {
+export type InviteFailMessageInput =
+  | InviteFailReason
+  | AcceptFailReason
+  | { reason: InviteFailReason | AcceptFailReason; status?: number; body?: string };
+
+export function inviteFailMessage(input: InviteFailMessageInput): string {
+  const fail = typeof input === "string" ? { reason: input } : input;
+  switch (fail.reason) {
     case "inviter_not_on_allowlist":
       return "Only an allowlisted founder or authorized mentee may invite.";
     case "invalid_email":
@@ -548,6 +608,11 @@ export function inviteFailMessage(reason: InviteFailReason | AcceptFailReason): 
       return "Inviter does not hold that company workspace label.";
     case "invite_store_unset":
       return "Invite store unset. Cos applies the invite migration on rebuild — never from a PR agent.";
+    case "invite_rpc_failed": {
+      const status = "status" in fail && fail.status != null ? fail.status : "?";
+      const body = "body" in fail && fail.body ? fail.body : "empty body";
+      return `Invite RPC failed (HTTP ${status}): ${body}`;
+    }
     case "invite_not_found":
       return "Invite rejected.";
     case "invite_expired":
