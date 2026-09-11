@@ -16,11 +16,11 @@ Critical paths run in CI on **PGlite** before any prod synthetic. Evidence: `mcp
 | R4 | Wrong token | Non-JWT / unusable Bearer → gated **401** (`not_a_pirin_access_token` or `invalid_or_revoked_token`). No label leak. | Yes |
 | R5 | Expired token | JWT `exp` in the past → gated **401** `invalid_or_revoked_token`. Fixture-allowed only — this host does not verify JWKS. | Yes |
 | R6 | Cross-company labels | Fixture A sees `alpha` only; B sees `bravo` only; Ivelin sees `pirin` / `zk0` / `totbox`. | Yes |
-| P1 | `invite_member` | Allowlisted inviter (Ivelin) invites Bill to a label they hold (`zk0`). Accept card (DraftExternalMessage). Uninvited cannot invite. Cross-company label refused. Unset store ≠ failed RPC (HTTP status + body, not `invite_store_unset`). | Yes |
-| P2 | `accept_invite` | Bill accepts → allowlist + `zk0`. Wrong email, expired, replay, bad token fail closed. | Yes |
-| P3 | Mail round-trip | Invite body / mailer / QR / SMS | **Pending**. Follow-on. Not this PR. |
+| P1 | Founder `invite_member` | Allowlisted inviter (Ivelin) invites Bill / `ivelin@zk0.bot` to a label they hold (`zk0`). Accept card + signup Auth card. Uninvited cannot invite. Cross-company label refused. Unset store ≠ failed RPC (HTTP status + body, not `invite_store_unset`). | Yes |
+| P2 | Invitee Grok `accept_invite` | Bill accepts → allowlist + `zk0`. Wrong email, expired, replay, bad token fail closed. | Yes |
+| P3 | Invitee non-Grok mail + signup | Email outbox (From `bootstrap@pirin.ai`) + `?invite=` URL + `verify_invite` (opaque fail). After JWT, `accept_invite` → whoami label. Dry-run / mock only — no prod Resend. | Yes |
 
-Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later mentees: [INVITE.md](INVITE.md).
+Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later mentees (mail + signup + accept): [INVITE.md](INVITE.md).
 
 ## Draft prod synthetic SRE (Cos only — not PR CI)
 
@@ -40,4 +40,4 @@ Do **not** run these from a PR cloud agent. Optional maintainer probe of **read-
 
 ## Out
 
-No live prod mutate. No migrate / seed / live-probe of `supabase-pirin-ai` from this repo’s PR agents. No login UI. No invite mailer. No mentee roster. No second host.
+No live prod mutate. No migrate / seed / live-probe of `supabase-pirin-ai` from this repo’s PR agents. No login UI. No prod Resend from this repo (Cos yes on pirin-ai first). No mentee roster. No second host. No marketplace.

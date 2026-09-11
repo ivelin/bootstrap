@@ -1,11 +1,17 @@
 /**
  * Hosted MCP invite + accept (Grok-first, in-chat Accept).
  * Fail-closed allowlist: invite creates/unlocks mentee rows. OAuth alone is not enough.
- * First user stays a SQL insert — HOSTED_IDENTITY.md. Mail / QR / SMS are later.
- * Mail sender is not this repo. Optional in_chat outbox enqueue only. Never supabase-pirin-ai from PR CI.
+ * First user stays a SQL insert — HOSTED_IDENTITY.md.
+ * Outsider mail: enqueue email outbox. pirin-ai Resend From bootstrap@pirin.ai after Cos yes.
+ * Never supabase-pirin-ai from PR CI.
  */
 import { randomBytes } from "node:crypto";
 import { hashMcpToken } from "./identity.js";
+import {
+  INVITE_MAIL_FROM,
+  INVITE_MAIL_NOTE,
+  inviteSignupUrl,
+} from "./invite-mail.js";
 
 export const INVITE_TOKEN_PREFIX = "inv_";
 export const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -13,7 +19,10 @@ export const COMPANY_LABEL_RE = /^[a-z0-9][a-z0-9_-]{0,31}$/;
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const INVITE_ACCEPT_NOTE =
-  "In-chat Accept. Shows who invited / to whom / company workspace. Not /bootstrap-os/login as the product path. Mail/QR/SMS later.";
+  "In-chat Accept. Shows who invited / to whom / company workspace. Not /bootstrap-os/login as the product path. Outsider mail (bootstrap@) is the support path when the invitee has no JWT yet.";
+
+export const INVITE_IN_CHAT_OUTBOX_NOTE =
+  "In-chat Accept. Raw invite token is not stored on this channel.";
 
 export type InviteActor = {
   email?: string;
@@ -39,10 +48,27 @@ export type AcceptInviteCard = {
   note: string;
 };
 
+export type InviteSignupCard = {
+  card: "invite_signup";
+  shape: "DraftExternalMessage";
+  from: { email: typeof INVITE_MAIL_FROM };
+  to: { email: string };
+  companyWorkspace: string;
+  inviterEmail: string;
+  action: "Create account";
+  signupUrl: string;
+  qrPayload: string;
+  inviteToken: string;
+  expiresAt: string;
+  note: string;
+};
+
 export type InviteOk = {
   ok: true;
   card: AcceptInviteCard;
+  authCard: InviteSignupCard;
   queued: { channel: "in_chat"; id: string };
+  queuedMail: { channel: "email"; id: string; from: typeof INVITE_MAIL_FROM };
 };
 
 export type InviteFailReason =
@@ -136,17 +162,33 @@ export type InviteRow = {
   createdAt: string;
 };
 
+export type InviteOutboxChannel = "in_chat" | "email";
+
 export type InviteOutboxRow = {
   id: string;
   inviteId: string;
-  channel: "in_chat";
+  channel: InviteOutboxChannel;
   payload: Record<string, unknown>;
+  deliveredAt?: string | null;
 };
+
+export type VerifyInviteOk = {
+  ok: true;
+  invitee_email: string;
+  company_label: string;
+  inviter_email: string;
+};
+
+/** Opaque. No reason / email / label. Callers must not enumerate. */
+export type VerifyInviteFail = { ok: false };
+
+export type VerifyInviteResult = VerifyInviteOk | VerifyInviteFail;
 
 export interface InviteStore {
   readonly kind: "memory" | "pglite" | "supabase";
   inviteMember(actor: InviteActor, input: InviteCreateInput): Promise<InviteResult>;
   acceptInvite(actor: InviteActor, token: string): Promise<AcceptResult>;
+  verifyInvite(token: string): Promise<VerifyInviteResult>;
 }
 
 export type InviteEnqueueHook = (row: InviteOutboxRow) => void;
@@ -221,6 +263,21 @@ export function decideInviteAccept(input: {
   return { ok: true };
 }
 
+export function decideInviteVerify(input: {
+  now: number;
+  invite: InviteRow | undefined;
+}): VerifyInviteResult {
+  if (!input.invite) return { ok: false };
+  if (input.invite.acceptedAt) return { ok: false };
+  if (Date.parse(input.invite.expiresAt) <= input.now) return { ok: false };
+  return {
+    ok: true,
+    invitee_email: input.invite.inviteeEmail,
+    company_label: input.invite.companyLabel,
+    inviter_email: input.invite.invitedByEmail,
+  };
+}
+
 export function buildAcceptCard(input: {
   fromEmail: string;
   toEmail: string;
@@ -242,6 +299,30 @@ export function buildAcceptCard(input: {
   };
 }
 
+export function buildSignupAuthCard(input: {
+  inviterEmail: string;
+  toEmail: string;
+  companyWorkspace: string;
+  inviteToken: string;
+  expiresAt: string;
+}): InviteSignupCard {
+  const signupUrl = inviteSignupUrl(input.inviteToken);
+  return {
+    card: "invite_signup",
+    shape: "DraftExternalMessage",
+    from: { email: INVITE_MAIL_FROM },
+    to: { email: input.toEmail },
+    companyWorkspace: input.companyWorkspace,
+    inviterEmail: input.inviterEmail,
+    action: "Create account",
+    signupUrl,
+    qrPayload: signupUrl,
+    inviteToken: input.inviteToken,
+    expiresAt: input.expiresAt,
+    note: INVITE_MAIL_NOTE,
+  };
+}
+
 export function inviteOutboxPayload(card: AcceptInviteCard): Record<string, unknown> {
   return {
     card: card.card,
@@ -253,7 +334,23 @@ export function inviteOutboxPayload(card: AcceptInviteCard): Record<string, unkn
     tool: card.tool,
     expiresAt: card.expiresAt,
     inviteToken: null,
-    note: "In-chat Accept. Raw invite token is not stored on the outbox. Mail/QR/SMS later.",
+    note: INVITE_IN_CHAT_OUTBOX_NOTE,
+  };
+}
+
+export function inviteEmailOutboxPayload(card: AcceptInviteCard): Record<string, unknown> {
+  const signupUrl = inviteSignupUrl(card.inviteToken);
+  return {
+    channel: "email",
+    mailFrom: INVITE_MAIL_FROM,
+    from: card.from,
+    to: card.to,
+    companyWorkspace: card.companyWorkspace,
+    signupUrl,
+    qrPayload: signupUrl,
+    inviteToken: card.inviteToken,
+    expiresAt: card.expiresAt,
+    note: "Mailer handoff. pirin-ai Resend From bootstrap@pirin.ai only. Token is on this channel so the poller can send ?invite=. in_chat never stores the token. Cos yes before prod send.",
   };
 }
 
@@ -263,6 +360,19 @@ export function enqueueInviteInChat(inviteId: string, card: AcceptInviteCard): I
     inviteId,
     channel: "in_chat",
     payload: inviteOutboxPayload(card),
+    deliveredAt: null,
+  };
+  enqueueHook?.(row);
+  return row;
+}
+
+export function enqueueInviteEmail(inviteId: string, card: AcceptInviteCard): InviteOutboxRow {
+  const row: InviteOutboxRow = {
+    id: `mail-${randomBytes(8).toString("hex")}`,
+    inviteId,
+    channel: "email",
+    payload: inviteEmailOutboxPayload(card),
+    deliveredAt: null,
   };
   enqueueHook?.(row);
   return row;
@@ -337,8 +447,21 @@ export class MemoryInviteStore implements InviteStore {
       createdAt: new Date(now).toISOString(),
     });
     const queued = enqueueInviteInChat(id, card);
-    this.outbox.push(queued);
-    return { ok: true, card, queued: { channel: "in_chat", id: queued.id } };
+    const queuedMail = enqueueInviteEmail(id, card);
+    this.outbox.push(queued, queuedMail);
+    return {
+      ok: true,
+      card,
+      authCard: buildSignupAuthCard({
+        inviterEmail: inviter.email,
+        toEmail: inviteeEmail,
+        companyWorkspace: companyLabel,
+        inviteToken: token,
+        expiresAt,
+      }),
+      queued: { channel: "in_chat", id: queued.id },
+      queuedMail: { channel: "email", id: queuedMail.id, from: INVITE_MAIL_FROM },
+    };
   }
 
   async acceptInvite(actor: InviteActor, token: string): Promise<AcceptResult> {
@@ -370,6 +493,12 @@ export class MemoryInviteStore implements InviteStore {
       companyWorkspace: row.companyLabel,
       note: "Allowlist + label bound. Labels only. Not boards. Not company-state.",
     };
+  }
+
+  async verifyInvite(token: string): Promise<VerifyInviteResult> {
+    const digest = token?.length >= 16 ? hashMcpToken(token) : "";
+    const invite = this.invites.find((row) => row.tokenHash === digest);
+    return decideInviteVerify({ now: inviteNow(), invite });
   }
 }
 
@@ -409,6 +538,16 @@ export class PgliteInviteStore implements InviteStore {
       return { ok: false, reason: "invite_not_found" };
     }
     return body as AcceptResult;
+  }
+
+  async verifyInvite(token: string): Promise<VerifyInviteResult> {
+    const body = (await this.db.query("SELECT bootstrap_mcp_verify_invite($1) AS body", [token]))
+      .rows[0]?.body;
+    if (!body || typeof body !== "object" || !("ok" in body)) {
+      return { ok: false };
+    }
+    if ((body as VerifyInviteResult).ok !== true) return { ok: false };
+    return body as VerifyInviteOk;
   }
 }
 
@@ -472,6 +611,16 @@ export class SupabaseInviteStore implements InviteStore {
     const hit = await this.rpc("bootstrap_mcp_accept_invite", { p_token: token });
     if (isInviteRpcFail(hit)) return hit;
     return coerceRpcResult<AcceptResult>(hit.raw, hit.status);
+  }
+
+  async verifyInvite(token: string): Promise<VerifyInviteResult> {
+    const hit = await this.rpc("bootstrap_mcp_verify_invite", { p_token: token });
+    if (isInviteRpcFail(hit)) return { ok: false };
+    const raw = hit.raw;
+    if (raw && typeof raw === "object" && (raw as VerifyInviteResult).ok === true) {
+      return raw as VerifyInviteOk;
+    }
+    return { ok: false };
   }
 }
 

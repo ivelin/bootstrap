@@ -71,7 +71,7 @@ Does **not** replace the seven-case matrix. Login is optional. Install-first sti
 | I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
 | I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
 | I5 | Valid JWT, no mentee row | gated whoami | `authenticated: false`, `reason: not_invited`, HTTP 401. Not open login. First user is a SQL insert — [`HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md#first-user-rebuild-from-github). | `identity.test.mjs` + PGlite RPC |
-| I6 | CTO/PM role-play (empty, first-user insert, wrong/expired, isolation, invite/accept) | PGlite E2E | Same paths as I2–I5 plus first-user SQL insert → invited whoami (`zk0`). `invite_member` / `accept_invite` (Bill → `zk0`). Mail / QR / SMS **pending**. | [`E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md) · [`INVITE.md`](../mcp/docs/INVITE.md) · `e2e-roleplay-matrix.test.mjs` |
+| I6 | CTO/PM role-play (empty, first-user insert, wrong/expired, isolation, invite/accept/mail) | PGlite E2E | Same paths as I2–I5 plus first-user SQL insert → invited whoami (`zk0`). Founder / Invitee Grok / Invitee non-Grok (`invite_member` / `accept_invite` / verify + `bootstrap@` outbox). No prod Resend. | [`E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md) · [`INVITE.md`](../mcp/docs/INVITE.md) · `e2e-roleplay-matrix.test.mjs` |
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 

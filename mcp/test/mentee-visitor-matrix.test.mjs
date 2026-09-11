@@ -112,7 +112,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     const e2e = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "E2E_ROLEPLAY.md"), "utf8");
     assert.match(e2e, /invite_member/);
     assert.match(e2e, /accept_invite/);
-    assert.match(e2e, /Mail round-trip/);
+    assert.match(e2e, /Invitee non-Grok mail \+ signup/);
     assert.match(e2e, /INVITE\.md/);
     const inviteDoc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "INVITE.md"), "utf8");
     assert.match(inviteDoc, /DraftExternalMessage/);

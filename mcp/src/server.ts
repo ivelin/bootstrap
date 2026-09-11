@@ -38,6 +38,12 @@ import { HOUSE_RULE_LINES, HOUSE_RULE_PINS } from "./house-rules.js";
 import { anonymousWhoami, type HostedRequestContext } from "./identity-context.js";
 import { hostedMcpResource, protectedResourceMetadataUrl } from "./oauth.js";
 import { inviteFailMessage, resolveInviteStore } from "./invite.js";
+import {
+  INVITE_MAIL_FROM,
+  buildInviteMail,
+  deliverInviteMailDryRun,
+  resolveInviteMailMode,
+} from "./invite-mail.js";
 
 export type McpSurface = "full" | "hosted-read";
 
@@ -288,7 +294,7 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
 function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "invite_member",
-    "Allowlisted founder/authorized invites a mentee (email + company workspace label). Returns an in-chat Accept card (DraftExternalMessage shape: who invited / to whom / workspace → Accept). Not /bootstrap-os/login. Mail/QR/SMS later. First user stays SQL — HOSTED_IDENTITY.md.",
+    "Allowlisted founder/authorized invites a mentee (email + company workspace label). Returns an in-chat Accept card plus a signup Auth card. Enqueues email outbox for pirin-ai (From bootstrap@pirin.ai; Cos yes before prod Resend). Not /bootstrap-os/login as the product path. First user stays SQL — HOSTED_IDENTITY.md.",
     {
       email: z.string().describe("Invitee email. Lowercased. Must match their pirin.ai login when they accept."),
       companyLabel: z
@@ -310,7 +316,25 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
           { email, companyLabel },
         );
         if (!result.ok) return err(inviteFailMessage(result));
-        return text(result);
+        const mailMode = resolveInviteMailMode();
+        const mail = {
+          mode: mailMode,
+          from: INVITE_MAIL_FROM,
+          queued: Boolean(result.queuedMail),
+          note: "pirin-ai Resend sends after Cos yes. MCP never blasts prod mail.",
+        };
+        if (mailMode === "dry-run") {
+          deliverInviteMailDryRun(
+            buildInviteMail({
+              inviterEmail: result.card.from.email,
+              inviteeEmail: result.card.to.email,
+              companyWorkspace: result.card.companyWorkspace,
+              inviteToken: result.card.inviteToken,
+              expiresAt: result.card.expiresAt,
+            }),
+          );
+        }
+        return text({ ...result, mail });
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));
       }
@@ -319,7 +343,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
 
   server.tool(
     "accept_invite",
-    "Invitee accepts with the one-time token from the in-chat Accept card. JWT email must match. Binds mentee allowlist + company workspace label. Fail-closed on wrong email, expired, or replay. Grok-first — mail later.",
+    "Invitee accepts with the one-time token from the in-chat Accept card or signup ?invite=. JWT email must match. Binds mentee allowlist + company workspace label. Fail-closed on wrong email, expired, or replay.",
     {
       token: z.string().describe("One-time invite token from the Accept card (inv_…). Shown once."),
     },

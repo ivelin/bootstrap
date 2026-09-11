@@ -1,6 +1,6 @@
 /**
  * CTO/PM E2E role-play matrix (PGlite + hosted handler).
- * Never supabase-pirin-ai. Never prod. Mail/QR/SMS not invented here.
+ * Never supabase-pirin-ai. Never prod. Mail is outbox + dry-run only.
  *
  * Matrix + draft prod synthetic SRE (say once): mcp/docs/E2E_ROLEPLAY.md
  * Invite contract (say once): mcp/docs/INVITE.md
@@ -31,6 +31,10 @@ import {
   setInviteClockForTests,
   setInviteStoreForTests,
 } from "../dist/invite.js";
+import {
+  INVITE_MAIL_FROM,
+  setInviteMailSinkForTests,
+} from "../dist/invite-mail.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -46,6 +50,8 @@ const STRANGER_UID = "99999999-9999-9999-9999-999999999999";
 const CTO_UID = "55555555-5555-5555-5555-555555555555";
 const BILL_UID = "66666666-6666-6666-6666-666666666666";
 const BILL_EMAIL = "bill@example.test";
+const ZK0_OUTSIDER_UID = "77777777-7777-7777-7777-777777777777";
+const ZK0_OUTSIDER_EMAIL = "ivelin@zk0.bot";
 
 let db;
 let rpcId = 80;
@@ -54,7 +60,9 @@ afterEach(() => {
   setIdentityStoreForTests(undefined);
   setInviteStoreForTests(undefined);
   setInviteClockForTests();
+  setInviteMailSinkForTests(undefined);
   delete process.env.VERCEL_ENV;
+  delete process.env.BOOTSTRAP_INVITE_MAIL;
 });
 
 function usePgliteStores() {
@@ -194,7 +202,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     await db?.close();
   });
 
-  it("docs say the matrix once; P1–P2 shipped; mail pending", () => {
+  it("docs say the matrix once; P1–P3 shipped; no prod mail", () => {
     const e2e = fs.readFileSync(E2E_DOC, "utf8");
     const hosted = fs.readFileSync(HOSTED_DOC, "utf8");
     const invite = fs.readFileSync(INVITE_DOC, "utf8");
@@ -208,8 +216,10 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(e2e, /accept_invite/);
     assert.match(e2e, /P1/);
     assert.match(e2e, /P2/);
-    assert.match(e2e, /Mail round-trip/);
-    assert.match(e2e, /\*\*Pending\*\*.*Follow-on/s);
+    assert.match(e2e, /Invitee non-Grok mail \+ signup/);
+    assert.match(e2e, /verify_invite/);
+    assert.match(e2e, /bootstrap@pirin\.ai/);
+    assert.match(e2e, /No prod Resend/);
     assert.match(e2e, /INVITE\.md/);
     assert.match(e2e, /Draft prod synthetic SRE/);
     assert.match(e2e, /GET \/health/);
@@ -228,7 +238,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(invite, /Bill/);
   });
 
-  it("wires invite_member / accept_invite into CI; mailer stays out", () => {
+  it("wires invite_member / accept_invite into CI; mailer is enqueue + dry-run", () => {
     assert.ok(HOSTED_GATED_TOOL_NAMES.includes("invite_member"));
     assert.ok(HOSTED_GATED_TOOL_NAMES.includes("accept_invite"));
     for (const name of HOSTED_READ_TOOL_NAMES) {
@@ -238,10 +248,14 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(server, /invite_member/);
     assert.match(server, /accept_invite/);
     const inviteSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
+    const mailSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite-mail.ts"), "utf8");
     assert.doesNotMatch(inviteSrc, /from ["']resend["']|smtp|nodemailer|sendgrid/i);
+    assert.doesNotMatch(mailSrc, /from ["']resend["']|smtp|nodemailer|sendgrid/i);
+    assert.match(mailSrc, /bootstrap@pirin\.ai/);
     const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, "mcp", "package.json"), "utf8"));
     assert.match(pkg.scripts["test:unit"], /e2e-roleplay-matrix\.test\.mjs/);
     assert.match(pkg.scripts["test:unit"], /invite\.test\.mjs/);
+    assert.match(pkg.scripts["test:unit"], /invite-mail\.test\.mjs/);
     assert.doesNotMatch(pkg.scripts["test:unit"], /preview-live/);
     assert.doesNotMatch(pkg.scripts.ci, /preview-live/);
   });
@@ -382,11 +396,19 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.equal(payload.card.companyWorkspace, "zk0");
     assert.equal(payload.card.action, "Accept");
     assert.equal(payload.queued.channel, "in_chat");
+    assert.equal(payload.queuedMail.channel, "email");
+    assert.equal(payload.queuedMail.from, INVITE_MAIL_FROM);
+    assert.equal(payload.authCard.card, "invite_signup");
+    assert.equal(payload.authCard.from.email, INVITE_MAIL_FROM);
     assert.match(payload.card.inviteToken, /^inv_/);
     const outbox = (await db.query("SELECT channel, payload FROM bootstrap_mcp_invite_outbox")).rows;
-    assert.ok(outbox.length >= 1);
-    assert.equal(outbox[outbox.length - 1].channel, "in_chat");
-    assert.equal(outbox[outbox.length - 1].payload.inviteToken, null);
+    const inChat = outbox.filter((row) => row.channel === "in_chat");
+    const email = outbox.filter((row) => row.channel === "email");
+    assert.ok(inChat.length >= 1);
+    assert.ok(email.length >= 1);
+    assert.equal(inChat[inChat.length - 1].payload.inviteToken, null);
+    assert.equal(email[email.length - 1].payload.mailFrom, INVITE_MAIL_FROM);
+    assert.match(String(email[email.length - 1].payload.signupUrl), /\/bootstrap-os\/login\?invite=inv_/);
   });
 
   it("P1 invite_member: unset store vs RPC failure are distinct user-facing errors", async () => {
@@ -488,5 +510,70 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const replay = await callTool("accept_invite", { token }, bill);
     assert.equal(replay.body.result.isError, true);
     assert.match(replay.body.result.content.map((c) => c.text).join("\n"), /Invite rejected/);
+  });
+
+  it("P3 Invitee non-Grok: mail outbox + verify + signup URL + accept → whoami zk0", async () => {
+    process.env.VERCEL_ENV = "production";
+    process.env.BOOTSTRAP_INVITE_MAIL = "dry-run";
+    usePgliteStores();
+    const seen = [];
+    setInviteMailSinkForTests((m) => seen.push(m));
+    const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
+    const outsider = syntheticAccessToken({ email: ZK0_OUTSIDER_EMAIL, sub: ZK0_OUTSIDER_UID });
+
+    const created = parseTool(
+      (await callTool("invite_member", { email: ZK0_OUTSIDER_EMAIL, companyLabel: "zk0" }, ivelin))
+        .body,
+    );
+    assert.equal(created.ok, true);
+    const token = created.card.inviteToken;
+    assert.equal(created.mail.mode, "dry-run");
+    assert.equal(created.mail.from, INVITE_MAIL_FROM);
+    assert.equal(seen.length, 1);
+    assert.equal(seen[0].from, INVITE_MAIL_FROM);
+    assert.equal(seen[0].to, ZK0_OUTSIDER_EMAIL);
+    assert.match(seen[0].text, /Who invited: ivelin@pirin\.ai/);
+    assert.match(seen[0].signupUrl, new RegExp(`invite=${token}`));
+
+    const store = new PgliteInviteStore(db);
+    const verified = await store.verifyInvite(token);
+    assert.deepEqual(verified, {
+      ok: true,
+      invitee_email: ZK0_OUTSIDER_EMAIL,
+      company_label: "zk0",
+      inviter_email: IVELIN_SEED_EMAIL,
+    });
+    assert.deepEqual(await store.verifyInvite("inv_not_a_real_invite_token_xx"), { ok: false });
+
+    const expiredToken = "inv_expired_non_grok_token_xxxx";
+    await db.exec("RESET ROLE");
+    await db.query(
+      `INSERT INTO bootstrap_mcp_invites
+        (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at, accepted_at)
+       VALUES ($1, $2, 'zk0', 'mentee-ivelin', $3, $4, $5, NULL)`,
+      ["inv-expired-ng", ZK0_OUTSIDER_EMAIL, IVELIN_SEED_EMAIL, hashMcpToken(expiredToken), "2000-01-01T00:00:00.000Z"],
+    );
+    const expiredVerify = await store.verifyInvite(expiredToken);
+    assert.deepEqual(expiredVerify, { ok: false });
+    assert.equal("reason" in expiredVerify, false);
+
+    await assertGated401(
+      await rawRpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, outsider),
+      "not_invited",
+    );
+
+    const accepted = await callTool("accept_invite", { token }, outsider);
+    assert.equal(accepted.res.status, 200, accepted.text);
+    const ok = parseTool(accepted.body);
+    assert.equal(ok.ok, true);
+    assert.equal(ok.email, ZK0_OUTSIDER_EMAIL);
+    assert.deepEqual(ok.labels, ["zk0"]);
+
+    const who = await whoamiPass(outsider);
+    assert.equal(who.authenticated, true);
+    assert.equal(who.email, ZK0_OUTSIDER_EMAIL);
+    assert.deepEqual(who.labels, ["zk0"]);
+
+    assert.deepEqual(await store.verifyInvite(token), { ok: false });
   });
 });

@@ -119,6 +119,19 @@ describe("RLS: one mentee cannot read another", () => {
     assert.doesNotMatch(pgcryptoSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
     assert.doesNotMatch(pgcryptoSql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_accept_invite/);
     assert.doesNotMatch(pgcryptoSql, /supabase\.co/);
+    const verifySql = fs.readFileSync(
+      path.join(__dirname, "..", "supabase", "migrations", "20260911_bootstrap_mcp_invite_verify_email_outbox.sql"),
+      "utf8",
+    );
+    assert.match(verifySql, /bootstrap_mcp_verify_invite/);
+    assert.match(verifySql, /channel IN \('in_chat', 'email'\)/);
+    assert.match(verifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_verify_invite\(text\) TO service_role/);
+    assert.doesNotMatch(verifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_verify_invite[\s\S]{0,40}anon/);
+    assert.doesNotMatch(verifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_verify_invite[\s\S]{0,60}authenticated/);
+    assert.doesNotMatch(verifySql, /CREATE POLICY[\s\S]{0,200}USING\s*\(\s*true\s*\)/i);
+    assert.doesNotMatch(verifySql, /smtp|nodemailer|sendgrid/i);
+    assert.doesNotMatch(verifySql, /supabase\.co/);
+    assert.match(verifySql, /DO NOT apply from a PR cloud agent/);
   });
 
   it("authenticated A cannot see B labels or mentee row", () => {
