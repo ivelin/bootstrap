@@ -132,6 +132,22 @@ describe("RLS: one mentee cannot read another", () => {
     assert.doesNotMatch(verifySql, /smtp|nodemailer|sendgrid/i);
     assert.doesNotMatch(verifySql, /supabase\.co/);
     assert.match(verifySql, /DO NOT apply from a PR cloud agent/);
+    const existingSql = fs.readFileSync(
+      path.join(__dirname, "..", "supabase", "migrations", "20260912_bootstrap_mcp_invite_existing_member.sql"),
+      "utf8",
+    );
+    const withoutExistingComments = existingSql.replace(/--[^\n]*/g, "");
+    assert.match(existingSql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.match(existingSql, /already_member/);
+    assert.match(existingSql, /bootstrap_mcp_invites_pending_email_label_idx/);
+    assert.match(existingSql, /i\.company_label = workspace/);
+    assert.doesNotMatch(withoutExistingComments, /AND company_label = company_label/);
+    assert.match(existingSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member\(text, text\) TO authenticated/);
+    assert.doesNotMatch(existingSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,60}anon/);
+    assert.doesNotMatch(existingSql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_accept_invite/);
+    assert.doesNotMatch(withoutExistingComments, /AND label = label/);
+    assert.doesNotMatch(existingSql, /supabase\.co/);
+    assert.match(existingSql, /DO NOT apply from a PR cloud agent/);
   });
 
   it("authenticated A cannot see B labels or mentee row", () => {

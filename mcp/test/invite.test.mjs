@@ -68,6 +68,7 @@ afterEach(() => {
   setInviteStoreForTests(undefined);
   setInviteClockForTests();
   setInviteEnqueueHook(undefined);
+  delete process.env.VERCEL_ENV;
 });
 
 function ivelinStore() {
@@ -100,12 +101,15 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(invite, /mail/i);
     assert.match(invite, /QR/);
     assert.match(invite, /SMS/);
-    assert.match(invite, /Not `\/bootstrap-os\/login`/);
+    assert.match(invite, /login\?invite=/);
+    assert.match(invite, /Universal/);
+    assert.match(invite, /already_member/);
     assert.match(invite, /HOSTED_IDENTITY\.md#first-user-rebuild-from-github/);
     assert.match(invite, /20260910_bootstrap_mcp_invite_accept\.sql/);
     assert.match(invite, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
     assert.match(invite, /20260911_bootstrap_mcp_invite_pgcrypto_search_path\.sql/);
     assert.match(invite, /20260911_bootstrap_mcp_invite_verify_email_outbox\.sql/);
+    assert.match(invite, /20260912_bootstrap_mcp_invite_existing_member\.sql/);
     assert.match(invite, /bootstrap_mcp_verify_invite/);
     assert.match(invite, /bootstrap@pirin\.ai/);
     assert.match(invite, /login\?invite=/);
@@ -121,6 +125,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(hosted, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
     assert.match(hosted, /20260911_bootstrap_mcp_invite_pgcrypto_search_path\.sql/);
     assert.match(hosted, /20260911_bootstrap_mcp_invite_verify_email_outbox\.sql/);
+    assert.match(hosted, /20260912_bootstrap_mcp_invite_existing_member\.sql/);
     const sql = fs.readFileSync(SQL, "utf8");
     assert.match(sql, /DO NOT apply from a PR cloud agent/);
     assert.match(sql, /bootstrap_mcp_invite_member/);
@@ -139,7 +144,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(qualify, /DO NOT apply from a PR cloud agent/);
     assert.doesNotMatch(qualify, /supabase\.co/);
     assert.match(pglite, /SELECT bootstrap_mcp_invite_member|bootstrap_mcp_invite_member\(p_email/);
-    assert.match(pglite, /cl\.label = company_label/);
+    assert.match(pglite, /cl\.label = workspace/);
     assert.doesNotMatch(withoutComments(pglite), /AND label = label/);
     assert.match(pglite, /SET search_path = public, extensions/);
     assert.match(pglite, /extensions\.gen_random_bytes\(24\)/);
@@ -178,6 +183,27 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(verifySql, /DO NOT apply from a PR cloud agent/);
     assert.doesNotMatch(verifySql, /supabase\.co/);
     assert.doesNotMatch(verifySql, /smtp|nodemailer|sendgrid|from ["']resend["']/i);
+    const existingSql = fs.readFileSync(
+      path.join(REPO_ROOT, "mcp", "supabase", "migrations", "20260912_bootstrap_mcp_invite_existing_member.sql"),
+      "utf8",
+    );
+    assert.match(existingSql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.match(existingSql, /already_member/);
+    assert.match(existingSql, /bootstrap_mcp_invites_pending_email_label_idx/);
+    assert.match(existingSql, /i\.company_label = workspace/);
+    assert.doesNotMatch(existingSql.replace(/--[^\n]*/g, ""), /AND company_label = company_label/);
+    assert.match(existingSql, /Sign in or create account/);
+    assert.match(existingSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.doesNotMatch(existingSql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_invite_member[\s\S]{0,40}anon/);
+    assert.doesNotMatch(existingSql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_accept_invite/);
+    assert.doesNotMatch(existingSql.replace(/--[^\n]*/g, ""), /AND label = label/);
+    assert.match(existingSql, /DO NOT apply from a PR cloud agent/);
+    assert.doesNotMatch(existingSql, /supabase\.co/);
+    assert.match(pglite, /already_member/);
+    assert.match(pglite, /bootstrap_mcp_invites_pending_email_label_idx/);
+    assert.match(pglite, /i\.company_label = workspace/);
+    assert.match(pglite, /cl\.label = workspace/);
+    assert.doesNotMatch(withoutComments(pglite), /AND company_label = company_label/);
     const storeSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
     assert.match(storeSrc, /SELECT bootstrap_mcp_invite_member\(\$1, \$2\)/);
     assert.match(storeSrc, /SELECT bootstrap_mcp_accept_invite\(\$1\)/);
@@ -272,7 +298,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.equal(card.companyWorkspace, "zk0");
     assert.equal(card.action, "Accept");
     assert.equal(card.tool, "accept_invite");
-    assert.match(card.note, /Not \/bootstrap-os\/login/);
+    assert.match(card.note, /Login URL is the universal path/);
     const queued = enqueueInviteInChat("inv-1", card);
     assert.equal(queued.channel, "in_chat");
     assert.equal(queued.payload.inviteToken, null);
@@ -285,6 +311,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
       expiresAt: "2030-01-01T00:00:00.000Z",
     });
     assert.equal(auth.card, "invite_signup");
+    assert.equal(auth.action, "Sign in or create account");
     assert.equal(auth.from.email, INVITE_MAIL_FROM);
     assert.equal(auth.inviterEmail, IVELIN_SEED_EMAIL);
     assert.match(auth.signupUrl, /\/bootstrap-os\/login\?invite=inv_once_only_fixture_token_xx/);
@@ -353,6 +380,51 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.deepEqual(await store.verifyInvite(invited.card.inviteToken), { ok: false });
   });
 
+  it("existing user joins a second workspace; already_member on the same one; pending rotates", async () => {
+    const store = ivelinStore();
+    const actorA = {
+      email: "mentee-a@example.test",
+      sub: "11111111-1111-1111-1111-111111111111",
+    };
+    const ivelin = { email: IVELIN_SEED_EMAIL, labels: [...IVELIN_SEED_LABELS] };
+
+    const first = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "zk0" });
+    assert.equal(first.ok, true);
+    if (!first.ok) return;
+    const firstToken = first.card.inviteToken;
+
+    const pendingOther = await store.inviteMember(ivelin, {
+      email: actorA.email,
+      companyLabel: "totbox",
+    });
+    assert.equal(pendingOther.ok, true);
+    if (!pendingOther.ok) return;
+
+    const rotated = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "zk0" });
+    assert.equal(rotated.ok, true);
+    if (!rotated.ok) return;
+    assert.notEqual(rotated.card.inviteToken, firstToken);
+    assert.deepEqual(await store.verifyInvite(firstToken), { ok: false });
+    assert.equal((await store.verifyInvite(rotated.card.inviteToken)).ok, true);
+
+    const accepted = await store.acceptInvite(actorA, rotated.card.inviteToken);
+    assert.equal(accepted.ok, true);
+    if (!accepted.ok) return;
+    assert.deepEqual(accepted.labels, ["alpha", "zk0"]);
+    assert.equal(store.menteeByEmail(actorA.email)?.authUserId, actorA.sub);
+    assert.ok(!accepted.labels.includes("bravo"));
+    assert.ok(!accepted.labels.includes("totbox"));
+
+    const again = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "zk0" });
+    assert.deepEqual(again, { ok: false, reason: "already_member" });
+    assert.match(inviteFailMessage("already_member"), /already on this company workspace/);
+
+    const totbox = await store.acceptInvite(actorA, pendingOther.card.inviteToken);
+    assert.equal(totbox.ok, true);
+    if (!totbox.ok) return;
+    assert.deepEqual(totbox.labels, ["alpha", "totbox", "zk0"]);
+  });
+
   it("invite_store_unset is missing env/client only; failed RPC keeps status+body", async () => {
     const src = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
     const serverSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "server.ts"), "utf8");
@@ -370,6 +442,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      VERCEL_ENV: process.env.VERCEL_ENV,
     };
     delete process.env.BOOTSTRAP_SUPABASE_URL;
     delete process.env.BOOTSTRAP_SUPABASE_ANON_KEY;
@@ -382,6 +455,13 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
       assert.equal(createInviteStore("tok"), null);
       process.env.BOOTSTRAP_SUPABASE_ANON_KEY = "anon-key-fixture-xx";
       assert.equal(createInviteStore(undefined), null);
+      process.env.VERCEL_ENV = "preview";
+      assert.equal(createInviteStore("tok"), null, "preview must not attach prod invite store");
+      process.env.VERCEL_ENV = "development";
+      assert.equal(createInviteStore("tok"), null, "development must not attach prod invite store");
+      delete process.env.VERCEL_ENV;
+      assert.equal(createInviteStore("tok"), null, "unset VERCEL_ENV must not attach prod invite store");
+      process.env.VERCEL_ENV = "production";
       const configured = createInviteStore("tok");
       assert.ok(configured);
       assert.equal(configured.kind, "supabase");

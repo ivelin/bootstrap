@@ -216,7 +216,9 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(e2e, /accept_invite/);
     assert.match(e2e, /P1/);
     assert.match(e2e, /P2/);
-    assert.match(e2e, /Invitee non-Grok mail \+ signup/);
+    assert.match(e2e, /Invitee login-URL accept/);
+    assert.match(e2e, /P4/);
+    assert.match(e2e, /Existing user, second workspace/);
     assert.match(e2e, /verify_invite/);
     assert.match(e2e, /bootstrap@pirin\.ai/);
     assert.match(e2e, /No prod Resend/);
@@ -399,6 +401,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.equal(payload.queuedMail.channel, "email");
     assert.equal(payload.queuedMail.from, INVITE_MAIL_FROM);
     assert.equal(payload.authCard.card, "invite_signup");
+    assert.equal(payload.authCard.action, "Sign in or create account");
     assert.equal(payload.authCard.from.email, INVITE_MAIL_FROM);
     assert.match(payload.card.inviteToken, /^inv_/);
     const outbox = (await db.query("SELECT channel, payload FROM bootstrap_mcp_invite_outbox")).rows;
@@ -488,7 +491,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
       `INSERT INTO bootstrap_mcp_invites
         (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at, accepted_at)
        VALUES ($1, $2, 'zk0', 'mentee-ivelin', $3, $4, $5, NULL)`,
-      ["inv-expired", BILL_EMAIL, IVELIN_SEED_EMAIL, hashMcpToken(expiredToken), "2000-01-01T00:00:00.000Z"],
+      ["inv-expired", "expired-verify@example.test", IVELIN_SEED_EMAIL, hashMcpToken(expiredToken), "2000-01-01T00:00:00.000Z"],
     );
     const expired = await callTool("accept_invite", { token: expiredToken }, bill);
     assert.equal(expired.body.result.isError, true);
@@ -512,7 +515,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(replay.body.result.content.map((c) => c.text).join("\n"), /Invite rejected/);
   });
 
-  it("P3 Invitee non-Grok: mail outbox + verify + signup URL + accept → whoami zk0", async () => {
+  it("P3 Invitee login-URL: mail outbox + verify + signup URL + accept → whoami zk0", async () => {
     process.env.VERCEL_ENV = "production";
     process.env.BOOTSTRAP_INVITE_MAIL = "dry-run";
     usePgliteStores();
@@ -545,13 +548,13 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     });
     assert.deepEqual(await store.verifyInvite("inv_not_a_real_invite_token_xx"), { ok: false });
 
-    const expiredToken = "inv_expired_non_grok_token_xxxx";
+    const expiredToken = "inv_expired_login_url_token_xxxx";
     await db.exec("RESET ROLE");
     await db.query(
       `INSERT INTO bootstrap_mcp_invites
         (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at, accepted_at)
        VALUES ($1, $2, 'zk0', 'mentee-ivelin', $3, $4, $5, NULL)`,
-      ["inv-expired-ng", ZK0_OUTSIDER_EMAIL, IVELIN_SEED_EMAIL, hashMcpToken(expiredToken), "2000-01-01T00:00:00.000Z"],
+      ["inv-expired-url", "expired-login-url@example.test", IVELIN_SEED_EMAIL, hashMcpToken(expiredToken), "2000-01-01T00:00:00.000Z"],
     );
     const expiredVerify = await store.verifyInvite(expiredToken);
     assert.deepEqual(expiredVerify, { ok: false });
@@ -575,5 +578,48 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.deepEqual(who.labels, ["zk0"]);
 
     assert.deepEqual(await store.verifyInvite(token), { ok: false });
+  });
+
+  it("P4 existing user second workspace: mentee-a (alpha) + zk0; already_member; isolation", async () => {
+    process.env.VERCEL_ENV = "production";
+    usePgliteStores();
+    const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
+    const aTok = syntheticAccessToken({ email: "mentee-a@example.test", sub: A_UID });
+    const bTok = syntheticAccessToken({ email: "mentee-b@example.test", sub: B_UID });
+
+    const before = await whoamiPass(aTok);
+    assert.deepEqual(before.labels, ["alpha"]);
+
+    const created = parseTool(
+      (await callTool("invite_member", { email: "mentee-a@example.test", companyLabel: "zk0" }, ivelin))
+        .body,
+    );
+    assert.equal(created.ok, true);
+    const token = created.card.inviteToken;
+
+    const accepted = await callTool("accept_invite", { token }, aTok);
+    assert.equal(accepted.res.status, 200, accepted.text);
+    const ok = parseTool(accepted.body);
+    assert.equal(ok.ok, true);
+    assert.deepEqual(ok.labels, ["alpha", "zk0"]);
+
+    const who = await whoamiPass(aTok);
+    assert.equal(who.authenticated, true);
+    assert.deepEqual(who.labels, ["alpha", "zk0"]);
+    assert.ok(!who.labels.includes("bravo"));
+    assert.ok(!who.labels.includes("pirin"));
+
+    const again = await callTool(
+      "invite_member",
+      { email: "mentee-a@example.test", companyLabel: "zk0" },
+      ivelin,
+    );
+    assert.equal(again.body.result.isError, true);
+    assert.match(again.body.result.content.map((c) => c.text).join("\n"), /already on this company workspace/);
+
+    const b = await whoamiPass(bTok);
+    assert.deepEqual(b.labels, ["bravo"]);
+    assert.ok(!b.labels.includes("zk0"));
+    assert.ok(!b.labels.includes("alpha"));
   });
 });

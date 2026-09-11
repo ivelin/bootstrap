@@ -247,7 +247,17 @@ export class SupabaseIdentityStore implements IdentityStore {
   }
 }
 
+/**
+ * Live pirin.ai Supabase is production-pin only.
+ * Preview / development / CI / local must not attach even if BOOTSTRAP_SUPABASE_* is set.
+ * Tests inject PGlite/memory via setIdentityStoreForTests.
+ */
+export function hostedProdIdentityAllowed(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.VERCEL_ENV === "production";
+}
+
 export function createIdentityStore(): IdentityStore | null {
+  if (!hostedProdIdentityAllowed()) return null;
   const url = supabaseUrl();
   const key = supabaseAnonKey();
   if (!url || !key) return null;
