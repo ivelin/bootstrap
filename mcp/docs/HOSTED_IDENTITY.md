@@ -1,6 +1,6 @@
 # Hosted MCP identity (resource server)
 
-This host is the **resource server only**. There is **one** invite-only hosted MCP pin: `https://mcp.bootstrap.pirin.ai/mcp`. Cookie-less `initialize` / GET SSE / `tools/list` **401** so Grok Bot starts OAuth. Gated tools accept **access tokens issued by pirin.ai login**. This draft also gates journey tools — contract: [`JOURNEY.md`](JOURNEY.md).
+This host is the **resource server only**. There is **one** invite-only hosted MCP pin: `https://mcp.bootstrap.pirin.ai/mcp`. Cookie-less `initialize` / GET SSE / `tools/list` **401** so an MCP client (Grok Bot is one example) can start OAuth. Gated tools accept **access tokens issued by pirin.ai login**. This draft also gates journey tools — contract: [`JOURNEY.md`](JOURNEY.md).
 
 Free docs are GitHub + [install-os](https://pirin.ai/install-os) + local — **not** a hosted MCP connector. Do not invent `os.bootstrap.pirin.ai` or a second public Path 1 hostname. Path 3 local stdio stays the write path.
 
@@ -12,8 +12,8 @@ Free docs are GitHub + [install-os](https://pirin.ai/install-os) + local — **n
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
 | Product | MCP client follows 401 → this origin's protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
-| Allowlist | A valid pirin.ai JWT is **not** enough. Hosted MCP whoami is `authenticated: true` only if email/`auth_user_id` is on `bootstrap_mcp_mentees`. Uninvited → `not_invited`; gated tools stay 401. First user is a SQL insert — [First user (rebuild from GitHub)](#first-user-rebuild-from-github). Later mentees: in-chat + outsider mail/signup [`INVITE.md`](INVITE.md) (`invite_member` / `accept_invite` / `bootstrap_mcp_verify_invite`). |
-| Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Invite-only collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. Do not merge. |
+| Allowlist | A valid pirin.ai JWT is **not** enough. Hosted MCP whoami is `authenticated: true` only if email/`auth_user_id` is on `bootstrap_mcp_mentees` (user table, legacy name). Uninvited → `not_invited`; gated tools stay 401. First user is a SQL insert — [First user (rebuild from GitHub)](#first-user-rebuild-from-github). Later users + additional workspaces: [`INVITE.md`](INVITE.md) (`invite_member` / `accept_invite` / `bootstrap_mcp_verify_invite`). |
+| Env pin | Live on Vercel project `bootstrap-os-mcp`. Identity/invite Supabase adapters attach **only** when `VERCEL_ENV=production`. Preview/development must not use prod DB even if `BOOTSTRAP_SUPABASE_*` is set. Do **not** print those values. Invite-only collab pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. Do not merge. |
 | Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
 | Deploy Host (not a pin) | `https://bootstrap-os-mcp.vercel.app/mcp` is the Vercel production Host. **Not a pin.** Not Path 1. Not advertised. Cos HARD 2026-09-09: treat this Host **exactly like collab** — cookie-less `initialize` / `tools/list` **HTTP 401** + `WWW-Authenticate`. Not a silent 200 alias (undeclared deploy-only). |
 
@@ -118,12 +118,12 @@ Collab-host and undeclared-deploy-Host clients get 401 on the first handshake an
 
 Say it **once** here. Other files link.
 
-A valid pirin.ai JWT alone must **not** grant hosted MCP access. There is **no login UI in this repo**. Invite-from-existing-user is in-chat Accept; outsider mail + signup is the support path — [`INVITE.md`](INVITE.md). First user is a **direct SQL insert** into `bootstrap_mcp_mentees` (email **lowercased**) plus optional `bootstrap_company_labels`.
+A valid pirin.ai JWT alone must **not** grant hosted MCP access. There is **no login UI in this repo**. Invite-from-existing-user is Bearer `accept_invite` (same user, additional workspace) or login URL; in-chat Accept is optional — [`INVITE.md`](INVITE.md). First user is a **direct SQL insert** into `bootstrap_mcp_mentees` (user table; email **lowercased**) plus optional `bootstrap_company_labels` (team memberships).
 
 On a rebuild (empty project / Cos applying migrations — **never from a PR cloud agent**):
 
-1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql`, `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`, `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_accept.sql`, then `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_qualify_label.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_verify_email_outbox.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member` — `SET search_path = public, extensions`; verify + email outbox). PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
-2. Insert the first mentee. The identity migration already seeds `ivelin@pirin.ai` + labels `pirin`, `zk0`, `totbox`. Additional mentees use the same shape:
+1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql`, `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`, `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_accept.sql`, then `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_qualify_label.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_verify_email_outbox.sql`, then `mcp/supabase/migrations/20260912_bootstrap_mcp_invite_existing_member.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member` — existing user, second workspace, `already_member`, pending unique). PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
+2. Insert the first user. The identity migration already seeds `ivelin@pirin.ai` + labels `pirin`, `zk0`, `totbox`. Additional first-user SQL uses the same shape:
 
 ```sql
 INSERT INTO public.bootstrap_mcp_mentees (email)
@@ -138,7 +138,7 @@ WHERE m.email = lower('founder@example.com');
 
 3. That person signs in at pirin.ai `/bootstrap-os/login`. OAuth then works. `bootstrap_mcp_my_labels` binds `auth_user_id` on the first email match.
 
-Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools stay HTTP 401 except `accept_invite` (valid JWT + matching invite token). Missing token still 401s the collab handshake. Later mentees: [`INVITE.md`](INVITE.md).
+Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools stay HTTP 401 except `accept_invite` (valid JWT + matching invite token; already-authenticated users may join another workspace). Missing token still 401s the collab handshake. Later users: [`INVITE.md`](INVITE.md).
 
 ## Tests (PGlite / isolated)
 
@@ -149,7 +149,7 @@ Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools 
 | FORCE RLS | `mcp/test/identity-pglite.test.mjs` |
 | SQL file locks | `mcp/test/identity-rls.test.mjs` (no network) |
 | CTO/PM role-play matrix + draft prod synthetic SRE | [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` |
-| Invite / accept / outsider mail | [`INVITE.md`](INVITE.md) · `mcp/test/invite.test.mjs` + `invite-mail.test.mjs` + role-play P1–P3 + `identity-pglite.test.mjs` (SQL `invite_member` / `verify_invite`, no 42702 / no 42883) |
+| Invite / accept / login-URL mail | [`INVITE.md`](INVITE.md) · `mcp/test/invite.test.mjs` + `invite-mail.test.mjs` + role-play P1–P4 + `identity-pglite.test.mjs` (SQL `invite_member` / `verify_invite`, no 42702 / no 42883; existing user second workspace; preview store refuse) |
 
 Do not run `preview-live.mjs` on PR cloud agents. Draft prod synthetic checks are Cos-only — same doc.
 

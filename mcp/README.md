@@ -68,8 +68,8 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 |------|---------|
 | `bootstrap_whoami` | Email + company labels when `Authorization: Bearer` is a pirin.ai access token **and** that email/`auth_user_id` is on `bootstrap_mcp_mentees`. Uninvited JWTs are `not_invited` (401). Unauthenticated gated calls return HTTP 401 + `WWW-Authenticate`. Public OS tools stay listed after auth on the collab host. First user: [`docs/HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later mentees: [`docs/INVITE.md`](docs/INVITE.md). |
 | `bootstrap_list_company_labels` | Same labels. Error without a token. Not `bootstrap_list_companies` (that stays path 3 / local boards). |
-| `invite_member` | Allowlisted founder/authorized invites (email + company workspace label). In-chat Accept + signup Auth card. Email outbox for pirin-ai (`bootstrap@pirin.ai`; Cos yes before prod Resend). [`INVITE.md`](docs/INVITE.md). |
-| `accept_invite` | Invitee JWT + one-time token → allowlist + label. Fail-closed on wrong email / expired / replay. Same token as `?invite=`. |
+| `invite_member` | Allowlisted team member invites a user (email + company workspace they belong to). Same user may join multiple workspaces. Optional Accept card + sign-in URL. Email outbox for pirin-ai (`bootstrap@pirin.ai`; Cos yes before prod Resend). [`INVITE.md`](docs/INVITE.md). |
+| `accept_invite` | Invitee JWT + one-time token → user + workspace membership. Existing users gain an additional team — not a second account. Fail-closed on wrong email / expired / replay. Same token as `?invite=`. |
 
 Hard rules (OS 2.8.9):
 

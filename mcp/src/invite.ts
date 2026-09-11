@@ -1,12 +1,13 @@
 /**
- * Hosted MCP invite + accept (Grok-first, in-chat Accept).
- * Fail-closed allowlist: invite creates/unlocks mentee rows. OAuth alone is not enough.
- * First user stays a SQL insert — HOSTED_IDENTITY.md.
+ * Hosted MCP invite + accept (team membership on a Bootstrap OS user).
+ * Fail-closed allowlist: invite creates/unlocks user rows (table: bootstrap_mcp_mentees).
+ * OAuth alone is not enough. First user stays a SQL insert — HOSTED_IDENTITY.md.
+ * Same user, many workspaces. Login URL is the universal path; in-chat Accept is optional.
  * Outsider mail: enqueue email outbox. pirin-ai Resend From bootstrap@pirin.ai after Cos yes.
- * Never supabase-pirin-ai from PR CI.
+ * Never supabase-pirin-ai from PR CI. Preview/dev never attach the prod store.
  */
 import { randomBytes } from "node:crypto";
-import { hashMcpToken } from "./identity.js";
+import { hashMcpToken, hostedProdIdentityAllowed } from "./identity.js";
 import {
   INVITE_MAIL_FROM,
   INVITE_MAIL_NOTE,
@@ -19,7 +20,7 @@ export const COMPANY_LABEL_RE = /^[a-z0-9][a-z0-9_-]{0,31}$/;
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const INVITE_ACCEPT_NOTE =
-  "In-chat Accept. Shows who invited / to whom / company workspace. Not /bootstrap-os/login as the product path. Outsider mail (bootstrap@) is the support path when the invitee has no JWT yet.";
+  "Optional Accept card for MCP clients that render tool results. Login URL is the universal path. Mail (bootstrap@) carries the same token. JWT email must match.";
 
 export const INVITE_IN_CHAT_OUTBOX_NOTE =
   "In-chat Accept. Raw invite token is not stored on this channel.";
@@ -55,7 +56,7 @@ export type InviteSignupCard = {
   to: { email: string };
   companyWorkspace: string;
   inviterEmail: string;
-  action: "Create account";
+  action: "Sign in or create account";
   signupUrl: string;
   qrPayload: string;
   inviteToken: string;
@@ -76,6 +77,7 @@ export type InviteFailReason =
   | "invalid_email"
   | "invalid_label"
   | "label_not_held"
+  | "already_member"
   | "invite_store_unset"
   | "invite_rpc_failed";
 
@@ -314,7 +316,7 @@ export function buildSignupAuthCard(input: {
     to: { email: input.toEmail },
     companyWorkspace: input.companyWorkspace,
     inviterEmail: input.inviterEmail,
-    action: "Create account",
+    action: "Sign in or create account",
     signupUrl,
     qrPayload: signupUrl,
     inviteToken: input.inviteToken,
@@ -424,10 +426,20 @@ export class MemoryInviteStore implements InviteStore {
     if (!inviter) return { ok: false, reason: "inviter_not_on_allowlist" };
     const held = decideInviteCreate(inviter.labels, companyLabel);
     if (!held.ok) return held;
+    const existing = this.mentees.find((row) => row.email === inviteeEmail);
+    if (existing?.labels.includes(companyLabel)) {
+      return { ok: false, reason: "already_member" };
+    }
     const token = mintInviteToken();
     const now = inviteNow();
     const expiresAt = new Date(now + INVITE_TTL_MS).toISOString();
-    const id = newId("inv");
+    const pending = this.invites.find(
+      (row) =>
+        row.inviteeEmail === inviteeEmail &&
+        row.companyLabel === companyLabel &&
+        !row.acceptedAt,
+    );
+    const id = pending?.id ?? newId("inv");
     const card = buildAcceptCard({
       fromEmail: inviter.email,
       toEmail: inviteeEmail,
@@ -435,17 +447,24 @@ export class MemoryInviteStore implements InviteStore {
       inviteToken: token,
       expiresAt,
     });
-    this.invites.push({
-      id,
-      inviteeEmail,
-      companyLabel,
-      invitedByMenteeId: inviter.id,
-      invitedByEmail: inviter.email,
-      tokenHash: hashMcpToken(token),
-      expiresAt,
-      acceptedAt: null,
-      createdAt: new Date(now).toISOString(),
-    });
+    if (pending) {
+      pending.tokenHash = hashMcpToken(token);
+      pending.expiresAt = expiresAt;
+      pending.invitedByMenteeId = inviter.id;
+      pending.invitedByEmail = inviter.email;
+    } else {
+      this.invites.push({
+        id,
+        inviteeEmail,
+        companyLabel,
+        invitedByMenteeId: inviter.id,
+        invitedByEmail: inviter.email,
+        tokenHash: hashMcpToken(token),
+        expiresAt,
+        acceptedAt: null,
+        createdAt: new Date(now).toISOString(),
+      });
+    }
     const queued = enqueueInviteInChat(id, card);
     const queuedMail = enqueueInviteEmail(id, card);
     this.outbox.push(queued, queuedMail);
@@ -567,7 +586,8 @@ function supabaseAnonKey(): string | undefined {
 /**
  * Prod adapter. Calls SECURITY DEFINER RPCs. PR agents must not live-probe supabase-pirin-ai.
  * HTTP / schema-cache / SQL failures stay invite_rpc_failed (status + body).
- * invite_store_unset is only createInviteStore() === null (url / anon key / access token missing).
+ * invite_store_unset is createInviteStore() === null (url / anon key / access token missing,
+ * or not production Vercel env — preview/dev never attach prod Supabase).
  */
 export class SupabaseInviteStore implements InviteStore {
   readonly kind = "supabase" as const;
@@ -625,6 +645,7 @@ export class SupabaseInviteStore implements InviteStore {
 }
 
 export function createInviteStore(accessToken?: string): InviteStore | null {
+  if (!hostedProdIdentityAllowed()) return null;
   const url = supabaseUrl();
   const key = supabaseAnonKey();
   if (!url || !key || !accessToken) return null;
@@ -652,6 +673,8 @@ export function inviteFailMessage(input: InviteFailMessageInput): string {
       return "Company workspace label must be a slug (a-z, 0-9, _-).";
     case "label_not_held":
       return "Inviter does not hold that company workspace label.";
+    case "already_member":
+      return "That email is already on this company workspace.";
     case "invite_store_unset":
       return "Invite store unset. Cos applies the invite migration on rebuild — never from a PR agent.";
     case "invite_rpc_failed": {

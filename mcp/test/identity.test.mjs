@@ -10,7 +10,9 @@ import {
   HOSTED_READ_TOOL_NAMES,
 } from "../dist/constants.js";
 import {
+  createIdentityStore,
   hashMcpToken,
+  hostedProdIdentityAllowed,
   ivelinMemoryFixture,
   IVELIN_SEED_EMAIL,
   IVELIN_SEED_LABELS,
@@ -111,6 +113,36 @@ describe("hosted identity (resource server, gated)", () => {
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhQGIifQ.sig";
     assert.equal(isJwtAccessToken(jwt), true);
     assert.equal(isJwtAccessToken("bos_not_a_jwt_token_xx"), false);
+  });
+
+  it("preview/dev never attach prod identity store even if Supabase env is set", () => {
+    const prev = {
+      BOOTSTRAP_SUPABASE_URL: process.env.BOOTSTRAP_SUPABASE_URL,
+      BOOTSTRAP_SUPABASE_ANON_KEY: process.env.BOOTSTRAP_SUPABASE_ANON_KEY,
+      VERCEL_ENV: process.env.VERCEL_ENV,
+    };
+    process.env.BOOTSTRAP_SUPABASE_URL = "https://example.supabase.co";
+    process.env.BOOTSTRAP_SUPABASE_ANON_KEY = "anon-key-fixture-xx";
+    try {
+      delete process.env.VERCEL_ENV;
+      assert.equal(hostedProdIdentityAllowed(), false);
+      assert.equal(createIdentityStore(), null);
+      process.env.VERCEL_ENV = "preview";
+      assert.equal(hostedProdIdentityAllowed(), false);
+      assert.equal(createIdentityStore(), null);
+      process.env.VERCEL_ENV = "development";
+      assert.equal(createIdentityStore(), null);
+      process.env.VERCEL_ENV = "production";
+      assert.equal(hostedProdIdentityAllowed(), true);
+      const store = createIdentityStore();
+      assert.ok(store);
+      assert.equal(store.kind, "supabase");
+    } finally {
+      for (const [key, value] of Object.entries(prev)) {
+        if (value === undefined) delete process.env[key];
+        else process.env[key] = value;
+      }
+    }
   });
 
   it("anonymous still gets published OS tools and no login wall", async () => {

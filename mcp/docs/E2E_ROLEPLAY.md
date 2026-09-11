@@ -16,11 +16,12 @@ Critical paths run in CI on **PGlite** before any prod synthetic. Evidence: `mcp
 | R4 | Wrong token | Non-JWT / unusable Bearer → gated **401** (`not_a_pirin_access_token` or `invalid_or_revoked_token`). No label leak. | Yes |
 | R5 | Expired token | JWT `exp` in the past → gated **401** `invalid_or_revoked_token`. Fixture-allowed only — this host does not verify JWKS. | Yes |
 | R6 | Cross-company labels | Fixture A sees `alpha` only; B sees `bravo` only; Ivelin sees `pirin` / `zk0` / `totbox`. | Yes |
-| P1 | Founder `invite_member` | Allowlisted inviter (Ivelin) invites Bill / `ivelin@zk0.bot` to a label they hold (`zk0`). Accept card + signup Auth card. Uninvited cannot invite. Cross-company label refused. Unset store ≠ failed RPC (HTTP status + body, not `invite_store_unset`). | Yes |
-| P2 | Invitee Grok `accept_invite` | Bill accepts → allowlist + `zk0`. Wrong email, expired, replay, bad token fail closed. | Yes |
-| P3 | Invitee non-Grok mail + signup | Email outbox (From `bootstrap@pirin.ai`) + `?invite=` URL + `verify_invite` (opaque fail). After JWT, `accept_invite` → whoami label. Dry-run / mock only — no prod Resend. | Yes |
+| P1 | Team member `invite_member` | Allowlisted inviter (Ivelin) invites Bill / `ivelin@zk0.bot` to a workspace they belong to (`zk0`). Accept card + sign-in Auth card. Uninvited cannot invite. Cross-company refused. Unset store ≠ failed RPC (HTTP status + body, not `invite_store_unset`). | Yes |
+| P2 | Invitee Bearer `accept_invite` | Any MCP client with a matching JWT. Bill accepts → user + `zk0`. Wrong email, expired, replay, bad token fail closed. | Yes |
+| P3 | Invitee login-URL accept | Email outbox (From `bootstrap@pirin.ai`) + `?invite=` URL + `verify_invite` (opaque fail). After JWT, `accept_invite` → whoami label. Dry-run / mock only — no prod Resend. Universal path — not Grok-only. | Yes |
+| P4 | Existing user, second workspace | Allowlisted `mentee-a` (`alpha`) is invited to `zk0`, accepts with the **same** email JWT (already authenticated, not `not_invited`). whoami `["alpha", "zk0"]`; still no `bravo`. Re-invite to `zk0` → `already_member`. | Yes |
 
-Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later mentees (mail + signup + accept): [INVITE.md](INVITE.md).
+Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later users (login URL + Bearer accept; additional workspaces on the same user): [INVITE.md](INVITE.md).
 
 ## Draft prod synthetic SRE (Cos only — not PR CI)
 

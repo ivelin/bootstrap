@@ -111,6 +111,11 @@ CREATE TABLE bootstrap_mcp_invites (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- One pending invite per (email, workspace). Re-invite rotates in place.
+CREATE UNIQUE INDEX bootstrap_mcp_invites_pending_email_label_idx
+  ON bootstrap_mcp_invites (invitee_email, company_label)
+  WHERE accepted_at IS NULL;
+
 CREATE TABLE bootstrap_mcp_invite_outbox (
   id text PRIMARY KEY,
   invite_id text NOT NULL REFERENCES bootstrap_mcp_invites (id) ON DELETE CASCADE,
@@ -161,8 +166,8 @@ AS $$
 $$;
 
 -- PGlite analog of public.bootstrap_mcp_invite_member. Session via app.auth_*.
--- Variable is company_label; column is cl.label. Never AND label = label (42702).
--- search_path includes extensions so gen_random_bytes is visible (not 42883).
+-- Variable is workspace; invites.company_label is the column. Never AND company_label = company_label (42702).
+-- Labels table column is cl.label. search_path includes extensions so gen_random_bytes is visible (not 42883).
 CREATE OR REPLACE FUNCTION bootstrap_mcp_invite_member(p_email text, p_company_label text)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -174,7 +179,7 @@ DECLARE
   inviter_email text := lower(nullif(current_setting('app.auth_email', true), ''));
   inviter_id text;
   invitee text;
-  company_label text;
+  workspace text;
   raw_token text;
   invite_id text;
   outbox_id text;
@@ -208,8 +213,8 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'invalid_email');
   END IF;
 
-  company_label := lower(nullif(btrim(p_company_label), ''));
-  IF company_label IS NULL OR company_label !~ '^[a-z0-9][a-z0-9_-]{0,31}$' THEN
+  workspace := lower(nullif(btrim(p_company_label), ''));
+  IF workspace IS NULL OR workspace !~ '^[a-z0-9][a-z0-9_-]{0,31}$' THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'invalid_label');
   END IF;
 
@@ -217,35 +222,63 @@ BEGIN
     SELECT 1
     FROM bootstrap_company_labels cl
     WHERE cl.mentee_id = inviter_id
-      AND cl.label = company_label
+      AND cl.label = workspace
   ) THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'label_not_held');
   END IF;
 
+  IF EXISTS (
+    SELECT 1
+    FROM bootstrap_mcp_mentees m
+    JOIN bootstrap_company_labels cl ON cl.mentee_id = m.id
+    WHERE m.email = invitee
+      AND cl.label = workspace
+  ) THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'already_member');
+  END IF;
+
   raw_token := 'inv_' || encode(extensions.gen_random_bytes(24), 'hex');
   expires := now() + interval '7 days';
-  invite_id := gen_random_uuid()::text;
   outbox_id := gen_random_uuid()::text;
   mail_id := gen_random_uuid()::text;
   signup_url := 'https://pirin.ai/bootstrap-os/login?invite=' || raw_token;
 
-  INSERT INTO bootstrap_mcp_invites (
-    id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at
-  ) VALUES (
-    invite_id, invitee, company_label, inviter_id, inviter_email, bootstrap_mcp_hash_token(raw_token), expires
-  );
+  SELECT i.id INTO invite_id
+  FROM bootstrap_mcp_invites i
+  WHERE i.invitee_email = invitee
+    AND i.company_label = workspace
+    AND i.accepted_at IS NULL
+  ORDER BY i.created_at DESC
+  LIMIT 1;
+
+  IF invite_id IS NOT NULL THEN
+    UPDATE bootstrap_mcp_invites
+    SET token_hash = bootstrap_mcp_hash_token(raw_token),
+        expires_at = expires,
+        invited_by_mentee_id = inviter_id,
+        invited_by_email = inviter_email
+    WHERE id = invite_id
+      AND accepted_at IS NULL;
+  ELSE
+    invite_id := gen_random_uuid()::text;
+    INSERT INTO bootstrap_mcp_invites (
+      id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at
+    ) VALUES (
+      invite_id, invitee, workspace, inviter_id, inviter_email, bootstrap_mcp_hash_token(raw_token), expires
+    );
+  END IF;
 
   card := jsonb_build_object(
     'card', 'accept_invite',
     'shape', 'DraftExternalMessage',
     'from', jsonb_build_object('email', inviter_email),
     'to', jsonb_build_object('email', invitee),
-    'companyWorkspace', company_label,
+    'companyWorkspace', workspace,
     'action', 'Accept',
     'inviteToken', raw_token,
     'expiresAt', expires,
     'tool', 'accept_invite',
-    'note', 'In-chat Accept. Shows who invited / to whom / company workspace. Not /bootstrap-os/login as the product path. Outsider mail (bootstrap@) is the support path when the invitee has no JWT yet.'
+    'note', 'Optional Accept card for MCP clients that render tool results. Login URL is the universal path. Mail (bootstrap@) carries the same token. JWT email must match.'
   );
 
   auth_card := jsonb_build_object(
@@ -253,14 +286,14 @@ BEGIN
     'shape', 'DraftExternalMessage',
     'from', jsonb_build_object('email', 'bootstrap@pirin.ai'),
     'to', jsonb_build_object('email', invitee),
-    'companyWorkspace', company_label,
+    'companyWorkspace', workspace,
     'inviterEmail', inviter_email,
-    'action', 'Create account',
+    'action', 'Sign in or create account',
     'signupUrl', signup_url,
     'qrPayload', signup_url,
     'inviteToken', raw_token,
     'expiresAt', expires,
-    'note', 'Support path when the invitee has no JWT yet. Web Builder owns /bootstrap-os/login. After JWT as that email, accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai only — Cos yes before prod Resend.'
+    'note', 'Universal path for any agentic client. Web Builder owns /bootstrap-os/login. Sign in as this email if you already have a pirin.ai account; otherwise create the account for this invitee email only. Then accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai only — Cos yes before prod Resend.'
   );
 
   outbox_payload := card - 'inviteToken';
@@ -274,7 +307,7 @@ BEGIN
     'mailFrom', 'bootstrap@pirin.ai',
     'from', jsonb_build_object('email', inviter_email),
     'to', jsonb_build_object('email', invitee),
-    'companyWorkspace', company_label,
+    'companyWorkspace', workspace,
     'signupUrl', signup_url,
     'qrPayload', signup_url,
     'inviteToken', raw_token,

@@ -10,7 +10,7 @@ export const INVITE_MAIL_FROM = "bootstrap@pirin.ai";
 export const INVITE_SIGNUP_QUERY = "invite";
 
 export const INVITE_MAIL_NOTE =
-  "Support path when the invitee has no JWT yet. Web Builder owns /bootstrap-os/login. After JWT as that email, accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai only — Cos yes before prod Resend.";
+  "Universal path for any agentic client. Web Builder owns /bootstrap-os/login. Sign in as this email if you already have a pirin.ai account; otherwise create the account for this invitee email only. Then accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai only — Cos yes before prod Resend.";
 
 export type InviteMailMode = "off" | "dry-run";
 
@@ -81,9 +81,10 @@ export function buildInviteMail(input: InviteMailInput): InviteMail {
     `QR payload (same as signup URL): ${signupUrl}`,
     `Expires: ${input.expiresAt}`,
     "",
-    "Create the account for this invitee email only (Web Builder).",
+    "Sign in or create the account for this invitee email only (Web Builder).",
+    "If you already have a pirin.ai account, sign in as this email — do not register a second one.",
     "After you have a pirin.ai JWT as that email, call accept_invite with the same token.",
-    "Grok / in-chat Accept is the product path when you already have a JWT.",
+    "Any MCP client that already has that Bearer can call accept_invite directly.",
     "",
     INVITE_MAIL_NOTE,
   ].join("\n");

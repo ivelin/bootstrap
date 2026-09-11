@@ -254,7 +254,7 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
 function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "bootstrap_whoami",
-    "Hosted identity. Requires a pirin.ai access token (Authorization: Bearer). Unauthenticated calls get HTTP 401 + WWW-Authenticate. Email + company labels only. Not boards. Not company-state.",
+    "Hosted identity. Requires a pirin.ai access token (Authorization: Bearer). Unauthenticated calls get HTTP 401 + WWW-Authenticate. Email + company workspace memberships (labels) for this user. Not boards. Not company-state.",
     {},
     async () => {
       const who = ctx.whoami;
@@ -285,7 +285,7 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
       return text({
         labels: who.labels,
         email: who.email,
-        note: "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os. Writes stay on path 3 local files.",
+        note: "Team memberships for this user. Labels only. Not boards. Not company-state. Not ~/.bootstrap-os. Writes stay on path 3 local files.",
       });
     },
   );
@@ -294,17 +294,17 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
 function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "invite_member",
-    "Allowlisted founder/authorized invites a mentee (email + company workspace label). Returns an in-chat Accept card plus a signup Auth card. Enqueues email outbox for pirin-ai (From bootstrap@pirin.ai; Cos yes before prod Resend). Not /bootstrap-os/login as the product path. First user stays SQL — HOSTED_IDENTITY.md.",
+    "Allowlisted team member invites a user (email + company workspace they already belong to). Same user may join multiple workspaces. Returns an optional Accept card plus a sign-in/create-account card. Enqueues email outbox for pirin-ai (From bootstrap@pirin.ai; Cos yes before prod Resend). Login URL is the universal path for any agentic client. First user stays SQL — HOSTED_IDENTITY.md.",
     {
       email: z.string().describe("Invitee email. Lowercased. Must match their pirin.ai login when they accept."),
       companyLabel: z
         .string()
-        .describe("Company workspace label the inviter already holds (e.g. zk0). Not a board."),
+        .describe("Company workspace the inviter already belongs to (e.g. zk0). Not a board. Not a role."),
     },
     async ({ email, companyLabel }) => {
       const who = ctx.whoami;
       if (!who.authenticated || !who.email) {
-        return err("Allowlisted founder or authorized mentee required.");
+        return err("Allowlisted team member required.");
       }
       const store = resolveInviteStore(ctx.accessToken);
       if (!store) {
@@ -343,7 +343,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
 
   server.tool(
     "accept_invite",
-    "Invitee accepts with the one-time token from the in-chat Accept card or signup ?invite=. JWT email must match. Binds mentee allowlist + company workspace label. Fail-closed on wrong email, expired, or replay.",
+    "Invitee accepts with the one-time token from the Accept card or login ?invite=. JWT email must match. Binds the Bootstrap OS user (same email) to that company workspace. Existing users gain an additional team membership — not a second account. Fail-closed on wrong email, expired, or replay.",
     {
       token: z.string().describe("One-time invite token from the Accept card (inv_…). Shown once."),
     },
