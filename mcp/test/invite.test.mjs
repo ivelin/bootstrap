@@ -1,6 +1,6 @@
 /**
  * Invite + accept unit locks (memory). PGlite HTTP matrix lives in e2e-roleplay-matrix.
- * Never supabase-pirin-ai. Never prod. No Resend.
+ * Never supabase-pirin-ai. Never prod. No Resend HTTP from this repo.
  */
 import { afterEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
@@ -10,10 +10,14 @@ import {
   MemoryInviteStore,
   SupabaseInviteStore,
   buildAcceptCard,
+  buildSignupAuthCard,
   createInviteStore,
   decideInviteAccept,
   decideInviteCreate,
+  decideInviteVerify,
+  enqueueInviteEmail,
   enqueueInviteInChat,
+  inviteEmailOutboxPayload,
   inviteFailMessage,
   inviteOutboxPayload,
   inviteRpcFailed,
@@ -24,6 +28,7 @@ import {
   setInviteEnqueueHook,
   setInviteStoreForTests,
 } from "../dist/invite.js";
+import { INVITE_MAIL_FROM } from "../dist/invite-mail.js";
 import { IVELIN_SEED_EMAIL, IVELIN_SEED_LABELS } from "../dist/identity.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
@@ -49,6 +54,13 @@ const PGCRYPTO_SQL = path.join(
   "supabase",
   "migrations",
   "20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql",
+);
+const VERIFY_SQL = path.join(
+  REPO_ROOT,
+  "mcp",
+  "supabase",
+  "migrations",
+  "20260911_bootstrap_mcp_invite_verify_email_outbox.sql",
 );
 const PGLITE_SCHEMA = path.join(REPO_ROOT, "mcp", "test", "pglite", "identity-schema.sql");
 
@@ -93,6 +105,12 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(invite, /20260910_bootstrap_mcp_invite_accept\.sql/);
     assert.match(invite, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
     assert.match(invite, /20260911_bootstrap_mcp_invite_pgcrypto_search_path\.sql/);
+    assert.match(invite, /20260911_bootstrap_mcp_invite_verify_email_outbox\.sql/);
+    assert.match(invite, /bootstrap_mcp_verify_invite/);
+    assert.match(invite, /bootstrap@pirin\.ai/);
+    assert.match(invite, /login\?invite=/);
+    assert.match(invite, /service_role/);
+    assert.match(invite, /Cos yes/);
     assert.match(invite, /PGlite/);
     assert.match(invite, /supabase-pirin-ai/);
     assert.match(invite, /invite_store_unset/);
@@ -102,6 +120,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(hosted, /First user \(rebuild from GitHub\)/);
     assert.match(hosted, /20260910_bootstrap_mcp_invite_qualify_label\.sql/);
     assert.match(hosted, /20260911_bootstrap_mcp_invite_pgcrypto_search_path\.sql/);
+    assert.match(hosted, /20260911_bootstrap_mcp_invite_verify_email_outbox\.sql/);
     const sql = fs.readFileSync(SQL, "utf8");
     assert.match(sql, /DO NOT apply from a PR cloud agent/);
     assert.match(sql, /bootstrap_mcp_invite_member/);
@@ -124,6 +143,9 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.doesNotMatch(withoutComments(pglite), /AND label = label/);
     assert.match(pglite, /SET search_path = public, extensions/);
     assert.match(pglite, /extensions\.gen_random_bytes\(24\)/);
+    assert.match(pglite, /bootstrap_mcp_verify_invite/);
+    assert.match(pglite, /channel IN \('in_chat', 'email'\)/);
+    assert.match(pglite, /REVOKE ALL ON FUNCTION bootstrap_mcp_verify_invite/);
     const pgcrypto = fs.readFileSync(PGCRYPTO_SQL, "utf8");
     assert.match(pgcrypto, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
     assert.match(pgcrypto, /SET search_path = public, extensions/);
@@ -137,9 +159,29 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.doesNotMatch(pgcrypto, /supabase\.co/);
     assert.doesNotMatch(pgcrypto, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_accept_invite/);
     assert.doesNotMatch(pgcrypto, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_mint_token/);
+    const verifySql = fs.readFileSync(VERIFY_SQL, "utf8");
+    const withoutVerifyComments = (s) => s.replace(/--[^\n]*/g, "");
+    assert.match(verifySql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_verify_invite/);
+    assert.match(verifySql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_invite_member/);
+    assert.match(verifySql, /channel IN \('in_chat', 'email'\)/);
+    assert.match(verifySql, /delivered_at/);
+    assert.match(verifySql, /bootstrap@pirin\.ai/);
+    assert.match(verifySql, /login\?invite=/);
+    assert.match(verifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_verify_invite\(text\) TO service_role/);
+    assert.match(verifySql, /REVOKE ALL ON FUNCTION public\.bootstrap_mcp_verify_invite\(text\) FROM PUBLIC, anon, authenticated/);
+    assert.doesNotMatch(verifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_verify_invite[\s\S]{0,40}anon/);
+    assert.doesNotMatch(verifySql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_verify_invite[\s\S]{0,60}authenticated/);
+    assert.doesNotMatch(withoutVerifyComments(verifySql), /AND label = label/);
+    assert.match(verifySql, /jsonb_build_object\('ok', false\)/);
+    assert.doesNotMatch(verifySql, /'reason', 'invite_expired'/);
+    assert.doesNotMatch(verifySql, /CREATE OR REPLACE FUNCTION public\.bootstrap_mcp_accept_invite/);
+    assert.match(verifySql, /DO NOT apply from a PR cloud agent/);
+    assert.doesNotMatch(verifySql, /supabase\.co/);
+    assert.doesNotMatch(verifySql, /smtp|nodemailer|sendgrid|from ["']resend["']/i);
     const storeSrc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite.ts"), "utf8");
     assert.match(storeSrc, /SELECT bootstrap_mcp_invite_member\(\$1, \$2\)/);
     assert.match(storeSrc, /SELECT bootstrap_mcp_accept_invite\(\$1\)/);
+    assert.match(storeSrc, /SELECT bootstrap_mcp_verify_invite\(\$1\)/);
   });
 
   it("normalizes email/label and refuses a label the inviter does not hold", () => {
@@ -192,6 +234,27 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
       decideInviteAccept({ now: Date.now(), actorEmail: "bill@example.test", invite: base }),
       { ok: true },
     );
+    assert.deepEqual(decideInviteVerify({ now: Date.now(), invite: undefined }), { ok: false });
+    assert.deepEqual(
+      decideInviteVerify({
+        now: Date.now() + 120_000,
+        invite: base,
+      }),
+      { ok: false },
+    );
+    assert.deepEqual(
+      decideInviteVerify({
+        now: Date.now(),
+        invite: { ...base, acceptedAt: new Date().toISOString() },
+      }),
+      { ok: false },
+    );
+    assert.deepEqual(decideInviteVerify({ now: Date.now(), invite: base }), {
+      ok: true,
+      invitee_email: "bill@example.test",
+      company_label: "zk0",
+      inviter_email: IVELIN_SEED_EMAIL,
+    });
   });
 
   it("Accept card is DraftExternalMessage-shaped; outbox strips the raw token", () => {
@@ -214,6 +277,25 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.equal(queued.channel, "in_chat");
     assert.equal(queued.payload.inviteToken, null);
     assert.doesNotMatch(JSON.stringify(inviteOutboxPayload(card)), /inv_once_only/);
+    const auth = buildSignupAuthCard({
+      inviterEmail: IVELIN_SEED_EMAIL,
+      toEmail: "bill@example.test",
+      companyWorkspace: "zk0",
+      inviteToken: "inv_once_only_fixture_token_xx",
+      expiresAt: "2030-01-01T00:00:00.000Z",
+    });
+    assert.equal(auth.card, "invite_signup");
+    assert.equal(auth.from.email, INVITE_MAIL_FROM);
+    assert.equal(auth.inviterEmail, IVELIN_SEED_EMAIL);
+    assert.match(auth.signupUrl, /\/bootstrap-os\/login\?invite=inv_once_only_fixture_token_xx/);
+    assert.equal(auth.qrPayload, auth.signupUrl);
+    const mailRow = enqueueInviteEmail("inv-1", card);
+    assert.equal(mailRow.channel, "email");
+    assert.equal(mailRow.payload.mailFrom, INVITE_MAIL_FROM);
+    assert.equal(mailRow.payload.inviteToken, "inv_once_only_fixture_token_xx");
+    assert.match(String(mailRow.payload.signupUrl), /invite=inv_once_only/);
+    assert.doesNotMatch(JSON.stringify(inviteEmailOutboxPayload(card)), /ivelin@pirin\.ai","to"/);
+    assert.equal(inviteEmailOutboxPayload(card).mailFrom, INVITE_MAIL_FROM);
   });
 
   it("memory store: Ivelin invites Bill to zk0; Bill accepts; A cannot invite to bravo", async () => {
@@ -226,7 +308,18 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     if (!invited.ok) return;
     assert.equal(invited.card.shape, "DraftExternalMessage");
     assert.equal(invited.queued.channel, "in_chat");
+    assert.equal(invited.queuedMail.channel, "email");
+    assert.equal(invited.queuedMail.from, INVITE_MAIL_FROM);
+    assert.equal(invited.authCard.from.email, INVITE_MAIL_FROM);
     assert.match(invited.card.inviteToken, /^inv_/);
+    const preview = await store.verifyInvite(invited.card.inviteToken);
+    assert.deepEqual(preview, {
+      ok: true,
+      invitee_email: "bill@example.test",
+      company_label: "zk0",
+      inviter_email: IVELIN_SEED_EMAIL,
+    });
+    assert.deepEqual(await store.verifyInvite("inv_not_a_real_invite_token_xx"), { ok: false });
 
     const cross = await store.inviteMember(
       { email: "mentee-a@example.test", labels: ["alpha"] },
@@ -257,6 +350,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
       invited.card.inviteToken,
     );
     assert.deepEqual(replay, { ok: false, reason: "invite_already_used" });
+    assert.deepEqual(await store.verifyInvite(invited.card.inviteToken), { ok: false });
   });
 
   it("invite_store_unset is missing env/client only; failed RPC keeps status+body", async () => {

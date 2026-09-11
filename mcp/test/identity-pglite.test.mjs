@@ -147,6 +147,8 @@ $$;
     assert.equal(invited.card.card, "accept_invite");
     assert.equal(invited.card.companyWorkspace, "zk0");
     assert.equal(invited.card.to.email, "ivelin@zk0.bot");
+    assert.equal(invited.authCard.card, "invite_signup");
+    assert.equal(invited.queuedMail.from, "bootstrap@pirin.ai");
     assert.match(invited.card.inviteToken, /^inv_/);
     assert.equal(invited.card.inviteToken.length, 4 + 48);
     assert.doesNotMatch(JSON.stringify(invited), /42702|ambiguous|42883|gen_random_bytes/);
@@ -226,5 +228,49 @@ $$;
       "SELECT id FROM bootstrap_mcp_invite_outbox",
     );
     assert.deepEqual(outbox, []);
+  });
+
+  it("verify_invite: pending ok; opaque fail; mentee_reader cannot execute", async () => {
+    await db.exec("RESET ROLE");
+    await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    const invited = (
+      await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
+        "ivelin@zk0.bot",
+        "zk0",
+      ])
+    ).rows[0].body;
+    const token = invited.card.inviteToken;
+    const ok = (await db.query("SELECT bootstrap_mcp_verify_invite($1) AS body", [token])).rows[0]
+      .body;
+    assert.deepEqual(ok, {
+      ok: true,
+      invitee_email: "ivelin@zk0.bot",
+      company_label: "zk0",
+      inviter_email: "ivelin@pirin.ai",
+    });
+    const bad = (await db.query("SELECT bootstrap_mcp_verify_invite($1) AS body", [
+      "inv_not_a_real_invite_token_xx",
+    ])).rows[0].body;
+    assert.deepEqual(bad, { ok: false });
+    assert.equal("reason" in bad, false);
+
+    const mail = (
+      await db.query(
+        "SELECT payload->>'mailFrom' AS mail_from, payload->>'signupUrl' AS signup_url FROM bootstrap_mcp_invite_outbox WHERE channel = 'email' ORDER BY created_at DESC LIMIT 1",
+      )
+    ).rows[0];
+    assert.equal(mail.mail_from, "bootstrap@pirin.ai");
+    assert.match(mail.signup_url, /\/bootstrap-os\/login\?invite=inv_/);
+
+    try {
+      await asReader(
+        "33333333-3333-3333-3333-333333333333",
+        "SELECT bootstrap_mcp_verify_invite('inv_not_a_real_invite_token_xx')",
+      );
+      assert.fail("mentee_reader must not execute verify_invite");
+    } catch (e) {
+      assert.match(String(e.message), /permission denied|execute/i);
+    }
   });
 });

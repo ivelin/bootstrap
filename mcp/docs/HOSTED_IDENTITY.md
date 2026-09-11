@@ -12,7 +12,7 @@ Free docs are GitHub + [install-os](https://pirin.ai/install-os) + local — **n
 | This repo | MCP resource server. Do **not** add a login UI. No second authorization server. |
 | Product | MCP client follows 401 → this origin's protected-resource metadata → pirin.ai authorize + PKCE. The client attaches the issued access token. This host never issues connector secrets. |
 | Prod database | Cloud agents on PRs do **not** migrate, seed, or live-probe the live pirin.ai project. Local / CI use **PGlite**. |
-| Allowlist | A valid pirin.ai JWT is **not** enough. Hosted MCP whoami is `authenticated: true` only if email/`auth_user_id` is on `bootstrap_mcp_mentees`. Uninvited → `not_invited`; gated tools stay 401. First user is a SQL insert — [First user (rebuild from GitHub)](#first-user-rebuild-from-github). Later mentees: in-chat [`INVITE.md`](INVITE.md) (`invite_member` / `accept_invite`). |
+| Allowlist | A valid pirin.ai JWT is **not** enough. Hosted MCP whoami is `authenticated: true` only if email/`auth_user_id` is on `bootstrap_mcp_mentees`. Uninvited → `not_invited`; gated tools stay 401. First user is a SQL insert — [First user (rebuild from GitHub)](#first-user-rebuild-from-github). Later mentees: in-chat + outsider mail/signup [`INVITE.md`](INVITE.md) (`invite_member` / `accept_invite` / `bootstrap_mcp_verify_invite`). |
 | Env pin | Live on Vercel project `bootstrap-os-mcp` (production + preview + development): `BOOTSTRAP_SUPABASE_URL` + `BOOTSTRAP_SUPABASE_ANON_KEY`. Do **not** print those values. Invite-only collab / Grok pin is `https://mcp.bootstrap.pirin.ai/mcp` on `main`. Do not merge. |
 | Public preview | Vercel Authentication is **off** on this project so founders can add the PR git preview with no Vercel login. Unmodified URL **and** protected-resource identifier: `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp`. Derived from the request host when `VERCEL_ENV=preview`. Never the production pin on preview. |
 | Deploy Host (not a pin) | `https://bootstrap-os-mcp.vercel.app/mcp` is the Vercel production Host. **Not a pin.** Not Path 1. Not advertised. Cos HARD 2026-09-09: treat this Host **exactly like collab** — cookie-less `initialize` / `tools/list` **HTTP 401** + `WWW-Authenticate`. Not a silent 200 alias (undeclared deploy-only). |
@@ -118,11 +118,11 @@ Collab-host and undeclared-deploy-Host clients get 401 on the first handshake an
 
 Say it **once** here. Other files link.
 
-A valid pirin.ai JWT alone must **not** grant hosted MCP access. There is **no login UI in this repo**. Invite-from-existing-user is in-chat Accept — [`INVITE.md`](INVITE.md). Body/mailer is a follow-on. First user is a **direct SQL insert** into `bootstrap_mcp_mentees` (email **lowercased**) plus optional `bootstrap_company_labels`.
+A valid pirin.ai JWT alone must **not** grant hosted MCP access. There is **no login UI in this repo**. Invite-from-existing-user is in-chat Accept; outsider mail + signup is the support path — [`INVITE.md`](INVITE.md). First user is a **direct SQL insert** into `bootstrap_mcp_mentees` (email **lowercased**) plus optional `bootstrap_company_labels`.
 
 On a rebuild (empty project / Cos applying migrations — **never from a PR cloud agent**):
 
-1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql`, `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`, `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_accept.sql`, then `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_qualify_label.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member` — `SET search_path = public, extensions`). PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
+1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql`, `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`, `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_accept.sql`, then `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_qualify_label.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_verify_email_outbox.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member` — `SET search_path = public, extensions`; verify + email outbox). PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
 2. Insert the first mentee. The identity migration already seeds `ivelin@pirin.ai` + labels `pirin`, `zk0`, `totbox`. Additional mentees use the same shape:
 
 ```sql
@@ -149,10 +149,10 @@ Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools 
 | FORCE RLS | `mcp/test/identity-pglite.test.mjs` |
 | SQL file locks | `mcp/test/identity-rls.test.mjs` (no network) |
 | CTO/PM role-play matrix + draft prod synthetic SRE | [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` |
-| Invite / accept (in-chat) | [`INVITE.md`](INVITE.md) · `mcp/test/invite.test.mjs` + role-play P1–P2 + `identity-pglite.test.mjs` (SQL `invite_member` RPC, no 42702 / no 42883) |
+| Invite / accept / outsider mail | [`INVITE.md`](INVITE.md) · `mcp/test/invite.test.mjs` + `invite-mail.test.mjs` + role-play P1–P3 + `identity-pglite.test.mjs` (SQL `invite_member` / `verify_invite`, no 42702 / no 42883) |
 
 Do not run `preview-live.mjs` on PR cloud agents. Draft prod synthetic checks are Cos-only — same doc.
 
 ## Out
 
-No mentee roster. No usage analytics as proof. No founder-update write. No WebMCP. No marketplace. No billing. No login UI in this repo. Insights/Apply stay email-only. No public Path 1 hosted MCP pin. No open login (JWT without a mentee row). Invite mailer / QR / SMS is a follow-on — [`INVITE.md`](INVITE.md).
+No mentee roster. No usage analytics as proof. No founder-update write. No WebMCP. No marketplace. No billing. No login UI in this repo. Insights/Apply stay email-only. No public Path 1 hosted MCP pin. No open login (JWT without a mentee row). No prod Resend from this repo — Cos yes on pirin-ai first. QR image / SMS later — [`INVITE.md`](INVITE.md).

@@ -114,8 +114,9 @@ CREATE TABLE bootstrap_mcp_invites (
 CREATE TABLE bootstrap_mcp_invite_outbox (
   id text PRIMARY KEY,
   invite_id text NOT NULL REFERENCES bootstrap_mcp_invites (id) ON DELETE CASCADE,
-  channel text NOT NULL CHECK (channel = 'in_chat'),
+  channel text NOT NULL CHECK (channel IN ('in_chat', 'email')),
   payload jsonb NOT NULL,
+  delivered_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -177,9 +178,13 @@ DECLARE
   raw_token text;
   invite_id text;
   outbox_id text;
+  mail_id text;
   expires timestamptz;
   card jsonb;
+  auth_card jsonb;
   outbox_payload jsonb;
+  mail_payload jsonb;
+  signup_url text;
 BEGIN
   IF uid IS NULL OR uid = '' THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'inviter_not_on_allowlist');
@@ -221,6 +226,8 @@ BEGIN
   expires := now() + interval '7 days';
   invite_id := gen_random_uuid()::text;
   outbox_id := gen_random_uuid()::text;
+  mail_id := gen_random_uuid()::text;
+  signup_url := 'https://pirin.ai/bootstrap-os/login?invite=' || raw_token;
 
   INSERT INTO bootstrap_mcp_invites (
     id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at
@@ -238,22 +245,59 @@ BEGIN
     'inviteToken', raw_token,
     'expiresAt', expires,
     'tool', 'accept_invite',
-    'note', 'In-chat Accept. Shows who invited / to whom / company workspace. Not /bootstrap-os/login as the product path. Mail/QR/SMS later.'
+    'note', 'In-chat Accept. Shows who invited / to whom / company workspace. Not /bootstrap-os/login as the product path. Outsider mail (bootstrap@) is the support path when the invitee has no JWT yet.'
+  );
+
+  auth_card := jsonb_build_object(
+    'card', 'invite_signup',
+    'shape', 'DraftExternalMessage',
+    'from', jsonb_build_object('email', 'bootstrap@pirin.ai'),
+    'to', jsonb_build_object('email', invitee),
+    'companyWorkspace', company_label,
+    'inviterEmail', inviter_email,
+    'action', 'Create account',
+    'signupUrl', signup_url,
+    'qrPayload', signup_url,
+    'inviteToken', raw_token,
+    'expiresAt', expires,
+    'note', 'Support path when the invitee has no JWT yet. Web Builder owns /bootstrap-os/login. After JWT as that email, accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai only — Cos yes before prod Resend.'
   );
 
   outbox_payload := card - 'inviteToken';
   outbox_payload := outbox_payload || jsonb_build_object(
     'inviteToken', null,
-    'note', 'In-chat Accept. Raw invite token is not stored on the outbox. Mail/QR/SMS later.'
+    'note', 'In-chat Accept. Raw invite token is not stored on this channel.'
+  );
+
+  mail_payload := jsonb_build_object(
+    'channel', 'email',
+    'mailFrom', 'bootstrap@pirin.ai',
+    'from', jsonb_build_object('email', inviter_email),
+    'to', jsonb_build_object('email', invitee),
+    'companyWorkspace', company_label,
+    'signupUrl', signup_url,
+    'qrPayload', signup_url,
+    'inviteToken', raw_token,
+    'expiresAt', expires,
+    'note', 'Mailer handoff. pirin-ai Resend From bootstrap@pirin.ai only. Token is on this channel so the poller can send ?invite=. in_chat never stores the token. Cos yes before prod send.'
   );
 
   INSERT INTO bootstrap_mcp_invite_outbox (id, invite_id, channel, payload)
   VALUES (outbox_id, invite_id, 'in_chat', outbox_payload);
 
+  INSERT INTO bootstrap_mcp_invite_outbox (id, invite_id, channel, payload)
+  VALUES (mail_id, invite_id, 'email', mail_payload);
+
   RETURN jsonb_build_object(
     'ok', true,
     'card', card,
-    'queued', jsonb_build_object('channel', 'in_chat', 'id', outbox_id)
+    'authCard', auth_card,
+    'queued', jsonb_build_object('channel', 'in_chat', 'id', outbox_id),
+    'queuedMail', jsonb_build_object(
+      'channel', 'email',
+      'id', mail_id,
+      'from', 'bootstrap@pirin.ai'
+    )
   );
 END;
 $$;
@@ -346,5 +390,47 @@ BEGIN
 END;
 $$;
 
+-- Fail-closed verify. Opaque fail. Not granted to mentee_reader (service_role analog).
+CREATE OR REPLACE FUNCTION bootstrap_mcp_verify_invite(p_token text)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  invite bootstrap_mcp_invites%ROWTYPE;
+BEGIN
+  IF p_token IS NULL OR length(p_token) < 16 THEN
+    RETURN jsonb_build_object('ok', false);
+  END IF;
+
+  SELECT * INTO invite
+  FROM bootstrap_mcp_invites
+  WHERE token_hash = bootstrap_mcp_hash_token(p_token);
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('ok', false);
+  END IF;
+
+  IF invite.accepted_at IS NOT NULL THEN
+    RETURN jsonb_build_object('ok', false);
+  END IF;
+
+  IF invite.expires_at <= now() THEN
+    RETURN jsonb_build_object('ok', false);
+  END IF;
+
+  RETURN jsonb_build_object(
+    'ok', true,
+    'invitee_email', invite.invitee_email,
+    'company_label', invite.company_label,
+    'inviter_email', invite.invited_by_email
+  );
+END;
+$$;
+
 GRANT EXECUTE ON FUNCTION bootstrap_mcp_invite_member(text, text) TO mentee_reader;
 GRANT EXECUTE ON FUNCTION bootstrap_mcp_accept_invite(text) TO mentee_reader;
+REVOKE ALL ON FUNCTION bootstrap_mcp_verify_invite(text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION bootstrap_mcp_verify_invite(text) FROM mentee_reader;
+-- verify_invite is table-owner only here (service_role analog). No mentee_reader. No anon.
