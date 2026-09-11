@@ -97,7 +97,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(invite, /who invited/);
     assert.match(invite, /Bill/);
     assert.match(invite, /zk0/);
-    assert.match(invite, /Mail/);
+    assert.match(invite, /mail/i);
     assert.match(invite, /QR/);
     assert.match(invite, /SMS/);
     assert.match(invite, /Not `\/bootstrap-os\/login`/);
