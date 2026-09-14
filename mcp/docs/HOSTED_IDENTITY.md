@@ -87,16 +87,16 @@ Suggested RFC 9728 document this MCP origin serves on the Hold preview (`VERCEL_
 
 `WWW-Authenticate` `resource_metadata` points at this MCP origin well-known (production pin origin on main; this preview origin on Hold). Clients then read `authorization_servers` and land on live `https://pirin.ai/bootstrap-os/login`. This repo does not host a login UI.
 
-Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. Preview and production copy the live pirin.ai AS document. All endpoints stay on pirin.ai — this repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
+Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. Issuer + authorize stay live pirin.ai apex. **Token + register are `www.pirin.ai`** — apex `https://pirin.ai/oauth/token` and `/oauth/register` 307 to www, and Grok / rmcp token exchange uses `OAuthHttpRedirectPolicy::Stop` (does not follow 307). Authorize cards can complete in the browser while no access token is stored; gated tools then 401. This repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
 
-Hold-preview RFC 8414 document (`VERCEL_ENV=preview`) — live pirin.ai:
+Hold-preview RFC 8414 document (`VERCEL_ENV=preview`) — same as production:
 
 ```json
 {
   "issuer": "https://pirin.ai/bootstrap-os/login",
   "authorization_endpoint": "https://pirin.ai/bootstrap-os/login",
-  "token_endpoint": "https://pirin.ai/oauth/token",
-  "registration_endpoint": "https://pirin.ai/oauth/register",
+  "token_endpoint": "https://www.pirin.ai/oauth/token",
+  "registration_endpoint": "https://www.pirin.ai/oauth/register",
   "response_types_supported": ["code"],
   "grant_types_supported": ["authorization_code"],
   "code_challenge_methods_supported": ["S256"],

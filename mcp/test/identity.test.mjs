@@ -32,6 +32,8 @@ import {
   HOSTED_PROTECTED_RESOURCE_METADATA_URL,
   PIRIN_AUTHORIZATION_SERVER,
   PIRIN_AUTHORIZATION_SERVER_METADATA,
+  PIRIN_REGISTRATION_ENDPOINT,
+  PIRIN_TOKEN_ENDPOINT,
   PIRIN_PROTECTED_RESOURCE_METADATA_URL,
   PREVIEW_HOSTED_MCP_RESOURCE,
   PREVIEW_HOSTED_PROTECTED_RESOURCE_METADATA_URL,
@@ -393,11 +395,15 @@ describe("hosted identity (resource server, gated)", () => {
       PIRIN_AUTHORIZATION_SERVER_METADATA.authorization_endpoint,
       "https://pirin.ai/bootstrap-os/login",
     );
-    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.token_endpoint, "https://pirin.ai/oauth/token");
+    assert.equal(PIRIN_TOKEN_ENDPOINT, "https://www.pirin.ai/oauth/token");
+    assert.equal(PIRIN_REGISTRATION_ENDPOINT, "https://www.pirin.ai/oauth/register");
+    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.token_endpoint, PIRIN_TOKEN_ENDPOINT);
     assert.equal(
       PIRIN_AUTHORIZATION_SERVER_METADATA.registration_endpoint,
-      "https://pirin.ai/oauth/register",
+      PIRIN_REGISTRATION_ENDPOINT,
     );
+    assert.doesNotMatch(PIRIN_TOKEN_ENDPOINT, /^https:\/\/pirin\.ai\//);
+    assert.doesNotMatch(PIRIN_REGISTRATION_ENDPOINT, /^https:\/\/pirin\.ai\//);
     assert.equal(
       WWW_AUTHENTICATE_CHALLENGE,
       `Bearer realm="bootstrap-os-mcp", resource_metadata="${HOSTED_PROTECTED_RESOURCE_METADATA_URL}", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
@@ -504,8 +510,8 @@ describe("hosted identity (resource server, gated)", () => {
     assert.deepEqual(asDoc, { ...PIRIN_AUTHORIZATION_SERVER_METADATA });
     assert.equal(asDoc.issuer, "https://pirin.ai/bootstrap-os/login");
     assert.equal(asDoc.authorization_endpoint, "https://pirin.ai/bootstrap-os/login");
-    assert.equal(asDoc.token_endpoint, "https://pirin.ai/oauth/token");
-    assert.equal(asDoc.registration_endpoint, "https://pirin.ai/oauth/register");
+    assert.equal(asDoc.token_endpoint, PIRIN_TOKEN_ENDPOINT);
+    assert.equal(asDoc.registration_endpoint, PIRIN_REGISTRATION_ENDPOINT);
     assert.equal(asDoc.service_documentation, "https://pirin.ai/bootstrap-os/login");
     assert.doesNotMatch(JSON.stringify(asDoc), /bootstrap-os-mcp/);
     assert.doesNotMatch(JSON.stringify(asDoc), /v0-pirin-ai-founder-studio-git-be053a/);

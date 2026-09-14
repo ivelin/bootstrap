@@ -90,7 +90,7 @@ async function main() {
     assert.ok(!names.includes("list_subscribers"));
 
     const info = await call(client, "bootstrap_os_info");
-    assert.equal(info.mcpVersion, "0.3.4");
+    assert.equal(info.mcpVersion, "0.3.5");
     assert.equal(info.osVersion, "2.8.9");
     assert.equal(path.resolve(info.paths.dataRoot), path.resolve(dataRoot));
     assert.match(JSON.stringify(info.adoptionOrder), /not mentee-ready boards/);

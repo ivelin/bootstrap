@@ -7,12 +7,20 @@ export const PIRIN_ORIGIN = "https://pirin.ai";
 /** Production / merge authorize URL. Live after pirin-ai #143 merged to main. Not the bare origin. */
 export const PIRIN_AUTHORIZATION_SERVER = `${PIRIN_ORIGIN}/bootstrap-os/login`;
 
-/** Production RFC 8414. Matches the live pirin.ai AS document. Preview copies this too — endpoints stay on pirin.ai. */
+/**
+ * Token + DCR on www. Apex `https://pirin.ai/oauth/token` and `/oauth/register` 307 to www.
+ * Grok / rmcp token exchange uses OAuthHttpRedirectPolicy::Stop (does not follow 307).
+ * Authorize stays on apex — browsers follow 307. Issuer stays apex (pirin identity).
+ */
+export const PIRIN_TOKEN_ENDPOINT = "https://www.pirin.ai/oauth/token";
+export const PIRIN_REGISTRATION_ENDPOINT = "https://www.pirin.ai/oauth/register";
+
+/** Production RFC 8414 served from this MCP origin. Issuer/authorize match live pirin.ai. */
 export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   issuer: PIRIN_AUTHORIZATION_SERVER,
   authorization_endpoint: PIRIN_AUTHORIZATION_SERVER,
-  token_endpoint: `${PIRIN_ORIGIN}/oauth/token`,
-  registration_endpoint: `${PIRIN_ORIGIN}/oauth/register`,
+  token_endpoint: PIRIN_TOKEN_ENDPOINT,
+  registration_endpoint: PIRIN_REGISTRATION_ENDPOINT,
   response_types_supported: ["code"],
   grant_types_supported: ["authorization_code"],
   code_challenge_methods_supported: ["S256"],
@@ -194,7 +202,7 @@ export function authorizationServerUrl(_req?: Request): string {
   return PIRIN_AUTHORIZATION_SERVER;
 }
 
-/** RFC 8414 metadata. Always the live pirin.ai document. Endpoints stay on pirin.ai. */
+/** RFC 8414 metadata. Issuer/authorize stay apex; token/register are www (no 307). */
 export function authorizationServerMetadataDocument(_req?: Request): typeof PIRIN_AUTHORIZATION_SERVER_METADATA {
   return PIRIN_AUTHORIZATION_SERVER_METADATA;
 }
