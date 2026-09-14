@@ -4,7 +4,7 @@
  * This repo enqueues + builds the body. pirin-ai Resend sends after Cos yes.
  * Default off. dry-run for tests. Never blast prod mail from MCP / CI.
  */
-import { PIRIN_AUTHORIZATION_SERVER } from "./oauth.js";
+import { PIRIN_ORIGIN } from "./oauth.js";
 
 export const INVITE_MAIL_FROM = "bootstrap@pirin.ai";
 export const INVITE_SIGNUP_QUERY = "invite";
@@ -42,7 +42,7 @@ export function setInviteMailSinkForTests(sink?: (mail: InviteMail) => void): vo
 }
 
 export function inviteSignupUrl(token: string): string {
-  const url = new URL(PIRIN_AUTHORIZATION_SERVER);
+  const url = new URL(`${PIRIN_ORIGIN}/bootstrap-os/login`);
   url.searchParams.set(INVITE_SIGNUP_QUERY, token);
   return url.toString();
 }
