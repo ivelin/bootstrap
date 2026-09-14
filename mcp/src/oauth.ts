@@ -4,15 +4,21 @@
  */
 export const PIRIN_ORIGIN = "https://pirin.ai";
 
-/** Production / merge authorize URL. Live after pirin-ai #143 merged to main. Not the bare origin. */
-export const PIRIN_AUTHORIZATION_SERVER = `${PIRIN_ORIGIN}/bootstrap-os/login`;
+/**
+ * Apex pirin.ai 307s to www (Vercel domain redirect). RFC 8414 / DCR / token
+ * must be HTTP 200 — Grok App falls back to a Client ID form if register 307s.
+ */
+export const PIRIN_OAUTH_ORIGIN = "https://www.pirin.ai";
 
-/** Production RFC 8414. Matches the live pirin.ai AS document. Preview copies this too — endpoints stay on pirin.ai. */
+/** Production / merge authorize URL. www so discovery and DCR do not follow a 307. */
+export const PIRIN_AUTHORIZATION_SERVER = `${PIRIN_OAUTH_ORIGIN}/bootstrap-os/login`;
+
+/** Production RFC 8414. Preview copies this too — endpoints stay on www.pirin.ai (200). */
 export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   issuer: PIRIN_AUTHORIZATION_SERVER,
   authorization_endpoint: PIRIN_AUTHORIZATION_SERVER,
-  token_endpoint: `${PIRIN_ORIGIN}/oauth/token`,
-  registration_endpoint: `${PIRIN_ORIGIN}/oauth/register`,
+  token_endpoint: `${PIRIN_OAUTH_ORIGIN}/oauth/token`,
+  registration_endpoint: `${PIRIN_OAUTH_ORIGIN}/oauth/register`,
   response_types_supported: ["code"],
   grant_types_supported: ["authorization_code"],
   code_challenge_methods_supported: ["S256"],

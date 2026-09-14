@@ -387,16 +387,16 @@ describe("hosted identity (resource server, gated)", () => {
       HOSTED_PROTECTED_RESOURCE_METADATA_URL,
       "https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource",
     );
-    assert.equal(PIRIN_AUTHORIZATION_SERVER, "https://pirin.ai/bootstrap-os/login");
-    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.issuer, "https://pirin.ai/bootstrap-os/login");
+    assert.equal(PIRIN_AUTHORIZATION_SERVER, "https://www.pirin.ai/bootstrap-os/login");
+    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.issuer, "https://www.pirin.ai/bootstrap-os/login");
     assert.equal(
       PIRIN_AUTHORIZATION_SERVER_METADATA.authorization_endpoint,
-      "https://pirin.ai/bootstrap-os/login",
+      "https://www.pirin.ai/bootstrap-os/login",
     );
-    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.token_endpoint, "https://pirin.ai/oauth/token");
+    assert.equal(PIRIN_AUTHORIZATION_SERVER_METADATA.token_endpoint, "https://www.pirin.ai/oauth/token");
     assert.equal(
       PIRIN_AUTHORIZATION_SERVER_METADATA.registration_endpoint,
-      "https://pirin.ai/oauth/register",
+      "https://www.pirin.ai/oauth/register",
     );
     assert.equal(
       WWW_AUTHENTICATE_CHALLENGE,
@@ -488,7 +488,7 @@ describe("hosted identity (resource server, gated)", () => {
     const doc = JSON.parse(await meta.text());
     assert.equal(doc.resource, PREVIEW_HOSTED_MCP_RESOURCE);
     assert.deepEqual(doc.authorization_servers, [PIRIN_AUTHORIZATION_SERVER]);
-    assert.equal(doc.authorization_servers[0], "https://pirin.ai/bootstrap-os/login");
+    assert.equal(doc.authorization_servers[0], "https://www.pirin.ai/bootstrap-os/login");
     const metaMcp = await handleHostedReadFetch(
       new Request("https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource/mcp"),
     );
@@ -502,11 +502,11 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(asMeta.status, 200);
     const asDoc = JSON.parse(await asMeta.text());
     assert.deepEqual(asDoc, { ...PIRIN_AUTHORIZATION_SERVER_METADATA });
-    assert.equal(asDoc.issuer, "https://pirin.ai/bootstrap-os/login");
-    assert.equal(asDoc.authorization_endpoint, "https://pirin.ai/bootstrap-os/login");
-    assert.equal(asDoc.token_endpoint, "https://pirin.ai/oauth/token");
-    assert.equal(asDoc.registration_endpoint, "https://pirin.ai/oauth/register");
-    assert.equal(asDoc.service_documentation, "https://pirin.ai/bootstrap-os/login");
+    assert.equal(asDoc.issuer, "https://www.pirin.ai/bootstrap-os/login");
+    assert.equal(asDoc.authorization_endpoint, "https://www.pirin.ai/bootstrap-os/login");
+    assert.equal(asDoc.token_endpoint, "https://www.pirin.ai/oauth/token");
+    assert.equal(asDoc.registration_endpoint, "https://www.pirin.ai/oauth/register");
+    assert.equal(asDoc.service_documentation, "https://www.pirin.ai/bootstrap-os/login");
     assert.doesNotMatch(JSON.stringify(asDoc), /bootstrap-os-mcp/);
     assert.doesNotMatch(JSON.stringify(asDoc), /v0-pirin-ai-founder-studio-git-be053a/);
     const asMetaMcp = await handleHostedReadFetch(
@@ -530,7 +530,7 @@ describe("hosted identity (resource server, gated)", () => {
     );
     assert.equal(prodDoc.resource, HOSTED_MCP_RESOURCE);
     assert.notEqual(prodDoc.resource, HOSTED_MCP_RESOURCE_ALIAS);
-    assert.deepEqual(prodDoc.authorization_servers, ["https://pirin.ai/bootstrap-os/login"]);
+    assert.deepEqual(prodDoc.authorization_servers, ["https://www.pirin.ai/bootstrap-os/login"]);
     const aliasDoc = protectedResourceMetadataDocument(
       new Request("https://bootstrap-os-mcp.vercel.app/.well-known/oauth-protected-resource"),
     );

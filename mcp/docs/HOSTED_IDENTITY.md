@@ -43,7 +43,7 @@ WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://bo
 
 Do **not** point production or Hold-preview `resource_metadata` at `https://pirin.ai/.well-known/oauth-protected-resource` — that JSON `resource` is still `https://bootstrap-os-mcp.vercel.app/mcp`. `BOOTSTRAP_OAUTH_RESOURCE_METADATA` cannot override onto that live document.
 
-This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://pirin.ai/bootstrap-os/login`. The vercel.app deploy Host must **401** cookie-less `initialize` and `tools/list` exactly like collab — not a silent 200.
+This host also serves RFC 9728 at `/.well-known/oauth-protected-resource` (and the `/mcp` suffix). On this Hold preview, `"resource"` is the preview MCP URL and `"authorization_servers"` is live `https://www.pirin.ai/bootstrap-os/login` (apex `pirin.ai` 307s — DCR/token must be 200). The vercel.app deploy Host must **401** cookie-less `initialize` and `tools/list` exactly like collab — not a silent 200.
 
 ## Web Builder
 
@@ -59,16 +59,16 @@ Protected-resource metadata URL (Hold preview — this MCP origin, Cos lock):
 
 `https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/.well-known/oauth-protected-resource`
 
-Authorize URL (authorization code + PKCE) — production **and** this Hold preview:
+Authorize URL (authorization code + PKCE) — production **and** this Hold preview. Advertised as www so Grok App DCR is HTTP 200 (apex 307s to www):
 
-`https://pirin.ai/bootstrap-os/login`
+`https://www.pirin.ai/bootstrap-os/login`
 
 Suggested RFC 9728 document (production — live):
 
 ```json
 {
   "resource": "https://mcp.bootstrap.pirin.ai/mcp",
-  "authorization_servers": ["https://pirin.ai/bootstrap-os/login"],
+  "authorization_servers": ["https://www.pirin.ai/bootstrap-os/login"],
   "scopes_supported": ["bootstrap-os"],
   "bearer_methods_supported": ["header"]
 }
@@ -79,30 +79,30 @@ Suggested RFC 9728 document this MCP origin serves on the Hold preview (`VERCEL_
 ```json
 {
   "resource": "https://bootstrap-os-mcp-git-cursor-ho-16df4d-ivelins-projects-9f9b7132.vercel.app/mcp",
-  "authorization_servers": ["https://pirin.ai/bootstrap-os/login"],
+  "authorization_servers": ["https://www.pirin.ai/bootstrap-os/login"],
   "scopes_supported": ["bootstrap-os"],
   "bearer_methods_supported": ["header"]
 }
 ```
 
-`WWW-Authenticate` `resource_metadata` points at this MCP origin well-known (production pin origin on main; this preview origin on Hold). Clients then read `authorization_servers` and land on live `https://pirin.ai/bootstrap-os/login`. This repo does not host a login UI.
+`WWW-Authenticate` `resource_metadata` points at this MCP origin well-known (production pin origin on main; this preview origin on Hold). Clients then read `authorization_servers` and land on live `https://www.pirin.ai/bootstrap-os/login`. This repo does not host a login UI.
 
-Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. Preview and production copy the live pirin.ai AS document. All endpoints stay on pirin.ai — this repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
+Grok Bot / RFC 8414 clients that look for `/.well-known/oauth-authorization-server` (and the `/mcp` suffix) on **this MCP origin** get HTTP 200. Preview and production copy the live www.pirin.ai AS document (apex 307s — DCR must be 200). All endpoints stay on www.pirin.ai — this repo does **not** serve `/oauth/token`, `/oauth/register`, or a login UI.
 
-Hold-preview RFC 8414 document (`VERCEL_ENV=preview`) — live pirin.ai:
+Hold-preview RFC 8414 document (`VERCEL_ENV=preview`) — live www.pirin.ai:
 
 ```json
 {
-  "issuer": "https://pirin.ai/bootstrap-os/login",
-  "authorization_endpoint": "https://pirin.ai/bootstrap-os/login",
-  "token_endpoint": "https://pirin.ai/oauth/token",
-  "registration_endpoint": "https://pirin.ai/oauth/register",
+  "issuer": "https://www.pirin.ai/bootstrap-os/login",
+  "authorization_endpoint": "https://www.pirin.ai/bootstrap-os/login",
+  "token_endpoint": "https://www.pirin.ai/oauth/token",
+  "registration_endpoint": "https://www.pirin.ai/oauth/register",
   "response_types_supported": ["code"],
   "grant_types_supported": ["authorization_code"],
   "code_challenge_methods_supported": ["S256"],
   "token_endpoint_auth_methods_supported": ["none"],
   "scopes_supported": ["bootstrap-os", "openid", "profile", "email"],
-  "service_documentation": "https://pirin.ai/bootstrap-os/login"
+  "service_documentation": "https://www.pirin.ai/bootstrap-os/login"
 }
 ```
 
