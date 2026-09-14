@@ -71,6 +71,33 @@ jobs:
           test -f dist/companies.js
           ! test -d node_modules/.cache || true
 
+  user-path:
+    name: user-path (stdio · http · role-play)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mcp
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: mcp/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: User-path (same command an independent verifier runs)
+        env:
+          VERCEL_ENV: preview
+        run: |
+          echo "CI green on this job is necessary and is not an independent pstack verdict."
+          npm run verify:user-path
+
   markdown-path:
     name: markdown path integrity (no Node MCP required)
     runs-on: ubuntu-latest

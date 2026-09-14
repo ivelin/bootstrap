@@ -47,7 +47,7 @@ cd mcp && npm ci && npm run ci
 
 ## Merge / ship (multi-tool)
 
-Proof of work is `cd mcp && npm run ci` plus root `./scripts/ci.sh`. A chat claim from Grok Build, Cursor Cloud Agent, Claude, or any other tool is not evidence. Do **not** merge to `main` if `mcp-ci` or Day-0 `ci` is red. GitHub required status checks are a Cos console setting — YAML alone does not block merge.
+Proof of work is `cd mcp && npm run ci` plus root `./scripts/ci.sh`. The `user-path` job runs `npm run verify:user-path` (stdio MCP client, HTTP hosted-read, cold-path, e2e role-play) — the same command an independent verifier should run locally. A chat claim from Grok Build, Cursor Cloud Agent, Claude, or any other tool is not evidence. Do **not** merge to `main` if `mcp-ci`, `user-path`, or Day-0 `ci` is red. GitHub required status checks are a Cos console setting — YAML alone does not block merge. CI green is closer to pstack user-path and is still not an independent verdict.
 
 PR cloud agents: **PGlite only**. No migrate / seed / live-probe of `supabase-pirin-ai`. Do not run `preview-live.mjs`. Preview/dev must not attach prod identity even if `BOOTSTRAP_SUPABASE_*` is set (`VERCEL_ENV=production` only).
 
