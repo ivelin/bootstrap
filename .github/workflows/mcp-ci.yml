@@ -92,8 +92,6 @@ jobs:
         run: npm ci
 
       - name: User-path (same command an independent verifier runs)
-        env:
-          VERCEL_ENV: preview
         run: |
           echo "CI green on this job is necessary and is not an independent pstack verdict."
           npm run verify:user-path
