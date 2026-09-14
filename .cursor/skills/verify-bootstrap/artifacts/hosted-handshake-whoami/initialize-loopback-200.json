@@ -1,0 +1,42 @@
+{
+  "label": "initialize-loopback",
+  "request": {
+    "url": "http://127.0.0.1:40831/mcp",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json, text/event-stream",
+      "Content-Length": 166
+    },
+    "body": "{\"jsonrpc\":\"2.0\",\"id\":11,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-03-26\",\"capabilities\":{},\"clientInfo\":{\"name\":\"verify-bootstrap\",\"version\":\"0.0.0\"}}}"
+  },
+  "status": 200,
+  "headers": {
+    "access-control-allow-headers": "Content-Type, Accept, Authorization, MCP-Session-Id, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID",
+    "access-control-allow-methods": "GET,POST,DELETE,OPTIONS",
+    "access-control-allow-origin": "*",
+    "access-control-expose-headers": "WWW-Authenticate",
+    "content-type": "application/json",
+    "date": "Mon, 14 Sep 2026 12:40:24 GMT",
+    "connection": "keep-alive",
+    "keep-alive": "timeout=5",
+    "transfer-encoding": "chunked"
+  },
+  "text": "{\"result\":{\"protocolVersion\":\"2025-03-26\",\"capabilities\":{\"tools\":{\"listChanged\":true}},\"serverInfo\":{\"name\":\"bootstrap-os\",\"version\":\"0.3.4\"}},\"jsonrpc\":\"2.0\",\"id\":11}",
+  "json": {
+    "result": {
+      "protocolVersion": "2025-03-26",
+      "capabilities": {
+        "tools": {
+          "listChanged": true
+        }
+      },
+      "serverInfo": {
+        "name": "bootstrap-os",
+        "version": "0.3.4"
+      }
+    },
+    "jsonrpc": "2.0",
+    "id": 11
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "resource": "https://mcp.bootstrap.pirin.ai/mcp",
+  "authorization_servers": [
+    "https://pirin.ai/bootstrap-os/login"
+  ],
+  "scopes_supported": [
+    "bootstrap-os"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ]
+}
