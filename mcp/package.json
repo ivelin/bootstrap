@@ -21,6 +21,7 @@
     "test:stdio": "npm run build && node test/stdio-mcp.client.mjs",
     "test:http": "npm run build && node test/http-mcp.client.mjs",
     "test:preview": "node test/preview-live.mjs",
+    "verify:user-path": "npm run build && node --test test/e2e-roleplay-matrix.test.mjs && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs && node test/http-mcp.client.mjs",
     "ci": "npm run typecheck && npm run build && npm run test:unit && node test/cold-path.smoke.mjs && node test/stdio-mcp.client.mjs && node test/http-mcp.client.mjs"
   },
   "engines": {
