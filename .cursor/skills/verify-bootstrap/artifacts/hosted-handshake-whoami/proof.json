@@ -1,0 +1,27 @@
+{
+  "featureId": "hosted-handshake-whoami",
+  "drivenAt": "2026-09-14T12:40:24.876Z",
+  "instance": {
+    "pid": 2006,
+    "url": "http://127.0.0.1:40831/mcp",
+    "port": 40831
+  },
+  "action": {
+    "health": "GET /health",
+    "whoami": "POST /mcp tools/call bootstrap_whoami without Authorization",
+    "handshake": "POST /mcp initialize with Host: mcp.bootstrap.pirin.ai",
+    "sse": "GET /mcp with Host: mcp.bootstrap.pirin.ai"
+  },
+  "resultingState": {
+    "health": "ok",
+    "whoamiStatus": 401,
+    "whoamiReason": "missing_or_short_token",
+    "whoamiIdentityStore": "unset",
+    "wwwAuthenticate": "Bearer realm=\"bootstrap-os-mcp\", resource_metadata=\"https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource\", resource=\"https://mcp.bootstrap.pirin.ai/mcp\", scope=\"bootstrap-os\"",
+    "loopbackInitialize": 200,
+    "collabInitialize": 401,
+    "getSse": 401,
+    "labelsStatus": 401
+  },
+  "ok": true
+}

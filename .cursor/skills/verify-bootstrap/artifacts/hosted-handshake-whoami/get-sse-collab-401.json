@@ -1,0 +1,33 @@
+{
+  "label": "get-sse-collab-host",
+  "request": {
+    "url": "http://127.0.0.1:40831/mcp",
+    "method": "GET",
+    "headers": {
+      "Accept": "text/event-stream",
+      "Host": "mcp.bootstrap.pirin.ai"
+    },
+    "body": null
+  },
+  "status": 401,
+  "headers": {
+    "access-control-allow-headers": "Content-Type, Accept, Authorization, MCP-Session-Id, MCP-Protocol-Version, Mcp-Session-Id, Last-Event-ID",
+    "access-control-allow-methods": "GET,POST,DELETE,OPTIONS",
+    "access-control-allow-origin": "*",
+    "access-control-expose-headers": "WWW-Authenticate",
+    "content-type": "application/json; charset=utf-8",
+    "www-authenticate": "Bearer realm=\"bootstrap-os-mcp\", resource_metadata=\"https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource\", resource=\"https://mcp.bootstrap.pirin.ai/mcp\", scope=\"bootstrap-os\"",
+    "date": "Mon, 14 Sep 2026 12:40:24 GMT",
+    "connection": "keep-alive",
+    "keep-alive": "timeout=5",
+    "transfer-encoding": "chunked"
+  },
+  "text": "{\"error\":\"invalid_token\",\"error_description\":\"Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.\",\"identityStore\":\"unset\",\"resource\":\"https://mcp.bootstrap.pirin.ai/mcp\",\"reason\":\"missing_or_short_token\"}",
+  "json": {
+    "error": "invalid_token",
+    "error_description": "Gated tools require a pirin.ai access token. Public OS tools stay open. Login lives on pirin.ai — not this host.",
+    "identityStore": "unset",
+    "resource": "https://mcp.bootstrap.pirin.ai/mcp",
+    "reason": "missing_or_short_token"
+  }
+}
