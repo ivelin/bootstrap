@@ -2,8 +2,8 @@ import { describe, it, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { handleHostedReadFetch } from "../dist/hosted-handler.js";
 import {
+  HOSTED_GATED_IDENTITY_TOOL_NAMES,
   HOSTED_GATED_JOURNEY_TOOL_NAMES,
-  HOSTED_GATED_TOOL_NAMES,
   HOSTED_READ_TOOL_NAMES,
 } from "../dist/constants.js";
 import { fixtureJourneyStore, setJourneyStoreForTests } from "../dist/journey.js";
@@ -56,11 +56,11 @@ describe("Vercel fetch handler (hosted-read)", () => {
     for (const n of HOSTED_READ_TOOL_NAMES) {
       assert.ok(names.includes(n), `missing ${n}`);
     }
-    for (const n of HOSTED_GATED_TOOL_NAMES) {
+    for (const n of HOSTED_GATED_IDENTITY_TOOL_NAMES) {
       assert.ok(names.includes(n), `missing gated ${n}`);
     }
     for (const n of HOSTED_GATED_JOURNEY_TOOL_NAMES) {
-      assert.ok(names.includes(n), `missing gated ${n} on this branch`);
+      assert.ok(!names.includes(n), `must not list ${n} without a journey store`);
     }
     assert.ok(!names.includes("bootstrap_init_company"));
     assert.ok(!names.includes("bootstrap_update_state"));

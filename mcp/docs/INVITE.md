@@ -60,8 +60,8 @@ Single-use. Expires in 7 days. Hash only in `bootstrap_mcp_invites`. Fail closed
 2. Ivelin (any MCP client, collab pin): `invite_member` `email=bill@…` `companyLabel=zk0`.
 3. **Invitee with Bearer:** Bill calls `accept_invite` with the token. JWT email must match. First accept creates the user + `zk0`.
 4. **Invitee via login URL:** mail / Auth card → `https://pirin.ai/bootstrap-os/login?invite=<token>` → sign in or create account **for that email** → JWT → `accept_invite` with the **same** token.
-5. Bill’s `bootstrap_whoami` is `authenticated: true` with `zk0`. Labels only — not boards.
-6. Later, Ivelin invites the **same** Bill to `totbox`. Bill accepts with the same email. whoami labels include `zk0` and `totbox`. Still one user.
+5. Bill’s `bootstrap_whoami` is `authenticated: true` with company `zk0`.
+6. Later, Ivelin invites the **same** Bill to `totbox`. Bill accepts with the same email. whoami companies include `zk0` and `totbox`. Still one user.
 7. zk0 dogfood uses the same outsider path (`ivelin@zk0.bot` / `zk0`). No Cos SQL shortcut for later users.
 
 ## Signup URL (Web Builder)

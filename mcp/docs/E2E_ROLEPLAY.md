@@ -32,7 +32,7 @@ Do **not** run these from a PR cloud agent. Optional maintainer probe of **read-
 | Liveness | `GET /health` | `200` body `ok` |
 | Handshake | Cookie-less `initialize` / GET SSE / `tools/list` | HTTP **401** + `WWW-Authenticate` (same string as [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md#http-contract)) |
 | Whoami uninvited | Bearer with a valid pirin.ai JWT **not** on `bootstrap_mcp_mentees` | HTTP **401**, `reason: not_invited` |
-| Whoami invited | Bearer Cos already has (Ivelin / zk0 dogfood) | `authenticated: true`, labels include `zk0`. Labels only — not boards. |
+| Whoami invited | Bearer Cos already has (Ivelin / zk0 dogfood) | `authenticated: true`, companies include `zk0`. |
 | Whoami empty | No `Authorization` | HTTP **401** (same challenge) |
 | Deploy Host | `https://bootstrap-os-mcp.vercel.app` | Same handshake **401**. Not a Path 1 pin. Not a silent 200. |
 | Rollback | Vercel project `bootstrap-os-mcp` → Deployments → Redeploy / previous production | Path 1 (GitHub) stays the front door |

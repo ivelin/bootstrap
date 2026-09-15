@@ -80,7 +80,7 @@ export function whoamiFromMentee(mentee: MenteeRecord | undefined, store: Hosted
     authenticated: true,
     email: mentee.email,
     labels: [...mentee.labels].sort(),
-    note: "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os.",
+    note: "Companies this login can open. A company may have several ideas; each idea is its own 0-1 board.",
     identityStore: store,
   };
 }
@@ -128,7 +128,7 @@ export function whoamiFromLabelsRpc(
     note:
       typeof raw.note === "string" && raw.note
         ? raw.note
-        : "Labels only. Not boards. Not company-state. Not ~/.bootstrap-os.",
+        : "Companies this login can open. A company may have several ideas; each idea is its own 0-1 board.",
     identityStore: "supabase",
   };
 }

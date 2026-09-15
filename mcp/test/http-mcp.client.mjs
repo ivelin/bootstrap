@@ -18,8 +18,6 @@ import { WWW_AUTHENTICATE_CHALLENGE } from "../dist/oauth.js";
 
 const WRITE_TOOLS = [
   "bootstrap_init_company",
-  "bootstrap_use_company",
-  "bootstrap_list_companies",
   "bootstrap_get_state",
   "bootstrap_update_state",
   "bootstrap_where_are_we",
@@ -110,14 +108,16 @@ async function main() {
     for (const n of HOSTED_READ_TOOL_NAMES) {
       assert.ok(names.includes(n), `missing hosted-read tool ${n}`);
     }
-    for (const n of HOSTED_GATED_TOOL_NAMES) {
+    for (const n of HOSTED_GATED_TOOL_NAMES.filter(
+      (n) => !HOSTED_GATED_JOURNEY_TOOL_NAMES.includes(n),
+    )) {
       assert.ok(names.includes(n), `missing gated tool ${n}`);
     }
     for (const n of WRITE_TOOLS) {
       assert.ok(!names.includes(n), `hosted-read must not expose ${n}`);
     }
     for (const n of HOSTED_GATED_JOURNEY_TOOL_NAMES) {
-      assert.ok(names.includes(n), `this branch must list gated ${n}`);
+      assert.ok(!names.includes(n), `must not list ${n} without a journey store`);
     }
 
     const info = await call(client, "bootstrap_os_info");

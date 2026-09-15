@@ -1,0 +1,181 @@
+/**
+ * Hosted access layer: one login, many companies. Founder English.
+ * PGlite/memory only. Never prod.
+ */
+import { afterEach, describe, it } from "node:test";
+import assert from "node:assert/strict";
+import { handleHostedReadFetch } from "../dist/hosted-handler.js";
+import {
+  HOSTED_GATED_IDENTITY_TOOL_NAMES,
+  HOSTED_GATED_JOURNEY_TOOL_NAMES,
+} from "../dist/constants.js";
+import { HOSTED_MCP_INSTRUCTIONS } from "../dist/hosted-copy.js";
+import { clearHostedCompanyContextForTests } from "../dist/hosted-company-context.js";
+import {
+  ivelinMemoryFixture,
+  IVELIN_SEED_EMAIL,
+  IVELIN_SEED_LABELS,
+  setIdentityStoreForTests,
+} from "../dist/identity.js";
+import { MemoryInviteStore, setInviteStoreForTests } from "../dist/invite.js";
+import { fixtureJourneyStore, setJourneyStoreForTests } from "../dist/journey.js";
+
+const IVELIN_TOKEN = "bos_ivelin_fixture_token_xx";
+const FORBIDDEN_IN_TOOL_TEXT = /Cursor|Path 3|WWW-Authenticate|Bearer|mentee/i;
+
+afterEach(() => {
+  setIdentityStoreForTests(undefined);
+  setInviteStoreForTests(undefined);
+  setJourneyStoreForTests(undefined);
+  clearHostedCompanyContextForTests();
+});
+
+async function rpc(method, params, id = 1, token = IVELIN_TOKEN, extraHeaders = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json, text/event-stream",
+    ...extraHeaders,
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await handleHostedReadFetch(
+    new Request("https://preview.example/mcp", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
+    }),
+  );
+  const text = await res.text();
+  assert.ok(res.ok, `RPC ${method} failed ${res.status}: ${text}`);
+  return JSON.parse(text);
+}
+
+function parseTool(result) {
+  const text = result.result.content.map((c) => c.text ?? "").join("\n");
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
+}
+
+describe("hosted access layer (one login, many companies)", () => {
+  it("initialize instructions tell Grok to list companies and ignore Cursor copies", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const init = await rpc("initialize", {
+      protocolVersion: "2025-03-26",
+      capabilities: {},
+      clientInfo: { name: "access-layer", version: "0.0.0" },
+    });
+    const instructions = init.result.instructions ?? "";
+    assert.match(instructions, /bootstrap_whoami|bootstrap_list_companies/);
+    assert.match(instructions, /companies/);
+    assert.match(instructions, /ideas/);
+    assert.match(instructions, /user-bootstrap-os-mcp/);
+    assert.doesNotMatch(instructions, /Path 3|WWW-Authenticate|Bearer|mentee/i);
+    assert.equal(instructions, HOSTED_MCP_INSTRUCTIONS);
+  });
+
+  it("hosted tool descriptions stay in founder English", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const listed = await rpc("tools/list", {}, 2);
+    const tools = listed.result.tools;
+    const names = tools.map((t) => t.name);
+    for (const n of HOSTED_GATED_IDENTITY_TOOL_NAMES) {
+      assert.ok(names.includes(n), `missing ${n}`);
+    }
+    for (const n of HOSTED_GATED_JOURNEY_TOOL_NAMES) {
+      assert.ok(!names.includes(n), `must hide ${n} without a store`);
+    }
+    for (const tool of tools) {
+      if (!HOSTED_GATED_IDENTITY_TOOL_NAMES.includes(tool.name) && tool.name !== "bootstrap_os_info") {
+        continue;
+      }
+      assert.doesNotMatch(String(tool.description ?? ""), FORBIDDEN_IN_TOOL_TEXT, tool.name);
+    }
+  });
+
+  it("whoami and list_companies return companies for the seed user", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const who = parseTool(await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 3));
+    assert.deepEqual(who.companies, [...IVELIN_SEED_LABELS]);
+    assert.deepEqual(who.labels, [...IVELIN_SEED_LABELS]);
+    const listed = parseTool(
+      await rpc("tools/call", { name: "bootstrap_list_companies", arguments: {} }, 4),
+    );
+    assert.deepEqual(listed.companies, [...IVELIN_SEED_LABELS]);
+  });
+
+  it("use_company rejects a company the user does not hold and sets one they do", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    const session = { "MCP-Session-Id": "access-layer-session-1" };
+    const denied = await rpc(
+      "tools/call",
+      { name: "bootstrap_use_company", arguments: { company: "not-a-team" } },
+      5,
+      IVELIN_TOKEN,
+      session,
+    );
+    assert.equal(denied.result.isError, true);
+    assert.match(denied.result.content[0].text, /don't have access/i);
+
+    const ok = parseTool(
+      await rpc(
+        "tools/call",
+        { name: "bootstrap_use_company", arguments: { company: "zk0" } },
+        6,
+        IVELIN_TOKEN,
+        session,
+      ),
+    );
+    assert.equal(ok.ok, true);
+    assert.equal(ok.activeCompany, "zk0");
+
+    const who = parseTool(
+      await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 7, IVELIN_TOKEN, session),
+    );
+    assert.equal(who.activeCompany, "zk0");
+  });
+
+  it("invite_member uses the active company when company is omitted", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    setInviteStoreForTests(
+      new MemoryInviteStore([
+        {
+          id: "ivelin",
+          email: IVELIN_SEED_EMAIL,
+          authUserId: "ivelin-auth",
+          labels: ["pirin", "totbox", "zk0"],
+        },
+      ]),
+    );
+    const session = { "MCP-Session-Id": "access-layer-session-2" };
+    await rpc(
+      "tools/call",
+      { name: "bootstrap_use_company", arguments: { company: "zk0" } },
+      8,
+      IVELIN_TOKEN,
+      session,
+    );
+    const invited = parseTool(
+      await rpc(
+        "tools/call",
+        { name: "invite_member", arguments: { email: "bill@example.test" } },
+        9,
+        IVELIN_TOKEN,
+        session,
+      ),
+    );
+    assert.equal(invited.ok, true);
+    assert.equal(invited.card.companyWorkspace, "zk0");
+  });
+
+  it("lists journey tools only when a store is attached", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    setJourneyStoreForTests(fixtureJourneyStore());
+    const listed = await rpc("tools/list", {}, 10);
+    const names = listed.result.tools.map((t) => t.name);
+    for (const n of HOSTED_GATED_JOURNEY_TOOL_NAMES) {
+      assert.ok(names.includes(n), `missing journey ${n} with store`);
+    }
+  });
+});
