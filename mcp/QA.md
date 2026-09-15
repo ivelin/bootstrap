@@ -14,7 +14,8 @@
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
 | **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Path 1 alias stays open; collab-host handshake + gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
-| **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation; P1 invite / P2 Bearer accept / P3 login-URL / **P4 existing user second workspace**. No prod mail. PGlite only. |
+| **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation; P1–P4 invite/accept; **P5 what companies**; **P6 use_company + invite**. No prod mail. PGlite only. |
+| **Line coverage ≥ 80%** | `npm run test:coverage` | Node 22 `node --test` coverage on `dist/`. Lines ≥ 80. Not a substitute for the role-play matrix. |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 
 Local full CI mirror:
@@ -47,7 +48,7 @@ cd mcp && npm ci && npm run ci
 
 ## Merge / ship (multi-tool)
 
-Proof of work is `cd mcp && npm run ci` plus root `./scripts/ci.sh`. The `user-path` job runs `npm run verify:user-path` (stdio MCP client, HTTP hosted-read, cold-path, e2e role-play) — the same command an independent verifier should run locally. A chat claim from Grok Build, Cursor Cloud Agent, Claude, or any other tool is not evidence. Do **not** merge to `main` if `mcp-ci`, `user-path`, or Day-0 `ci` is red. GitHub required status checks are a Cos console setting — YAML alone does not block merge. CI green is closer to pstack user-path and is still not an independent verdict.
+Proof of work is `cd mcp && npm run ci` plus root `./scripts/ci.sh`. The `user-path` job runs `npm run verify:user-path` (stdio MCP client, HTTP hosted-read, cold-path, e2e role-play including P5/P6). Node 22 also runs `npm run test:coverage` (lines ≥ 80). A chat claim from Grok Build, Cursor Cloud Agent, Claude, or any other tool is not evidence. Do **not** merge to `main` if `mcp-ci`, `user-path`, or Day-0 `ci` is red. GitHub required status checks are a Cos console setting — YAML alone does not block merge. CI green is closer to pstack user-path and is still not an independent verdict.
 
 PR cloud agents: **PGlite only**. No migrate / seed / live-probe of `supabase-pirin-ai`. Do not run `preview-live.mjs`. Preview/dev must not attach prod identity even if `BOOTSTRAP_SUPABASE_*` is set (`VERCEL_ENV=production` only).
 

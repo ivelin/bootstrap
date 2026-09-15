@@ -20,6 +20,8 @@ Critical paths run in CI on **PGlite** before any prod synthetic. Evidence: `mcp
 | P2 | Invitee Bearer `accept_invite` | Any MCP client with a matching JWT. Bill accepts → user + `zk0`. Wrong email, expired, replay, bad token fail closed. | Yes |
 | P3 | Invitee login-URL accept | Email outbox (From `bootstrap@pirin.ai`) + `?invite=` URL + `verify_invite` (opaque fail). After JWT, `accept_invite` → whoami label. Dry-run / mock only — no prod Resend. Universal path — not Grok-only. | Yes |
 | P4 | Existing user, second workspace | Allowlisted `mentee-a` (`alpha`) is invited to `zk0`, accepts with the **same** email JWT (already authenticated, not `not_invited`). whoami `["alpha", "zk0"]`; still no `bravo`. Re-invite to `zk0` → `already_member`. | Yes |
+| P5 | Grok App: “What companies do I have?” | Signed-in whoami + `bootstrap_list_companies` return `companies`. Process docs are not companies. `get_journey` is not listed. | Yes |
+| P6 | “Look at zk0” then invite | `bootstrap_use_company` zk0; reject a company you do not hold; `invite_member` without `company` uses the active company. | Yes |
 
 Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later users (login URL + Bearer accept; additional workspaces on the same user): [INVITE.md](INVITE.md).
 
