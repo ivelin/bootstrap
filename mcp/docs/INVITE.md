@@ -104,7 +104,7 @@ Email payload is enough for bootstrap@ mail: who invited, invitee email, company
 
 **From address (hard):** `bootstrap@pirin.ai` only. Never `ivelin@` / `cos@`.
 
-**Who sends:** this repo **enqueues**. pirin-ai **owns Resend**. MCP default is mail **off** (`BOOTSTRAP_INVITE_MAIL=off`). `dry-run` builds the body for tests. There is **no prod send** from this host. pirin-ai production drains the outbox (same isolation as other Resend). Team members may `invite_member` for workspaces they already belong to; no Cos yes per invite.
+**Who sends:** this repo **enqueues**. pirin-ai **owns Resend**. MCP default is mail **off** (`BOOTSTRAP_INVITE_MAIL=off`). `dry-run` builds the body for tests. There is **no prod send** from this host. On Vercel production, `invite_member` POSTs pirin `/api/bootstrap-os/invite-mail` (shared secret; www.pirin.ai only). Cron retries undelivered outbox rows. Preview never POSTs. Team members may `invite_member` for workspaces they already belong to; no Cos yes per invite.
 
 ### Poll contract (pirin-ai, service_role)
 

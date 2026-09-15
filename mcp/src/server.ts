@@ -58,6 +58,7 @@ import {
   INVITE_MAIL_FROM,
   buildInviteMail,
   deliverInviteMailDryRun,
+  notifyPirinInviteMail,
   resolveInviteMailMode,
 } from "./invite-mail.js";
 
@@ -355,7 +356,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
           mode: mailMode,
           from: INVITE_MAIL_FROM,
           queued: Boolean(result.queuedMail),
-          note: "pirin-ai production sends invite mail. MCP never blasts prod mail.",
+          note: "pirin-ai production sends invite mail (webhook kick; cron retries). MCP never talks to Resend.",
         };
         if (mailMode === "dry-run") {
           deliverInviteMailDryRun(
@@ -368,6 +369,12 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
             }),
           );
         }
+        void notifyPirinInviteMail({
+          inviteeEmail: result.card.to.email,
+          invitedByEmail: result.card.from.email,
+          companyLabel: result.card.companyWorkspace,
+          inviteToken: result.card.inviteToken,
+        }).catch(() => undefined);
         return text({ ...result, mail });
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));

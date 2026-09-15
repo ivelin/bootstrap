@@ -352,7 +352,7 @@ export function inviteEmailOutboxPayload(card: AcceptInviteCard): Record<string,
     qrPayload: signupUrl,
     inviteToken: card.inviteToken,
     expiresAt: card.expiresAt,
-    note: "Mailer handoff. pirin-ai Resend From bootstrap@pirin.ai only. Token is on this channel so the poller can send ?invite=. in_chat never stores the token. pirin production sends.",
+    note: "Mailer handoff. pirin-ai Resend From bootstrap@pirin.ai only. Token is on this channel so the webhook/cron can send ?invite=. in_chat never stores the token. pirin production sends.",
   };
 }
 

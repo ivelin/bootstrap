@@ -13,8 +13,10 @@ import {
   buildInviteMail,
   deliverInviteMailDryRun,
   inviteSignupUrl,
+  notifyPirinInviteMail,
   resolveInviteMailMode,
   setInviteMailSinkForTests,
+  shouldPostPirinInviteMail,
 } from "../dist/invite-mail.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
@@ -22,6 +24,8 @@ afterEach(() => {
   setInviteMailSinkForTests(undefined);
   delete process.env.BOOTSTRAP_INVITE_MAIL;
   delete process.env.VERCEL_ENV;
+  delete process.env.BOOTSTRAP_INVITE_MAIL_SECRET;
+  delete process.env.BOOTSTRAP_INVITE_MAIL_URL;
 });
 
 describe("invite mail contract (never prod Resend)", { concurrency: false }, () => {
@@ -89,5 +93,50 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
     const src = fs.readFileSync(path.join(REPO_ROOT, "mcp", "src", "invite-mail.ts"), "utf8");
     assert.doesNotMatch(src, /from ["']resend["']|smtp|nodemailer|sendgrid/i);
     assert.match(src, /Never blast prod mail/);
+  });
+
+  it("production POSTs pirin invite-mail webhook; preview never", async () => {
+    assert.equal(shouldPostPirinInviteMail({}), false);
+    assert.equal(shouldPostPirinInviteMail({ VERCEL_ENV: "preview", BOOTSTRAP_INVITE_MAIL_SECRET: "s" }), false);
+    assert.equal(shouldPostPirinInviteMail({ VERCEL_ENV: "production" }), false);
+    assert.equal(
+      shouldPostPirinInviteMail({ VERCEL_ENV: "production", BOOTSTRAP_INVITE_MAIL_SECRET: "s" }),
+      true,
+    );
+
+    const skipped = await notifyPirinInviteMail(
+      {
+        inviteeEmail: "ivelin@zk0.bot",
+        invitedByEmail: "ivelin@pirin.ai",
+        companyLabel: "zk0",
+        inviteToken: "inv_fixture_token_xxxxxxxx",
+      },
+      { VERCEL_ENV: "preview", BOOTSTRAP_INVITE_MAIL_SECRET: "s" },
+      async () => {
+        throw new Error("must not fetch");
+      },
+    );
+    assert.equal(skipped.skipped, "not_production");
+
+    const hits = [];
+    const posted = await notifyPirinInviteMail(
+      {
+        inviteeEmail: "ivelin@zk0.bot",
+        invitedByEmail: "ivelin@pirin.ai",
+        companyLabel: "zk0",
+        inviteToken: "inv_fixture_token_xxxxxxxx",
+      },
+      { VERCEL_ENV: "production", BOOTSTRAP_INVITE_MAIL_SECRET: "s" },
+      async (url, init) => {
+        hits.push({ url: String(url), auth: init.headers.Authorization, body: init.body });
+        return { status: 200 };
+      },
+    );
+    assert.equal(posted.status, 200);
+    assert.equal(hits.length, 1);
+    assert.equal(hits[0].url, "https://www.pirin.ai/api/bootstrap-os/invite-mail");
+    assert.equal(hits[0].auth, "Bearer s");
+    assert.match(hits[0].body, /ivelin@zk0.bot/);
+    assert.match(hits[0].body, /inv_fixture_token_xxxxxxxx/);
   });
 });
