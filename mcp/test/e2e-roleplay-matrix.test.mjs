@@ -138,11 +138,12 @@ function pgliteIdentityStore(database) {
   };
 }
 
-async function rawRpc(method, params, token) {
+async function rawRpc(method, params, token, extraHeaders = {}) {
   rpcId += 1;
   const headers = {
     "Content-Type": "application/json",
     Accept: "application/json, text/event-stream",
+    ...extraHeaders,
   };
   if (token) headers.Authorization = `Bearer ${token}`;
   return handleHostedReadFetch(
@@ -182,8 +183,8 @@ async function whoamiPass(token) {
   return parseTool(JSON.parse(text));
 }
 
-async function callTool(name, args, token) {
-  const res = await rawRpc("tools/call", { name, arguments: args }, token);
+async function callTool(name, args, token, extraHeaders = {}) {
+  const res = await rawRpc("tools/call", { name, arguments: args }, token, extraHeaders);
   const text = await res.text();
   return { res, body: JSON.parse(text), text };
 }
@@ -219,6 +220,10 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(e2e, /Invitee login-URL accept/);
     assert.match(e2e, /P4/);
     assert.match(e2e, /Existing user, second workspace/);
+    assert.match(e2e, /P5/);
+    assert.match(e2e, /What companies/);
+    assert.match(e2e, /P6/);
+    assert.match(e2e, /use_company/);
     assert.match(e2e, /verify_invite/);
     assert.match(e2e, /bootstrap@pirin\.ai/);
     assert.match(e2e, /No prod Resend/);
@@ -256,6 +261,10 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(mailSrc, /bootstrap@pirin\.ai/);
     const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, "mcp", "package.json"), "utf8"));
     assert.match(pkg.scripts["test:unit"], /e2e-roleplay-matrix\.test\.mjs/);
+    assert.match(pkg.scripts["test:coverage"], /scripts\/coverage\.mjs/);
+    assert.match(pkg.scripts.ci, /test:coverage/);
+    const cov = fs.readFileSync(path.join(REPO_ROOT, "mcp", "scripts", "coverage.mjs"), "utf8");
+    assert.match(cov, /test-coverage-lines=80/);
     assert.match(pkg.scripts["test:unit"], /invite\.test\.mjs/);
     assert.match(pkg.scripts["test:unit"], /invite-mail\.test\.mjs/);
     assert.doesNotMatch(pkg.scripts["test:unit"], /preview-live/);
@@ -621,5 +630,64 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.deepEqual(b.labels, ["bravo"]);
     assert.ok(!b.labels.includes("zk0"));
     assert.ok(!b.labels.includes("alpha"));
+  });
+
+  it("P5 Grok App: what companies do I have — whoami/list_companies, not docs, not journey", async () => {
+    process.env.VERCEL_ENV = "production";
+    usePgliteStores();
+    const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
+
+    const listed = await rawRpc("tools/list", {}, ivelin);
+    assert.equal(listed.status, 200);
+    const names = JSON.parse(await listed.text()).result.tools.map((t) => t.name);
+    assert.ok(names.includes("bootstrap_whoami"));
+    assert.ok(names.includes("bootstrap_list_companies"));
+    assert.ok(names.includes("bootstrap_use_company"));
+    assert.ok(!names.includes("get_journey"));
+
+    const who = await whoamiPass(ivelin);
+    assert.deepEqual(who.companies, [...IVELIN_SEED_LABELS]);
+    assert.doesNotMatch(JSON.stringify(who), /user-bootstrap-os-mcp|operating-system|first-hour/);
+
+    const companies = parseTool((await callTool("bootstrap_list_companies", {}, ivelin)).body);
+    assert.deepEqual(companies.companies, [...IVELIN_SEED_LABELS]);
+
+    const docs = parseTool((await callTool("bootstrap_list_docs", {}, ivelin)).body);
+    const docKeys = JSON.stringify(docs);
+    assert.match(docKeys, /operating-system/);
+    for (const company of IVELIN_SEED_LABELS) {
+      assert.ok(companies.companies.includes(company));
+      assert.doesNotMatch(docKeys, new RegExp(`"${company}"`));
+    }
+  });
+
+  it("P6 look at zk0 then invite without naming company; reject a company you do not hold", async () => {
+    process.env.VERCEL_ENV = "production";
+    usePgliteStores();
+    const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
+    const session = { "MCP-Session-Id": "e2e-p6-zk0" };
+
+    const denied = await callTool(
+      "bootstrap_use_company",
+      { company: "not-a-team" },
+      ivelin,
+      session,
+    );
+    assert.equal(denied.body.result.isError, true);
+    assert.match(denied.body.result.content[0].text, /don't have access/i);
+
+    const used = parseTool((await callTool("bootstrap_use_company", { company: "zk0" }, ivelin, session)).body);
+    assert.equal(used.ok, true);
+    assert.equal(used.activeCompany, "zk0");
+
+    const who = parseTool((await callTool("bootstrap_whoami", {}, ivelin, session)).body);
+    assert.equal(who.activeCompany, "zk0");
+    assert.deepEqual(who.companies, [...IVELIN_SEED_LABELS]);
+
+    const invited = parseTool(
+      (await callTool("invite_member", { email: "p6-invitee@example.test" }, ivelin, session)).body,
+    );
+    assert.equal(invited.ok, true);
+    assert.equal(invited.card.companyWorkspace, "zk0");
   });
 });

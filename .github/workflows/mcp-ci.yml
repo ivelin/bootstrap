@@ -53,7 +53,12 @@ jobs:
         run: npm run build
 
       - name: Unit tests
+        if: matrix.node != '22'
         run: npm run test:unit
+
+      - name: Unit tests + line coverage ≥ 80%
+        if: matrix.node == '22'
+        run: npm run test:coverage
 
       - name: Cold-path smoke
         run: node test/cold-path.smoke.mjs
