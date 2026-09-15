@@ -27,7 +27,7 @@ One production pin. Say it here; other files link.
 
 On this **Hold preview** (`VERCEL_ENV=preview`, not a prod hostname), cookie-less `initialize`, GET SSE `/mcp`, and `tools/list` return **HTTP 401** with the same `WWW-Authenticate` as gated whoami. Public OS tools still work **with a Bearer**. RFC 8414 / RFC 9728 well-known GETs stay 200.
 
-Unauthenticated or invalid-token calls to `bootstrap_whoami`, `bootstrap_list_company_labels`, `invite_member`, or `accept_invite` (and any later gated tool) return **HTTP 401**. `accept_invite` allows a valid JWT that is still `not_invited` — the invitee is not on the allowlist yet. Production / main uses this exact header (`resource_metadata` is **this MCP origin** well-known — not live pirin.ai, whose RFC 9728 `resource` is still the vercel.app alias until pirin-ai updates):
+Unauthenticated or invalid-token calls to `bootstrap_whoami`, `bootstrap_list_companies`, `bootstrap_use_company`, `invite_member`, or `accept_invite` (and any later gated tool) return **HTTP 401**. `accept_invite` allows a valid JWT that is still `not_invited` — the invitee is not on the allowlist yet. Production / main uses this exact header (`resource_metadata` is **this MCP origin** well-known — not live pirin.ai, whose RFC 9728 `resource` is still the vercel.app alias until pirin-ai updates):
 
 ```http
 WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource", resource="https://mcp.bootstrap.pirin.ai/mcp", scope="bootstrap-os"

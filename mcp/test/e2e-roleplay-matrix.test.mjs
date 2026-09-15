@@ -315,7 +315,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.equal(who.authenticated, true);
     assert.equal(who.email, "cto-first@example.test");
     assert.deepEqual(who.labels, ["zk0"]);
-    assert.match(String(who.note), /Labels only/);
+    assert.match(String(who.note), /Companies this login can open/);
     const bound = (
       await db.query("SELECT auth_user_id, email FROM bootstrap_mcp_mentees WHERE id = 'mentee-cto-insert'")
     ).rows[0];

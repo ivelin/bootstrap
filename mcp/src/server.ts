@@ -2,7 +2,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
   DOC_KEYS,
-  HOSTED_GATED_JOURNEY_TOOL_NAMES,
   JOURNEY_PHASES,
   LOOP_STAGES,
   MCP_VERSION,
@@ -36,7 +35,24 @@ import { buildNextEvidenceView, buildStatusView } from "./guidance.js";
 import { evaluateExternalAsk } from "./policy.js";
 import { HOUSE_RULE_LINES, HOUSE_RULE_PINS } from "./house-rules.js";
 import { anonymousWhoami, type HostedRequestContext } from "./identity-context.js";
-import { hostedMcpResource, protectedResourceMetadataUrl } from "./oauth.js";
+import { hostedMcpResource } from "./oauth.js";
+import {
+  getActiveCompany,
+  resolveCompanyArg,
+  setActiveCompany,
+} from "./hosted-company-context.js";
+import {
+  HOSTED_MCP_INSTRUCTIONS,
+  NOTE_COMPANIES,
+  NOTE_NOT_SIGNED_IN,
+  NOTE_OS_INFO_HOSTED,
+  TOOL_ACCEPT_INVITE,
+  TOOL_INVITE_MEMBER,
+  TOOL_LIST_COMPANIES,
+  TOOL_LIST_COMPANY_LABELS_ALIAS,
+  TOOL_USE_COMPANY,
+  TOOL_WHOAMI,
+} from "./hosted-copy.js";
 import { inviteFailMessage, resolveInviteStore } from "./invite.js";
 import {
   INVITE_MAIL_FROM,
@@ -79,10 +95,25 @@ function adoptionOrder() {
   };
 }
 
+function membershipPayload(
+  who: { authenticated: boolean; email?: string; labels: string[] },
+  sessionKey?: string,
+) {
+  const companies = [...who.labels].sort();
+  return {
+    authenticated: who.authenticated,
+    email: who.authenticated ? who.email ?? null : null,
+    companies,
+    labels: companies,
+    activeCompany: sessionKey ? getActiveCompany(sessionKey) ?? null : null,
+    note: NOTE_COMPANIES,
+  };
+}
+
 function registerReadTools(server: McpServer, surface: McpSurface, hosted?: HostedRequestContext) {
   server.tool(
     "bootstrap_os_info",
-    "Bootstrap OS + MCP modes, versions, and honesty about hosted preview vs path 3 writes.",
+    "Bootstrap OS version, house rules, and how this connector works.",
     {},
     async () => {
       const common = {
@@ -114,41 +145,12 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
       if (surface === "hosted-read") {
         return text({
           ...common,
-          connectorModel:
-            "Preview HTTP read adapter. Markdown on GitHub is the constitution. Not a second OS. Not mentee-ready hosted boards.",
+          connectorModel: NOTE_OS_INFO_HOSTED,
           docsSource: resolveDocsSource(),
           docsBase: resolveDocsBaseUrl(),
-          companyState:
-            "Not hosted. Write / init / use-company stays path 3 local stdio.",
-          modes: {
-            markdownOnly: "Path 1–2. Use company-os/*.md. Full ownership, offline. Front door.",
-            localMcpMultiCompany:
-              "Path 3. One stdio server; bootstrap_init_company / list / use_company; state under BOOTSTRAP_DATA_ROOT/instances/<id>.",
-            hostedReadPreview:
-              "Path 4 preview. Read-only: os info, docs, house-rule pins. Collab host handshake + gated whoami/labels: 401 + WWW-Authenticate to this MCP origin RFC 9728 (authorization_servers = pirin.ai login). Path 1 alias keeps cookie-less initialize. Fetch published repo. No shared founder boards.",
-            identity: {
-              publicTools:
-                "Open without login on the Path 1 alias. On the collab host they stay listed after auth. Empty-context agents keep working on the alias.",
-              gatedTools: [
-                "bootstrap_whoami",
-                "bootstrap_list_company_labels",
-                "invite_member",
-                "accept_invite",
-                ...HOSTED_GATED_JOURNEY_TOOL_NAMES,
-              ],
-              challenge: "HTTP 401 + WWW-Authenticate resource_metadata. No login UI here.",
-              identityStore: hosted?.whoami.identityStore ?? "unset",
-              resource: hosted?.resource ?? hostedMcpResource(),
-              resourceMetadata: protectedResourceMetadataUrl(),
-              stores: "Labels only on the existing pirin.ai Supabase. Not company-state. Not ~/.bootstrap-os.",
-            },
-          },
-          journeyTools: {
-            names: HOSTED_GATED_JOURNEY_TOOL_NAMES,
-            gated: true,
-            onProductionPin: false,
-            note: "Branch only. Production pin stays main. Login/OAuth Hold. Public OS tools stay unauthenticated.",
-          },
+          companyState: NOTE_OS_INFO_HOSTED,
+          identityStore: hosted?.whoami.identityStore ?? "unset",
+          resource: hosted?.resource ?? hostedMcpResource(),
         });
       }
 
@@ -215,7 +217,7 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
 
   server.tool(
     "bootstrap_get_ai_instructions",
-    "Return the thin always-on AI enforcement layer (paste into AGENTS.md / Cursor / Claude / Grok).",
+    "The thin always-on AI rules for Bootstrap OS.",
     {},
     async () => {
       try {
@@ -252,40 +254,66 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
 }
 
 function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext) {
-  server.tool(
-    "bootstrap_whoami",
-    "Hosted identity. Requires a pirin.ai access token (Authorization: Bearer). Unauthenticated calls get HTTP 401 + WWW-Authenticate. Email + company workspace memberships (labels) for this user. Not boards. Not company-state.",
-    {},
-    async () => {
-      const who = ctx.whoami;
-      return text({
-        authenticated: who.authenticated,
-        email: who.authenticated ? who.email : null,
-        labels: who.labels,
-        reason: who.reason ?? null,
-        identityStore: who.identityStore ?? null,
-        note:
-          who.note ??
-          "Public OS tools stay open with no login. Labels only — not boards, not company-state, not ~/.bootstrap-os.",
-      });
-    },
-  );
+  const listCompaniesHeld = async () => {
+    const who = ctx.whoami;
+    if (!who.authenticated) {
+      return err(NOTE_NOT_SIGNED_IN);
+    }
+    return text(membershipPayload(who, ctx.sessionKey));
+  };
+
+  server.tool("bootstrap_whoami", TOOL_WHOAMI, {}, async () => {
+    const who = ctx.whoami;
+    if (!who.authenticated) {
+      return err(NOTE_NOT_SIGNED_IN);
+    }
+    return text({
+      ...membershipPayload(who, ctx.sessionKey),
+      reason: who.reason ?? null,
+      identityStore: who.identityStore ?? null,
+    });
+  });
+
+  server.tool("bootstrap_list_companies", TOOL_LIST_COMPANIES, {}, listCompaniesHeld);
 
   server.tool(
     "bootstrap_list_company_labels",
-    "Hosted company labels for the mentee identified by a pirin.ai access token. Unauthenticated calls get HTTP 401 + WWW-Authenticate. Labels only — not boards or company-state.",
+    TOOL_LIST_COMPANY_LABELS_ALIAS,
     {},
-    async () => {
+    listCompaniesHeld,
+  );
+
+  server.tool(
+    "bootstrap_use_company",
+    TOOL_USE_COMPANY,
+    {
+      company: z.string().optional().describe("Company name, for example zk0"),
+      companyId: z.string().optional().describe("Same as company"),
+    },
+    async ({ company, companyId }) => {
       const who = ctx.whoami;
       if (!who.authenticated) {
+        return err(NOTE_NOT_SIGNED_IN);
+      }
+      const sessionKey = ctx.sessionKey ?? "anon";
+      const chosen = resolveCompanyArg({ company, companyId, sessionKey });
+      if (!chosen) {
         return err(
-          "Login required for company labels. Public OS tools stay open. Follow 401 WWW-Authenticate to pirin.ai (authorization code + PKCE at /bootstrap-os/login).",
+          `Say which company. You can open: ${[...who.labels].sort().join(", ") || "(none)"}.`,
         );
       }
+      const held = new Set(who.labels);
+      if (!held.has(chosen)) {
+        return err(
+          `You don't have access to ${chosen}. You can open: ${[...who.labels].sort().join(", ") || "(none)"}.`,
+        );
+      }
+      setActiveCompany(sessionKey, chosen);
       return text({
-        labels: who.labels,
-        email: who.email,
-        note: "Team memberships for this user. Labels only. Not boards. Not company-state. Not ~/.bootstrap-os. Writes stay on path 3 local files.",
+        ok: true,
+        activeCompany: chosen,
+        companies: [...who.labels].sort(),
+        note: `This chat is about ${chosen}. Invite and later status use this company unless you name another.`,
       });
     },
   );
@@ -294,17 +322,23 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
 function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
   server.tool(
     "invite_member",
-    "Allowlisted team member invites a user (email + company workspace they already belong to). Same user may join multiple workspaces. Returns an optional Accept card plus a sign-in/create-account card. Enqueues email outbox for pirin-ai (From bootstrap@pirin.ai; Cos yes before prod Resend). Login URL is the universal path for any agentic client. First user stays SQL — HOSTED_IDENTITY.md.",
+    TOOL_INVITE_MEMBER,
     {
-      email: z.string().describe("Invitee email. Lowercased. Must match their pirin.ai login when they accept."),
-      companyLabel: z
-        .string()
-        .describe("Company workspace the inviter already belongs to (e.g. zk0). Not a board. Not a role."),
+      email: z.string().describe("Invitee email. Must match their sign-in email when they accept."),
+      company: z.string().optional().describe("Company to invite them to, for example zk0"),
+      companyLabel: z.string().optional().describe("Same as company"),
     },
-    async ({ email, companyLabel }) => {
+    async ({ email, company, companyLabel }) => {
       const who = ctx.whoami;
       if (!who.authenticated || !who.email) {
-        return err("Allowlisted team member required.");
+        return err(NOTE_NOT_SIGNED_IN);
+      }
+      const sessionKey = ctx.sessionKey ?? "anon";
+      const resolved = resolveCompanyArg({ company, companyLabel, sessionKey });
+      if (!resolved) {
+        return err(
+          `Say which company, or call bootstrap_use_company first. You can open: ${[...who.labels].sort().join(", ") || "(none)"}.`,
+        );
       }
       const store = resolveInviteStore(ctx.accessToken);
       if (!store) {
@@ -313,7 +347,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
       try {
         const result = await store.inviteMember(
           { email: who.email, sub: ctx.inviteActor?.sub, labels: who.labels },
-          { email, companyLabel },
+          { email, companyLabel: resolved },
         );
         if (!result.ok) return err(inviteFailMessage(result));
         const mailMode = resolveInviteMailMode();
@@ -343,7 +377,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
 
   server.tool(
     "accept_invite",
-    "Invitee accepts with the one-time token from the Accept card or login ?invite=. JWT email must match. Binds the Bootstrap OS user (same email) to that company workspace. Existing users gain an additional team membership — not a second account. Fail-closed on wrong email, expired, or replay.",
+    TOOL_ACCEPT_INVITE,
     {
       token: z.string().describe("One-time invite token from the Accept card (inv_…). Shown once."),
     },
@@ -917,16 +951,21 @@ export function createBootstrapServer(
   surface: McpSurface = "full",
   hosted?: HostedRequestContext,
 ): McpServer {
-  const server = new McpServer({
-    name: "bootstrap-os",
-    version: MCP_VERSION,
-  });
+  const server = new McpServer(
+    {
+      name: "bootstrap-os",
+      version: MCP_VERSION,
+    },
+    surface === "hosted-read" ? { instructions: HOSTED_MCP_INSTRUCTIONS } : undefined,
+  );
   registerReadTools(server, surface, hosted);
   if (surface === "hosted-read") {
     const ctx = hosted ?? { whoami: anonymousWhoami() };
     registerGatedIdentityTools(server, ctx);
     registerInviteTools(server, ctx);
-    registerJourneyTools(server, ctx);
+    if (resolveJourneyStore()) {
+      registerJourneyTools(server, ctx);
+    }
   }
   if (surface === "full") {
     registerWriteTools(server);

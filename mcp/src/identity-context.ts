@@ -13,6 +13,8 @@ export type HostedRequestContext = {
   inviteActor?: { email?: string; sub?: string };
   /** Raw pirin.ai access token. Invite RPCs use it. Never log. */
   accessToken?: string;
+  /** In-memory active-company key for this HTTP request. */
+  sessionKey?: string;
 };
 
 export function anonymousWhoami(): HostedWhoami {

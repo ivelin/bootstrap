@@ -6,7 +6,7 @@ import { afterEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { handleHostedReadFetch } from "../dist/hosted-handler.js";
 import {
-  HOSTED_GATED_TOOL_NAMES,
+  HOSTED_GATED_IDENTITY_TOOL_NAMES,
   HOSTED_READ_TOOL_NAMES,
 } from "../dist/constants.js";
 import {
@@ -156,7 +156,7 @@ describe("hosted identity (resource server, gated)", () => {
     for (const n of HOSTED_READ_TOOL_NAMES) {
       assert.ok(names.includes(n), `missing public ${n}`);
     }
-    for (const n of HOSTED_GATED_TOOL_NAMES) {
+    for (const n of HOSTED_GATED_IDENTITY_TOOL_NAMES) {
       assert.ok(names.includes(n), `missing gated ${n}`);
     }
     assert.ok(!names.includes("bootstrap_init_company"));
@@ -166,8 +166,7 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(info.surface, "hosted-read");
     assert.match(String(info.companyState), /Not hosted/i);
     assert.ok(!info.paths?.statePath);
-    assert.match(String(info.modes?.identity?.challenge ?? info.modes?.hostedReadPreview), /401|WWW-Authenticate|pirin\.ai/);
-    assert.equal(info.modes?.identity?.identityStore, "memory");
+    assert.equal(info.identityStore, "memory");
   });
 
   it("gated tools without a token return 401 + WWW-Authenticate to pirin.ai", async () => {
@@ -198,16 +197,18 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(who.authenticated, true);
     assert.equal(who.email, IVELIN_SEED_EMAIL);
     assert.deepEqual(who.labels, ["pirin", "totbox", "zk0"]);
+    assert.deepEqual(who.companies, [...IVELIN_SEED_LABELS]);
     assert.deepEqual(who.labels, [...IVELIN_SEED_LABELS]);
     const blob = JSON.stringify(who);
     assert.doesNotMatch(blob, /journeyPhase|instanceRoot|secret-other|company-state\.json/);
-    assert.match(blob, /Labels only/);
+    assert.match(blob, /Companies this login can open/);
 
     const labels = parseTool(
       await rpc("tools/call", { name: "bootstrap_list_company_labels", arguments: {} }, 7, IVELIN_TOKEN),
     );
+    assert.deepEqual(labels.companies, [...IVELIN_SEED_LABELS]);
     assert.deepEqual(labels.labels, [...IVELIN_SEED_LABELS]);
-    assert.match(String(labels.note), /Labels only/i);
+    assert.match(String(labels.note), /Companies this login can open/i);
   });
 
   it("other mentee token cannot see Ivelin labels", async () => {
@@ -766,7 +767,7 @@ describe("hosted identity (resource server, gated)", () => {
     for (const n of HOSTED_READ_TOOL_NAMES) {
       assert.ok(collabNames.includes(n), `authed collab missing public ${n}`);
     }
-    for (const n of HOSTED_GATED_TOOL_NAMES) {
+    for (const n of HOSTED_GATED_IDENTITY_TOOL_NAMES) {
       assert.ok(collabNames.includes(n), `authed collab missing gated ${n}`);
     }
 

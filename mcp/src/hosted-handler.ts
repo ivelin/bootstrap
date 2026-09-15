@@ -27,6 +27,7 @@ import {
   wwwAuthenticateChallenge,
 } from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
+import { hostedSessionKey } from "./hosted-company-context.js";
 
 export function applyHostedReadEnv(): void {
   process.env.BOOTSTRAP_MCP_SURFACE = "hosted-read";
@@ -237,6 +238,7 @@ export async function handleHostedReadFetch(req: Request): Promise<Response> {
     actor,
     inviteActor: inviteClaims ?? (whoami.email ? { email: whoami.email } : undefined),
     accessToken,
+    sessionKey: hostedSessionKey(req, accessToken),
   });
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,

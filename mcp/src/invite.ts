@@ -510,7 +510,7 @@ export class MemoryInviteStore implements InviteStore {
       email: mentee.email,
       labels: [...mentee.labels],
       companyWorkspace: row.companyLabel,
-      note: "Allowlist + label bound. Labels only. Not boards. Not company-state.",
+      note: "Allowlist bound. Companies this login can open.",
     };
   }
 

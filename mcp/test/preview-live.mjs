@@ -22,8 +22,6 @@ const ALIAS_ORIGIN = HOSTED_MCP_RESOURCE_ALIAS.replace(/\/mcp$/i, "");
 const ORIGIN_OVERRIDE = process.env.BOOTSTRAP_MCP_ORIGIN?.replace(/\/+$/, "");
 const WRITE_TOOLS = [
   "bootstrap_init_company",
-  "bootstrap_use_company",
-  "bootstrap_list_companies",
   "bootstrap_get_state",
   "bootstrap_update_state",
   "bootstrap_where_are_we",

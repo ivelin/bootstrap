@@ -20,7 +20,9 @@ export const HOSTED_READ_TOOL_NAMES = [
 /** Resource-server gated identity. Unauthenticated calls return HTTP 401 + WWW-Authenticate. */
 export const HOSTED_GATED_IDENTITY_TOOL_NAMES = [
   "bootstrap_whoami",
+  "bootstrap_list_companies",
   "bootstrap_list_company_labels",
+  "bootstrap_use_company",
   "invite_member",
   "accept_invite",
 ] as const;
