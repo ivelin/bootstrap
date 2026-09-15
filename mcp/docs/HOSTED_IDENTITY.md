@@ -155,4 +155,4 @@ Do not run `preview-live.mjs` on PR cloud agents. Draft prod synthetic checks ar
 
 ## Out
 
-No mentee roster. No usage analytics as proof. No founder-update write. No WebMCP. No marketplace. No billing. No login UI in this repo. Insights/Apply stay email-only. No public Path 1 hosted MCP pin. No open login (JWT without a mentee row). No prod Resend from this repo — Cos yes on pirin-ai first. QR image / SMS later — [`INVITE.md`](INVITE.md).
+No mentee roster. No usage analytics as proof. No founder-update write. No WebMCP. No marketplace. No billing. No login UI in this repo. Insights/Apply stay email-only. No public Path 1 hosted MCP pin. No open login (JWT without a mentee row). No prod Resend from this repo. QR image / SMS later — [`INVITE.md`](INVITE.md).

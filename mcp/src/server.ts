@@ -355,7 +355,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
           mode: mailMode,
           from: INVITE_MAIL_FROM,
           queued: Boolean(result.queuedMail),
-          note: "pirin-ai Resend sends after Cos yes. MCP never blasts prod mail.",
+          note: "pirin-ai production sends invite mail. MCP never blasts prod mail.",
         };
         if (mailMode === "dry-run") {
           deliverInviteMailDryRun(

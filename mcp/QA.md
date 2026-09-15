@@ -52,7 +52,7 @@ Proof of work is `cd mcp && npm run ci` plus root `./scripts/ci.sh`. The `user-p
 
 PR cloud agents: **PGlite only**. No migrate / seed / live-probe of `supabase-pirin-ai`. Do not run `preview-live.mjs`. Preview/dev must not attach prod identity even if `BOOTSTRAP_SUPABASE_*` is set (`VERCEL_ENV=production` only).
 
-Ready-for-human-eyes for invite links: do not send a real person an invite until P4 is green and Cos yeses. CI green is necessary, not sufficient. When in doubt, hold.
+Ready-for-human-eyes for invite links: this host never sends. pirin-ai production drains the email outbox. CI green is necessary, not sufficient. When in doubt, hold.
 
 ## SRE / ops notes
 

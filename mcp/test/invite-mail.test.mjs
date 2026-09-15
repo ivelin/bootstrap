@@ -57,7 +57,7 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
     assert.equal(mail.signupUrl, mail.qrPayload);
     assert.match(mail.text, /accept_invite/);
     assert.match(mail.text, /Sign in or create/);
-    assert.match(INVITE_MAIL_NOTE, /Cos yes before prod Resend/);
+    assert.match(INVITE_MAIL_NOTE, /pirin-ai sends From bootstrap@pirin.ai on production/);
     assert.match(INVITE_MAIL_NOTE, /any agentic client/);
     assert.doesNotMatch(mail.from, /ivelin@|cos@/);
   });

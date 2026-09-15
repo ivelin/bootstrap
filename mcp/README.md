@@ -69,7 +69,7 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 | `bootstrap_whoami` | Who is signed in and which **companies** they can open. [`INVITE.md`](docs/INVITE.md). |
 | `bootstrap_list_companies` | Same company list. (`bootstrap_list_company_labels` is a one-release alias.) |
 | `bootstrap_use_company` | This chat is about one company the user already belongs to. |
-| `invite_member` | Invite someone to a company you can open. Same email may join several companies. [`INVITE.md`](docs/INVITE.md). |
+| `invite_member` | Invite someone to a company you can open. Same email may join several companies. Email outbox for pirin-ai (`bootstrap@pirin.ai`; production sends). [`INVITE.md`](docs/INVITE.md). |
 | `accept_invite` | Invitee JWT + one-time token → user + workspace membership. Existing users gain an additional team — not a second account. Fail-closed on wrong email / expired / replay. Same token as `?invite=`. |
 
 Hard rules (OS 2.8.9):

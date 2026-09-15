@@ -1,8 +1,8 @@
 /**
  * Outsider invite mail contract (MCP side).
  * From: bootstrap@pirin.ai only. Never ivelin@ / cos@.
- * This repo enqueues + builds the body. pirin-ai Resend sends after Cos yes.
- * Default off. dry-run for tests. Never blast prod mail from MCP / CI.
+ * This repo enqueues + builds the body. pirin-ai Resend sends on production.
+ * Default off here. dry-run for tests. Never blast prod mail from MCP / CI.
  */
 import { PIRIN_ORIGIN } from "./oauth.js";
 
@@ -10,7 +10,7 @@ export const INVITE_MAIL_FROM = "bootstrap@pirin.ai";
 export const INVITE_SIGNUP_QUERY = "invite";
 
 export const INVITE_MAIL_NOTE =
-  "Universal path for any agentic client. Web Builder owns /bootstrap-os/login. Sign in as this email if you already have a pirin.ai account; otherwise create the account for this invitee email only. Then accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai only — Cos yes before prod Resend.";
+  "Universal path for any agentic client. Web Builder owns /bootstrap-os/login. Sign in as this email if you already have a pirin.ai account; otherwise create the account for this invitee email only. Then accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai on production.";
 
 export type InviteMailMode = "off" | "dry-run";
 
