@@ -16,11 +16,14 @@ import {
   playbookMayBeAutomatedWithoutNamedOwner,
   agentTeamMaySkipUnownedStep,
   newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
+  legalPaperMayPromote,
+  advisorRideAlongIsObserved,
+  spokenExclusivityIsWtp,
 } from "../dist/house-rules.js";
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
 
 describe("OS house rules (adapter reminders)", () => {
-  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program, no optimal price, do not automate", () => {
+  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program, no optimal price, do not automate, legal paper, advisor ride-along", () => {
     const blob = HOUSE_RULE_LINES.join("\n");
     assert.match(blob, /stated, synthetic, and observed/i);
     assert.match(blob, /observed wins/i);
@@ -37,6 +40,10 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /A security program cannot promote/);
     assert.match(blob, /There is no optimal price until people have paid and stayed/);
     assert.match(blob, /Do not automate a step that should not exist/);
+    assert.match(blob, /Legal paper cannot promote/);
+    assert.match(blob, /Advisor ride-along is assumed, not observed/);
+    assert.match(blob, /Spoken exclusivity is stated, not WTP/);
+    assert.match(blob, /Discovery traces must name who spoke/);
     assert.match(blob, /An agent team is automation/);
     assert.match(blob, /Name the one bottleneck this week and work that/);
     assert.match(blob, /Several ideas may attack that same bottleneck/);
@@ -53,6 +60,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
     assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
     assert.match(pins, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.match(pins, /house-rule-legal-paper-cannot-promote/);
+    assert.match(pins, /house-rule-advisor-ride-along-is-assumed-not-observed/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {
@@ -82,6 +91,9 @@ describe("OS house rules (adapter reminders)", () => {
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(false), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(true), true);
+    assert.equal(legalPaperMayPromote(), false);
+    assert.equal(advisorRideAlongIsObserved(), false);
+    assert.equal(spokenExclusivityIsWtp(), false);
   });
 
   it("phase 3 / stage 1 gates refuse demo-only seed, spoken yes, Likert WTP", () => {

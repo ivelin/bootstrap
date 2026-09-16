@@ -65,12 +65,16 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(firstHour, /Eyeballs aren't buyers/);
       assert.match(firstHour, /house-rule-marketing-volume-cannot-promote/);
       const os = readOsDoc("operating-system");
-      assert.match(os, /2\.8\.9/);
+      assert.match(os, /2\.8\.11/);
       assert.match(os, /### House rule: marketing volume cannot promote/);
       assert.match(os, /### House rule: a security program cannot promote/);
       assert.match(os, /### House rule: there is no optimal price until people have paid and stayed/);
       assert.match(os, /### House rule: do not automate a step that should not exist/);
+      assert.match(os, /### House rule: legal paper cannot promote/);
+      assert.match(os, /### House rule: advisor ride-along is assumed, not observed/);
       assert.match(os, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+      assert.match(os, /house-rule-legal-paper-cannot-promote/);
+      assert.match(os, /house-rule-advisor-ride-along-is-assumed-not-observed/);
       assert.match(os, /Several ideas may attack that same bottleneck/);
       assert.match(os, /Name the one bottleneck this week and work that/);
       assert.doesNotMatch(os, /Do not open a second idea, ritual, or agent team to walk around it/);
@@ -79,6 +83,8 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(firstHour, /day-0-lifestyle-or-swinging-for-the-fences/);
       assert.match(firstHour, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
       assert.match(firstHour, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+      assert.match(firstHour, /house-rule-legal-paper-cannot-promote/);
+      assert.match(firstHour, /house-rule-advisor-ride-along-is-assumed-not-observed/);
       assert.match(firstHour, /### Standing rules/);
       assert.ok(firstHour.includes(HOSTED_MCP_RESOURCE));
       assert.ok(!firstHour.includes(HOSTED_MCP_RESOURCE_ALIAS));
@@ -99,6 +105,8 @@ describe("markdown install path (zero MCP required)", () => {
       assert.doesNotMatch(doneWhen[0], /automate a step that should not exist/);
       assert.doesNotMatch(doneWhen[0], /automate the playbook/);
       assert.doesNotMatch(doneWhen[0], /agent team/);
+      assert.doesNotMatch(doneWhen[0], /legal paper cannot promote/);
+      assert.doesNotMatch(doneWhen[0], /advisor ride-along/);
       assert.match(firstHour, /Write the thesis \(~20 minutes\)/);
       assert.match(firstHour, /At least three customer groups \(~25 minutes\)/);
       assert.match(firstHour, /First “Where are we\?” \(~15 minutes\)/);

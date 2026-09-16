@@ -17,6 +17,9 @@ import {
   playbookMayBeAutomatedWithoutNamedOwner,
   agentTeamMaySkipUnownedStep,
   newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
+  legalPaperMayPromote,
+  advisorRideAlongIsObserved,
+  spokenExclusivityIsWtp,
 } from "../dist/house-rules.js";
 import {
   afterProofEfficiencyPageMayOpen,
@@ -387,6 +390,56 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.equal(agentTeamMaySkipUnownedStep(), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(true), true);
+  });
+
+  it("legal paper cannot promote; advisor ride-along is assumed, not observed", () => {
+    const standing = skill("query-os-first");
+    const pins = skill("house-rule-pins");
+    const firstHourOs = fs.readFileSync(
+      path.join(REPO_ROOT, "company-os", "first-hour.md"),
+      "utf8",
+    );
+    const os = fs.readFileSync(
+      path.join(REPO_ROOT, "company-os", "operating-system.md"),
+      "utf8",
+    );
+    const readme = fs.readFileSync(README, "utf8");
+    const coverage = fs.readFileSync(COVERAGE, "utf8");
+
+    assert.match(os, /### House rule: legal paper cannot promote/);
+    assert.match(os, /house-rule-legal-paper-cannot-promote/);
+    assert.match(os, /a filing is not observed use/);
+    assert.match(os, /Legal paperwork is not observed product proof/);
+    assert.match(os, /### House rule: advisor ride-along is assumed, not observed/);
+    assert.match(os, /house-rule-advisor-ride-along-is-assumed-not-observed/);
+    assert.match(os, /Discovery traces must name who spoke/);
+    assert.match(os, /Do not stall a paid path on assumed advisor ride-along/);
+
+    const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
+    assert.ok(doneWhen, "Done when section missing");
+    assert.doesNotMatch(doneWhen[0], /legal paper cannot promote/);
+    assert.doesNotMatch(doneWhen[0], /advisor ride-along/);
+    assert.doesNotMatch(doneWhen[0], /signed SAFE/);
+
+    for (const body of [standing, pins]) {
+      assert.match(body, /house-rule-legal-paper-cannot-promote/);
+      assert.match(body, /house-rule-advisor-ride-along-is-assumed-not-observed/);
+    }
+    assert.match(firstHourOs, /house-rule-legal-paper-cannot-promote/);
+    assert.match(firstHourOs, /house-rule-advisor-ride-along-is-assumed-not-observed/);
+    assert.match(firstHourOs, /I don't need a signed SAFE to advance/);
+    assert.match(firstHourOs, /An advisor's spoken exclusivity is stated, not WTP/);
+    assert.doesNotMatch(firstHourOs, /a filing is not observed use/);
+    assert.doesNotMatch(firstHourOs, /File the paper on the side/);
+    assert.doesNotMatch(firstHourOs, /Stalling the first payment until the advisor rides along/);
+
+    for (const body of [readme, coverage]) {
+      assert.match(body, /Legal paper visitor matrix/);
+      assert.match(body, /Advisor ride-along visitor matrix/);
+    }
+    assert.equal(legalPaperMayPromote(), false);
+    assert.equal(advisorRideAlongIsObserved(), false);
+    assert.equal(spokenExclusivityIsWtp(), false);
   });
 
   it("install-reader and team listing still lock the pin", () => {

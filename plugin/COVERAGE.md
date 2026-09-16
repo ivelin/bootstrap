@@ -12,11 +12,13 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Connector URL | `plugin/mcp.json` | Collab / Grok pin `https://mcp.bootstrap.pirin.ai/mcp`. No Gmail/Stripe/other. |
 | `${BOOTSTRAP_MCP_URL}` default | `plugin/.cursor-plugin/plugin.json` | Optional override defaults to that host. |
 | Plugin 0.1.1 + thin skills | `plugin/plugin.json`, `skills/*/SKILL.md` | Hyperlinks to the published OS. No constitution copy. |
-| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / GTM / spoken yes / empty-context / optimal price / automate the playbook / new landing page as bottleneck. Query this plugin first. Do not invent stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. Cite OS. |
+| Standing rule | `plugin/skills/query-os-first/SKILL.md` | 0-1 / GTM / spoken yes / empty-context / optimal price / automate the playbook / new landing page as bottleneck / legal paper / advisor ride-along. Query this plugin first. Do not invent stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. Cite OS. |
 | After-proof efficiency page | `company-os/after-proof-efficiency.md` | Dated 2026-08-24. Five instruments. Open only if fences + proof + they asked. Not a house rule. Not a version bump. |
 | After-proof efficiency gate | `plugin/skills/after-proof-efficiency/SKILL.md` + `mcp/src/after-proof-efficiency.ts` | Plugin opens the page only if ALL three. Otherwise two clocks. |
 | OS 2.8.8 house rule (once) | `company-os/operating-system.md` | Full text of *there is no optimal price until people have paid and stayed*. Pointers only elsewhere. |
 | OS 2.8.9 house rule (once) | `company-os/operating-system.md` | Full text of *do not automate a step that should not exist*. One bottleneck this week. Pointers only elsewhere. |
+| OS 2.8.10 house rule (once) | `company-os/operating-system.md` | Full text of *legal paper cannot promote*. Cap-table / FAST / SAFE / 83(b) / counsel threads cannot promote. Pointers only elsewhere. |
+| OS 2.8.11 house rule (once) | `company-os/operating-system.md` | Full text of *advisor ride-along is assumed, not observed*. Spoken exclusivity is stated, not WTP. Pointers only elsewhere. |
 | Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
 | After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: Path 1 is GitHub + install-os + local — not a hosted MCP connector; invite-only collab / Grok / whoami `https://mcp.bootstrap.pirin.ai/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
 | Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Public read tools. Gated whoami/labels 401 + WWW-Authenticate. No company-state. `marketplace: false`. |
@@ -40,7 +42,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Extra connectors / mentee roster / usage analytics as proof | Out. |
 | Journey SQL on pirin.ai / mentee-ready boards | This branch ships SQL + PGlite tests only. Not the production pin. Do not merge. |
 | A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
-| Production `bootstrap_os_info.osVersion` already `2.8.9` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
+| Production `bootstrap_os_info.osVersion` already `2.8.11` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | CAC / LTV / day-31 / day-90 / NRR / magic-number numbers on Path 1 | Must stay absent. CI locks the absence. |
 | Old SaaS playbook tables as the aim | Must stay absent on Path 1 / Day 0. Stale (LTV:CAC 3x, T2D3) lives on the dated page only. |
 
@@ -108,6 +110,26 @@ Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Pass only i
 | H2 | Mentee told to “automate the playbook” | `query-os-first` + `house-rule-pins` | Refuse. Name the person or delete the step. Cite OS. | File lock + `playbookMayBeAutomatedWithoutNamedOwner()===false` |
 | H3 | Specialist, agent team to skip a step with no named owner | same skills | Refuse. An agent team is automation. Delete or name first. | File lock + `agentTeamMaySkipUnownedStep()===false` |
 | H4 | New landing page as the bottleneck; no one has talked to customers | `query-os-first` + `house-rule-pins` | Refuse. Fun side quest. Written founder override only. | File lock + `newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers()===false` |
+
+## Legal paper visitor matrix
+
+Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Cap-table / FAST / SAFE / 83(b) / counsel threads cannot promote.
+
+| # | Visitor | Surface | Done means | Evidence |
+|---|---------|---------|------------|----------|
+| H1 | Installing founder | `first-hour` + standing rules | Day 0 is thesis / ≥3 / snapshot. This rule is not a Day 0 checkbox. | File lock |
+| H2 | Mentee told a signed SAFE / 83(b) advances phase or human-eyes | `query-os-first` + `house-rule-pins` | Refuse. Cite OS. | File lock + `legalPaperMayPromote()===false` |
+| H3 | Specialist treating cap-table paper as observed product proof | same skills | Refuse. Paper is not use or pay. | File lock + `legalPaperMayPromote()===false` |
+
+## Advisor ride-along visitor matrix
+
+Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Spoken exclusivity is stated, not WTP. Name who spoke.
+
+| # | Visitor | Surface | Done means | Evidence |
+|---|---------|---------|------------|----------|
+| H1 | Installing founder | `first-hour` + standing rules | Day 0 is thesis / ≥3 / snapshot. This rule is not a Day 0 checkbox. | File lock |
+| H2 | Mentee treating advisor exclusivity as WTP | `query-os-first` + `house-rule-pins` | Refuse. Name who spoke. Cite OS. | File lock + `spokenExclusivityIsWtp()===false` |
+| H3 | Specialist stalling a paid path on assumed advisor ride-along | same skills | Refuse. Do not stall. | File lock + `advisorRideAlongIsObserved()===false` |
 
 ## After-proof efficiency visitor matrix
 

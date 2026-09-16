@@ -142,6 +142,8 @@ async function assertPublicPin(origin) {
   const pins = JSON.stringify(parseTool(pinsRaw));
   assert.match(pins, /github.com\/ivelin\/bootstrap/);
   assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
+  assert.match(pins, /house-rule-legal-paper-cannot-promote/);
+  assert.match(pins, /house-rule-advisor-ride-along-is-assumed-not-observed/);
   return names;
 }
 

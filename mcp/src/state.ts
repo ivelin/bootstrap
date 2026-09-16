@@ -143,6 +143,8 @@ export function whereAreWePlain(state: CompanyState): string {
     "Several ideas are allowed. Each companyId is its own board. Rank and kill per board.",
     "Marketing volume cannot promote.",
     "There is no optimal price until people have paid and stayed.",
+    "Legal paper cannot promote.",
+    "Advisor ride-along is assumed, not observed.",
     "No Likert or naked dollar WTP — choice or sentence, then map.",
     "Same state as markdown: company-state.json + where-are-we.py. Green human-eyes ≠ demand/PMF.",
   ]

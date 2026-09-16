@@ -8,7 +8,7 @@ Coverage (what CI locks vs what it does not): [`COVERAGE.md`](COVERAGE.md). Visi
 
 ## Standing rule
 
-Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, whether to model LTV/CAC at 0-1, or whether to automate the playbook or add an agent team to skip a step with no named owner. Empty context with no founder update — do not invent their stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. After First Hour: query the published OS on GitHub / install-os / local. Do not upload mentee work to Ivelin's GitHub. Full line: [`first-hour.md` standing rules](https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules). See [`query-os-first`](skills/query-os-first/SKILL.md). After-proof efficiency page: [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) — open only if fences + proof + they asked.
+Mentee CoS and specialists query this plugin first when the ask is where current work sits on 0-1, whether a conversation is GTM/traction, whether a spoken yes is enough, whether a price is optimal, whether a handful survey is WTP, whether to model LTV/CAC at 0-1, whether to automate the playbook or add an agent team to skip a step with no named owner, whether legal paper can promote, or whether advisor exclusivity is WTP. Empty context with no founder update — do not invent their stage, a price, or an LTV number. Exit without fences+proof — refuse, two clocks. A verbal maybe is not GTM — refuse and cite the OS. Do not speak as Ivelin. Do not host mentee boards. After First Hour: query the published OS on GitHub / install-os / local. Do not upload mentee work to Ivelin's GitHub. Full line: [`first-hour.md` standing rules](https://github.com/ivelin/bootstrap/blob/main/company-os/first-hour.md#standing-rules). See [`query-os-first`](skills/query-os-first/SKILL.md). After-proof efficiency page: [`after-proof-efficiency`](skills/after-proof-efficiency/SKILL.md) — open only if fences + proof + they asked.
 
 ## Merge-gate visitor matrix (CoS smell-test)
 
@@ -76,6 +76,36 @@ Not Day 0 homework. Full rule once in the OS. Pins only here. Pass only if they 
 2. Asked to add an agent team to skip a step with no named owner — refuse. An agent team is automation. Delete or name first.
 3. Asked to write “new landing page” as the bottleneck when no one has talked to customers — refuse unless written founder override.
 
+## Legal paper visitor matrix
+
+Not Day 0 homework. Full rule once in the OS. Pins only here. Cap-table / FAST / SAFE / 83(b) / counsel threads cannot promote.
+
+**Human**
+
+1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. This rule is not a Day 0 checkbox.
+2. Mentee told a signed SAFE / 83(b) / counsel thread advances phase or human-eyes — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Refuse. Cite the OS.
+3. Specialist treating cap-table paper as observed product proof — same skills. Paper is not use or pay.
+
+**Agent**
+
+1. Asked to advance phase because FAST / SAFE / 83(b) is signed — refuse. Cite the OS. `legalPaperMayPromote()===false`.
+2. Asked to mark Ready for human eyes green because counsel signed off — refuse. Cite the OS.
+
+## Advisor ride-along visitor matrix
+
+Not Day 0 homework. Full rule once in the OS. Pins only here. Spoken exclusivity is stated, not WTP. Name who spoke.
+
+**Human**
+
+1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. This rule is not a Day 0 checkbox.
+2. Mentee treating advisor exclusivity or office-hours dollar-pain as WTP — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Refuse. Name who spoke. Cite the OS.
+3. Specialist stalling a paid path on assumed advisor ride-along — same skills. Do not stall.
+
+**Agent**
+
+1. Asked to treat advisor exclusivity as WTP — refuse. Cite the OS. `spokenExclusivityIsWtp()===false`.
+2. Asked to stall a paid path until the advisor rides along — refuse. Cite the OS. `advisorRideAlongIsObserved()===false`.
+
 ## After-proof efficiency visitor matrix
 
 Not a mentee dashboard. Not Path 1. Open the page only when the three gates hold.
@@ -128,9 +158,9 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 
 | Skill | Points at |
 |-------|-----------|
-| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / automate the playbook / agent team with no named owner / new landing page as bottleneck / exit without fences+proof |
+| `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / automate the playbook / agent team with no named owner / new landing page as bottleneck / legal paper / advisor ride-along / exit without fences+proof |
 | `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences · After First Hour pin |
-| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; LTV:CAC 3x / T2D3 stale |
+| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9 / 2.8.10 / 2.8.11; LTV:CAC 3x / T2D3 stale |
 | `first-hour` | Day 0 + install-first (plugin + this connector only) · After First Hour standing rules |
 | `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
 | `when-to-write` | After a gate / founder yes in chat. Weekly constraint is the honest bottleneck, not a side quest. Comments never mutate phase. |

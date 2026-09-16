@@ -127,6 +127,18 @@ When someone names a new landing page as the bottleneck, and no one has talked t
 
 House rule: [do not automate a step that should not exist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
 
+When someone says you must finish the SAFE / cap table / 83(b) before you can advance:
+
+> I don't need a signed SAFE to advance. Paper is not product proof.
+
+House rule: [legal paper cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-legal-paper-cannot-promote).
+
+When someone treats an advisor's spoken exclusivity or office-hours dollar-pain map as WTP:
+
+> An advisor's spoken exclusivity is stated, not WTP. Name who spoke. Do not stall a paid path on it.
+
+House rule: [advisor ride-along is assumed, not observed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed).
+
 ---
 
 *You supply the insight. AI supplies the speed.*

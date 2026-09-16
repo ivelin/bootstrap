@@ -25,6 +25,12 @@ const ESSAY_FORBIDDEN = [
   "Do not open a second idea, ritual, or agent team to walk around it",
   "weakest link",
   "slowest soldier",
+  "a filing is not observed use",
+  "File the paper on the side",
+  "because the cap table is clean or FAST is signed",
+  "Stalling the first payment until the advisor rides along",
+  "An unnamed \"advisor said they would pay\"",
+  "Advisor paper and office hours sit beside it",
 ];
 
 function skillFiles() {
@@ -99,7 +105,7 @@ describe("preview plugin (hyperlink only)", () => {
     }
     for (const file of files) {
       const body = fs.readFileSync(file, "utf8");
-      assert.ok(body.length < 1800, `${file} is too long — link, do not copy the OS`);
+      assert.ok(body.length < 2400, `${file} is too long — link, do not copy the OS`);
       assert.match(body, /https:\/\/github.com\/ivelin\/bootstrap/);
       for (const phrase of ESSAY_FORBIDDEN) {
         assert.ok(!body.includes(phrase), `${file} must not copy OS essay: ${phrase}`);
@@ -110,6 +116,8 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
     assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
     assert.match(pins, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.match(pins, /house-rule-legal-paper-cannot-promote/);
+    assert.match(pins, /house-rule-advisor-ride-along-is-assumed-not-observed/);
     assert.match(pins, /old SaaS playbook/);
     assert.match(pins, /automate the playbook/);
     assert.match(pins, /one bottleneck this week/);
@@ -130,6 +138,8 @@ describe("preview plugin (hyperlink only)", () => {
     assert.match(standing, /old SaaS playbook/);
     assert.match(standing, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
     assert.match(standing, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.match(standing, /house-rule-legal-paper-cannot-promote/);
+    assert.match(standing, /house-rule-advisor-ride-along-is-assumed-not-observed/);
     assert.match(standing, /automate the playbook/);
     assert.match(standing, /new landing page/);
     assert.match(standing, /written founder override/);
