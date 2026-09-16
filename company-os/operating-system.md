@@ -1087,8 +1087,8 @@ Someone saying you must finish the cap table, a SAFE, or a lawyer email thread b
 
 | | Do this | Not this |
 |--|---------|----------|
-| **Paper later** | The founder points at [starter legal templates](#starter-legal-templates). They get one stranger through the happy path this week. They file the paper on the side. | A lawyer emails that the SAFE is signed. Nobody has tried the product. The founder treats the signed paper as proof strangers can use it. |
-| **Stay put** | The paper gets filed. The company stays at the stage the product evidence supports. One stranger still finishes the product. | The week's only activity is lawyer emails. The cap table is clean. The founder still says the company moved to the next stage. |
+| **Paper later** | The founder points at [starter legal templates](#starter-legal-templates). They get one stranger through the happy path this week. File the paper on the side. | A lawyer emails that the SAFE is signed. Nobody has tried the product. The founder treats the signed paper as proof strangers can try the product. |
+| **Stay put** | The paper gets filed. The company stays at the stage the product evidence supports. One stranger still finishes the product. | The week's only activity is lawyer emails. The founder still says the company moved to the next stage because the cap table is clean or a SAFE is signed. |
 
 Same family: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). [A security program cannot promote](#house-rule-a-security-program-cannot-promote).
 

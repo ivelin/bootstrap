@@ -652,11 +652,17 @@ forbidden = [
     "because the cap table is clean or FAST is signed",
     "does not move you to the next stage by itself",
     "proof strangers can try the product",
+    "A lawyer emails that the SAFE is signed",
     "Stalling the first payment until the advisor rides along",
     "An unnamed \"advisor said they would pay\"",
     "Advisor paper and office hours sit beside it",
     "founders hate paying $X",
     "just to keep an advisor happy",
+    "don't take customers yet",
+    "stay exclusive to my introductions",
+    "A real prospect then asks to pay",
+    "A room tip is not a sale",
+    "Person N said",
     "A week of only lawyer emails and advisor meetings",
 ]
 required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency", "when-to-write"}
@@ -1109,6 +1115,7 @@ if grep -q '^\*\*Version:\*\* 2.8.11' company-os/operating-system.md \
   && grep -q 'File the paper on the side' company-os/operating-system.md \
   && grep -q 'proof strangers can try the product' company-os/operating-system.md \
   && grep -q 'because the cap table is clean or a SAFE is signed' company-os/operating-system.md \
+  && grep -q 'A lawyer emails that the SAFE is signed' company-os/operating-system.md \
   && grep -q 'v2.8.10' README.md \
   && grep -q 'house-rule-legal-paper-cannot-promote' README.md; then
   ok "OS 2.8.10 house-rule section has full rule and vocabulary"
@@ -1132,6 +1139,9 @@ if ! grep -q 'does not move you to the next stage by itself' company-os/first-ho
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md \
   && ! grep -q 'proof strangers can try the product' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'A lawyer emails that the SAFE is signed' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md; then
   ok "2.8.10 essay is not copied outside the OS section"
@@ -1162,6 +1172,10 @@ if grep -q '^\*\*Version:\*\* 2.8.11' company-os/operating-system.md \
   && grep -q 'founders hate paying $X' company-os/operating-system.md \
   && grep -q 'Write down who said what' company-os/operating-system.md \
   && grep -q 'A week of only lawyer emails and advisor meetings' company-os/operating-system.md \
+  && grep -q "don't take customers yet" company-os/operating-system.md \
+  && grep -q 'A real prospect then asks to pay' company-os/operating-system.md \
+  && grep -q 'A room tip is not a sale' company-os/operating-system.md \
+  && grep -q 'Person N said' company-os/operating-system.md \
   && grep -q 'v2.8.11' README.md \
   && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' README.md; then
   ok "OS 2.8.11 house-rule section has full rule and vocabulary"
@@ -1184,6 +1198,15 @@ if ! grep -q 'founders hate paying $X' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md \
   && ! grep -q 'A week of only lawyer emails and advisor meetings' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q "don't take customers yet" company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'A room tip is not a sale' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'Person N said' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md; then
   ok "2.8.11 essay is not copied outside the OS section"
