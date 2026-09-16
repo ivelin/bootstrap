@@ -17,6 +17,8 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | After-proof efficiency gate | `plugin/skills/after-proof-efficiency/SKILL.md` + `mcp/src/after-proof-efficiency.ts` | Plugin opens the page only if ALL three. Otherwise two clocks. |
 | OS 2.8.8 house rule (once) | `company-os/operating-system.md` | Full text of *there is no optimal price until people have paid and stayed*. Pointers only elsewhere. |
 | OS 2.8.9 house rule (once) | `company-os/operating-system.md` | Full text of *do not automate a step that should not exist*. One bottleneck this week. Pointers only elsewhere. |
+| OS 2.8.10 house rule (once) | `company-os/operating-system.md` | Full text of *legal paper cannot promote*. Cap-table / FAST / SAFE / 83(b) / counsel cannot promote. Pointers only elsewhere. |
+| OS 2.8.11 house rule (once) | `company-os/operating-system.md` | Full text of *advisor ride-along is assumed, not observed*. Spoken exclusivity / OH dollar-pain maps are stated. Pointers only elsewhere. |
 | Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
 | After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: Path 1 is GitHub + install-os + local — not a hosted MCP connector; invite-only collab / Grok / whoami `https://mcp.bootstrap.pirin.ai/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
 | Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Public read tools. Gated whoami/labels 401 + WWW-Authenticate. No company-state. `marketplace: false`. |
@@ -40,7 +42,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | Extra connectors / mentee roster / usage analytics as proof | Out. |
 | Journey SQL on pirin.ai / mentee-ready boards | This branch ships SQL + PGlite tests only. Not the production pin. Do not merge. |
 | A founder actually answering lifestyle vs fences, or setting a first price | File pins are locked. The conversation is not. |
-| Production `bootstrap_os_info.osVersion` already `2.8.9` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
+| Production `bootstrap_os_info.osVersion` already `2.8.11` | Draft PR. Prod still serves the last production deploy until merge + Vercel production. |
 | CAC / LTV / day-31 / day-90 / NRR / magic-number numbers on Path 1 | Must stay absent. CI locks the absence. |
 | Old SaaS playbook tables as the aim | Must stay absent on Path 1 / Day 0. Stale (LTV:CAC 3x, T2D3) lives on the dated page only. |
 

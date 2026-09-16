@@ -13,6 +13,9 @@ import {
   handfulSurveyMaySetOptimalPrice,
   ltvModelMayPromoteAtZeroToOne,
   emptyContextMayInventPriceOrLtv,
+  legalPaperMayPromote,
+  advisorRideAlongIsObserved,
+  spokenExclusivityIsWtp,
   playbookMayBeAutomatedWithoutNamedOwner,
   agentTeamMaySkipUnownedStep,
   newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
@@ -20,7 +23,7 @@ import {
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
 
 describe("OS house rules (adapter reminders)", () => {
-  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program, no optimal price, do not automate", () => {
+  it("pins stated / synthetic / observed, observed wins, spoken yes, seed, Likert, marketing volume, security program, legal paper, advisor ride-along, no optimal price, do not automate", () => {
     const blob = HOUSE_RULE_LINES.join("\n");
     assert.match(blob, /stated, synthetic, and observed/i);
     assert.match(blob, /observed wins/i);
@@ -35,6 +38,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Rank and kill per board/);
     assert.match(blob, /Marketing volume cannot promote/);
     assert.match(blob, /A security program cannot promote/);
+    assert.match(blob, /Legal paper cannot promote/);
+    assert.match(blob, /Advisor ride-along is assumed, not observed/);
     assert.match(blob, /There is no optimal price until people have paid and stayed/);
     assert.match(blob, /Do not automate a step that should not exist/);
     assert.match(blob, /An agent team is automation/);
@@ -51,6 +56,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(pins, /github.com\/ivelin\/bootstrap/);
     assert.match(pins, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
+    assert.match(pins, /house-rule-legal-paper-cannot-promote/);
+    assert.match(pins, /house-rule-advisor-ride-along-is-assumed-not-observed/);
     assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
     assert.match(pins, /house-rule-do-not-automate-a-step-that-should-not-exist/);
   });
@@ -74,6 +81,9 @@ describe("OS house rules (adapter reminders)", () => {
     assert.equal(demographicOneLinerIsValidSeed(), false);
     assert.equal(likertOrNakedDollarWtpAllowed(), false);
     assert.equal(marketingVolumeMayPromote(), false);
+    assert.equal(legalPaperMayPromote(), false);
+    assert.equal(advisorRideAlongIsObserved(), false);
+    assert.equal(spokenExclusivityIsWtp(), false);
     assert.equal(handfulSurveyMaySetOptimalPrice(), false);
     assert.equal(ltvModelMayPromoteAtZeroToOne(), false);
     assert.equal(emptyContextMayInventPriceOrLtv(), false);

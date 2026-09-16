@@ -20,6 +20,8 @@ export const HOUSE_RULE_LINES = [
   "Several ideas are allowed. Each idea is its own thesis, instance, and scorecard. Do not hide a second idea to look focused. Rank and kill per board.",
   "Marketing volume cannot promote.",
   "A security program cannot promote.",
+  "Legal paper cannot promote. Cap-table / FAST / SAFE / 83(b) / counsel threads do not advance journey phase or Ready for human eyes.",
+  "Advisor ride-along is assumed, not observed. Spoken exclusivity and office-hours dollar-pain maps are stated, not WTP. Discovery traces must name who spoke. Do not stall a paid path on assumed ride-along.",
   "There is no optimal price until people have paid and stayed.",
   "Do not automate a step that should not exist. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck. Challenge a fun side quest dressed as the bottleneck. Founder still decides; the agent does not rubber-stamp.",
   "SaaS 1.0 playbooks may be outdated. Stay current.",
@@ -92,6 +94,20 @@ export function marketingVolumeMayPromote(): false {
   return false;
 }
 
+/** Cap-table / FAST / SAFE / 83(b) / counsel threads cannot promote. */
+export function legalPaperMayPromote(): false {
+  return false;
+}
+
+/** Advisor ride-along / spoken exclusivity is stated, not observed WTP. */
+export function advisorRideAlongIsObserved(): false {
+  return false;
+}
+
+export function spokenExclusivityIsWtp(): false {
+  return false;
+}
+
 export function handfulSurveyMaySetOptimalPrice(): false {
   return false;
 }
@@ -145,6 +161,16 @@ export const HOUSE_RULE_PINS = [
     id: "security-program-2.8.7",
     pin: "A security program cannot promote.",
     url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-a-security-program-cannot-promote",
+  },
+  {
+    id: "legal-paper-2.8.10",
+    pin: "Legal paper cannot promote. Paper is not observed use or pay.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-legal-paper-cannot-promote",
+  },
+  {
+    id: "advisor-ride-along-2.8.11",
+    pin: "Advisor ride-along is assumed, not observed. Name who spoke. Do not stall a paid path on it.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed",
   },
   {
     id: "no-optimal-price-2.8.8",

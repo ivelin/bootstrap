@@ -6,7 +6,7 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 
 | | |
 |--|--|
-| **Version** | Blueprint + live runtime **v2.8.9** · optional local MCP **v0.2** (path 3) |
+| **Version** | Blueprint + live runtime **v2.8.11** · optional local MCP **v0.2** (path 3) |
 | **License** | Apache-2.0 |
 | **Audience** | Independent solo founders; mentors (Founder Institute, SCORE, …); AI helpers |
 | **Maintainer** | [Ivelin Ivanov](https://github.com/ivelin) · [Pirin.ai](https://pirin.ai) |
@@ -71,7 +71,7 @@ Optional. Script or hand copy — [Install](#install-in-your-company). Optional 
 
 ### 3. Self-hosted MCP (optional — several ideas)
 
-Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.9). Rank and kill per board. Markdown remains the constitution.
+Several ideas are allowed. Do not hide a second thesis to look focused. Optional local MCP under [`mcp/`](mcp/) keeps each idea on its own board — `company-state.json` + `where-are-we.py` — without importing this tree into every product repo. Same founder gates. Same evidence rules (OS 2.8.11). Rank and kill per board. Markdown remains the constitution.
 
 Not required. Path 1 (point an AI) and path 2 (optional files + workflows) stay enough.
 
@@ -153,8 +153,8 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 | Doc | Current |
 |-----|---------|
-| Operating system blueprint | **v2.8.9** |
-| Live runtime | **v2.8.9** |
+| Operating system blueprint | **v2.8.11** |
+| Live runtime | **v2.8.11** |
 | Optional local MCP (path 3) | **v0.2** — adapter only; not a second OS. HTTP read transport is preview. |
 | Preview plugin | **0.1.1** — [`plugin/`](plugin/). Skills hyperlink this pack. Team Import from Repo only — not a public catalog submit. Not mentee-ready hosted boards. |
 
@@ -162,6 +162,12 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 
 **After proof — efficiency (fences)**  
 Resource page, not a house rule, not a version bump. Open only if fences + proof + they asked: [after-proof-efficiency.md](company-os/after-proof-efficiency.md).
+
+**v2.8.11 — advisor ride-along is assumed, not observed**  
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as spoken-yes-cannot-promote / stated≠observed; do not merge. Spoken exclusivity and office-hours dollar-pain maps are stated, not WTP. Name who spoke. Do not stall a paid path on assumed ride-along.
+
+**v2.8.10 — legal paper cannot promote**  
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-legal-paper-cannot-promote). Same family as 2.8.7; do not merge. Cap-table / FAST / SAFE / 83(b) / counsel threads do not advance journey phase or Ready for human eyes. Paper is not observed use or pay.
 
 **v2.8.9 — do not automate a step that should not exist**  
 House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Name the person. Delete first. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck.

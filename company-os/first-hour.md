@@ -109,6 +109,18 @@ When someone says you must lock down the product so secrets do not leak, before 
 
 House rule: [a security program cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-a-security-program-cannot-promote).
 
+When someone says you must finish the cap table, FAST, SAFE, 83(b), or a counsel thread before anyone has used or paid:
+
+> I don't need a signed SAFE to advance. Paper is not observed use or pay.
+
+House rule: [legal paper cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-legal-paper-cannot-promote).
+
+When someone treats an advisor's spoken exclusivity, or an office-hours dollar-pain map, as willingness to pay:
+
+> Advisor ride-along is assumed, not observed. Name who spoke. Do not stall a paid path on it.
+
+House rule: [advisor ride-along is assumed, not observed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed).
+
 When someone says you must find the optimal price from a handful of users, before anyone has paid and stayed:
 
 > There is no optimal price until people have paid and stayed. A survey of a handful will lie. Start with one price.

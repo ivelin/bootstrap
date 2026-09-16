@@ -72,7 +72,7 @@ Product code (pirin app, zk0, …) stays in its own repo. Point the agent at thi
 | `invite_member` | Invite someone to a company you can open. Same email may join several companies. Email outbox for pirin-ai (`bootstrap@pirin.ai`; production sends). [`INVITE.md`](docs/INVITE.md). |
 | `accept_invite` | Invitee JWT + one-time token → user + workspace membership. Existing users gain an additional team — not a second account. Fail-closed on wrong email / expired / replay. Same token as `?invite=`. |
 
-Hard rules (OS 2.8.9):
+Hard rules (OS 2.8.11):
 
 - Journey phase does **not** change unless `founderApprovedPhaseChange=true`
 - Human-eyes **green** is not demand or PMF
@@ -85,6 +85,8 @@ Hard rules (OS 2.8.9):
 - Do not ask a sim for a Likert or a naked dollar WTP — a choice or a sentence, then map
 - Several ideas are allowed — each `companyId` is its own board; do not hide a second idea to look focused; rank and kill per board
 - Marketing volume cannot promote
+- Legal paper cannot promote
+- Advisor ride-along is assumed, not observed
 - There is no optimal price until people have paid and stayed
 - Do not automate a step that should not exist. Automate last. An agent team is automation.
 

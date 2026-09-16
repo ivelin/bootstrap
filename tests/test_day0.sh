@@ -647,6 +647,9 @@ forbidden = [
     "A second ritual, channel, or agent team that does not attack it is busywork",
     "weakest link",
     "slowest soldier",
+    "busy-looking paper at 0→1",
+    "An advisor in the room is a clue, not a sale",
+    "A ride-along is a clue, not a gate",
 ]
 required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency", "when-to-write"}
 found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
@@ -654,7 +657,7 @@ assert required <= found, found
 for skill in (root / "skills").glob("*/SKILL.md"):
     body = skill.read_text()
     assert "https://github.com/ivelin/bootstrap" in body, skill
-    assert len(body) < 1800, skill
+    assert len(body) < 2400, skill
     for phrase in forbidden:
         assert phrase not in body, (skill, phrase)
 pins = (root / "skills/house-rule-pins/SKILL.md").read_text()
@@ -662,6 +665,8 @@ assert "house-rule-marketing-volume-cannot-promote" in pins
 assert "house-rule-a-security-program-cannot-promote" in pins
 assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in pins
 assert "house-rule-do-not-automate-a-step-that-should-not-exist" in pins
+assert "house-rule-legal-paper-cannot-promote" in pins
+assert "house-rule-advisor-ride-along-is-assumed-not-observed" in pins
 assert "old SaaS playbook" in pins
 assert "automate the playbook" in pins
 assert "one bottleneck this week" in pins
@@ -681,6 +686,8 @@ assert "is this price optimal" in standing
 assert "old SaaS playbook" in standing
 assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in standing
 assert "house-rule-do-not-automate-a-step-that-should-not-exist" in standing
+assert "house-rule-legal-paper-cannot-promote" in standing
+assert "house-rule-advisor-ride-along-is-assumed-not-observed" in standing
 assert "automate the playbook" in standing
 assert "new landing page" in standing
 assert "written founder override" in standing
@@ -751,8 +758,12 @@ assert "Rollback" in coverage
 assert "SSO" in coverage
 assert "2.8.8" in coverage
 assert "2.8.9" in coverage
+assert "2.8.10" in coverage
+assert "2.8.11" in coverage
 assert "there is no optimal price until people have paid and stayed" in coverage
 assert "do not automate a step that should not exist" in coverage
+assert "legal paper cannot promote" in coverage
+assert "advisor ride-along is assumed, not observed" in coverage
 assert "Do not automate visitor matrix" in coverage
 assert "automate the playbook" in coverage
 assert "lifestyle or swinging for the fences" in coverage
@@ -982,7 +993,7 @@ fi
 
 # --- v) OS 2.8.9: do not automate a step that should not exist ---
 # Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
-if grep -q '^\*\*Version:\*\* 2.8.9' company-os/operating-system.md \
+if grep -q '| 2.8.9 |' company-os/operating-system.md \
   && grep -q '### House rule: do not automate a step that should not exist' company-os/operating-system.md \
   && grep -q 'Do not speed up or automate a step that should not exist' company-os/operating-system.md \
   && grep -q "Every requirement has a person's name" company-os/operating-system.md \
@@ -1076,6 +1087,86 @@ if grep -q 'Do not automate visitor matrix' plugin/README.md \
   ok "plugin README and COVERAGE name the do-not-automate visitor matrix"
 else
   not_ok "plugin README and COVERAGE must name the do-not-automate visitor matrix"
+fi
+
+# --- w) OS 2.8.10: legal paper cannot promote ---
+# Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
+if grep -q '^\*\*Version:\*\* 2.8.11' company-os/operating-system.md \
+  && grep -q '### House rule: legal paper cannot promote' company-os/operating-system.md \
+  && grep -q 'busy-looking paper at 0→1' company-os/operating-system.md \
+  && grep -q 'Cap-table / FAST / SAFE / 83(b) / counsel threads do not advance journey phase or Ready for human eyes' company-os/operating-system.md \
+  && grep -q 'Paper is not observed use or pay' company-os/operating-system.md \
+  && grep -q '| 2.8.10 |' company-os/operating-system.md \
+  && grep -q 'v2.8.10' README.md \
+  && grep -q 'house-rule-legal-paper-cannot-promote' README.md; then
+  ok "OS 2.8.10 house-rule section has full rule and vocabulary"
+else
+  not_ok "operating-system.md must hold the full 2.8.10 legal-paper house rule"
+fi
+if grep -q "I don't need a signed SAFE to advance" company-os/first-hour.md \
+  && grep -q 'house-rule-legal-paper-cannot-promote' company-os/first-hour.md \
+  && grep -q 'house-rule-legal-paper-cannot-promote' company-os/ai-instructions.md \
+  && grep -q 'house-rule-legal-paper-cannot-promote' plugin/skills/house-rule-pins/SKILL.md \
+  && grep -q 'house-rule-legal-paper-cannot-promote' plugin/skills/query-os-first/SKILL.md; then
+  ok "first-hour, ai-instructions, and plugin skills pin the 2.8.10 OS section"
+else
+  not_ok "first-hour, ai-instructions, and plugin skills must pin the 2.8.10 OS section"
+fi
+if ! grep -q 'busy-looking paper at 0→1' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md; then
+  ok "2.8.10 essay is not copied outside the OS section"
+else
+  not_ok "do not reprint the 2.8.10 house-rule essay outside operating-system.md"
+fi
+if ! printf '%s\n' "$done_when" | grep -q 'legal paper cannot promote' \
+  && ! printf '%s\n' "$done_when" | grep -q 'signed SAFE' \
+  && ! printf '%s\n' "$done_when" | grep -q '83(b)'; then
+  ok "2.8.10 house rule is not extra Day 0 homework"
+else
+  not_ok "do not put the 2.8.10 house rule in the Day 0 Done when checklist"
+fi
+
+# --- x) OS 2.8.11: advisor ride-along is assumed, not observed ---
+# Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
+if grep -q '### House rule: advisor ride-along is assumed, not observed' company-os/operating-system.md \
+  && grep -q 'An advisor in the room is a clue, not a sale' company-os/operating-system.md \
+  && grep -q 'A ride-along is a clue, not a gate' company-os/operating-system.md \
+  && grep -q 'Spoken exclusivity and office-hours dollar-pain maps are \*\*stated\*\*, not WTP' company-os/operating-system.md \
+  && grep -q 'Discovery traces must name who spoke' company-os/operating-system.md \
+  && grep -q 'Do not stall a paid path on assumed ride-along' company-os/operating-system.md \
+  && grep -q '| 2.8.11 |' company-os/operating-system.md \
+  && grep -q 'v2.8.11' README.md \
+  && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' README.md; then
+  ok "OS 2.8.11 house-rule section has full rule and vocabulary"
+else
+  not_ok "operating-system.md must hold the full 2.8.11 advisor-ride-along house rule"
+fi
+if grep -q 'Advisor ride-along is assumed, not observed. Name who spoke' company-os/first-hour.md \
+  && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' company-os/first-hour.md \
+  && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' company-os/ai-instructions.md \
+  && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' plugin/skills/house-rule-pins/SKILL.md \
+  && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' plugin/skills/query-os-first/SKILL.md; then
+  ok "first-hour, ai-instructions, and plugin skills pin the 2.8.11 OS section"
+else
+  not_ok "first-hour, ai-instructions, and plugin skills must pin the 2.8.11 OS section"
+fi
+if ! grep -q 'An advisor in the room is a clue, not a sale' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md \
+  && ! grep -q 'A ride-along is a clue, not a gate' company-os/first-hour.md \
+    company-os/ai-instructions.md README.md \
+    plugin/skills/*/SKILL.md; then
+  ok "2.8.11 essay is not copied outside the OS section"
+else
+  not_ok "do not reprint the 2.8.11 house-rule essay outside operating-system.md"
+fi
+if ! printf '%s\n' "$done_when" | grep -q 'advisor ride-along' \
+  && ! printf '%s\n' "$done_when" | grep -q 'spoken exclusivity' \
+  && ! printf '%s\n' "$done_when" | grep -q 'dollar-pain'; then
+  ok "2.8.11 house rule is not extra Day 0 homework"
+else
+  not_ok "do not put the 2.8.11 house rule in the Day 0 Done when checklist"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"

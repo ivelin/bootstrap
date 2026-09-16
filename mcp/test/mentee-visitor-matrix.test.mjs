@@ -14,6 +14,9 @@ import {
   handfulSurveyMaySetOptimalPrice,
   ltvModelMayPromoteAtZeroToOne,
   emptyContextMayInventPriceOrLtv,
+  legalPaperMayPromote,
+  advisorRideAlongIsObserved,
+  spokenExclusivityIsWtp,
   playbookMayBeAutomatedWithoutNamedOwner,
   agentTeamMaySkipUnownedStep,
   newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
@@ -387,6 +390,32 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.equal(agentTeamMaySkipUnownedStep(), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(true), true);
+  });
+
+  it("legal paper and advisor ride-along cannot promote — refuse and cite OS", () => {
+    const standing = skill("query-os-first");
+    const pins = skill("house-rule-pins");
+    const firstHourOs = fs.readFileSync(
+      path.join(REPO_ROOT, "company-os", "first-hour.md"),
+      "utf8",
+    );
+    const os = fs.readFileSync(
+      path.join(REPO_ROOT, "company-os", "operating-system.md"),
+      "utf8",
+    );
+    assert.match(os, /### House rule: legal paper cannot promote/);
+    assert.match(os, /### House rule: advisor ride-along is assumed, not observed/);
+    for (const body of [standing, pins]) {
+      assert.match(body, /house-rule-legal-paper-cannot-promote/);
+      assert.match(body, /house-rule-advisor-ride-along-is-assumed-not-observed/);
+    }
+    assert.match(firstHourOs, /house-rule-legal-paper-cannot-promote/);
+    assert.match(firstHourOs, /house-rule-advisor-ride-along-is-assumed-not-observed/);
+    assert.doesNotMatch(firstHourOs, /busy-looking paper at 0→1/);
+    assert.doesNotMatch(firstHourOs, /An advisor in the room is a clue, not a sale/);
+    assert.equal(legalPaperMayPromote(), false);
+    assert.equal(advisorRideAlongIsObserved(), false);
+    assert.equal(spokenExclusivityIsWtp(), false);
   });
 
   it("install-reader and team listing still lock the pin", () => {

@@ -166,6 +166,8 @@ async function main() {
     assert.match(pinBlob, /github.com\/ivelin\/bootstrap/);
     assert.match(pinBlob, /house-rule-marketing-volume-cannot-promote/);
     assert.match(pinBlob, /house-rule-a-security-program-cannot-promote/);
+    assert.match(pinBlob, /house-rule-legal-paper-cannot-promote/);
+    assert.match(pinBlob, /house-rule-advisor-ride-along-is-assumed-not-observed/);
     assert.match(pinBlob, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
     assert.match(pinBlob, /house-rule-do-not-automate-a-step-that-should-not-exist/);
 
