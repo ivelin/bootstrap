@@ -164,10 +164,10 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 Resource page, not a house rule, not a version bump. Open only if fences + proof + they asked: [after-proof-efficiency.md](company-os/after-proof-efficiency.md).
 
 **v2.8.11 — advisor ride-along is assumed, not observed**  
-House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. Spoken exclusivity is stated, not WTP. Name who spoke. Do not stall a paid path on assumed advisor ride-along.
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. An advisor's opinion is a tip, not proof. Write down who said it. Do not delay a paying customer.
 
 **v2.8.10 — legal paper cannot promote**  
-House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-legal-paper-cannot-promote). Same family as 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; do not merge. Cap-table / FAST / SAFE / 83(b) / counsel threads do not advance journey phase or Ready for human eyes.
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-legal-paper-cannot-promote). Same family as 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; do not merge. Cap table, SAFE, and lawyer emails do not prove the product works.
 
 **v2.8.9 — do not automate a step that should not exist**  
 House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Name the person. Delete first. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck.

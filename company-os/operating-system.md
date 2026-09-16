@@ -1081,23 +1081,34 @@ Same family: [there is no optimal price until people have paid and stayed](#hous
 
 ### House rule: legal paper cannot promote
 
-Someone saying you must finish the cap table, FAST, SAFE, 83(b), or a counsel thread before anyone has used or paid, is asking for **paperwork** — not product proof. Same family as [a security program cannot promote](#house-rule-a-security-program-cannot-promote): a filing is not observed use. Cap-table / FAST / SAFE / 83(b) / counsel threads do not advance journey phase or Ready for human eyes. Legal paperwork is not observed product proof. Observed use or pay can.
+Someone saying you must finish the cap table, a SAFE, or a lawyer email thread before anyone has used or paid is asking for **paperwork**, not proof the product works. Same family as [a security program cannot promote](#house-rule-a-security-program-cannot-promote).
+
+**Meaning.** Real proof = someone used the product, paid, came back, or referred a friend. Legal paperwork (cap table, SAFE, lawyer emails) does not prove the product works and does not move you to the next stage by itself.
 
 | | Do this | Not this |
 |--|---------|----------|
-| **Paper later** | Point at [starter legal templates](#starter-legal-templates). Get one stranger through the happy path. | Treating a signed SAFE, an 83(b) filing, or a counsel email as Ready for human eyes green. |
-| **Phase stays** | Keep the journey phase where the product evidence is. File the paper on the side. | Advancing phase because the cap table is clean or FAST is signed. |
+| **Paper later** | Point at [starter legal templates](#starter-legal-templates). Get one stranger through the happy path. File the paper on the side. | Treating a signed SAFE, a tax filing, or a lawyer email as proof strangers can try the product. |
+| **Stay put** | Stay at the stage your product evidence supports. | Moving to the next stage because the cap table is clean or a SAFE is signed. |
+
+**Good.** The paper gets filed. One stranger still finishes the product.
+
+**Bad.** A week of only lawyer emails, and you claim you moved forward.
 
 Same family: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). [A security program cannot promote](#house-rule-a-security-program-cannot-promote).
 
 ### House rule: advisor ride-along is assumed, not observed
 
-Someone saying an advisor's spoken exclusivity or office-hours dollar-pain map is willingness to pay is asking you to treat **stated** words as observed. Same family as a spoken yes cannot promote: a ride-along is assumed, not observed. Spoken exclusivity and office-hours dollar-pain maps are stated, not WTP. Discovery traces must name who spoke. Do not stall a paid path on assumed advisor ride-along. Observed use or pay can.
+Someone saying an advisor's promise of exclusivity, or an Office Hours tip about price, proves customers will pay is mixing up a **tip** with real proof. Same family as a spoken yes: talk is not a sale.
+
+**Meaning.** Real proof = someone used the product, paid, came back, or referred a friend. An advisor's opinion or an Office Hours tip is a tip — not proof customers will pay. A promise of exclusivity is not that either. Do not delay a customer who wants to pay just to keep an advisor happy or "exclusive."
 
 | | Do this | Not this |
 |--|---------|----------|
-| **Name who spoke** | Write the advisor's name on the trace. Label it stated. | An unnamed "advisor said they would pay" as WTP. |
-| **Paid path first** | Keep the paid path moving. Advisor paper and office hours sit beside it. | Stalling the first payment until the advisor rides along or maps dollar pain. |
+| **Write who said it** | Write down who said what, and in what context. Treat it as that person's opinion until a real customer acts. You still need a named buyer who acts. | Someone in Office Hours says "founders hate paying $X" and you treat that as proof of what customers will pay, or you move forward with no named buyer. An unnamed "advisor said they would pay" treated as proof. |
+| **Paying customer first** | The advisor helps. A paying customer still gets the product. Wait for a real reason before promising exclusivity. | Delaying a customer who wants to pay because an advisor asked to stay exclusive. |
+| **Stay put** | Advisor notes stay notes. Stay where you are until someone uses the product, pays, comes back, or refers a friend. | The only things that happened this week were advisor meetings, lawyer talk, or exclusivity talk — and you still say you moved to the next stage. |
+
+**Implement.** Write down who said what. Check that first before you write exclusivity language. A week of only lawyer emails and advisor meetings = stay put. A named person who wants to pay can move you.
 
 Same family: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
@@ -1324,8 +1335,8 @@ Every company should maintain its own list. Starter prompts:
 - A security or compliance program as proof — see [a security program cannot promote](#house-rule-a-security-program-cannot-promote)  
 - A handful survey as optimal price, a CAC/LTV model at 0→1 as proof, or last decade's SaaS playbook as the aim — see [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed)  
 - Automating the playbook, or an agent team to skip a step with no named owner — see [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist)  
-- Cap-table / FAST / SAFE / 83(b) / counsel threads as proof — see [legal paper cannot promote](#house-rule-legal-paper-cannot-promote)  
-- Spoken exclusivity or office-hours dollar-pain as WTP, or stalling a paid path on advisor ride-along — see [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed)  
+- Cap table, SAFE, or lawyer emails as proof the product works — see [legal paper cannot promote](#house-rule-legal-paper-cannot-promote)  
+- An advisor's opinion or Office Hours tip as proof customers will pay, or delaying a paying customer to keep an advisor exclusive — see [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed)  
 - Commissioning custom legal agreements before revenue — see [starter legal templates](#starter-legal-templates)
 
 ---
@@ -1404,8 +1415,8 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.7 | House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). Same family as 2.8.6; do not merge. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): preview plugin [`plugin/`](../plugin/) — skills hyperlink this pack; hosted MCP is a read adapter only, not mentee-ready boards, not a marketplace. |
 | 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. SaaS 1.0 playbooks may be outdated; stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.9 | House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck. [Several ideas are allowed](#core-beliefs) (2.8.5) still stands. Not Day 0 homework. Not a third clock. Not an accelerate or optimize law. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
-| 2.8.10 | House rule: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). Same family as 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; do not merge. Cap-table / FAST / SAFE / 83(b) / counsel threads do not advance journey phase or Ready for human eyes. Legal paperwork is not observed product proof. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
-| 2.8.11 | House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. Spoken exclusivity / office-hours dollar-pain maps are stated, not WTP. Discovery traces must name who spoke. Do not stall a paid path on assumed advisor ride-along. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.10 | House rule: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). Same family as 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; do not merge. Cap table, SAFE, and lawyer emails do not prove the product works. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.11 | House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. An advisor's opinion is a tip, not proof. Write down who said it. Do not delay a paying customer. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 

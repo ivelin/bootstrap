@@ -28,9 +28,14 @@ const ESSAY_FORBIDDEN = [
   "a filing is not observed use",
   "File the paper on the side",
   "because the cap table is clean or FAST is signed",
+  "does not move you to the next stage by itself",
+  "proof strangers can try the product",
   "Stalling the first payment until the advisor rides along",
   "An unnamed \"advisor said they would pay\"",
   "Advisor paper and office hours sit beside it",
+  "founders hate paying $X",
+  "just to keep an advisor happy",
+  "A week of only lawyer emails and advisor meetings",
 ];
 
 function skillFiles() {

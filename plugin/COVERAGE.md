@@ -18,7 +18,7 @@ This is a **preview package**. Not mentee-ready hosted boards. Path 1 stays the 
 | OS 2.8.8 house rule (once) | `company-os/operating-system.md` | Full text of *there is no optimal price until people have paid and stayed*. Pointers only elsewhere. |
 | OS 2.8.9 house rule (once) | `company-os/operating-system.md` | Full text of *do not automate a step that should not exist*. One bottleneck this week. Pointers only elsewhere. |
 | OS 2.8.10 house rule (once) | `company-os/operating-system.md` | Full text of *legal paper cannot promote*. Cap-table / FAST / SAFE / 83(b) / counsel threads cannot promote. Pointers only elsewhere. |
-| OS 2.8.11 house rule (once) | `company-os/operating-system.md` | Full text of *advisor ride-along is assumed, not observed*. Spoken exclusivity is stated, not WTP. Pointers only elsewhere. |
+| OS 2.8.11 house rule (once) | `company-os/operating-system.md` | Full text of *advisor ride-along is assumed, not observed*. An advisor's opinion is a tip, not proof. Pointers only elsewhere. |
 | Day 0 question (once) | `company-os/operating-system.md` | Full text of *lifestyle or swinging for the fences*. First-hour / Path 1 keep a short pin + link. |
 | After First Hour standing rules (once) | `company-os/first-hour.md` | Full line: Path 1 is GitHub + install-os + local — not a hosted MCP connector; invite-only collab / Grok / whoami `https://mcp.bootstrap.pirin.ai/mcp`. Do not upload mentee work to Ivelin's GitHub. Path 1 stays `https://github.com/ivelin/bootstrap`. Skills / plugin README pin + link only. |
 | Hosted-read surface (local) | `mcp` unit + HTTP smoke | `/health` → `ok`. Public read tools. Gated whoami/labels 401 + WWW-Authenticate. No company-state. `marketplace: false`. |
@@ -123,13 +123,13 @@ Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Cap-table /
 
 ## Advisor ride-along visitor matrix
 
-Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. Spoken exclusivity is stated, not WTP. Name who spoke.
+Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. An advisor's opinion is a tip, not proof. Write down who said it.
 
 | # | Visitor | Surface | Done means | Evidence |
 |---|---------|---------|------------|----------|
 | H1 | Installing founder | `first-hour` + standing rules | Day 0 is thesis / ≥3 / snapshot. This rule is not a Day 0 checkbox. | File lock |
-| H2 | Mentee treating advisor exclusivity as WTP | `query-os-first` + `house-rule-pins` | Refuse. Name who spoke. Cite OS. | File lock + `spokenExclusivityIsWtp()===false` |
-| H3 | Specialist stalling a paid path on assumed advisor ride-along | same skills | Refuse. Do not stall. | File lock + `advisorRideAlongIsObserved()===false` |
+| H2 | Mentee treating advisor exclusivity as proof customers will pay | `query-os-first` + `house-rule-pins` | Refuse. Write down who said it. Cite OS. | File lock + `spokenExclusivityIsWtp()===false` |
+| H3 | Specialist delaying a paying customer to keep an advisor exclusive | same skills | Refuse. Do not delay. | File lock + `advisorRideAlongIsObserved()===false` |
 
 ## After-proof efficiency visitor matrix
 

@@ -93,18 +93,18 @@ Not Day 0 homework. Full rule once in the OS. Pins only here. Cap-table / FAST /
 
 ## Advisor ride-along visitor matrix
 
-Not Day 0 homework. Full rule once in the OS. Pins only here. Spoken exclusivity is stated, not WTP. Name who spoke.
+Not Day 0 homework. Full rule once in the OS. Pins only here. An advisor's opinion is a tip, not proof. Write down who said it.
 
 **Human**
 
 1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. This rule is not a Day 0 checkbox.
-2. Mentee treating advisor exclusivity or office-hours dollar-pain as WTP — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Refuse. Name who spoke. Cite the OS.
-3. Specialist stalling a paid path on assumed advisor ride-along — same skills. Do not stall.
+2. Mentee treating advisor exclusivity or an Office Hours tip as proof customers will pay — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Refuse. Write down who said it. Cite the OS.
+3. Specialist delaying a paying customer to keep an advisor exclusive — same skills. Do not delay.
 
 **Agent**
 
-1. Asked to treat advisor exclusivity as WTP — refuse. Cite the OS. `spokenExclusivityIsWtp()===false`.
-2. Asked to stall a paid path until the advisor rides along — refuse. Cite the OS. `advisorRideAlongIsObserved()===false`.
+1. Asked to treat advisor exclusivity as proof customers will pay — refuse. Cite the OS. `spokenExclusivityIsWtp()===false`.
+2. Asked to delay a paying customer until an advisor is exclusive — refuse. Cite the OS. `advisorRideAlongIsObserved()===false`.
 
 ## After-proof efficiency visitor matrix
 

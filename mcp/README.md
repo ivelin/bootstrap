@@ -88,7 +88,7 @@ Hard rules (OS 2.8.11):
 - There is no optimal price until people have paid and stayed
 - Do not automate a step that should not exist. Automate last. An agent team is automation.
 - Legal paper cannot promote
-- Advisor ride-along is assumed, not observed. Spoken exclusivity is stated, not WTP.
+- Advisor ride-along is assumed, not observed. An advisor's opinion is a tip, not proof customers will pay.
 
 ---
 

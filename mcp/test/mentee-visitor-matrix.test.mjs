@@ -408,12 +408,13 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
 
     assert.match(os, /### House rule: legal paper cannot promote/);
     assert.match(os, /house-rule-legal-paper-cannot-promote/);
-    assert.match(os, /a filing is not observed use/);
-    assert.match(os, /Legal paperwork is not observed product proof/);
+    assert.match(os, /does not prove the product works and does not move you to the next stage by itself/);
+    assert.match(os, /File the paper on the side/);
     assert.match(os, /### House rule: advisor ride-along is assumed, not observed/);
     assert.match(os, /house-rule-advisor-ride-along-is-assumed-not-observed/);
-    assert.match(os, /Discovery traces must name who spoke/);
-    assert.match(os, /Do not stall a paid path on assumed advisor ride-along/);
+    assert.match(os, /An advisor's opinion or an Office Hours tip is a tip/);
+    assert.match(os, /Write down who said what/);
+    assert.match(os, /just to keep an advisor happy/);
 
     const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
     assert.ok(doneWhen, "Done when section missing");
@@ -427,11 +428,12 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     }
     assert.match(firstHourOs, /house-rule-legal-paper-cannot-promote/);
     assert.match(firstHourOs, /house-rule-advisor-ride-along-is-assumed-not-observed/);
-    assert.match(firstHourOs, /I don't need a signed SAFE to advance/);
-    assert.match(firstHourOs, /An advisor's spoken exclusivity is stated, not WTP/);
-    assert.doesNotMatch(firstHourOs, /a filing is not observed use/);
+    assert.match(firstHourOs, /I don't need a signed SAFE to move to the next stage/);
+    assert.match(firstHourOs, /An advisor's opinion is a tip, not proof customers will pay/);
+    assert.doesNotMatch(firstHourOs, /does not move you to the next stage by itself/);
     assert.doesNotMatch(firstHourOs, /File the paper on the side/);
-    assert.doesNotMatch(firstHourOs, /Stalling the first payment until the advisor rides along/);
+    assert.doesNotMatch(firstHourOs, /founders hate paying \$X/);
+    assert.doesNotMatch(firstHourOs, /just to keep an advisor happy/);
 
     for (const body of [readme, coverage]) {
       assert.match(body, /Legal paper visitor matrix/);

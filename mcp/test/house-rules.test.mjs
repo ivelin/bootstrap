@@ -42,8 +42,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Do not automate a step that should not exist/);
     assert.match(blob, /Legal paper cannot promote/);
     assert.match(blob, /Advisor ride-along is assumed, not observed/);
-    assert.match(blob, /Spoken exclusivity is stated, not WTP/);
-    assert.match(blob, /Discovery traces must name who spoke/);
+    assert.match(blob, /An advisor's opinion is a tip, not proof customers will pay/);
+    assert.match(blob, /Write down who said it/);
     assert.match(blob, /An agent team is automation/);
     assert.match(blob, /Name the one bottleneck this week and work that/);
     assert.match(blob, /Several ideas may attack that same bottleneck/);

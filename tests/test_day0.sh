@@ -650,9 +650,14 @@ forbidden = [
     "a filing is not observed use",
     "File the paper on the side",
     "because the cap table is clean or FAST is signed",
+    "does not move you to the next stage by itself",
+    "proof strangers can try the product",
     "Stalling the first payment until the advisor rides along",
     "An unnamed \"advisor said they would pay\"",
     "Advisor paper and office hours sit beside it",
+    "founders hate paying $X",
+    "just to keep an advisor happy",
+    "A week of only lawyer emails and advisor meetings",
 ]
 required = {"path-1-default", "house-rule-pins", "first-hour", "query-os-first", "after-proof-efficiency", "when-to-write"}
 found = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
@@ -1100,17 +1105,17 @@ fi
 # Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
 if grep -q '^\*\*Version:\*\* 2.8.11' company-os/operating-system.md \
   && grep -q '### House rule: legal paper cannot promote' company-os/operating-system.md \
-  && grep -q 'a filing is not observed use' company-os/operating-system.md \
-  && grep -q 'Legal paperwork is not observed product proof' company-os/operating-system.md \
+  && grep -q 'does not prove the product works and does not move you to the next stage by itself' company-os/operating-system.md \
   && grep -q 'File the paper on the side' company-os/operating-system.md \
-  && grep -q 'because the cap table is clean or FAST is signed' company-os/operating-system.md \
+  && grep -q 'proof strangers can try the product' company-os/operating-system.md \
+  && grep -q 'because the cap table is clean or a SAFE is signed' company-os/operating-system.md \
   && grep -q 'v2.8.10' README.md \
   && grep -q 'house-rule-legal-paper-cannot-promote' README.md; then
   ok "OS 2.8.10 house-rule section has full rule and vocabulary"
 else
   not_ok "operating-system.md must hold the full 2.8.10 legal-paper house rule"
 fi
-if grep -q "I don't need a signed SAFE to advance" company-os/first-hour.md \
+if grep -q "I don't need a signed SAFE to move to the next stage" company-os/first-hour.md \
   && grep -q 'house-rule-legal-paper-cannot-promote' company-os/first-hour.md \
   && grep -q 'house-rule-legal-paper-cannot-promote' company-os/ai-instructions.md \
   && grep -q 'house-rule-legal-paper-cannot-promote' plugin/skills/house-rule-pins/SKILL.md \
@@ -1120,13 +1125,13 @@ if grep -q "I don't need a signed SAFE to advance" company-os/first-hour.md \
 else
   not_ok "first-hour, ai-instructions, and plugin skills must pin the 2.8.10 OS section"
 fi
-if ! grep -q 'a filing is not observed use' company-os/first-hour.md \
+if ! grep -q 'does not move you to the next stage by itself' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md \
   && ! grep -q 'File the paper on the side' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md \
-  && ! grep -q 'because the cap table is clean or FAST is signed' company-os/first-hour.md \
+  && ! grep -q 'proof strangers can try the product' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md; then
   ok "2.8.10 essay is not copied outside the OS section"
@@ -1151,19 +1156,19 @@ fi
 # Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
 if grep -q '^\*\*Version:\*\* 2.8.11' company-os/operating-system.md \
   && grep -q '### House rule: advisor ride-along is assumed, not observed' company-os/operating-system.md \
-  && grep -q 'Spoken exclusivity and office-hours dollar-pain maps are stated, not WTP' company-os/operating-system.md \
-  && grep -q 'Discovery traces must name who spoke' company-os/operating-system.md \
-  && grep -q 'Do not stall a paid path on assumed advisor ride-along' company-os/operating-system.md \
-  && grep -q 'Stalling the first payment until the advisor rides along' company-os/operating-system.md \
-  && grep -q 'An unnamed "advisor said they would pay"' company-os/operating-system.md \
-  && grep -q 'Advisor paper and office hours sit beside it' company-os/operating-system.md \
+  && grep -q 'Real proof = someone used the product, paid, came back, or referred a friend' company-os/operating-system.md \
+  && grep -q "An advisor's opinion or an Office Hours tip is a tip" company-os/operating-system.md \
+  && grep -q 'just to keep an advisor happy' company-os/operating-system.md \
+  && grep -q 'founders hate paying $X' company-os/operating-system.md \
+  && grep -q 'Write down who said what' company-os/operating-system.md \
+  && grep -q 'A week of only lawyer emails and advisor meetings' company-os/operating-system.md \
   && grep -q 'v2.8.11' README.md \
   && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' README.md; then
   ok "OS 2.8.11 house-rule section has full rule and vocabulary"
 else
   not_ok "operating-system.md must hold the full 2.8.11 advisor ride-along house rule"
 fi
-if grep -q "An advisor's spoken exclusivity is stated, not WTP" company-os/first-hour.md \
+if grep -q "An advisor's opinion is a tip, not proof customers will pay" company-os/first-hour.md \
   && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' company-os/first-hour.md \
   && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' company-os/ai-instructions.md \
   && grep -q 'house-rule-advisor-ride-along-is-assumed-not-observed' plugin/skills/house-rule-pins/SKILL.md \
@@ -1172,13 +1177,13 @@ if grep -q "An advisor's spoken exclusivity is stated, not WTP" company-os/first
 else
   not_ok "first-hour, ai-instructions, and plugin skills must pin the 2.8.11 OS section"
 fi
-if ! grep -q 'Stalling the first payment until the advisor rides along' company-os/first-hour.md \
+if ! grep -q 'founders hate paying $X' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md \
-  && ! grep -q 'An unnamed "advisor said they would pay"' company-os/first-hour.md \
+  && ! grep -q 'just to keep an advisor happy' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md \
-  && ! grep -q 'Advisor paper and office hours sit beside it' company-os/first-hour.md \
+  && ! grep -q 'A week of only lawyer emails and advisor meetings' company-os/first-hour.md \
     company-os/ai-instructions.md README.md \
     plugin/skills/*/SKILL.md; then
   ok "2.8.11 essay is not copied outside the OS section"
