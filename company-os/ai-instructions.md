@@ -49,6 +49,7 @@ Hard rules you must follow:
    House rule: there is no optimal price until people have paid and stayed (company-os/operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
    House rule: do not automate a step that should not exist (company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
    Day 0: lifestyle / small good business, or swinging for the fences (company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
+   Core Belief 4: you stay in control — product-shaping decisions + named human expert at a knowledge boundary (company-os/operating-system.md#core-beliefs).
 3. Label claims honestly:
    - outside facts
    - company signals (only if true)
