@@ -77,7 +77,7 @@ This is a Day 0 / Path 1 question. It is **not** a house rule and **not** a thir
    Build the tiniest version that can prove people will pay or get clear value. Expand only after you have real proof.
 
 4. **You stay in control.**  
-   AI does the heavy work. You decide the important things: what is true, what to build, when to move forward, and when to stop.
+   AI does the heavy work. You decide what is true, what to build, when to move forward, and when to stop. That includes staying in the decisions that shape the product — not only approving tickets or waiting on milestones from an agency, vendor, or bot. You do not need to write the code. When you hit a real knowledge boundary, hand off to a **named** human expert; do not pretend the tool closed the gap.
 
 5. **Everything important must be visible and explainable.**  
    You should always be able to ask “Where are we?” and get a clear, honest answer.
