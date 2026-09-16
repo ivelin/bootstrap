@@ -45,3 +45,6 @@ export const TOOL_POST_COMMENT =
 
 export const NOTE_OS_INFO_HOSTED =
   "Process docs, house rules, and a shared 0-1 board per company you can open.";
+
+export const NOTE_INVITE_SENT =
+  "They'll get an email at that address. They must sign in as that email, then accept the invite in their chat. You can also send them the sign-in link.";
