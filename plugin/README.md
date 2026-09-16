@@ -99,7 +99,7 @@ Not Day 0 homework. Full rule once in the OS. Pins only here. An advisor's opini
 
 1. Installing founder — [`first-hour`](skills/first-hour/SKILL.md). Thesis, ≥3 groups, one snapshot. This rule is not a Day 0 checkbox.
 2. Mentee treating advisor exclusivity or an Office Hours tip as proof customers will pay — [`query-os-first`](skills/query-os-first/SKILL.md) + [`house-rule-pins`](skills/house-rule-pins/SKILL.md). Refuse. Write down who said it. Cite the OS.
-3. Specialist delaying a paying customer to keep an advisor exclusive — same skills. Do not delay.
+3. Specialist whose advisor said stay exclusive, then a prospect asked to pay, and the founder delayed them — same skills. Do not delay.
 
 **Agent**
 

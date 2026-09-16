@@ -1087,12 +1087,8 @@ Someone saying you must finish the cap table, a SAFE, or a lawyer email thread b
 
 | | Do this | Not this |
 |--|---------|----------|
-| **Paper later** | Point at [starter legal templates](#starter-legal-templates). Get one stranger through the happy path. File the paper on the side. | Treating a signed SAFE, a tax filing, or a lawyer email as proof strangers can try the product. |
-| **Stay put** | Stay at the stage your product evidence supports. | Moving to the next stage because the cap table is clean or a SAFE is signed. |
-
-**Good.** The paper gets filed. One stranger still finishes the product.
-
-**Bad.** A week of only lawyer emails, and you claim you moved forward.
+| **Paper later** | The founder points at [starter legal templates](#starter-legal-templates). They get one stranger through the happy path this week. They file the paper on the side. | A lawyer emails that the SAFE is signed. Nobody has tried the product. The founder treats the signed paper as proof strangers can use it. |
+| **Stay put** | The paper gets filed. The company stays at the stage the product evidence supports. One stranger still finishes the product. | The week's only activity is lawyer emails. The cap table is clean. The founder still says the company moved to the next stage. |
 
 Same family: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). [A security program cannot promote](#house-rule-a-security-program-cannot-promote).
 
@@ -1104,9 +1100,9 @@ Someone saying an advisor's promise of exclusivity, or an Office Hours tip about
 
 | | Do this | Not this |
 |--|---------|----------|
-| **Write who said it** | Write down who said what, and in what context. Treat it as that person's opinion until a real customer acts. You still need a named buyer who acts. | Someone in Office Hours says "founders hate paying $X" and you treat that as proof of what customers will pay, or you move forward with no named buyer. An unnamed "advisor said they would pay" treated as proof. |
-| **Paying customer first** | The advisor helps. A paying customer still gets the product. Wait for a real reason before promising exclusivity. | Delaying a customer who wants to pay because an advisor asked to stay exclusive. |
-| **Stay put** | Advisor notes stay notes. Stay where you are until someone uses the product, pays, comes back, or refers a friend. | The only things that happened this week were advisor meetings, lawyer talk, or exclusivity talk — and you still say you moved to the next stage. |
+| **Paying customer first** | The advisor is helpful. A prospect asks to pay. The founder ships the pilot. Any exclusivity promise waits until there is a real reason. | An advisor says "don't take customers yet — stay exclusive to my introductions." A real prospect then asks to pay and start. The founder delays or turns them down so the advisor stays happy. The prospect's ask is the real signal; the advisor's exclusivity talk is only an opinion. |
+| **Write who said it** | In Office Hours someone says "founders hate paying $X for this." The founder writes "Person N said this in Office Hours" and treats it as that person's opinion. Discovery still looks for a named buyer who acts. | In Office Hours someone says "founders hate paying $X for this." The board treats that tip as proof of what customers will pay and moves on. No named buyer ever said they would pay. A room tip is not a sale. |
+| **Stay put** | Advisor notes stay in the notes. The company stays put until someone uses the product, pays, comes back, or refers a friend. | The week's only activity is advisor meetings, lawyer emails, or exclusivity talk. The founder still says the company moved to the next stage. Talk is not proof someone used or paid. |
 
 **Implement.** Write down who said what. Check that first before you write exclusivity language. A week of only lawyer emails and advisor meetings = stay put. A named person who wants to pay can move you.
 
@@ -1336,7 +1332,7 @@ Every company should maintain its own list. Starter prompts:
 - A handful survey as optimal price, a CAC/LTV model at 0→1 as proof, or last decade's SaaS playbook as the aim — see [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed)  
 - Automating the playbook, or an agent team to skip a step with no named owner — see [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist)  
 - Cap table, SAFE, or lawyer emails as proof the product works — see [legal paper cannot promote](#house-rule-legal-paper-cannot-promote)  
-- An advisor's opinion or Office Hours tip as proof customers will pay, or delaying a paying customer to keep an advisor exclusive — see [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed)  
+- An advisor says stay exclusive, then a prospect asks to pay, and the founder delays them — see [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed)  
 - Commissioning custom legal agreements before revenue — see [starter legal templates](#starter-legal-templates)
 
 ---

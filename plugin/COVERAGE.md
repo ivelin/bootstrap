@@ -129,7 +129,7 @@ Not Day 0 homework. Day 0 stays thesis / ≥3 groups / one snapshot. An advisor'
 |---|---------|---------|------------|----------|
 | H1 | Installing founder | `first-hour` + standing rules | Day 0 is thesis / ≥3 / snapshot. This rule is not a Day 0 checkbox. | File lock |
 | H2 | Mentee treating advisor exclusivity as proof customers will pay | `query-os-first` + `house-rule-pins` | Refuse. Write down who said it. Cite OS. | File lock + `spokenExclusivityIsWtp()===false` |
-| H3 | Specialist delaying a paying customer to keep an advisor exclusive | same skills | Refuse. Do not delay. | File lock + `advisorRideAlongIsObserved()===false` |
+| H3 | Specialist whose advisor said stay exclusive, then a prospect asked to pay, and the founder delayed them | same skills | Refuse. Do not delay. | File lock + `advisorRideAlongIsObserved()===false` |
 
 ## After-proof efficiency visitor matrix
 

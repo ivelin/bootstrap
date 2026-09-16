@@ -415,6 +415,11 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(os, /An advisor's opinion or an Office Hours tip is a tip/);
     assert.match(os, /Write down who said what/);
     assert.match(os, /just to keep an advisor happy/);
+    assert.match(os, /don't take customers yet/);
+    assert.match(os, /A real prospect then asks to pay/);
+    assert.match(os, /A room tip is not a sale/);
+    assert.match(os, /Person N said/);
+    assert.match(os, /A lawyer emails that the SAFE is signed/);
 
     const doneWhen = firstHourOs.match(/## Done when[\s\S]*?(?=\n## After this hour)/);
     assert.ok(doneWhen, "Done when section missing");
@@ -434,6 +439,10 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.doesNotMatch(firstHourOs, /File the paper on the side/);
     assert.doesNotMatch(firstHourOs, /founders hate paying \$X/);
     assert.doesNotMatch(firstHourOs, /just to keep an advisor happy/);
+    assert.doesNotMatch(firstHourOs, /don't take customers yet/);
+    assert.doesNotMatch(firstHourOs, /A room tip is not a sale/);
+    assert.doesNotMatch(firstHourOs, /Person N said/);
+    assert.doesNotMatch(firstHourOs, /A lawyer emails that the SAFE is signed/);
 
     for (const body of [readme, coverage]) {
       assert.match(body, /Legal paper visitor matrix/);

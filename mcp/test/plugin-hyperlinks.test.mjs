@@ -30,11 +30,17 @@ const ESSAY_FORBIDDEN = [
   "because the cap table is clean or FAST is signed",
   "does not move you to the next stage by itself",
   "proof strangers can try the product",
+  "A lawyer emails that the SAFE is signed",
   "Stalling the first payment until the advisor rides along",
   "An unnamed \"advisor said they would pay\"",
   "Advisor paper and office hours sit beside it",
   "founders hate paying $X",
   "just to keep an advisor happy",
+  "don't take customers yet",
+  "stay exclusive to my introductions",
+  "A real prospect then asks to pay",
+  "A room tip is not a sale",
+  "Person N said",
   "A week of only lawyer emails and advisor meetings",
 ];
 
