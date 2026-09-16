@@ -9,7 +9,7 @@ export type JourneyActor = {
   email?: string;
   sub?: string;
   principal?: string;
-  identityStore?: "memory" | "pglite" | "unset";
+  identityStore?: "memory" | "pglite" | "supabase" | "unset";
   reason?: string;
 };
 

@@ -22,6 +22,7 @@ Critical paths run in CI on **PGlite** before any prod synthetic. Evidence: `mcp
 | P4 | Existing user, second workspace | Allowlisted `mentee-a` (`alpha`) is invited to `zk0`, accepts with the **same** email JWT (already authenticated, not `not_invited`). whoami `["alpha", "zk0"]`; still no `bravo`. Re-invite to `zk0` → `already_member`. | Yes |
 | P5 | Grok App: “What companies do I have?” | Signed-in whoami + `bootstrap_list_companies` return `companies`. Process docs are not companies. `get_journey` is not listed. | Yes |
 | P6 | “Look at zk0” then invite | `bootstrap_use_company` zk0; reject a company you do not hold; `invite_member` without `company` uses the active company. | Yes |
+| P7 | “Where are we?” on zk0 | After use_company, `bootstrap_where_are_we` returns shared board (phase 1, hold, mermaid + snapshot). Not GitHub. | Yes |
 
 Rebuild-from-GitHub first user is still a **direct SQL insert** (Cos / empty project — never a PR agent). Link only: [First user (rebuild from GitHub)](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later users (login URL + Bearer accept; additional workspaces on the same user): [INVITE.md](INVITE.md).
 

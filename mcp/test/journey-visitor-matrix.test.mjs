@@ -144,6 +144,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(coverage, /No human Ivelin session claimed/);
     assert.deepEqual([...HOSTED_GATED_JOURNEY_TOOL_NAMES], [
       "get_journey",
+      "bootstrap_where_are_we",
       "put_journey",
       "post_comment",
       "subscribe_board",

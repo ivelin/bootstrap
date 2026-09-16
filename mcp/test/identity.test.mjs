@@ -164,7 +164,7 @@ describe("hosted identity (resource server, gated)", () => {
 
     const info = parseTool(await rpc("tools/call", { name: "bootstrap_os_info", arguments: {} }, 3));
     assert.equal(info.surface, "hosted-read");
-    assert.match(String(info.companyState), /Not hosted/i);
+    assert.match(String(info.companyState), /shared 0-1 board|Not hosted/i);
     assert.ok(!info.paths?.statePath);
     assert.equal(info.identityStore, "memory");
   });

@@ -47,7 +47,10 @@ import {
   NOTE_NOT_SIGNED_IN,
   NOTE_OS_INFO_HOSTED,
   TOOL_ACCEPT_INVITE,
+  TOOL_GET_JOURNEY,
   TOOL_INVITE_MEMBER,
+  TOOL_POST_COMMENT,
+  TOOL_PUT_JOURNEY,
   TOOL_LIST_COMPANIES,
   TOOL_LIST_COMPANY_LABELS_ALIAS,
   TOOL_USE_COMPANY,
@@ -743,9 +746,15 @@ function registerWriteTools(server: McpServer) {
 }
 
 function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
+  const storeOf = () => resolveJourneyStore(ctx.accessToken);
+  const companyOf = (input: { q?: string; company?: string; idea?: string }) => {
+    const parsed = parseJourneyQuery(input);
+    const fromSession = ctx.sessionKey ? getActiveCompany(ctx.sessionKey) : undefined;
+    return { companySlug: parsed.companySlug || fromSession, ideaSlug: parsed.ideaSlug };
+  };
   server.tool(
     "get_journey",
-    "Where are we — company (every idea) or company/idea. Surfaces constraint_this_week and ACL owners (not a free-text owner). Prefer webhook notify over polling. Comments never Advance. Gated. Invite-only collab pin in HOSTED_IDENTITY.md.",
+    TOOL_GET_JOURNEY,
     {
       q: z
         .string()
@@ -759,12 +768,48 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
         .describe("snapshot is always returned. meeting_doc is a generated view, not stored."),
     },
     async (input) => {
-      const store = resolveJourneyStore();
+      const store = storeOf();
       const actor = ctx.actor;
       if (!store || !actor?.authenticated) {
-        return err("Gated. Founder or advisor token required. Public OS tools stay open.");
+        return err(NOTE_NOT_SIGNED_IN);
       }
-      const parsed = parseJourneyQuery(input);
+      const parsed = companyOf(input);
+      if (!parsed.companySlug) {
+        return err("Say which company, or call bootstrap_use_company first.");
+      }
+      try {
+        return text(
+          await store.getJourney(actor, {
+            companySlug: parsed.companySlug,
+            ideaSlug: parsed.ideaSlug,
+            expandMeetingDoc: input.expand === "meeting_doc",
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "bootstrap_where_are_we",
+    TOOL_GET_JOURNEY,
+    {
+      q: z.string().optional().describe("Company, or company / idea"),
+      company: z.string().optional().describe("Company name, for example zk0"),
+      idea: z.string().optional(),
+      expand: z.enum(["snapshot", "meeting_doc"]).optional(),
+    },
+    async (input) => {
+      const store = storeOf();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err(NOTE_NOT_SIGNED_IN);
+      }
+      const parsed = companyOf(input);
+      if (!parsed.companySlug) {
+        return err("Say which company, or call bootstrap_use_company first.");
+      }
       try {
         return text(
           await store.getJourney(actor, {
@@ -781,7 +826,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
 
   server.tool(
     "put_journey",
-    "Overwrite clocks and versioned jsonb for one idea, including constraint_this_week (honest biggest bottleneck; not a clock; not a fun side quest). Founder or founder-authorized. One founder yes in chat — not a form, not mail. Refuse “new landing page” as the constraint when no one has talked to customers unless a written founder decision overrides.",
+    TOOL_PUT_JOURNEY,
     {
       company: z.string().describe("Company slug"),
       idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
@@ -809,7 +854,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
     },
     async (input) => {
-      const store = resolveJourneyStore();
+      const store = storeOf();
       const actor = ctx.actor;
       if (!store || !actor?.authenticated) {
         return err("Gated. Founder or founder-authorized token required.");
@@ -846,7 +891,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
     },
     async (input) => {
-      const store = resolveJourneyStore();
+      const store = storeOf();
       const actor = ctx.actor;
       if (!store || !actor?.authenticated) {
         return err("Gated. Advisor token required.");
@@ -881,7 +926,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
         .describe("Enqueue an email contract row. Resend lives on pirin.ai — not this repo."),
     },
     async (input) => {
-      const store = resolveJourneyStore();
+      const store = storeOf();
       const actor = ctx.actor;
       if (!store || !actor?.authenticated) {
         return err("Gated. Founder or founder-authorized token required.");
@@ -913,7 +958,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       principalKind: z.enum(["email", "sub"]),
     },
     async (input) => {
-      const store = resolveJourneyStore();
+      const store = storeOf();
       const actor = ctx.actor;
       if (!store || !actor?.authenticated) {
         return err("Gated. Founder or founder-authorized token required.");
@@ -940,7 +985,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       company: z.string().describe("Company slug"),
     },
     async (input) => {
-      const store = resolveJourneyStore();
+      const store = storeOf();
       const actor = ctx.actor;
       if (!store || !actor?.authenticated) {
         return err("Gated. Founder or advisor token required. Public OS tools stay open.");
@@ -970,7 +1015,7 @@ export function createBootstrapServer(
     const ctx = hosted ?? { whoami: anonymousWhoami() };
     registerGatedIdentityTools(server, ctx);
     registerInviteTools(server, ctx);
-    if (resolveJourneyStore()) {
+    if (resolveJourneyStore(ctx.accessToken)) {
       registerJourneyTools(server, ctx);
     }
   }

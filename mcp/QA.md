@@ -14,7 +14,7 @@
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
 | **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Path 1 alias stays open; collab-host handshake + gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
-| **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation; P1–P4 invite/accept; **P5 what companies**; **P6 use_company + invite**. No prod mail. PGlite only. |
+| **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation; P1–P4 invite/accept; **P5–P6** membership; **P7 where are we**. No prod mail. PGlite only. |
 | **Line coverage ≥ 80%** | `npm run test:coverage` | Node 22 `node --test` coverage on `dist/`. Lines ≥ 80. Not a substitute for the role-play matrix. |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 

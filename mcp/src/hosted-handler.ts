@@ -18,7 +18,8 @@ import {
   actorFromAuthorizationHeader,
   type JourneyActor,
 } from "./journey-auth.js";
-import { resolveJourneyStore } from "./journey.js";
+import { resolveJourneyStore, setLiveJourneyStoreFactory } from "./journey.js";
+import { createJourneyStore } from "./hosted-journey-store.js";
 import {
   authorizationServerMetadataDocument,
   hostedMcpResource,
@@ -28,6 +29,8 @@ import {
 } from "./oauth.js";
 import { createBootstrapServer } from "./server.js";
 import { hostedSessionKey } from "./hosted-company-context.js";
+
+setLiveJourneyStoreFactory(createJourneyStore);
 
 export function applyHostedReadEnv(): void {
   process.env.BOOTSTRAP_MCP_SURFACE = "hosted-read";
@@ -133,7 +136,7 @@ function isAuthorizationServerMetadataPath(pathname: string): boolean {
 }
 
 function resolveGatedActor(authorization: string | null): JourneyActor {
-  const store = resolveJourneyStore();
+  const store = resolveJourneyStore(parseBearerToken(authorization));
   const actor = actorFromAuthorizationHeader(authorization, store?.kind ?? "unset");
   if (!actor.authenticated) return actor;
   if (!store) {

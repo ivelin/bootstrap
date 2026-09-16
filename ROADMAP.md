@@ -188,6 +188,8 @@ These are the **only** benefits we actively invest in. Each row must keep a live
 | **3. Local MCP** | **v0.2 optional adapter** | One connector, isolated instances; same `company-state.json` + `where-are-we.py` |
 | **4. Hosted MCP** | **Preview only — not mentee-ready** | `plugin/` + HTTP read adapter. Invite-only collab pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Free docs are GitHub + install-os + local — not a hosted MCP connector. Project `bootstrap-os-mcp`; git-branch previews on `*.vercel.app` (same 401 as collab, not a silent 200 alias, not a pin). Contract: [`mcp/docs/HOSTED_IDENTITY.md`](mcp/docs/HOSTED_IDENTITY.md). Same public read tool names after auth. Gated whoami + company **labels**: HTTP 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login). This repo is the resource server only. Login / OAuth stay on pirin.ai `/bootstrap-os/login` (Web Builder). No login UI and no copy-paste `bos_` mint as the mentee path. No founder boards / company-state / `~/.bootstrap-os` on the host. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door. |
 
+Cos Advance (hosted board): invited companies share a 0-1 snapshot (`get_journey`) after journey SQL is applied on pirin.ai. Preview still does not attach. Local traces stay on disk. Path 1 stays the no-login front door. Still not a public catalog.
+
 MCP is **compass + logbook**, not a third harness.
 
 ---
