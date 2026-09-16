@@ -33,9 +33,10 @@ export const HOSTED_GATED_IDENTITY_TOOL_NAMES = [
  */
 export const HOSTED_PRE_ALLOWLIST_TOOL_NAMES = ["accept_invite"] as const;
 
-/** Branch-only journey board. Not on the production pin until this draft merges. Public OS tools stay open. */
+/** Shared 0-1 board. Listed only when a journey store is attached. */
 export const HOSTED_GATED_JOURNEY_TOOL_NAMES = [
   "get_journey",
+  "bootstrap_where_are_we",
   "put_journey",
   "post_comment",
   "subscribe_board",

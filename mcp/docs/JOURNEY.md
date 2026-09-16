@@ -1,6 +1,6 @@
-# FAST 0-1 journey (this branch, not production)
+# FAST 0-1 journey (hosted board)
 
-**Do not merge.** Invite-only collab pin (say once): [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md). Free docs are GitHub + install-os + local — not a hosted MCP connector. Login UI stays on pirin.ai only. No prod DB writes. No migrate/seed/live-probe of supabase-pirin-ai. Tests are **PGlite only**.
+Invite-only collab pin: [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md). After Cos applies journey SQL on pirin.ai, production `VERCEL_ENV=production` attaches the store. Preview never attaches. Tests are **PGlite only**. Login UI stays on pirin.ai. No migrate/seed/live-probe of supabase-pirin-ai from PR agents.
 
 Ivelin yes 2026-09-01 (via Cos): one source of truth for a FAST mentee 0-1 journey. **Company and idea are separate abstractions**, not a flattened composite key.
 
@@ -60,7 +60,7 @@ No PII dump. Same shape for webhook and the email contract row:
 
 HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Cookie-less handshake on the invite-only collab host is also 401. Path 1 founders use GitHub + local — they are not told to connect this host.
 
-These tools are **not** on the production pin. Stdio/path 3 does not register them (do not lift local traces).
+Listed on the production pin when the journey store is attached (Cos SQL applied). Stdio/path 3 does not register them (do not lift local traces). Membership is `bootstrap_company_labels` — same companies as whoami.
 
 ## Out
 

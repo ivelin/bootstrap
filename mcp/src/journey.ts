@@ -539,7 +539,7 @@ export function ideaPayload(
 }
 
 export type JourneyStore = {
-  readonly kind: "memory" | "pglite";
+  readonly kind: "memory" | "pglite" | "supabase";
   actorOnAllowlist(actor: JourneyActor): boolean;
   getJourney(
     actor: JourneyActor,
@@ -613,6 +613,7 @@ function forbidden(message: string) {
 export class MemoryJourneyStore implements JourneyStore {
   readonly kind = "memory" as const;
   private seq = 0;
+  allowMemberComments = false;
 
   constructor(
     private companies: CompanyRow[],
@@ -628,6 +629,42 @@ export class MemoryJourneyStore implements JourneyStore {
 
   actorOnAllowlist(actor: JourneyActor): boolean {
     return rlsVisibleAcl(this.acl, actor).length > 0;
+  }
+
+  ensureCompanyForMember(slug: string, actor: JourneyActor): CompanyRow {
+    const want = normalizeSlug(slug);
+    let company = this.companyBySlug(want);
+    if (!company) {
+      company = { id: this.nextId("co"), slug: want, label: want };
+      this.companies.push(company);
+      this.ideas.push({
+        id: this.nextId("id"),
+        companyId: company.id,
+        slug: "default",
+        name: want,
+        journeyPhase: 1,
+        loopStage: 1,
+        currentGate: "hold",
+        scoreboard: defaultScoreboard(),
+      });
+    }
+    if (actor.email) {
+      const exists = this.acl.some(
+        (row) =>
+          row.companyId === company.id &&
+          row.principalKind === "email" &&
+          row.principal === actor.email,
+      );
+      if (!exists) {
+        this.acl.push({
+          companyId: company.id,
+          principal: actor.email,
+          principalKind: "email",
+          role: "founder_authorized",
+        });
+      }
+    }
+    return company;
   }
 
   private nextId(prefix: string): string {
@@ -856,7 +893,10 @@ export class MemoryJourneyStore implements JourneyStore {
       return forbidden("unauthenticated");
     }
     const company = this.companyBySlug(input.companySlug);
-    if (!company || !canPostComment(this.acl, actor, company.id)) {
+    const mayComment = this.allowMemberComments
+      ? Boolean(company && canReadCompany(this.acl, actor, company.id))
+      : Boolean(company && canPostComment(this.acl, actor, company.id));
+    if (!company || !mayComment) {
       return forbidden("advisors post comments");
     }
     const ideas = this.ideasFor(company.id, input.ideaSlug);
@@ -1204,7 +1244,15 @@ export function setJourneyStoreForTests(store: JourneyStore | null | undefined):
   testStore = store;
 }
 
-export function resolveJourneyStore(): JourneyStore | null {
+let liveStoreFactory: ((accessToken?: string) => JourneyStore | null) | undefined;
+
+export function setLiveJourneyStoreFactory(
+  factory: ((accessToken?: string) => JourneyStore | null) | undefined,
+): void {
+  liveStoreFactory = factory;
+}
+
+export function resolveJourneyStore(accessToken?: string): JourneyStore | null {
   if (testStore !== undefined) return testStore;
-  return null;
+  return liveStoreFactory?.(accessToken) ?? null;
 }

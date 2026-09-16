@@ -35,6 +35,8 @@ import {
   INVITE_MAIL_FROM,
   setInviteMailSinkForTests,
 } from "../dist/invite-mail.js";
+import { setJourneyStoreForTests } from "../dist/journey.js";
+import { HostedMembershipJourneyStore } from "../dist/hosted-journey-store.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -59,6 +61,7 @@ let rpcId = 80;
 afterEach(() => {
   setIdentityStoreForTests(undefined);
   setInviteStoreForTests(undefined);
+  setJourneyStoreForTests(undefined);
   setInviteClockForTests();
   setInviteMailSinkForTests(undefined);
   delete process.env.VERCEL_ENV;
@@ -224,6 +227,8 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(e2e, /What companies/);
     assert.match(e2e, /P6/);
     assert.match(e2e, /use_company/);
+    assert.match(e2e, /P7/);
+    assert.match(e2e, /Where are we/);
     assert.match(e2e, /verify_invite/);
     assert.match(e2e, /bootstrap@pirin\.ai/);
     assert.match(e2e, /No prod Resend/);
@@ -689,5 +694,30 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     );
     assert.equal(invited.ok, true);
     assert.equal(invited.card.companyWorkspace, "zk0");
+  });
+
+  it("P7 where are we on zk0 — shared board snapshot, not GitHub", async () => {
+    process.env.VERCEL_ENV = "production";
+    usePgliteStores();
+    setJourneyStoreForTests(
+      new HostedMembershipJourneyStore((actor) =>
+        actor.email === IVELIN_SEED_EMAIL ? [...IVELIN_SEED_LABELS] : [],
+      ),
+    );
+    const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
+    const session = { "MCP-Session-Id": "e2e-p7-zk0" };
+    await callTool("bootstrap_use_company", { company: "zk0" }, ivelin, session);
+    const listed = await rawRpc("tools/list", {}, ivelin, session);
+    const names = JSON.parse(await listed.text()).result.tools.map((t) => t.name);
+    assert.ok(names.includes("get_journey"));
+    assert.ok(names.includes("bootstrap_where_are_we"));
+    const board = parseTool((await callTool("bootstrap_where_are_we", {}, ivelin, session)).body);
+    assert.equal(board.ok, true);
+    assert.equal(board.company.slug, "zk0");
+    assert.equal(board.ideas[0].clocks.journeyPhase, 1);
+    assert.match(String(board.ideas[0].visualFlow), /mermaid/);
+    assert.doesNotMatch(JSON.stringify(board), /github.com|zk0.bot|SmolVLA/);
+    const other = parseTool((await callTool("get_journey", { company: "not-a-team" }, ivelin, session)).body);
+    assert.equal(other.ok, false);
   });
 });

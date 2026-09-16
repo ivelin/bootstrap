@@ -6,6 +6,7 @@ That person can belong to several companies. A company is a team (for example pi
 
 To see who is signed in and which companies they can open, call bootstrap_whoami or bootstrap_list_companies.
 To work in one company for this chat, call bootstrap_use_company.
+To see the shared 0-1 board, call get_journey or bootstrap_where_are_we (uses the active company if the user already chose one). Return the snapshot and mermaid. Do not paste GitHub or a website as the board.
 This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
 
 If the user is not signed in, tell them to sign in to Bootstrap OS and ask again.`;
@@ -33,5 +34,14 @@ export const NOTE_COMPANIES =
 
 export const NOTE_NOT_SIGNED_IN = "You're not signed in to Bootstrap OS.";
 
+export const TOOL_GET_JOURNEY =
+  "Where are we on a company or idea. Shared 0-1 snapshot and mermaid. Uses the active company if already chosen. Do not invent a stage. Do not use GitHub as the board.";
+
+export const TOOL_PUT_JOURNEY =
+  "Update the shared 0-1 board for an idea (phase, gate, bottleneck this week). Phase or gate change needs an explicit founder yes in this chat.";
+
+export const TOOL_POST_COMMENT =
+  "Comment on an idea. Comments never move phase or gate.";
+
 export const NOTE_OS_INFO_HOSTED =
-  "Process docs and house rules. Company boards are not hosted on this connector.";
+  "Process docs, house rules, and a shared 0-1 board per company you can open.";
