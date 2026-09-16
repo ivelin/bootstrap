@@ -166,7 +166,12 @@ describe("hosted access layer (one login, many companies)", () => {
       ),
     );
     assert.equal(invited.ok, true);
-    assert.equal(invited.card.companyWorkspace, "zk0");
+    assert.equal(invited.company, "zk0");
+    assert.equal(invited.invited, "bill@example.test");
+    assert.match(invited.signInUrl, /^https:\/\/pirin\.ai\/bootstrap-os\/login\?invite=/);
+    assert.match(invited.note, /email at that address/);
+    const blob = JSON.stringify(invited);
+    assert.doesNotMatch(blob, /webhook|cron|mail mode|queuedMail|never talks to Resend/i);
   });
 
   it("lists journey tools only when a store is attached", async () => {

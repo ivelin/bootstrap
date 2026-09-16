@@ -179,6 +179,11 @@ function parseTool(result) {
   }
 }
 
+function inviteTokenFromPublic(payload) {
+  const url = new URL(payload.signInUrl);
+  return url.searchParams.get("invite");
+}
+
 async function whoamiPass(token) {
   const res = await rawRpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, token);
   const text = await res.text();
@@ -405,19 +410,14 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.equal(invited.res.status, 200, invited.text);
     const payload = parseTool(invited.body);
     assert.equal(payload.ok, true);
-    assert.equal(payload.card.card, "accept_invite");
-    assert.equal(payload.card.shape, "DraftExternalMessage");
-    assert.equal(payload.card.from.email, IVELIN_SEED_EMAIL);
-    assert.equal(payload.card.to.email, BILL_EMAIL);
-    assert.equal(payload.card.companyWorkspace, "zk0");
-    assert.equal(payload.card.action, "Accept");
-    assert.equal(payload.queued.channel, "in_chat");
-    assert.equal(payload.queuedMail.channel, "email");
-    assert.equal(payload.queuedMail.from, INVITE_MAIL_FROM);
-    assert.equal(payload.authCard.card, "invite_signup");
-    assert.equal(payload.authCard.action, "Sign in or create account");
-    assert.equal(payload.authCard.from.email, INVITE_MAIL_FROM);
-    assert.match(payload.card.inviteToken, /^inv_/);
+    assert.equal(payload.from, IVELIN_SEED_EMAIL);
+    assert.equal(payload.invited, BILL_EMAIL);
+    assert.equal(payload.company, "zk0");
+    assert.match(payload.signInUrl, /^https:\/\/pirin\.ai\/bootstrap-os\/login\?invite=inv_/);
+    assert.match(payload.note, /email at that address/);
+    const blob = JSON.stringify(payload);
+    assert.doesNotMatch(blob, /webhook|cron|queuedMail|mail mode|never talks to Resend/i);
+    assert.match(inviteTokenFromPublic(payload), /^inv_/);
     const outbox = (await db.query("SELECT channel, payload FROM bootstrap_mcp_invite_outbox")).rows;
     const inChat = outbox.filter((row) => row.channel === "in_chat");
     const email = outbox.filter((row) => row.channel === "email");
@@ -483,7 +483,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const created = parseTool(
       (await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "zk0" }, ivelin)).body,
     );
-    const token = created.card.inviteToken;
+    const token = inviteTokenFromPublic(created);
 
     await assertGated401(
       await rawRpc("tools/call", { name: "accept_invite", arguments: { token } }),
@@ -543,9 +543,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
         .body,
     );
     assert.equal(created.ok, true);
-    const token = created.card.inviteToken;
-    assert.equal(created.mail.mode, "dry-run");
-    assert.equal(created.mail.from, INVITE_MAIL_FROM);
+    const token = inviteTokenFromPublic(created);
     assert.equal(seen.length, 1);
     assert.equal(seen[0].from, INVITE_MAIL_FROM);
     assert.equal(seen[0].to, ZK0_OUTSIDER_EMAIL);
@@ -609,7 +607,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
         .body,
     );
     assert.equal(created.ok, true);
-    const token = created.card.inviteToken;
+    const token = inviteTokenFromPublic(created);
 
     const accepted = await callTool("accept_invite", { token }, aTok);
     assert.equal(accepted.res.status, 200, accepted.text);
@@ -693,7 +691,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
       (await callTool("invite_member", { email: "p6-invitee@example.test" }, ivelin, session)).body,
     );
     assert.equal(invited.ok, true);
-    assert.equal(invited.card.companyWorkspace, "zk0");
+    assert.equal(invited.company, "zk0");
   });
 
   it("P7 where are we on zk0 — shared board snapshot, not GitHub", async () => {

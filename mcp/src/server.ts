@@ -44,6 +44,7 @@ import {
 import {
   HOSTED_MCP_INSTRUCTIONS,
   NOTE_COMPANIES,
+  NOTE_INVITE_SENT,
   NOTE_NOT_SIGNED_IN,
   NOTE_OS_INFO_HOSTED,
   TOOL_ACCEPT_INVITE,
@@ -58,9 +59,9 @@ import {
 } from "./hosted-copy.js";
 import { inviteFailMessage, resolveInviteStore } from "./invite.js";
 import {
-  INVITE_MAIL_FROM,
   buildInviteMail,
   deliverInviteMailDryRun,
+  inviteSignupUrl,
   notifyPirinInviteMail,
   resolveInviteMailMode,
 } from "./invite-mail.js";
@@ -355,12 +356,6 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
         );
         if (!result.ok) return err(inviteFailMessage(result));
         const mailMode = resolveInviteMailMode();
-        const mail = {
-          mode: mailMode,
-          from: INVITE_MAIL_FROM,
-          queued: Boolean(result.queuedMail),
-          note: "pirin-ai production sends invite mail (webhook kick; cron retries). MCP never talks to Resend.",
-        };
         if (mailMode === "dry-run") {
           deliverInviteMailDryRun(
             buildInviteMail({
@@ -378,7 +373,15 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
           companyLabel: result.card.companyWorkspace,
           inviteToken: result.card.inviteToken,
         }).catch(() => undefined);
-        return text({ ...result, mail });
+        return text({
+          ok: true,
+          invited: result.card.to.email,
+          company: result.card.companyWorkspace,
+          from: result.card.from.email,
+          expiresAt: result.card.expiresAt,
+          signInUrl: inviteSignupUrl(result.card.inviteToken),
+          note: NOTE_INVITE_SENT,
+        });
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));
       }
