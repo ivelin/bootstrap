@@ -27,12 +27,30 @@ describe("hosted membership journey store", () => {
       false,
     );
     assert.equal(
-      (await store.putJourney(ivelin, { companySlug: "zk0", why: "yes", founderYes: true, constraintThisWeek: "talk" })).ok,
+      (
+        await store.putJourney(ivelin, {
+          companySlug: "zk0",
+          why: "yes",
+          founderYes: true,
+          currentGate: "hold",
+          constraintThisWeek: "talk",
+        })
+      ).ok,
       true,
     );
     assert.equal((await store.postComment(ivelin, { companySlug: "zk0", body: "note" })).ok, true);
     const after = await store.getJourney(ivelin, { companySlug: "zk0" });
     assert.equal(after.ideas[0].clocks.journeyPhase, 1);
+    assert.ok(Array.isArray(after.ideas[0].lastTransitions));
+    assert.ok(after.ideas[0].lastTransitions.length >= 1);
+    assert.equal(after.ideas[0].lastTransitions[0].who, "ivelin@pirin.ai");
+    assert.ok(Array.isArray(after.audit));
+    assert.ok(after.audit.length >= 1);
+    const expanded = await store.getJourney(ivelin, {
+      companySlug: "zk0",
+      expandMeetingDoc: true,
+    });
+    assert.equal(expanded.ideas[0].comments[0].body, "note");
   });
 
   it("createJourneyStore is null off production; supabase rpc failures stay closed", async () => {
