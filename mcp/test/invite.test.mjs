@@ -114,7 +114,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(invite, /bootstrap@pirin\.ai/);
     assert.match(invite, /login\?invite=/);
     assert.match(invite, /service_role/);
-    assert.match(invite, /Cos yes/);
+    assert.match(invite, /no Cos yes per invite/);
     assert.match(invite, /PGlite/);
     assert.match(invite, /supabase-pirin-ai/);
     assert.match(invite, /invite_store_unset/);

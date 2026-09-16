@@ -1,16 +1,16 @@
 /**
  * Outsider invite mail contract (MCP side).
  * From: bootstrap@pirin.ai only. Never ivelin@ / cos@.
- * This repo enqueues + builds the body. pirin-ai Resend sends after Cos yes.
- * Default off. dry-run for tests. Never blast prod mail from MCP / CI.
+ * This repo enqueues + builds the body. pirin-ai Resend sends on production.
+ * Default off here. dry-run for tests. Never blast prod mail from MCP / CI.
  */
-import { PIRIN_ORIGIN } from "./oauth.js";
+import { PIRIN_OAUTH_ORIGIN, PIRIN_ORIGIN } from "./oauth.js";
 
 export const INVITE_MAIL_FROM = "bootstrap@pirin.ai";
 export const INVITE_SIGNUP_QUERY = "invite";
 
 export const INVITE_MAIL_NOTE =
-  "Universal path for any agentic client. Web Builder owns /bootstrap-os/login. Sign in as this email if you already have a pirin.ai account; otherwise create the account for this invitee email only. Then accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai only — Cos yes before prod Resend.";
+  "Universal path for any agentic client. Web Builder owns /bootstrap-os/login. Sign in as this email if you already have a pirin.ai account; otherwise create the account for this invitee email only. Then accept_invite with the same token. pirin-ai sends From bootstrap@pirin.ai on production.";
 
 export type InviteMailMode = "off" | "dry-run";
 
@@ -45,6 +45,62 @@ export function inviteSignupUrl(token: string): string {
   const url = new URL(`${PIRIN_ORIGIN}/bootstrap-os/login`);
   url.searchParams.set(INVITE_SIGNUP_QUERY, token);
   return url.toString();
+}
+
+export const DEFAULT_PIRIN_INVITE_MAIL_URL = `${PIRIN_OAUTH_ORIGIN}/api/bootstrap-os/invite-mail`;
+
+export type PirinInviteMailKick = {
+  inviteeEmail: string;
+  invitedByEmail: string;
+  companyLabel: string;
+  inviteToken: string;
+};
+
+/** Production MCP kicks pirin to send immediately. Preview/CI never POST. */
+export function shouldPostPirinInviteMail(env: NodeJS.ProcessEnv = process.env): boolean {
+  if (env.VERCEL_ENV !== "production") return false;
+  return Boolean(env.BOOTSTRAP_INVITE_MAIL_SECRET?.trim());
+}
+
+function pirinInviteMailUrl(env: NodeJS.ProcessEnv): string | null {
+  const raw = (env.BOOTSTRAP_INVITE_MAIL_URL || DEFAULT_PIRIN_INVITE_MAIL_URL).trim();
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return null;
+    const host = url.hostname.toLowerCase();
+    if (host !== "pirin.ai" && host !== "www.pirin.ai") return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+export async function notifyPirinInviteMail(
+  kick: PirinInviteMailKick,
+  env: NodeJS.ProcessEnv = process.env,
+  fetchImpl: typeof fetch = fetch,
+): Promise<{ skipped?: string; status?: number }> {
+  if (env.VERCEL_ENV !== "production") return { skipped: "not_production" };
+  const secret = env.BOOTSTRAP_INVITE_MAIL_SECRET?.trim();
+  if (!secret) return { skipped: "secret_unset" };
+  const url = pirinInviteMailUrl(env);
+  if (!url) return { skipped: "url_not_pirin" };
+  const res = await fetchImpl(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${secret}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      inviteeEmail: kick.inviteeEmail,
+      invitedByEmail: kick.invitedByEmail,
+      companyLabel: kick.companyLabel,
+      inviteToken: kick.inviteToken,
+      signupUrl: inviteSignupUrl(kick.inviteToken),
+    }),
+    signal: AbortSignal.timeout(10_000),
+  });
+  return { status: res.status };
 }
 
 export function assertInviteMailFrom(from: string): asserts from is typeof INVITE_MAIL_FROM {

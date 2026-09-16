@@ -104,7 +104,7 @@ Email payload is enough for bootstrap@ mail: who invited, invitee email, company
 
 **From address (hard):** `bootstrap@pirin.ai` only. Never `ivelin@` / `cos@`.
 
-**Who sends:** this repo **enqueues**. pirin-ai **owns Resend**. MCP default is mail **off** (`BOOTSTRAP_INVITE_MAIL=off`). `dry-run` builds the body for tests. There is **no prod send** from this host. Cos yeses before pirin-ai enables the poller.
+**Who sends:** this repo **enqueues**. pirin-ai **owns Resend**. MCP default is mail **off** (`BOOTSTRAP_INVITE_MAIL=off`). `dry-run` builds the body for tests. There is **no prod send** from this host. On Vercel production, `invite_member` POSTs pirin `/api/bootstrap-os/invite-mail` (shared secret; www.pirin.ai only). Cron retries undelivered outbox rows. Preview never POSTs. Team members may `invite_member` for workspaces they already belong to; no Cos yes per invite.
 
 ### Poll contract (pirin-ai, service_role)
 
@@ -138,13 +138,13 @@ Hosted identity + invite Supabase adapters attach **only** when `VERCEL_ENV=prod
 2. First user = SQL insert (link above). Do **not** apply `mcp/test/pglite/identity-schema.sql` to prod.
 3. Later users use `invite_member` / `accept_invite`. Additional workspaces are extra memberships on the same user. Do not invent journey stage or Advance.
 
-PR CI is **PGlite only**. Do not migrate, seed, or live-probe `supabase-pirin-ai`. Do not merge to `main` if `mcp-ci` or Day-0 `ci` is red. A chat claim from any agent is not evidence — `cd mcp && npm run ci` is. Do not send a real person an invite link until the P4 role-play is green and Cos yeses. CI green ≠ ready for human eyes.
+PR CI is **PGlite only**. Do not migrate, seed, or live-probe `supabase-pirin-ai`. Do not merge to `main` if `mcp-ci` or Day-0 `ci` is red. A chat claim from any agent is not evidence — `cd mcp && npm run ci` is. CI green ≠ ready for human eyes. pirin-ai production sends invite mail for member invites.
 
 ## Deferred
 
 | | |
 |--|--|
-| Prod Resend | pirin-ai poller. **Cos yes before enable.** This PR does not blast mail. |
+| Prod Resend | pirin-ai poller on production. This host never sends. |
 | QR render / SMS | Payload includes `qrPayload` (the signup URL). Image / SMS later. |
 | Login UI | Never in this repo. pirin.ai `/bootstrap-os/login` is OAuth + sign-in/create-account furniture. |
 | Role enum / table rename | `bootstrap_mcp_mentees` stays the user table. Roles later on membership, not on the person. |

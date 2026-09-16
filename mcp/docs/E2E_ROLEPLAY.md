@@ -43,4 +43,4 @@ Do **not** run these from a PR cloud agent. Optional maintainer probe of **read-
 
 ## Out
 
-No live prod mutate. No migrate / seed / live-probe of `supabase-pirin-ai` from this repo’s PR agents. No login UI. No prod Resend from this repo (Cos yes on pirin-ai first). No mentee roster. No second host. No marketplace.
+No live prod mutate. No migrate / seed / live-probe of `supabase-pirin-ai` from this repo’s PR agents. No login UI. No prod Resend from this repo. No mentee roster. No second host. No marketplace.

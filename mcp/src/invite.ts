@@ -3,7 +3,7 @@
  * Fail-closed allowlist: invite creates/unlocks user rows (table: bootstrap_mcp_mentees).
  * OAuth alone is not enough. First user stays a SQL insert — HOSTED_IDENTITY.md.
  * Same user, many workspaces. Login URL is the universal path; in-chat Accept is optional.
- * Outsider mail: enqueue email outbox. pirin-ai Resend From bootstrap@pirin.ai after Cos yes.
+ * Outsider mail: enqueue email outbox. pirin-ai Resend From bootstrap@pirin.ai on production.
  * Never supabase-pirin-ai from PR CI. Preview/dev never attach the prod store.
  */
 import { randomBytes } from "node:crypto";
@@ -352,7 +352,7 @@ export function inviteEmailOutboxPayload(card: AcceptInviteCard): Record<string,
     qrPayload: signupUrl,
     inviteToken: card.inviteToken,
     expiresAt: card.expiresAt,
-    note: "Mailer handoff. pirin-ai Resend From bootstrap@pirin.ai only. Token is on this channel so the poller can send ?invite=. in_chat never stores the token. Cos yes before prod send.",
+    note: "Mailer handoff. pirin-ai Resend From bootstrap@pirin.ai only. Token is on this channel so the webhook/cron can send ?invite=. in_chat never stores the token. pirin production sends.",
   };
 }
 
