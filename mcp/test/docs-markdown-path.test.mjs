@@ -58,6 +58,12 @@ describe("markdown install path (zero MCP required)", () => {
       assert.match(body, /stated, synthetic, and observed/i);
       assert.match(body, /Likert/);
       assert.match(body, /then map/);
+      assert.match(body, /Core Belief 4:/);
+      assert.match(body, /product-shaping decisions/);
+      assert.match(body, /named human at a knowledge boundary/);
+      assert.match(body, /operating-system\.md#core-beliefs/);
+      assert.doesNotMatch(body, /approving tickets or waiting on milestones/);
+      assert.doesNotMatch(body, /do not pretend the tool closed the gap/);
       assert.ok(body.length > 200);
       const firstHour = readOsDoc("first-hour");
       assert.match(firstHour, /demographic one-liner/i);

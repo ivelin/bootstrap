@@ -1078,6 +1078,26 @@ else
   not_ok "plugin README and COVERAGE must name the do-not-automate visitor matrix"
 fi
 
+# --- Core Belief 4 pin (ai-instructions only; essay stays in OS) ---
+# Mirror pin + #core-beliefs. No new belief, no version bump, no essay reprint.
+if grep -qF '**You stay in control.**' company-os/operating-system.md \
+  && grep -qF '**named** human expert' company-os/operating-system.md \
+  && grep -q 'Core Belief 4:' company-os/ai-instructions.md \
+  && grep -q 'product-shaping decisions' company-os/ai-instructions.md \
+  && grep -q 'named human at a knowledge boundary' company-os/ai-instructions.md \
+  && grep -q 'operating-system.md#core-beliefs' company-os/ai-instructions.md; then
+  ok "ai-instructions pins Core Belief 4 at the OS Core Beliefs section"
+else
+  not_ok "ai-instructions.md must pin Core Belief 4 to operating-system.md#core-beliefs"
+fi
+if ! grep -q 'approving tickets or waiting on milestones' company-os/ai-instructions.md \
+  && ! grep -q 'do not pretend the tool closed the gap' company-os/ai-instructions.md \
+  && ! grep -q 'You do not need to write the code' company-os/ai-instructions.md; then
+  ok "Core Belief 4 essay is not copied into ai-instructions"
+else
+  not_ok "do not reprint the Core Belief 4 essay in ai-instructions.md"
+fi
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then
   exit 1
