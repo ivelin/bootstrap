@@ -1,0 +1,97 @@
+{
+  "note": "Copied from local company-state.json and one Pirin Hold trace. gateStatus open maps to hold. No GitHub. No zk0 README clocks.",
+  "who": "ivelin@pirin.ai",
+  "companies": [
+    {
+      "slug": "pirin",
+      "source": "/home/ivelin/pirin-ai/company/state/company-state.json",
+      "idea": "default",
+      "journeyPhase": 6,
+      "loopStage": 6,
+      "currentGate": "hold",
+      "gateStatusInFile": "open",
+      "gateStatusMapping": "open is not Advance; hosted enum hold",
+      "scoreboard": {
+        "schema_version": 1,
+        "hypothesis": "Non-technical solo founders will install and run a Bootstrap OS with structured help; a paid intensive plus free Ground Level for FI-equivalent alumni can prove and monetize that value.",
+        "readyForHumanEyes": { "status": "green" },
+        "autonomyPosture": "strict",
+        "openQuestions": [
+          "Is Bootstrap OS Intensive the primary paid beachhead, or Ground Level → Next Level?",
+          "Confirm or override: 3 paid deposits to open a first cohort; 0 paid by 2026-09-16 holds intensive as primary?",
+          "Which ICP rank survives an evidence-labeled reward/risk pass?",
+          "What experiment makes zk0 community contribution tangible (not only stars/views)?"
+        ],
+        "lastAction": "weekly_snapshot_2026-08-17",
+        "constraint_this_week": "Install page shipped self-serve (PR #130). WTP unchanged. Intensive one-number: 3 paid deposits to open; 0 paid by 2026-09-16 holds intensive as primary. Dogfood: Totbox+Pirin. zk0: Hold full board."
+      },
+      "events": [
+        {
+          "at": "2026-08-06T21:27:49.000Z",
+          "action": "hold",
+          "why": "hold_zk0_full_bootstrap_os_instance — traces/decisions/2026-08-06-hold-zk0-bootstrap-os-instance.md"
+        },
+        {
+          "at": "2026-08-06T22:00:00.000Z",
+          "action": "hold",
+          "why": "Hold journey at 6; iterate intensive numbers/ICP; stamp weekly ritual — docs/company-os/instance/WEEKLY-SNAPSHOT-2026-08-06.md"
+        },
+        {
+          "at": "2026-08-17T00:00:00.000Z",
+          "action": "hold",
+          "why": "Hold journey at 6; self-serve install is the door; 3 paid deposits to open a cohort; 0 paid by 2026-09-16 holds intensive as primary — docs/company-os/instance/WEEKLY-SNAPSHOT-2026-08-17.md"
+        }
+      ]
+    },
+    {
+      "slug": "totbox",
+      "source": "/home/ivelin/totboxapp/company/state/company-state.json",
+      "idea": "default",
+      "journeyPhase": 6,
+      "loopStage": 4,
+      "currentGate": "hold",
+      "gateStatusInFile": "open",
+      "gateStatusMapping": "open is not Advance; hosted enum hold",
+      "scoreboard": {
+        "schema_version": 1,
+        "readyForHumanEyes": { "status": "unknown" },
+        "autonomyPosture": "strict",
+        "openQuestions": [
+          "What numbers must a real job hit before we build more?",
+          "When is the next real household job, with a short honest write-up after?",
+          "When is the next weekly “where do we stand?” check-in?",
+          "Is Ready for human eyes green before any mentor “try this product” ask?"
+        ],
+        "lastAction": "ready_for_human_eyes:unknown",
+        "constraint_this_week": "Engineering tests look good. That is not proof people will pay or that real jobs get easier. Real household jobs still needed."
+      },
+      "events": []
+    },
+    {
+      "slug": "zk0",
+      "source": "/home/ivelin/pirin-ai/traces/decisions/2026-08-06-hold-zk0-bootstrap-os-instance.md",
+      "idea": "default",
+      "journeyPhase": 1,
+      "loopStage": 1,
+      "currentGate": "hold",
+      "note": "No zk0 company-state.json. Do not copy README stage. Clocks stay empty-board defaults. Copy Hold/Iterate engagement only.",
+      "scoreboard": {
+        "schema_version": 1,
+        "readyForHumanEyes": { "status": "unknown" },
+        "autonomyPosture": "strict",
+        "openQuestions": [
+          "What experiment makes zk0 community contribution tangible (not only stars/views)?"
+        ],
+        "lastAction": "hold_zk0_full_bootstrap_os_instance",
+        "constraint_this_week": "Community engagement that produces tangible project progress — not only stars, views, or cool-topic interest."
+      },
+      "events": [
+        {
+          "at": "2026-08-06T21:27:49.000Z",
+          "action": "hold",
+          "why": "Hold full zk0 Bootstrap OS instance; Iterate engagement model. Same OS filter as Totbox/Pirin. Real contribution not passed. traces/decisions/2026-08-06-hold-zk0-bootstrap-os-instance.md"
+        }
+      ]
+    }
+  ]
+}
