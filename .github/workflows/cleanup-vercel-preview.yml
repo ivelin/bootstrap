@@ -1,0 +1,181 @@
+name: Cleanup Vercel preview
+
+on:
+  pull_request:
+    types: [closed]
+  schedule:
+    - cron: "0 14 * * 0"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Optional. Also delete all previews for this git branch.
+        required: false
+        type: string
+
+concurrency:
+  group: vercel-preview-cleanup-bootstrap-os-mcp
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: >-
+      github.event_name != 'pull_request'
+      || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_TEAM_ID: ${{ vars.VERCEL_TEAM_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      BRANCH: ${{ github.event.pull_request.head.ref || inputs.branch }}
+    steps:
+      - name: Require VERCEL_TOKEN
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "::error::VERCEL_TOKEN secret is missing on ivelin/bootstrap. Add the same Vercel token used on pirin-ai."
+            exit 1
+          fi
+
+      - name: Delete preview deployments for closed PR branch
+        if: env.BRANCH != ''
+        run: |
+          set -euo pipefail
+          TEAM="${VERCEL_TEAM_ID:-team_vhRLfXjbtB0CgVM29W6ErXus}"
+          PROJECT="${VERCEL_PROJECT_ID:-prj_gqPG0DoMFUWWBmAO1ca2lTOM1L46}"
+          BRANCH="${BRANCH}"
+
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "dev" ]; then
+            echo "Skip branch sweep for protected branch $BRANCH"
+            exit 0
+          fi
+
+          echo "Branch sweep: $BRANCH project=$PROJECT"
+          tmp=$(mktemp)
+          until=""
+          pages=0
+          : > "$tmp"
+          while [ "$pages" -lt 25 ]; do
+            pages=$((pages + 1))
+            url="https://api.vercel.com/v6/deployments?projectId=${PROJECT}&teamId=${TEAM}&limit=100"
+            [ -n "$until" ] && url="${url}&until=${until}"
+            resp=$(curl -sS -H "Authorization: Bearer ${VERCEL_TOKEN}" "$url")
+            echo "$resp" | jq -e '.deployments' >/dev/null
+            echo "$resp" | jq -r --arg b "$BRANCH" '
+              .deployments[]
+              | select((.meta.githubCommitRef // "") == $b)
+              | select((.target // "") != "production")
+              | (.uid // .id)
+            ' >> "$tmp"
+            next=$(echo "$resp" | jq -r '.pagination.next // empty')
+            count=$(echo "$resp" | jq -r '.deployments | length')
+            [ -z "$next" ] || [ "$count" = "0" ] && break
+            until="$next"
+          done
+          mapfile -t IDS < <(sort -u "$tmp" | sed '/^$/d')
+          rm -f "$tmp"
+          deleted=0; skipped=0; failed=0
+          for id in "${IDS[@]:-}"; do
+            [ -z "$id" ] && continue
+            echo "DELETE branch preview $id"
+            code=$(curl -sS -o /tmp/vercel-del.json -w "%{http_code}" -X DELETE \
+              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v13/deployments/${id}?teamId=${TEAM}")
+            if [ "$code" = "200" ] || [ "$code" = "204" ]; then
+              deleted=$((deleted + 1))
+            elif [ "$code" = "400" ] || [ "$code" = "403" ] || [ "$code" = "404" ]; then
+              echo "skip $id HTTP $code"
+              cat /tmp/vercel-del.json || true; echo
+              skipped=$((skipped + 1))
+            else
+              echo "fail $id HTTP $code"
+              cat /tmp/vercel-del.json || true; echo
+              failed=$((failed + 1))
+            fi
+          done
+          echo "branch sweep deleted=$deleted skipped=$skipped failed=$failed"
+          [ "$failed" -eq 0 ]
+
+      - name: Delete previews older than 7 days and production older than 30 days
+        run: |
+          set -euo pipefail
+          TEAM="${VERCEL_TEAM_ID:-team_vhRLfXjbtB0CgVM29W6ErXus}"
+          PROJECT="${VERCEL_PROJECT_ID:-prj_gqPG0DoMFUWWBmAO1ca2lTOM1L46}"
+          NOW=$(($(date +%s) * 1000))
+          WEEK=$((7 * 86400 * 1000))
+          MONTH=$((30 * 86400 * 1000))
+
+          proj=$(curl -sS -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            "https://api.vercel.com/v9/projects/${PROJECT}?teamId=${TEAM}")
+          LIVE=$(echo "$proj" | jq -r '.targets.production.id // empty')
+          echo "Live production id=${LIVE:-UNRESOLVED}"
+          if [ -z "$LIVE" ]; then
+            echo "::warning::Could not resolve live production deployment. Production deletes are skipped."
+          fi
+
+          tmp=$(mktemp)
+          until=""
+          pages=0
+          : > "$tmp"
+          while [ "$pages" -lt 25 ]; do
+            pages=$((pages + 1))
+            url="https://api.vercel.com/v6/deployments?projectId=${PROJECT}&teamId=${TEAM}&limit=100"
+            [ -n "$until" ] && url="${url}&until=${until}"
+            resp=$(curl -sS -H "Authorization: Bearer ${VERCEL_TOKEN}" "$url")
+            echo "$resp" | jq -e '.deployments' >/dev/null
+            echo "$resp" | jq -r \
+              --arg live "$LIVE" \
+              --argjson now "$NOW" \
+              --argjson week "$WEEK" \
+              --argjson month "$MONTH" '
+              .deployments[]
+              | (.uid // .id) as $id
+              | (.created // 0) as $c
+              | (.target // "") as $t
+              | select($id != $live)
+              | select(
+                  if $t == "production" then
+                    ($live != "") and (($now - $c) > $month)
+                  else
+                    (($now - $c) > $week)
+                  end
+                )
+              | $id
+            ' >> "$tmp"
+            next=$(echo "$resp" | jq -r '.pagination.next // empty')
+            count=$(echo "$resp" | jq -r '.deployments | length')
+            [ -z "$next" ] || [ "$count" = "0" ] && break
+            until="$next"
+          done
+
+          mapfile -t IDS < <(sort -u "$tmp" | sed '/^$/d')
+          rm -f "$tmp"
+          echo "Age sweep candidates=${#IDS[@]}"
+          deleted=0; skipped=0; failed=0
+          for id in "${IDS[@]:-}"; do
+            [ -z "$id" ] && continue
+            if [ -n "$LIVE" ] && [ "$id" = "$LIVE" ]; then
+              echo "skip live production $id"
+              skipped=$((skipped + 1))
+              continue
+            fi
+            echo "DELETE stale $id"
+            code=$(curl -sS -o /tmp/vercel-del.json -w "%{http_code}" -X DELETE \
+              -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+              "https://api.vercel.com/v13/deployments/${id}?teamId=${TEAM}")
+            if [ "$code" = "200" ] || [ "$code" = "204" ]; then
+              deleted=$((deleted + 1))
+            elif [ "$code" = "400" ] || [ "$code" = "403" ] || [ "$code" = "404" ]; then
+              echo "skip $id HTTP $code (Hobby keep-3 / alias / already gone)"
+              cat /tmp/vercel-del.json || true; echo
+              skipped=$((skipped + 1))
+            else
+              echo "fail $id HTTP $code"
+              cat /tmp/vercel-del.json || true; echo
+              failed=$((failed + 1))
+            fi
+          done
+          echo "age sweep deleted=$deleted skipped=$skipped failed=$failed"
+          [ "$failed" -eq 0 ]
