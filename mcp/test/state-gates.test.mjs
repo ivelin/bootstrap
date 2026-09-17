@@ -17,7 +17,7 @@ describe("phase advance gate", () => {
   beforeEach(() => {
     dataRoot = makeTempEnv();
     clearSession();
-    initCompany({ companyId: "pirin", displayName: "Pirin", hypothesis: "OS for founders" });
+    initCompany({ companyId: "charlie", displayName: "Pirin", hypothesis: "OS for founders" });
   });
 
   afterEach(() => {
@@ -47,7 +47,7 @@ describe("phase advance gate", () => {
 
   it("whereAreWePlain includes company and clocks", () => {
     const plain = whereAreWePlain(readState());
-    assert.match(plain, /pirin/i);
+    assert.match(plain, /charlie/i);
     assert.match(plain, /Journey: step 1 of 9/);
     assert.match(plain, /not demand or PMF/i);
     assert.match(plain, /observed wins/i);
@@ -67,6 +67,6 @@ describe("phase advance gate", () => {
     const body = fs.readFileSync(file, "utf8");
     assert.match(body, /Hold phase/);
     assert.match(body, /Founder approved:\*\* yes/);
-    assert.ok(file.includes(path.join("instances", "pirin")));
+    assert.ok(file.includes(path.join("instances", "charlie")));
   });
 });

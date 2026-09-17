@@ -32,7 +32,7 @@ npm ci
 npm run ci
 ```
 
-Expected: typecheck, build, unit tests (including OS 2.8.9 house rules, the [E2E role-play matrix](E2E_ROLEPLAY.md), and [invite/accept](INVITE.md)), cold-path smoke, **stdio MCP client smoke**, **HTTP hosted-read smoke** all pass. The CI `user-path` job is `npm run verify:user-path` (role-play + those smokes) — necessary, not an independent pstack verdict.
+Expected: typecheck, build, unit tests (including OS 2.8.9 house rules, the [E2E role-play matrix](E2E_ROLEPLAY.md), [invite/accept](INVITE.md), and the no-instance-secrets smell test), cold-path smoke, **stdio MCP client smoke**, **HTTP hosted-read smoke** all pass. The CI `user-path` job is `npm run verify:user-path` (role-play + those smokes) — necessary, not an independent pstack verdict.
 
 What `npm run ci` proves without a GUI:
 

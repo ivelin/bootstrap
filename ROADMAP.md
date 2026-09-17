@@ -318,6 +318,7 @@ We teach [`company-os/ai-instructions.md`](company-os/ai-instructions.md). We ar
 | M8 | **Template policy:** no product thesis/market from Pirin or mentees into `company-os/` without approval-gated portable edit | “While we’re here” template pollution |
 | M9 | **Evidence over narrative** in ROADMAP §1 and §8 | Roadmap theater without instance files |
 | M10 | If unsure whether a founder excuse is valid, **apply the same test to ourselves** | “We’re the authors so we know” |
+| M11 | **No instance secrets in the template:** no specific company names, theses, scores, decision traces, or local paths in OS / MCP fixtures / evals. Fictional `alpha` / `bravo` / `charlie` only. CI smell test must stay green | Copying dogfood boards or labels into the public pack |
 
 #### Fail the week (automatic)
 

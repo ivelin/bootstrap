@@ -31,42 +31,42 @@ describe("multi-company isolation", () => {
   });
 
   it("init + use keeps separate state files", () => {
-    initCompany({ companyId: "pirin", hypothesis: "A" });
-    initCompany({ companyId: "zk0", hypothesis: "B", activate: false });
-    initCompany({ companyId: "tokbox", hypothesis: "C", activate: false });
+    initCompany({ companyId: "alpha", hypothesis: "A" });
+    initCompany({ companyId: "bravo", hypothesis: "B", activate: false });
+    initCompany({ companyId: "charlie", hypothesis: "C", activate: false });
 
-    useCompany("pirin");
+    useCompany("alpha");
     patchState({ journeyPhase: 5 }, { allowPhaseAdvance: true });
     assert.equal(readState().journeyPhase, 5);
-    assert.equal(readState().companyId, "pirin");
+    assert.equal(readState().companyId, "alpha");
 
-    useCompany("zk0");
+    useCompany("bravo");
     assert.equal(readState().journeyPhase, 1);
-    assert.equal(readState().companyId, "zk0");
+    assert.equal(readState().companyId, "bravo");
     assert.equal(readState().hypothesis, "B");
 
-    useCompany("tokbox");
+    useCompany("charlie");
     assert.equal(readState().journeyPhase, 1);
 
-    // pirin still 5 on disk
-    const pirinState = JSON.parse(
+    // alpha still 5 on disk
+    const alphaState = JSON.parse(
       fs.readFileSync(
-        path.join(dataRoot, "instances", "pirin", "company", "state", "company-state.json"),
+        path.join(dataRoot, "instances", "alpha", "company", "state", "company-state.json"),
         "utf8",
       ),
     );
-    assert.equal(pirinState.journeyPhase, 5);
+    assert.equal(alphaState.journeyPhase, 5);
 
     const listed = listCompanies();
     assert.equal(listed.companies.length, 3);
-    assert.equal(listed.activeCompanyId, "tokbox");
-    const pirin = listed.companies.find((c) => c.companyId === "pirin");
-    assert.equal(pirin.journeyPhase, 5);
+    assert.equal(listed.activeCompanyId, "charlie");
+    const alpha = listed.companies.find((c) => c.companyId === "alpha");
+    assert.equal(alpha.journeyPhase, 5);
 
     const where = path.join(
       dataRoot,
       "instances",
-      "pirin",
+      "alpha",
       "company",
       "state",
       "where-are-we.py",
@@ -74,7 +74,7 @@ describe("multi-company isolation", () => {
     const schema = path.join(
       dataRoot,
       "instances",
-      "pirin",
+      "alpha",
       "company",
       "state",
       "company-state.schema.json",
@@ -88,9 +88,9 @@ describe("multi-company isolation", () => {
   });
 
   it("init is idempotent and does not wipe state", () => {
-    initCompany({ companyId: "pirin" });
+    initCompany({ companyId: "charlie" });
     patchState({ journeyPhase: 4 }, { allowPhaseAdvance: true });
-    const again = initCompany({ companyId: "pirin" });
+    const again = initCompany({ companyId: "charlie" });
     assert.equal(again.created, false);
     assert.equal(readState().journeyPhase, 4);
   });

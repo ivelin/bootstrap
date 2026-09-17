@@ -29,11 +29,11 @@ Preconditions:
 
 - **Mail + URL + verify + accept.** Run `node .cursor/skills/verify-bootstrap/scripts/verify-bootstrap.mjs drive invite-signup-login-url`. That is `cd mcp && node --test --test-name-pattern "P3 Invitee login-URL" test/e2e-roleplay-matrix.test.mjs`.
 - **Signup URL.** Dry-run mail `signupUrl` contains `invite=<token>` and host `pirin.ai` path `/bootstrap-os/login`. QR payload equals the signup URL.
-- **Verify.** `bootstrap_mcp_verify_invite` (store `verifyInvite`) returns the invitee email + `zk0` + inviter. Bad token and expired token return `{ ok: false }` with no `reason` key.
+- **Verify.** `bootstrap_mcp_verify_invite` (store `verifyInvite`) returns the invitee email + `alpha` + inviter. Bad token and expired token return `{ ok: false }` with no `reason` key.
 - **Before accept.** Outsider JWT `bootstrap_whoami` is HTTP 401 `not_invited`.
-- **After accept.** `accept_invite` `ok: true`, whoami `authenticated: true` with `["zk0"]`. Verify of the used token is `{ ok: false }`.
+- **After accept.** `accept_invite` `ok: true`, whoami `authenticated: true` with `["alpha"]`. Verify of the used token is `{ ok: false }`.
 - **Email confirm redirect (this side only).** Assert the token in `signupUrl` is the one accept consumes. Do not script pirin.ai `/confirm` or marketing routes. If confirm drops `invite=`, the Bootstrap landing is broken — report it and let `verify-pirin` drive the pirin redirect.
-- **Proof.** `artifacts/invite-signup-login-url/proof.json` exit `0` and TAP including `Signup URL` / `invite=` / whoami `zk0`.
+- **Proof.** `artifacts/invite-signup-login-url/proof.json` exit `0` and TAP including `Signup URL` / `invite=` / whoami `alpha`.
 
 ## Gotchas
 

@@ -24,39 +24,39 @@ try {
   assert.ok(listOsDocs().every((d) => d.bytes > 0));
   assert.match(readOsDoc("ready-for-human-eyes"), /human eyes/i);
 
-  // 2. Multi-company init (pirin / zk0 / tokbox)
-  for (const id of ["pirin", "zk0", "tokbox"]) {
+  // 2. Multi-company init (alpha / bravo / charlie)
+  for (const id of ["alpha", "bravo", "charlie"]) {
     initCompany({ companyId: id, displayName: id, hypothesis: `${id} thesis` });
   }
   assert.equal(listCompanies().companies.length, 3);
 
   // 3. Phase gate
-  useCompany("pirin");
+  useCompany("charlie");
   let r = patchState({ journeyPhase: 6 }, { allowPhaseAdvance: false });
   assert.equal(r.state.journeyPhase, 1);
   r = patchState({ journeyPhase: 6 }, { allowPhaseAdvance: true });
   assert.equal(r.state.journeyPhase, 6);
 
   // 4. Isolation
-  useCompany("zk0");
+  useCompany("alpha");
   assert.equal(readState().journeyPhase, 1);
 
   // 5. Human-eyes refuse
-  useCompany("pirin");
+  useCompany("charlie");
   const eyes = readState().readyForHumanEyes?.status ?? "unknown";
   const deny = evaluateExternalAsk({ readyStatus: eyes, intent: "try my link" });
   assert.equal(deny.allow, false);
 
   // 6. Status plain + house rules
   const plain = whereAreWePlain(readState());
-  assert.match(plain, /pirin/);
+  assert.match(plain, /charlie/);
   assert.match(plain, /observed wins/i);
   assert.match(plain, /marketing volume cannot promote/i);
 
   const wherePy = path.join(
     dataRoot,
     "instances",
-    "pirin",
+    "charlie",
     "company",
     "state",
     "where-are-we.py",

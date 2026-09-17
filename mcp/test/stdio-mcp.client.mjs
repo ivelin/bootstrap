@@ -104,7 +104,7 @@ async function main() {
     assert.match(JSON.stringify(info.houseRules), /no optimal price until people have paid and stayed/i);
     assert.match(JSON.stringify(info.houseRules), /do not automate a step that should not exist/i);
 
-    for (const id of ["pirin", "zk0", "tokbox"]) {
+    for (const id of ["alpha", "bravo", "charlie"]) {
       const r = await call(client, "bootstrap_init_company", {
         companyId: id,
         displayName: id,
@@ -118,10 +118,10 @@ async function main() {
     const listed = await call(client, "bootstrap_list_companies");
     assert.ok(listed.companies.length >= 3);
 
-    await call(client, "bootstrap_use_company", { companyId: "pirin" });
+    await call(client, "bootstrap_use_company", { companyId: "charlie" });
     const where = await call(client, "bootstrap_where_are_we", {});
     const whereBlob = JSON.stringify(where);
-    assert.match(whereBlob, /pirin/i);
+    assert.match(whereBlob, /charlie/i);
 
     const denied = await call(client, "bootstrap_update_state", {
       journeyPhase: 5,
@@ -139,10 +139,10 @@ async function main() {
     });
     assert.equal(allowed.state.journeyPhase, 5);
 
-    await call(client, "bootstrap_use_company", { companyId: "zk0" });
-    const zk0 = await call(client, "bootstrap_get_state", {});
-    assert.equal(zk0.state.journeyPhase, 1);
-    assert.equal(zk0.state.companyId, "zk0");
+    await call(client, "bootstrap_use_company", { companyId: "alpha" });
+    const alpha = await call(client, "bootstrap_get_state", {});
+    assert.equal(alpha.state.journeyPhase, 1);
+    assert.equal(alpha.state.companyId, "alpha");
 
     const refuse = await call(client, "bootstrap_refuse_external_ask_if_not_green", {
       intent: "email mentor a try-link",
@@ -152,13 +152,13 @@ async function main() {
     const ai = await call(client, "bootstrap_get_ai_instructions", {});
     assert.ok(String(typeof ai === "string" ? ai : JSON.stringify(ai)).length > 200);
 
-    const diskPirin = JSON.parse(
+    const diskCharlie = JSON.parse(
       fs.readFileSync(
-        path.join(dataRoot, "instances", "pirin", "company", "state", "company-state.json"),
+        path.join(dataRoot, "instances", "charlie", "company", "state", "company-state.json"),
         "utf8",
       ),
     );
-    assert.equal(diskPirin.journeyPhase, 5);
+    assert.equal(diskCharlie.journeyPhase, 5);
 
     console.log(
       JSON.stringify(
@@ -167,8 +167,8 @@ async function main() {
           gate: "M1-stdio-protocol",
           tools: names.length,
           dataRoot,
-          companies: ["pirin", "zk0", "tokbox"],
-          pirinPhase: diskPirin.journeyPhase,
+          companies: ["alpha", "bravo", "charlie"],
+          charliePhase: diskCharlie.journeyPhase,
           refuseAllow: refuse.allow,
         },
         null,

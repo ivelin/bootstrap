@@ -37,9 +37,9 @@ Shaped like **DraftExternalMessage**. Shows **who invited / to whom / company wo
 {
   "card": "accept_invite",
   "shape": "DraftExternalMessage",
-  "from": { "email": "ivelin@pirin.ai" },
+  "from": { "email": "founder@example.test" },
   "to": { "email": "bill@example.test" },
-  "companyWorkspace": "zk0",
+  "companyWorkspace": "alpha",
   "action": "Accept",
   "inviteToken": "inv_…",
   "tool": "accept_invite"
@@ -56,13 +56,13 @@ Single-use. Expires in 7 days. Hash only in `bootstrap_mcp_invites`. Fail closed
 
 ## How Bill uses it (dogfood A/B)
 
-1. First user is already a Bootstrap OS user via SQL — [rebuild](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Ivelin is that row (`pirin` / `zk0` / `totbox`).
-2. Ivelin (any MCP client, collab pin): `invite_member` `email=bill@…` `companyLabel=zk0`.
-3. **Invitee with Bearer:** Bill calls `accept_invite` with the token. JWT email must match. First accept creates the user + `zk0`.
+1. First user is already a Bootstrap OS user via SQL — [rebuild](HOSTED_IDENTITY.md#first-user-rebuild-from-github). Template fixture is `founder@example.test` (`alpha` / `bravo` / `charlie`).
+2. Allowlisted inviter (any MCP client, collab pin): `invite_member` `email=bill@…` `companyLabel=alpha`.
+3. **Invitee with Bearer:** Bill calls `accept_invite` with the token. JWT email must match. First accept creates the user + `alpha`.
 4. **Invitee via login URL:** mail / Auth card → `https://pirin.ai/bootstrap-os/login?invite=<token>` → sign in or create account **for that email** → JWT → `accept_invite` with the **same** token.
-5. Bill’s `bootstrap_whoami` is `authenticated: true` with company `zk0`.
-6. Later, Ivelin invites the **same** Bill to `totbox`. Bill accepts with the same email. whoami companies include `zk0` and `totbox`. Still one user.
-7. zk0 dogfood uses the same outsider path (`ivelin@zk0.bot` / `zk0`). No Cos SQL shortcut for later users.
+5. Bill’s `bootstrap_whoami` is `authenticated: true` with company `alpha`.
+6. Later, the same inviter invites the **same** Bill to `bravo`. Bill accepts with the same email. whoami companies include `alpha` and `bravo`. Still one user.
+7. Outsider dogfood uses the same path (`member@example.test` / `alpha`). No Cos SQL shortcut for later users.
 
 ## Signup URL (Web Builder)
 

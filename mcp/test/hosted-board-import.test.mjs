@@ -10,21 +10,21 @@ const fixture = JSON.parse(
 );
 
 describe("hosted-board-import.json copies local files only", () => {
-  it("pirin and totbox clocks match local json; zk0 is Hold note not README Beta", () => {
+  it("charlie and bravo clocks match local json; alpha is Hold note not README Beta", () => {
     const bySlug = Object.fromEntries(fixture.companies.map((c) => [c.slug, c]));
-    assert.equal(bySlug.pirin.journeyPhase, 6);
-    assert.equal(bySlug.pirin.loopStage, 6);
-    assert.equal(bySlug.pirin.currentGate, "hold");
-    assert.equal(bySlug.pirin.gateStatusInFile, "open");
-    assert.equal(bySlug.totbox.journeyPhase, 6);
-    assert.equal(bySlug.totbox.loopStage, 4);
-    assert.equal(bySlug.totbox.currentGate, "hold");
-    assert.equal(bySlug.zk0.journeyPhase, 1);
-    assert.equal(bySlug.zk0.loopStage, 1);
-    assert.doesNotMatch(JSON.stringify(bySlug.zk0), /Beta|FedProx|SmolVLA/i);
-    assert.match(bySlug.zk0.scoreboard.constraint_this_week, /tangible/);
-    assert.equal(bySlug.zk0.events[0].at, "2026-08-06T21:27:49.000Z");
-    assert.equal(bySlug.pirin.events.length, 3);
-    assert.equal(bySlug.totbox.events.length, 0);
+    assert.equal(bySlug.charlie.journeyPhase, 6);
+    assert.equal(bySlug.charlie.loopStage, 6);
+    assert.equal(bySlug.charlie.currentGate, "hold");
+    assert.equal(bySlug.charlie.gateStatusInFile, "open");
+    assert.equal(bySlug.bravo.journeyPhase, 6);
+    assert.equal(bySlug.bravo.loopStage, 4);
+    assert.equal(bySlug.bravo.currentGate, "hold");
+    assert.equal(bySlug.alpha.journeyPhase, 1);
+    assert.equal(bySlug.alpha.loopStage, 1);
+    assert.doesNotMatch(JSON.stringify(bySlug.alpha), /Beta/i);
+    assert.match(bySlug.alpha.scoreboard.constraint_this_week, /tangible/);
+    assert.equal(bySlug.alpha.events[0].at, "2026-08-06T21:27:49.000Z");
+    assert.equal(bySlug.charlie.events.length, 3);
+    assert.equal(bySlug.bravo.events.length, 0);
   });
 });

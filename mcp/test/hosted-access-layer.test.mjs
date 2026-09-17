@@ -161,19 +161,19 @@ describe("hosted access layer (one login, many companies)", () => {
     const ok = parseTool(
       await rpc(
         "tools/call",
-        { name: "bootstrap_use_company", arguments: { company: "zk0" } },
+        { name: "bootstrap_use_company", arguments: { company: "alpha" } },
         6,
         IVELIN_TOKEN,
         session,
       ),
     );
     assert.equal(ok.ok, true);
-    assert.equal(ok.activeCompany, "zk0");
+    assert.equal(ok.activeCompany, "alpha");
 
     const who = parseTool(
       await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 7, IVELIN_TOKEN, session),
     );
-    assert.equal(who.activeCompany, "zk0");
+    assert.equal(who.activeCompany, "alpha");
   });
 
   it("invite_member uses the active company when company is omitted", async () => {
@@ -184,14 +184,14 @@ describe("hosted access layer (one login, many companies)", () => {
           id: "ivelin",
           email: IVELIN_SEED_EMAIL,
           authUserId: "ivelin-auth",
-          labels: ["pirin", "totbox", "zk0"],
+          labels: ["charlie", "bravo", "alpha"],
         },
       ]),
     );
     const session = { "MCP-Session-Id": "access-layer-session-2" };
     await rpc(
       "tools/call",
-      { name: "bootstrap_use_company", arguments: { company: "zk0" } },
+      { name: "bootstrap_use_company", arguments: { company: "alpha" } },
       8,
       IVELIN_TOKEN,
       session,
@@ -206,7 +206,7 @@ describe("hosted access layer (one login, many companies)", () => {
       ),
     );
     assert.equal(invited.ok, true);
-    assert.equal(invited.company, "zk0");
+    assert.equal(invited.company, "alpha");
     assert.equal(invited.invited, "bill@example.test");
     assert.match(invited.signInUrl, /^https:\/\/pirin\.ai\/bootstrap-os\/login\?invite=/);
     assert.match(invited.note, /email at that address/);

@@ -8,7 +8,7 @@
 |------|----------------|---------------|
 | Typecheck | `npm run typecheck` | zero errors |
 | Build | `npm run build` | `dist/` emits index + policy + companies |
-| Unit tests | `npm run test:unit` | phase gate, isolation, policy, markdown path, PGlite journey RLS |
+| Unit tests | `npm run test:unit` | phase gate, isolation, policy, markdown path, PGlite journey RLS, no-instance-secrets smell test |
 | Cold-path smoke | `node test/cold-path.smoke.mjs` | multi-company + refuse external ask + no template writes |
 | **Stdio MCP client (M1 protocol)** | `node test/stdio-mcp.client.mjs` | official SDK client over stdio: tools, init, phase gate, refuse |
 | **HTTP hosted-read** | `node test/http-mcp.client.mjs` | Streamable HTTP serves OS info/docs without a local clone; write tools absent |
@@ -34,6 +34,7 @@ cd mcp && npm ci && npm run ci
 6. Stdio MCP protocol serves the full tool surface to a real client.
 7. OS 2.8.9 house rules: stated / synthetic / observed (observed wins); spoken yes cannot promote; no demographic one-liner seed; no Likert / naked dollar WTP; several ideas allowed (rank and kill per board); marketing volume cannot promote; there is no optimal price until people have paid and stayed; do not automate a step that should not exist.
 8. Same state furniture: instance gets `company-state.json` + `where-are-we.py` (and schema). Hosted read adapter is preview only — no founder state on a shared server.
+9. **No instance secrets in the template.** Specific company names, theses, scores, decision traces, and local paths stay out of OS / MCP fixtures / evals. Fictional `alpha` / `bravo` / `charlie` + `founder@example.test` only. Smell test: `test/no-instance-secrets.test.mjs`.
 
 ## Manual (before ready-for-review)
 
@@ -42,7 +43,7 @@ cd mcp && npm ci && npm run ci
 | M1a | **Automated** stdio protocol smoke in CI | [x] `test/stdio-mcp.client.mjs` | CI job |
 | M1b | Human client (Cursor/Claude/Grok) using `config/mcp.stdio.example.json` | [x] Grok CLI 2026-08-16 CT, sandbox only | [`docs/CLIENT_CONNECT.md`](docs/CLIENT_CONNECT.md) sign-off. Not Cursor GUI. M2 still required. |
 | M2 | Non-maintainer cold path | ☐ | Runbook [`docs/COLD_PATH.md`](docs/COLD_PATH.md) + sign-off form |
-| M3 | Private dogfood weekly snapshot + stage-7 | [x] 2026-08-16 Pirin instance (one week, not four) | Private files, not this template. M2 still open. |
+| M3 | Private dogfood weekly snapshot + stage-7 | [x] 2026-08-16 private instance (one week, not four) | Private files, not this template. M2 still open. |
 | M4 | PR description test plan boxes checked with evidence | ☐ | PR body |
 | M5 | Human-eyes for MCP still labeled honestly (`unknown` until M2) | ☐ | honest status |
 

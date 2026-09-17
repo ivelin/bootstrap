@@ -68,10 +68,11 @@ Does **not** replace the seven-case matrix. Login is optional. Install-first sti
 |---|---------|---------|------------|----------|
 | I1 | Installing founder / install-first agent | `first-hour` + GitHub / local | Path 1 founders are not told to connect a hosted MCP URL. Published OS on GitHub. Collab invitees use `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). | File lock + hosted-handler |
 | I2 | Empty-context agent | `bootstrap_whoami` with no header | HTTP 401 + WWW-Authenticate to this MCP origin RFC 9728. Does not invent their stage. | `identity.test.mjs` |
-| I3 | Logged-in Ivelin fixture | gated whoami + labels | Sees `pirin`, `zk0`, `totbox`. Not boards. | Fixture lock — not a human paste |
+| I3 | Logged-in founder fixture | gated whoami + labels | Sees `alpha`, `bravo`, `charlie`. Not boards. | Fixture lock — not a human paste |
 | I4 | Other mentee token | same tools | Cannot see Ivelin labels. | `identity.test.mjs` + RLS USING clauses |
 | I5 | Valid JWT, no mentee row | gated whoami | `authenticated: false`, `reason: not_invited`, HTTP 401. Not open login. First user is a SQL insert — [`HOSTED_IDENTITY.md`](../mcp/docs/HOSTED_IDENTITY.md#first-user-rebuild-from-github). | `identity.test.mjs` + PGlite RPC |
-| I6 | CTO/PM role-play (empty, first-user insert, wrong/expired, isolation, invite/accept/mail, existing user second workspace) | PGlite E2E | Same paths as I2–I5 plus first-user SQL insert → invited whoami (`zk0`). P1 invite / P2 Bearer accept / P3 login-URL / P4 existing user → second workspace. No prod Resend. Preview never prod DB. | [`E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md) · [`INVITE.md`](../mcp/docs/INVITE.md) · `e2e-roleplay-matrix.test.mjs` |
+| I6 | CTO/PM role-play (empty, first-user insert, wrong/expired, isolation, invite/accept/mail, existing user second workspace) | PGlite E2E | Same paths as I2–I5 plus first-user SQL insert → invited whoami (`alpha`). P1 invite / P2 Bearer accept / P3 login-URL / P4 existing user → second workspace. No prod Resend. Preview never prod DB. | [`E2E_ROLEPLAY.md`](../mcp/docs/E2E_ROLEPLAY.md) · [`INVITE.md`](../mcp/docs/INVITE.md) · `e2e-roleplay-matrix.test.mjs` |
+| T1 | Template contributor / eval | no-instance-secrets smell | No instance company names, theses, scores, or local paths in the portable pack. Fixtures are `alpha` / `bravo` / `charlie`. Rule is recorded in AGENTS.md, README, OS, ROADMAP. | `mcp/test/no-instance-secrets.test.mjs` · Day-0 `tests/test_day0.sh` |
 
 ## 0-1 journey visitor matrix (this PR, not the production pin)
 

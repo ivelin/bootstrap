@@ -4,7 +4,7 @@ An allowlisted team member invites an email onto a company workspace they alread
 
 ## Sub-features
 
-- `invite-allowlisted` lets Ivelin invite Bill (or `ivelin@zk0.bot`) to `zk0`.
+- `invite-allowlisted` lets the seed founder invite Bill (or `member@example.test`) to `alpha`.
 - `invite-accept-card` returns `card: "accept_invite"`, `shape: "DraftExternalMessage"`, `action: "Accept"`, `inviteToken` prefix `inv_`.
 - `invite-signup-card` returns `card: "invite_signup"`, `action: "Sign in or create account"`, `signupUrl` with `invite=`.
 - `invite-outbox` enqueues `in_chat` (token stripped) and `email` (token + signup URL, From `bootstrap@pirin.ai`).
@@ -24,11 +24,11 @@ Preconditions:
 
 - Helper launched and `doctor` ok (proves the host is the hosted-read adapter).
 - Do **not** set `VERCEL_ENV=production` on the helper. Live invite RPCs stay unset locally.
-- Drive the mutation through PGlite: `mcp/test/e2e-roleplay-matrix.test.mjs` case `P1 invite_member: Ivelin invites Bill to zk0`.
+- Drive the mutation through PGlite: `mcp/test/e2e-roleplay-matrix.test.mjs` case `P1 invite_member: Ivelin invites Bill to alpha`.
 
 - **Empty inviter.** Cookie-less `invite_member` on the helper is HTTP 401 (same as whoami). Covered by doctor `whoami-401` plus this test's empty-Bearer assertion.
-- **Allowlisted invite.** Run `node .cursor/skills/verify-bootstrap/scripts/verify-bootstrap.mjs drive invite-member`. That is `cd mcp && node --test --test-name-pattern "P1 invite_member: Ivelin invites Bill to zk0" test/e2e-roleplay-matrix.test.mjs`.
-- **Accept card.** Result `ok: true`, `card.card` is `accept_invite`, `from.email` is `ivelin@pirin.ai`, `to.email` is `bill@example.test`, `companyWorkspace` is `zk0`, `action` is `Accept`, `tool` is `accept_invite`, `inviteToken` matches `/^inv_/`.
+- **Allowlisted invite.** Run `node .cursor/skills/verify-bootstrap/scripts/verify-bootstrap.mjs drive invite-member`. That is `cd mcp && node --test --test-name-pattern "P1 invite_member: Ivelin invites Bill to alpha" test/e2e-roleplay-matrix.test.mjs`.
+- **Accept card.** Result `ok: true`, `card.card` is `accept_invite`, `from.email` is `founder@example.test`, `to.email` is `bill@example.test`, `companyWorkspace` is `alpha`, `action` is `Accept`, `tool` is `accept_invite`, `inviteToken` matches `/^inv_/`.
 - **Signup card.** `authCard.card` is `invite_signup`, `action` is `Sign in or create account`, `from.email` is `bootstrap@pirin.ai`.
 - **Outbox.** `in_chat` payload `inviteToken` is `null`. `email` payload `mailFrom` is `bootstrap@pirin.ai` and `signupUrl` matches `/\/bootstrap-os\/login\?invite=inv_/`.
 - **Fail closed.** Uninvited stranger → 401 `not_invited`. mentee-a inviting to `bravo` → tool error matching `/does not hold/i`.

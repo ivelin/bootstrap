@@ -28,7 +28,8 @@ Founders adopt this for months. The OS must not be moving sand.
 2. **Optional until useful.** A new ritual is skippable until you have the situation it is for (no real conversations → skip the founder-day rows).  
 3. **Rarely breaking.** We do not rename phases, restack the loop, or drop a gate without a named version note that says what to keep doing.  
 4. **One mental model.** Two clocks. You stay in control. Evidence beats narrative. That sentence should still be true next year.  
-5. **Say it once. Link. No filler.** Each idea lives in one place. Other files hyperlink. A short reminder is allowed on the page a founder actually opens (first-hour room line). Tests lock the source of truth and the pointers, not the same paragraph in eight files. High signal means only what changes a decision. Dense leftover text is good. A stream of novel riffs is not — house rules stay stable (see 1–3).
+5. **Say it once. Link. No filler.** Each idea lives in one place. Other files hyperlink. A short reminder is allowed on the page a founder actually opens (first-hour room line). Tests lock the source of truth and the pointers, not the same paragraph in eight files. High signal means only what changes a decision. Dense leftover text is good. A stream of novel riffs is not — house rules stay stable (see 1–3).  
+6. **No instance secrets in the portable template.** This pack is process and control. Do not commit another company’s name, thesis, beachhead, scores, decision traces, or local paths. Example fixtures use fictional labels only. Live state stays in the founder’s instance. CI locks the absence.
 
 A solid tool improves gradually. It does not ask you to relearn the desk every week.
 

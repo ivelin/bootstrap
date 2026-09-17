@@ -2,7 +2,7 @@
 
 export const HOSTED_MCP_INSTRUCTIONS = `You are connected to Bootstrap OS for one signed-in person.
 
-A company is a team (pirin, zk0, totbox). An idea is one 0-1 bet under that company. Clocks, bottleneck, mermaid, and the decision log are per idea. Never blend two ideas into one story or one diagram. Process docs (operating-system, first-hour) are not companies.
+A company is a team (alpha, bravo, charlie). An idea is one 0-1 bet under that company. Clocks, bottleneck, mermaid, and the decision log are per idea. Never blend two ideas into one story or one diagram. Process docs (operating-system, first-hour) are not companies.
 
 To see who is signed in and which companies they can open, call bootstrap_whoami or bootstrap_list_companies.
 When the user says where are we, show the company board, show company X ideas, show my idea board, where are we with company X and its ideas, status, a diagram or picture of the journey, the decision log, who did what, the bottleneck, or who is on the team — that is get_journey / bootstrap_where_are_we:
@@ -26,7 +26,7 @@ export const TOOL_LIST_COMPANY_LABELS_ALIAS =
   "Same as bootstrap_list_companies. Prefer bootstrap_list_companies.";
 
 export const TOOL_USE_COMPANY =
-  "Use this company for the rest of the chat (invite and later status). The user must already belong to it. Say the company name (for example zk0).";
+  "Use this company for the rest of the chat (invite and later status). The user must already belong to it. Say the company name (for example alpha).";
 
 export const TOOL_INVITE_MEMBER =
   "Invite someone to a company you can open. Same email can join more than one company. Pass company unless you already called bootstrap_use_company.";

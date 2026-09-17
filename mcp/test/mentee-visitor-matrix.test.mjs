@@ -52,7 +52,7 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(coverage, /emptyContextMayInventStage/);
     assert.match(coverage, /spokenYesMayPromote/);
     assert.match(coverage, /Optional identity visitor matrix/);
-    assert.match(coverage, /pirin.*zk0.*totbox|ivelin fixture whoami/i);
+    assert.match(coverage, /alpha.*bravo.*charlie|founder fixture/i);
     assert.match(coverage, /one mentee cannot read another|Cannot see Ivelin labels/i);
     assert.match(coverage, /I5/);
     assert.match(coverage, /not_invited/);
@@ -126,8 +126,8 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.doesNotMatch(readme, /SSO-gated/);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "mcp", "api", "login.ts")), false);
     assert.equal(fs.existsSync(path.join(REPO_ROOT, "plugin", "login.html")), false);
-    assert.match(mcpReadme, /Ivelin first account/);
-    assert.match(mcpReadme, /pirin.*zk0.*totbox/s);
+    assert.match(mcpReadme, /First-user fixture/);
+    assert.match(mcpReadme, /alpha.*bravo.*charlie/s);
     assert.match(mcpReadme, /Replaces Path 1\?/);
   });
 

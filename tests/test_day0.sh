@@ -1124,6 +1124,66 @@ else
   not_ok "ai-instructions must say Do not lead with QC"
 fi
 
+# --- no instance secrets (hard contribution rule) ---
+if grep -q 'No instance secrets in this template (hard)' AGENTS.md \
+  && grep -q 'Instance secrets in the template' README.md \
+  && grep -q 'No instance secrets in the portable template' company-os/operating-system.md \
+  && grep -q 'No instance secrets in the template' ROADMAP.md mcp/QA.md; then
+  ok "contribution rule no-instance-secrets is recorded"
+else
+  not_ok "AGENTS.md, README, OS, ROADMAP, and QA.md must record no-instance-secrets"
+fi
+if python3 - <<'PY'
+import os, sys
+needles = [
+    "z" + "k0",
+    "tot" + "box",
+    "tot" + "boxapp",
+    "tok" + "box",
+    "Fed" + "Prox",
+    "Smol" + "VLA",
+    "hvac" + "_cleaning",
+    "3 paid " + "deposits",
+    "cocoon" + "hive",
+    "/home/ivelin/" + "pirin-ai",
+    "ivelin@" + "z" + "k0" + ".bot",
+    "hold_" + "z" + "k0",
+]
+skip_dirs = {".git", "node_modules", "dist", "artifacts", "coverage"}
+skip_files = {
+    os.path.join("mcp", "test", "no-instance-secrets.test.mjs"),
+    os.path.join("tests", "test_day0.sh"),
+}
+leaks = []
+for root, dirs, files in os.walk("."):
+    dirs[:] = [d for d in dirs if d not in skip_dirs]
+    for name in files:
+        rel = os.path.normpath(os.path.join(root, name))
+        if rel.startswith("./"):
+            rel = rel[2:]
+        if rel in skip_files or name.endswith(".lock") or name == "package-lock.json":
+            continue
+        path = os.path.join(root, name)
+        try:
+            text = open(path, "r", encoding="utf-8").read()
+        except (UnicodeDecodeError, OSError):
+            continue
+        if "\0" in text:
+            continue
+        lower = text.lower()
+        found = [n for n in needles if n.lower() in lower]
+        if found:
+            leaks.append(f"{rel}: {', '.join(found)}")
+if leaks:
+    print("\n".join(leaks[:40]))
+    sys.exit(1)
+PY
+then
+  ok "template has no instance company names or confidential phrases"
+else
+  not_ok "template leaked instance company names or confidential phrases"
+fi
+
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then
   exit 1

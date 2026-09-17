@@ -263,13 +263,15 @@ GRANT EXECUTE ON FUNCTION public.bootstrap_mcp_whoami(text) TO anon, authenticat
 GRANT EXECUTE ON FUNCTION public.bootstrap_mcp_mint_token() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.bootstrap_mcp_my_labels() TO authenticated;
 
+-- Fictional template seed only. Production first-user is a Cos SQL insert
+-- (never committed live emails or instance labels). Do not copy dogfood names here.
 INSERT INTO public.bootstrap_mcp_mentees (email)
-VALUES ('ivelin@pirin.ai')
+VALUES ('founder@example.test')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO public.bootstrap_company_labels (mentee_id, label)
 SELECT m.id, x.label
 FROM public.bootstrap_mcp_mentees m
-CROSS JOIN (VALUES ('pirin'), ('zk0'), ('totbox')) AS x(label)
-WHERE m.email = 'ivelin@pirin.ai'
+CROSS JOIN (VALUES ('alpha'), ('bravo'), ('charlie')) AS x(label)
+WHERE m.email = 'founder@example.test'
 ON CONFLICT (mentee_id, label) DO NOTHING;

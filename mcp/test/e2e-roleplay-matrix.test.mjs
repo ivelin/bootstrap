@@ -52,8 +52,8 @@ const STRANGER_UID = "99999999-9999-9999-9999-999999999999";
 const CTO_UID = "55555555-5555-5555-5555-555555555555";
 const BILL_UID = "66666666-6666-6666-6666-666666666666";
 const BILL_EMAIL = "bill@example.test";
-const ZK0_OUTSIDER_UID = "77777777-7777-7777-7777-777777777777";
-const ZK0_OUTSIDER_EMAIL = "ivelin@zk0.bot";
+const OUTSIDER_UID = "77777777-7777-7777-7777-777777777777";
+const OUTSIDER_EMAIL = "member@example.test";
 
 let db;
 let rpcId = 80;
@@ -165,7 +165,7 @@ async function assertGated401(res, reason) {
   assert.equal(body.error, "invalid_token");
   if (reason) assert.equal(body.reason, reason);
   const blob = JSON.stringify(body);
-  assert.doesNotMatch(blob, /"(alpha|bravo|totbox|zk0|secret-other)"/);
+  assert.doesNotMatch(blob, /"(alpha|bravo|bravo|alpha|secret-other)"/);
   assert.equal(body.labels, undefined);
   return body;
 }
@@ -198,7 +198,7 @@ async function callTool(name, args, token, extraHeaders = {}) {
 }
 
 function assertNoLabelLeak(blob) {
-  assert.doesNotMatch(blob, /"(alpha|bravo|totbox|secret-other)"/);
+  assert.doesNotMatch(blob, /"(alpha|bravo|bravo|secret-other)"/);
 }
 
 describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, () => {
@@ -219,7 +219,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(e2e, /R1/);
     assert.match(e2e, /not_invited/);
     assert.match(e2e, /First-user|first-user/);
-    assert.match(e2e, /zk0/);
+    assert.match(e2e, /alpha/);
     assert.match(e2e, /invite_member/);
     assert.match(e2e, /invite_store_unset/);
     assert.match(e2e, /accept_invite/);
@@ -314,7 +314,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     );
   });
 
-  it("R3 CTO first-user SQL insert → invited whoami PASS (zk0)", async () => {
+  it("R3 CTO first-user SQL insert → invited whoami PASS (alpha)", async () => {
     process.env.VERCEL_ENV = "production";
     usePgliteStores();
     await db.exec("RESET ROLE");
@@ -324,7 +324,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     );
     await db.query(
       "INSERT INTO bootstrap_company_labels (id, mentee_id, label) VALUES ($1, $2, $3)",
-      ["lcto", "mentee-cto-insert", "zk0"],
+      ["lcto", "mentee-cto-insert", "alpha"],
     );
     const token = syntheticAccessToken({
       email: "CTO-First@example.test",
@@ -333,7 +333,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const who = await whoamiPass(token);
     assert.equal(who.authenticated, true);
     assert.equal(who.email, "cto-first@example.test");
-    assert.deepEqual(who.labels, ["zk0"]);
+    assert.deepEqual(who.labels, ["alpha"]);
     assert.match(String(who.note), /Companies this login can open/);
     const bound = (
       await db.query("SELECT auth_user_id, email FROM bootstrap_mcp_mentees WHERE id = 'mentee-cto-insert'")
@@ -365,7 +365,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     );
   });
 
-  it("R6 cross-company labels + R7 invited Ivelin zk0 dogfood", async () => {
+  it("R6 cross-company labels + R7 invited Ivelin alpha dogfood", async () => {
     process.env.VERCEL_ENV = "production";
     usePgliteStores();
     const a = await whoamiPass(syntheticAccessToken({ email: "mentee-a@example.test", sub: A_UID }));
@@ -374,13 +374,11 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.deepEqual(a.labels, ["alpha"]);
     assert.deepEqual(b.labels, ["bravo"]);
     assert.deepEqual(ivelin.labels, [...IVELIN_SEED_LABELS]);
-    assert.ok(ivelin.labels.includes("zk0"));
-    assert.ok(!a.labels.includes("bravo") && !a.labels.includes("zk0"));
-    assert.ok(!b.labels.includes("alpha") && !b.labels.includes("pirin"));
-    assert.ok(!ivelin.labels.includes("alpha") && !ivelin.labels.includes("bravo"));
+    assert.ok(!a.labels.includes("bravo") && !a.labels.includes("charlie"));
+    assert.ok(!b.labels.includes("alpha") && !b.labels.includes("charlie"));
   });
 
-  it("P1 invite_member: Ivelin invites Bill to zk0; uninvited and cross-company fail", async () => {
+  it("P1 invite_member: Ivelin invites Bill to alpha; uninvited and cross-company fail", async () => {
     process.env.VERCEL_ENV = "production";
     usePgliteStores();
     const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
@@ -388,13 +386,13 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const aTok = syntheticAccessToken({ email: "mentee-a@example.test", sub: A_UID });
 
     await assertGated401(
-      await rawRpc("tools/call", { name: "invite_member", arguments: { email: BILL_EMAIL, companyLabel: "zk0" } }),
+      await rawRpc("tools/call", { name: "invite_member", arguments: { email: BILL_EMAIL, companyLabel: "alpha" } }),
       "missing_or_short_token",
     );
     await assertGated401(
       await rawRpc(
         "tools/call",
-        { name: "invite_member", arguments: { email: BILL_EMAIL, companyLabel: "zk0" } },
+        { name: "invite_member", arguments: { email: BILL_EMAIL, companyLabel: "alpha" } },
         stranger,
       ),
       "not_invited",
@@ -406,13 +404,13 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(cross.body.result.content.map((c) => c.text).join("\n"), /does not hold/i);
     assertNoLabelLeak(cross.text);
 
-    const invited = await callTool("invite_member", { email: "Bill@Example.TEST", companyLabel: "zk0" }, ivelin);
+    const invited = await callTool("invite_member", { email: "Bill@Example.TEST", companyLabel: "alpha" }, ivelin);
     assert.equal(invited.res.status, 200, invited.text);
     const payload = parseTool(invited.body);
     assert.equal(payload.ok, true);
     assert.equal(payload.from, IVELIN_SEED_EMAIL);
     assert.equal(payload.invited, BILL_EMAIL);
-    assert.equal(payload.company, "zk0");
+    assert.equal(payload.company, "alpha");
     assert.match(payload.signInUrl, /^https:\/\/pirin\.ai\/bootstrap-os\/login\?invite=inv_/);
     assert.match(payload.note, /email at that address/);
     const blob = JSON.stringify(payload);
@@ -434,7 +432,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
 
     setInviteStoreForTests(null);
-    const unset = await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "zk0" }, ivelin);
+    const unset = await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "alpha" }, ivelin);
     assert.equal(unset.res.status, 200, unset.text);
     assert.equal(unset.body.result.isError, true);
     const unsetMsg = unset.body.result.content.map((c) => c.text).join("\n");
@@ -460,7 +458,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
       setInviteStoreForTests(
         new SupabaseInviteStore("https://rpc-fail.example", "anon-key-fixture-xx", ivelin),
       );
-      const failed = await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "zk0" }, ivelin);
+      const failed = await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "alpha" }, ivelin);
       assert.equal(failed.res.status, 200, failed.text);
       assert.equal(failed.body.result.isError, true);
       const msg = failed.body.result.content.map((c) => c.text).join("\n");
@@ -473,7 +471,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     }
   });
 
-  it("P2 accept_invite: Bill lands on zk0; wrong email / expired / replay / bad token fail", async () => {
+  it("P2 accept_invite: Bill lands on alpha; wrong email / expired / replay / bad token fail", async () => {
     process.env.VERCEL_ENV = "production";
     usePgliteStores();
     const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
@@ -481,7 +479,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const stranger = syntheticAccessToken({ email: "stranger@example.test", sub: STRANGER_UID });
 
     const created = parseTool(
-      (await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "zk0" }, ivelin)).body,
+      (await callTool("invite_member", { email: BILL_EMAIL, companyLabel: "alpha" }, ivelin)).body,
     );
     const token = inviteTokenFromPublic(created);
 
@@ -504,7 +502,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     await db.query(
       `INSERT INTO bootstrap_mcp_invites
         (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at, accepted_at)
-       VALUES ($1, $2, 'zk0', 'mentee-ivelin', $3, $4, $5, NULL)`,
+       VALUES ($1, $2, 'alpha', 'mentee-ivelin', $3, $4, $5, NULL)`,
       ["inv-expired", "expired-verify@example.test", IVELIN_SEED_EMAIL, hashMcpToken(expiredToken), "2000-01-01T00:00:00.000Z"],
     );
     const expired = await callTool("accept_invite", { token: expiredToken }, bill);
@@ -516,46 +514,46 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     const ok = parseTool(accepted.body);
     assert.equal(ok.ok, true);
     assert.equal(ok.email, BILL_EMAIL);
-    assert.deepEqual(ok.labels, ["zk0"]);
+    assert.deepEqual(ok.labels, ["alpha"]);
 
     const who = await whoamiPass(bill);
     assert.equal(who.authenticated, true);
     assert.equal(who.email, BILL_EMAIL);
-    assert.deepEqual(who.labels, ["zk0"]);
-    assert.ok(!who.labels.includes("alpha") && !who.labels.includes("pirin"));
+    assert.deepEqual(who.labels, ["alpha"]);
+    assert.ok(!who.labels.includes("bravo") && !who.labels.includes("charlie"));
 
     const replay = await callTool("accept_invite", { token }, bill);
     assert.equal(replay.body.result.isError, true);
     assert.match(replay.body.result.content.map((c) => c.text).join("\n"), /Invite rejected/);
   });
 
-  it("P3 Invitee login-URL: mail outbox + verify + signup URL + accept → whoami zk0", async () => {
+  it("P3 Invitee login-URL: mail outbox + verify + signup URL + accept → whoami alpha", async () => {
     process.env.VERCEL_ENV = "production";
     process.env.BOOTSTRAP_INVITE_MAIL = "dry-run";
     usePgliteStores();
     const seen = [];
     setInviteMailSinkForTests((m) => seen.push(m));
     const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
-    const outsider = syntheticAccessToken({ email: ZK0_OUTSIDER_EMAIL, sub: ZK0_OUTSIDER_UID });
+    const outsider = syntheticAccessToken({ email: OUTSIDER_EMAIL, sub: OUTSIDER_UID });
 
     const created = parseTool(
-      (await callTool("invite_member", { email: ZK0_OUTSIDER_EMAIL, companyLabel: "zk0" }, ivelin))
+      (await callTool("invite_member", { email: OUTSIDER_EMAIL, companyLabel: "alpha" }, ivelin))
         .body,
     );
     assert.equal(created.ok, true);
     const token = inviteTokenFromPublic(created);
     assert.equal(seen.length, 1);
     assert.equal(seen[0].from, INVITE_MAIL_FROM);
-    assert.equal(seen[0].to, ZK0_OUTSIDER_EMAIL);
-    assert.match(seen[0].text, /Who invited: ivelin@pirin\.ai/);
+    assert.equal(seen[0].to, OUTSIDER_EMAIL);
+    assert.match(seen[0].text, /Who invited: founder@example\.test/);
     assert.match(seen[0].signupUrl, new RegExp(`invite=${token}`));
 
     const store = new PgliteInviteStore(db);
     const verified = await store.verifyInvite(token);
     assert.deepEqual(verified, {
       ok: true,
-      invitee_email: ZK0_OUTSIDER_EMAIL,
-      company_label: "zk0",
+      invitee_email: OUTSIDER_EMAIL,
+      company_label: "alpha",
       inviter_email: IVELIN_SEED_EMAIL,
     });
     assert.deepEqual(await store.verifyInvite("inv_not_a_real_invite_token_xx"), { ok: false });
@@ -565,7 +563,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     await db.query(
       `INSERT INTO bootstrap_mcp_invites
         (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at, accepted_at)
-       VALUES ($1, $2, 'zk0', 'mentee-ivelin', $3, $4, $5, NULL)`,
+       VALUES ($1, $2, 'alpha', 'mentee-ivelin', $3, $4, $5, NULL)`,
       ["inv-expired-url", "expired-login-url@example.test", IVELIN_SEED_EMAIL, hashMcpToken(expiredToken), "2000-01-01T00:00:00.000Z"],
     );
     const expiredVerify = await store.verifyInvite(expiredToken);
@@ -581,18 +579,18 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.equal(accepted.res.status, 200, accepted.text);
     const ok = parseTool(accepted.body);
     assert.equal(ok.ok, true);
-    assert.equal(ok.email, ZK0_OUTSIDER_EMAIL);
-    assert.deepEqual(ok.labels, ["zk0"]);
+    assert.equal(ok.email, OUTSIDER_EMAIL);
+    assert.deepEqual(ok.labels, ["alpha"]);
 
     const who = await whoamiPass(outsider);
     assert.equal(who.authenticated, true);
-    assert.equal(who.email, ZK0_OUTSIDER_EMAIL);
-    assert.deepEqual(who.labels, ["zk0"]);
+    assert.equal(who.email, OUTSIDER_EMAIL);
+    assert.deepEqual(who.labels, ["alpha"]);
 
     assert.deepEqual(await store.verifyInvite(token), { ok: false });
   });
 
-  it("P4 existing user second workspace: mentee-a (alpha) + zk0; already_member; isolation", async () => {
+  it("P4 existing user second workspace: mentee-a (alpha) + charlie; already_member; isolation", async () => {
     process.env.VERCEL_ENV = "production";
     usePgliteStores();
     const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
@@ -603,7 +601,7 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.deepEqual(before.labels, ["alpha"]);
 
     const created = parseTool(
-      (await callTool("invite_member", { email: "mentee-a@example.test", companyLabel: "zk0" }, ivelin))
+      (await callTool("invite_member", { email: "mentee-a@example.test", companyLabel: "charlie" }, ivelin))
         .body,
     );
     assert.equal(created.ok, true);
@@ -613,17 +611,16 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.equal(accepted.res.status, 200, accepted.text);
     const ok = parseTool(accepted.body);
     assert.equal(ok.ok, true);
-    assert.deepEqual(ok.labels, ["alpha", "zk0"]);
+    assert.deepEqual(ok.labels, ["alpha", "charlie"]);
 
     const who = await whoamiPass(aTok);
     assert.equal(who.authenticated, true);
-    assert.deepEqual(who.labels, ["alpha", "zk0"]);
+    assert.deepEqual(who.labels, ["alpha", "charlie"]);
     assert.ok(!who.labels.includes("bravo"));
-    assert.ok(!who.labels.includes("pirin"));
 
     const again = await callTool(
       "invite_member",
-      { email: "mentee-a@example.test", companyLabel: "zk0" },
+      { email: "mentee-a@example.test", companyLabel: "charlie" },
       ivelin,
     );
     assert.equal(again.body.result.isError, true);
@@ -631,8 +628,8 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
 
     const b = await whoamiPass(bTok);
     assert.deepEqual(b.labels, ["bravo"]);
-    assert.ok(!b.labels.includes("zk0"));
     assert.ok(!b.labels.includes("alpha"));
+    assert.ok(!b.labels.includes("charlie"));
   });
 
   it("P5 Grok App: what companies do I have — whoami/list_companies, not docs, not journey", async () => {
@@ -664,11 +661,11 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     }
   });
 
-  it("P6 look at zk0 then invite without naming company; reject a company you do not hold", async () => {
+  it("P6 look at alpha then invite without naming company; reject a company you do not hold", async () => {
     process.env.VERCEL_ENV = "production";
     usePgliteStores();
     const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
-    const session = { "MCP-Session-Id": "e2e-p6-zk0" };
+    const session = { "MCP-Session-Id": "e2e-p6-alpha" };
 
     const denied = await callTool(
       "bootstrap_use_company",
@@ -679,22 +676,22 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.equal(denied.body.result.isError, true);
     assert.match(denied.body.result.content[0].text, /don't have access/i);
 
-    const used = parseTool((await callTool("bootstrap_use_company", { company: "zk0" }, ivelin, session)).body);
+    const used = parseTool((await callTool("bootstrap_use_company", { company: "alpha" }, ivelin, session)).body);
     assert.equal(used.ok, true);
-    assert.equal(used.activeCompany, "zk0");
+    assert.equal(used.activeCompany, "alpha");
 
     const who = parseTool((await callTool("bootstrap_whoami", {}, ivelin, session)).body);
-    assert.equal(who.activeCompany, "zk0");
+    assert.equal(who.activeCompany, "alpha");
     assert.deepEqual(who.companies, [...IVELIN_SEED_LABELS]);
 
     const invited = parseTool(
       (await callTool("invite_member", { email: "p6-invitee@example.test" }, ivelin, session)).body,
     );
     assert.equal(invited.ok, true);
-    assert.equal(invited.company, "zk0");
+    assert.equal(invited.company, "alpha");
   });
 
-  it("P7 where are we on zk0 — shared board snapshot, not GitHub", async () => {
+  it("P7 where are we on alpha — shared board snapshot, not GitHub", async () => {
     process.env.VERCEL_ENV = "production";
     usePgliteStores();
     setJourneyStoreForTests(
@@ -703,18 +700,18 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
       ),
     );
     const ivelin = syntheticAccessToken({ email: IVELIN_SEED_EMAIL, sub: IVELIN_UID });
-    const session = { "MCP-Session-Id": "e2e-p7-zk0" };
-    await callTool("bootstrap_use_company", { company: "zk0" }, ivelin, session);
+    const session = { "MCP-Session-Id": "e2e-p7-alpha" };
+    await callTool("bootstrap_use_company", { company: "alpha" }, ivelin, session);
     const listed = await rawRpc("tools/list", {}, ivelin, session);
     const names = JSON.parse(await listed.text()).result.tools.map((t) => t.name);
     assert.ok(names.includes("get_journey"));
     assert.ok(names.includes("bootstrap_where_are_we"));
     const board = parseTool((await callTool("bootstrap_where_are_we", {}, ivelin, session)).body);
     assert.equal(board.ok, true);
-    assert.equal(board.company.slug, "zk0");
+    assert.equal(board.company.slug, "alpha");
     assert.equal(board.ideas[0].clocks.journeyPhase, 1);
     assert.match(String(board.ideas[0].visualFlow), /mermaid/);
-    assert.doesNotMatch(JSON.stringify(board), /github.com|zk0.bot|SmolVLA/);
+    assert.doesNotMatch(JSON.stringify(board), /github.com|alpha\.bot/);
     const other = parseTool((await callTool("get_journey", { company: "not-a-team" }, ivelin, session)).body);
     assert.equal(other.ok, false);
   });
