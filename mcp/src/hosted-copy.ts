@@ -2,13 +2,18 @@
 
 export const HOSTED_MCP_INSTRUCTIONS = `You are connected to Bootstrap OS for one signed-in person.
 
-That person can belong to several companies. A company is a team (for example pirin, zk0, totbox). Under a company there may be several ideas; each idea has its own 0-1 board. Do not blend two ideas into one story. Do not treat process docs (operating-system, first-hour, ready-for-human-eyes) as companies.
+A company is a team (pirin, zk0, totbox). An idea is one 0-1 bet under that company. Clocks, bottleneck, mermaid, and the decision log are per idea. Never blend two ideas into one story or one diagram. Process docs (operating-system, first-hour) are not companies.
 
 To see who is signed in and which companies they can open, call bootstrap_whoami or bootstrap_list_companies.
-To work in one company for this chat, call bootstrap_use_company.
-To see the shared 0-1 board, call get_journey or bootstrap_where_are_we (uses the active company if the user already chose one). Return the snapshot, mermaid, and the decision log (lastTransitions, comments, audit). Do not invent log entries. Do not paste GitHub or a website as the board.
-This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
+When the user asks for status, where we are, the 0-1 journey, a diagram or state machine or mermaid, the decision log or who did what, the bottleneck or next constraint, or who is on the team:
+1. Call bootstrap_use_company if no company is active.
+2. Call get_journey or bootstrap_where_are_we with company and optional idea (omit idea for every idea under the company).
+3. Answer only from the payload: clocks, snapshot, visualFlow mermaid (journey 1-9 and loop 1-7 flowcharts), lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners.
+4. The bottleneck and open questions are the honest next work. Do not invent a task list, log rows, or a later phase. Do not use GitHub as the board.
 
+put_journey writes bottleneck or Advance/Iterate/Hold/Kill (founder yes in this chat). post_comment never moves clocks.
+
+This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
 If the user is not signed in, tell them to sign in to Bootstrap OS and ask again.`;
 
 export const TOOL_WHOAMI =
@@ -35,7 +40,7 @@ export const NOTE_COMPANIES =
 export const NOTE_NOT_SIGNED_IN = "You're not signed in to Bootstrap OS.";
 
 export const TOOL_GET_JOURNEY =
-  "Where are we on a company or idea. Shared 0-1 snapshot and mermaid. Uses the active company if already chosen. Do not invent a stage. Do not use GitHub as the board.";
+  "Status of a company or one idea under it (separate boards). Returns 0-1 clocks, snapshot, mermaid state machine (journey 1-9 and loop 1-7 flowcharts), decision log (lastTransitions, comments, audit: who did what), bottleneck (constraintThisWeek), open questions as next work, and owners (who is on the team). Omit idea for every idea under the company. Uses the active company if already chosen. Do not invent a stage or log rows. Do not use GitHub as the board.";
 
 export const TOOL_PUT_JOURNEY =
   "Update the shared 0-1 board for an idea (phase, gate, bottleneck this week). Phase or gate change needs an explicit founder yes in this chat.";

@@ -9,7 +9,8 @@ import {
   HOSTED_GATED_IDENTITY_TOOL_NAMES,
   HOSTED_GATED_JOURNEY_TOOL_NAMES,
 } from "../dist/constants.js";
-import { HOSTED_MCP_INSTRUCTIONS } from "../dist/hosted-copy.js";
+import { HOSTED_MCP_INSTRUCTIONS, TOOL_GET_JOURNEY } from "../dist/hosted-copy.js";
+import { HostedMembershipJourneyStore } from "../dist/hosted-journey-store.js";
 import { clearHostedCompanyContextForTests } from "../dist/hosted-company-context.js";
 import {
   ivelinMemoryFixture,
@@ -70,7 +71,13 @@ describe("hosted access layer (one login, many companies)", () => {
     assert.match(instructions, /bootstrap_whoami|bootstrap_list_companies/);
     assert.match(instructions, /companies/);
     assert.match(instructions, /ideas/);
+    assert.match(instructions, /get_journey|bootstrap_where_are_we/);
+    assert.match(instructions, /mermaid/);
+    assert.match(instructions, /lastTransitions|decision log/i);
+    assert.match(instructions, /owners/);
+    assert.match(instructions, /constraintThisWeek|bottleneck/i);
     assert.match(instructions, /user-bootstrap-os-mcp/);
+    assert.doesNotMatch(instructions, /swim/i);
     assert.doesNotMatch(instructions, /Path 3|WWW-Authenticate|Bearer|mentee/i);
     assert.equal(instructions, HOSTED_MCP_INSTRUCTIONS);
   });
@@ -92,6 +99,31 @@ describe("hosted access layer (one login, many companies)", () => {
       }
       assert.doesNotMatch(String(tool.description ?? ""), FORBIDDEN_IN_TOOL_TEXT, tool.name);
     }
+  });
+
+  it("get_journey description advertises company vs idea, mermaid, log, bottleneck, owners", async () => {
+    setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
+    setJourneyStoreForTests(
+      new HostedMembershipJourneyStore((actor) =>
+        actor.email === IVELIN_SEED_EMAIL ? [...IVELIN_SEED_LABELS] : [],
+      ),
+    );
+    const listed = await rpc("tools/list", {}, 11);
+    const journey = listed.result.tools.find((t) => t.name === "get_journey");
+    assert.ok(journey);
+    assert.equal(journey.description, TOOL_GET_JOURNEY);
+    assert.match(journey.description, /company/i);
+    assert.match(journey.description, /idea/i);
+    assert.match(journey.description, /mermaid/);
+    assert.match(journey.description, /lastTransitions|decision log/i);
+    assert.match(journey.description, /owners/);
+    assert.match(journey.description, /constraintThisWeek|bottleneck/i);
+    assert.doesNotMatch(journey.description, /swim/i);
+    const ideaParam = journey.inputSchema?.properties?.idea;
+    const companyParam = journey.inputSchema?.properties?.company;
+    assert.match(String(companyParam?.description ?? ""), /team/i);
+    assert.match(String(ideaParam?.description ?? ""), /idea/i);
+    assert.doesNotMatch(JSON.stringify(journey.inputSchema), /CoreHaul/);
   });
 
   it("whoami and list_companies return companies for the seed user", async () => {

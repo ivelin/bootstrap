@@ -509,7 +509,7 @@ function registerWriteTools(server: McpServer) {
 
   server.tool(
     "bootstrap_where_are_we",
-    "Clear status for the ACTIVE company only: plain + structured two clocks, human-eyes, questions, scores.",
+    "Local file status for the ACTIVE Path 3 company only. Shared hosted board is get_journey, not this tool.",
     {},
     async () => {
       try {
@@ -762,9 +762,9 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       q: z
         .string()
         .optional()
-        .describe("CoreHaul or CoreHaul / last-mile. Company and idea are separate."),
-      company: z.string().optional().describe("Company slug"),
-      idea: z.string().optional().describe("Idea slug. Omit for every idea under the company."),
+        .describe("Company name, or company / idea. Company is the team; idea is one 0-1 bet under it."),
+      company: z.string().optional().describe("Company (team) name, for example zk0"),
+      idea: z.string().optional().describe("One idea under that company. Omit for every idea."),
       expand: z
         .enum(["snapshot", "meeting_doc"])
         .optional()
@@ -798,9 +798,9 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
     "bootstrap_where_are_we",
     TOOL_GET_JOURNEY,
     {
-      q: z.string().optional().describe("Company, or company / idea"),
-      company: z.string().optional().describe("Company name, for example zk0"),
-      idea: z.string().optional(),
+      q: z.string().optional().describe("Company name, or company / idea. Company is the team; idea is one 0-1 bet under it."),
+      company: z.string().optional().describe("Company (team) name, for example zk0"),
+      idea: z.string().optional().describe("One idea under that company. Omit for every idea."),
       expand: z.enum(["snapshot", "meeting_doc"]).optional(),
     },
     async (input) => {

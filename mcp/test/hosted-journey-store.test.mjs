@@ -20,6 +20,8 @@ describe("hosted membership journey store", () => {
     const board = await store.getJourney(ivelin, { companySlug: "zk0" });
     assert.equal(board.ok, true);
     assert.equal(board.ideas[0].slug, "default");
+    assert.ok(Array.isArray(board.owners));
+    assert.ok(board.owners.some((row) => row.principal === "ivelin@pirin.ai"));
     assert.equal(board.ideas[0].clocks.journeyPhase, 1);
     assert.match(board.ideas[0].visualFlow, /mermaid/);
     assert.equal(

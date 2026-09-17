@@ -57,7 +57,15 @@ export class HostedMembershipJourneyStore implements JourneyStore {
       return { ok: false, error: "company not visible" };
     }
     this.inner.ensureCompanyForMember(slug, actor);
-    return this.inner.getJourney(actor, { ...query, companySlug: slug });
+    const result = (await this.inner.getJourney(actor, { ...query, companySlug: slug })) as {
+      ok?: boolean;
+      acl?: Array<{ principal: string; role: string }>;
+      owners?: Array<{ principal: string; role: string }>;
+    };
+    if (result?.ok && Array.isArray(result.acl)) {
+      result.owners = result.acl.map((row) => ({ principal: row.principal, role: row.role }));
+    }
+    return result;
   }
 
   async putJourney(
