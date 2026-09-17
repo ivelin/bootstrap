@@ -1106,6 +1106,23 @@ if ! printf '%s\n' "$done_when" | grep -q 'founder checkpoint' \
 else
   not_ok "do not put founder checkpoint / Alpha / QC Hold in the Day 0 Done when checklist"
 fi
+if grep -q 'How to say this' company-os/operating-system.md \
+  && grep -q 'What the founder hears' company-os/operating-system.md; then
+  ok "OS 2.8.12 How to say this is pinned"
+else
+  not_ok "OS must have How to say this and What the founder hears"
+fi
+if ! grep -q 'QC holds' company-os/first-hour.md \
+  && ! grep -q 'Alpha is a written' company-os/first-hour.md; then
+  ok "first-hour quote does not use QC holds / Alpha is a written"
+else
+  not_ok "first-hour quote must not contain QC holds or Alpha is a written"
+fi
+if grep -q 'Do not lead with QC' company-os/ai-instructions.md; then
+  ok "ai-instructions does not lead checkpoints with desk labels"
+else
+  not_ok "ai-instructions must say Do not lead with QC"
+fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
 if [ "$fail" -ne 0 ]; then

@@ -674,6 +674,23 @@ Soft moments stay soft: weekly snapshot, ranking challenge, “what should I dec
 
 Do not store another company’s deal, cap, or private instrument in this template. Instrument class only (sign, file, date, bet).
 
+### How to say this
+
+Desk labels (QC, Bind, Clock, Alpha) are for traces. They are not how you talk to a founder.
+
+Speak in the founder's words when a founder-voice profile exists. If none exists yet, use these lines. Short. Calm. No acronyms. No pep talk. No "you should have known."
+
+| Desk label | What the founder hears |
+|------------|------------------------|
+| QC | This path is not ready for a real person yet. We hold this path and write a better test. Other work can continue. |
+| Bind | This would sign, send, or spend in the company's name. I will draft it. You decide whether it goes out. |
+| Clock | There is a date that will pass. Someone with a name needs to act, or you write why it can wait. |
+| Alpha | You want to go against what I would usually recommend. Write the claim, by when you will know, what would prove you wrong, and how much time or money you will spend to learn. |
+
+If the founder already has a way of saying the same thing, use that. Update the skill. Do not correct their language into house jargon.
+
+Never open a checkpoint by announcing the desk label first.
+
 ### Autonomy postures (how much the system may do alone)
 
 Pick one default for the company this week. You can only get **stricter** in a narrower context — not looser.
@@ -1420,7 +1437,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.7 | House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). Same family as 2.8.6; do not merge. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): preview plugin [`plugin/`](../plugin/) — skills hyperlink this pack; hosted MCP is a read adapter only, not mentee-ready boards, not a marketplace. |
 | 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. SaaS 1.0 playbooks may be outdated; stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.9 | House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck. [Several ideas are allowed](#core-beliefs) (2.8.5) still stands. Not Day 0 homework. Not a third clock. Not an accelerate or optimize law. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
-| 2.8.12 | Additive pack: [founder checkpoints](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha). Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. No tenth phase. No third clock. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.12 | Additive pack: [founder checkpoints](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha). Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. Founder-facing speech uses the [plain lines](#how-to-say-this); desk labels stay in traces. No tenth phase. No third clock. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 
