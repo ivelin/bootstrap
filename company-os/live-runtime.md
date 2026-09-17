@@ -66,6 +66,7 @@ Whatever tools you pick, the **live OS needs durable, versioned state** that bot
 | **Loop cursor** | Where the runtime is | Current stage 1–7, last run id, blocked reason; optional: last snapshot date |
 | **Autonomy posture** | How much the system may do alone | Strict / Auto / Dangerous ([blueprint](operating-system.md#autonomy-postures-how-much-the-system-may-do-alone)); default Strict |
 | **Ready for human eyes** | May we ask cold humans to try a product URL? | `unknown` \| `blocked` \| `green` + optional evidence path / blockers ([blueprint](operating-system.md#ready-for-human-eyes-ship-gate-before-external-feedback)); default **unknown** |
+| **Founder checkpoints** | Open QC / Bind / Clock / Alpha moments | Optional. Default **empty** = 2.8.9 behavior. QC Hold is path-local. Does not change `current_gate`. See [founder checkpoints](operating-system.md#founder-checkpoints-when-human-judgment-is-the-work) |
 
 ### 3.2 Design rules for state
 
@@ -245,6 +246,9 @@ The loop may be automated; **strategy must not**.
 | Autonomy posture change (esp. toward looser) | Drafts / dry-runs under current posture |
 | Spend / hiring / co-founder | Test generation |
 | Shipping to real customers (first times) | Synthetic scenario runs |
+| Clear a founder checkpoint (QC / Bind / Clock / Alpha) | Draft the Human Expert Brief; recommend opening one |
+
+**QC Hold is path-local.** A QC checkpoint on one path does not set journey `Hold` and does not freeze other paths. Journey Hold still means the whole board waits. Absent checkpoints means the runtime behaves as it did before this pack.
 
 AI permanent instructions: [`ai-instructions.md`](ai-instructions.md).
 
@@ -404,6 +408,7 @@ Before heavy agent frameworks, a solo founder can run an honest loop with:
 - [ ] Founder-day pack ran if real talks happened (prep / close the call / post-talk); skills updated when steered  
 - [ ] `readyForHumanEyes` is tracked; external product-test asks only when **green** (or override + trace)  
 - [ ] Cold happy path was run outside founder-only session before last mentor/user product ask  
+- [ ] Open founder checkpoints (if any) are listed; empty is fine; QC Hold named by path  
 
 ---
 

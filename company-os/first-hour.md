@@ -127,6 +127,12 @@ When someone names a new landing page as the bottleneck, and no one has talked t
 
 House rule: [do not automate a step that should not exist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
 
+When the AI cannot meet a human bar on one path, or you want to bet against what it calls reasonable:
+
+> That is a founder checkpoint, not a new clock. QC holds the path. Alpha is a written bet with a horizon and a cap.
+
+[Founder checkpoints](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#founder-checkpoints-when-human-judgment-is-the-work). Optional until you have the situation. Not this hour.
+
 ---
 
 *You supply the insight. AI supplies the speed.*
