@@ -127,6 +127,18 @@ When someone names a new landing page as the bottleneck, and no one has talked t
 
 House rule: [do not automate a step that should not exist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
 
+When someone treats a signed SAFE, a clean cap table, or a lawyer email as proof the product works:
+
+> Legal paper cannot promote. File it on the side. Get one stranger through the happy path this week.
+
+House rule: [legal paper cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-legal-paper-cannot-promote).
+
+When someone treats an advisor's promise of exclusivity or an Office Hours tip as proof customers will pay:
+
+> An advisor's opinion is a tip, not proof customers will pay. Write down who said it. Do not delay a customer who wants to pay.
+
+House rule: [advisor ride-along is assumed, not observed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed).
+
 When a path is not ready for a real person, or you want to go against the usual advice:
 
 > Hold that path and write a better test. Other work can continue. If I am betting against the usual advice, I write the claim, the date, what would prove me wrong, and how much I will spend to learn.
