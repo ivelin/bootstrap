@@ -58,6 +58,7 @@ describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, ()
     );
     assert.match(createSql, /bootstrap_os_create_idea/);
     assert.match(createSql, /idea not found; call create_idea first/);
+    assert.match(createSql, /p_scoreboard/);
     assert.match(createSql, /Fictional template labels only/);
     assert.doesNotMatch(createSql, /supabase\.co/);
   });

@@ -237,6 +237,7 @@ export class SupabaseJourneyStore implements JourneyStore {
       p_loop_stage: input.loopStage ?? null,
       p_current_gate: input.currentGate ?? null,
       p_constraint: input.constraintThisWeek ?? null,
+      p_scoreboard: input.scoreboard ?? null,
       p_why: input.why,
       p_founder_yes: input.founderYes,
       p_founder_written_decision: input.founderWrittenDecision ?? null,

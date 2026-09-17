@@ -52,11 +52,14 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS public.bootstrap_os_put_journey(text, text, text, boolean, int, int, text, text, text);
+
 CREATE OR REPLACE FUNCTION public.bootstrap_os_put_journey(
   p_company text, p_idea text, p_why text, p_founder_yes boolean,
   p_journey_phase int DEFAULT NULL, p_loop_stage int DEFAULT NULL,
   p_current_gate text DEFAULT NULL, p_constraint text DEFAULT NULL,
-  p_founder_written_decision text DEFAULT NULL
+  p_founder_written_decision text DEFAULT NULL,
+  p_scoreboard jsonb DEFAULT NULL
 ) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, bootstrap_os AS $$
 DECLARE cid uuid; idea_row bootstrap_os.ideas%ROWTYPE; email text := NULLIF(lower(auth.jwt() ->> 'email'), '');
 BEGIN
@@ -72,6 +75,9 @@ BEGIN
   IF p_journey_phase IS NOT NULL THEN idea_row.journey_phase := p_journey_phase; END IF;
   IF p_loop_stage IS NOT NULL THEN idea_row.loop_stage := p_loop_stage; END IF;
   IF p_current_gate IS NOT NULL THEN idea_row.current_gate := p_current_gate::bootstrap_os.gate_decision; END IF;
+  IF p_scoreboard IS NOT NULL AND jsonb_typeof(p_scoreboard) = 'object' THEN
+    idea_row.scoreboard := coalesce(idea_row.scoreboard, '{}'::jsonb) || (p_scoreboard - 'owner' - 'owners' - 'ownerName' - 'ownerEmail');
+  END IF;
   IF p_constraint IS NOT NULL THEN
     idea_row.scoreboard := jsonb_set(coalesce(idea_row.scoreboard, '{}'::jsonb), '{constraint_this_week}', to_jsonb(left(p_constraint, 280)));
   END IF;
@@ -104,3 +110,5 @@ $$;
 
 REVOKE ALL ON FUNCTION public.bootstrap_os_create_idea(text, text, text, boolean, text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.bootstrap_os_create_idea(text, text, text, boolean, text) TO authenticated;
+REVOKE ALL ON FUNCTION public.bootstrap_os_put_journey(text, text, text, boolean, int, int, text, text, text, jsonb) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.bootstrap_os_put_journey(text, text, text, boolean, int, int, text, text, text, jsonb) TO authenticated;
