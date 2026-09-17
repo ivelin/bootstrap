@@ -130,7 +130,7 @@ Thin when-to-use + links to the published OS. They do not copy the constitution.
 |-------|-----------|
 | `query-os-first` | 0-1 / GTM / spoken yes / empty-context (do not invent stage, price, or LTV) / optimal price / automate the playbook / agent team with no named owner / new landing page as bottleneck / exit without fences+proof |
 | `path-1-default` | https://github.com/ivelin/bootstrap · Day 0 lifestyle or fences · After First Hour pin |
-| `house-rule-pins` | Spoken yes is not GTM; 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; LTV:CAC 3x / T2D3 stale |
+| `house-rule-pins` | Spoken yes is not GTM; 2.8.6–2.8.11; LTV:CAC 3x / T2D3 stale |
 | `first-hour` | Day 0 + install-first (plugin + this connector only) · After First Hour standing rules |
 | `after-proof-efficiency` | Open only if fences + proof + they asked. Otherwise two clocks. |
 | `when-to-write` | After a gate / founder yes in chat. Weekly constraint is the honest bottleneck, not a side quest. Comments never mutate phase. |

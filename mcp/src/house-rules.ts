@@ -22,6 +22,8 @@ export const HOUSE_RULE_LINES = [
   "A security program cannot promote.",
   "There is no optimal price until people have paid and stayed.",
   "Do not automate a step that should not exist. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck. Challenge a fun side quest dressed as the bottleneck. Founder still decides; the agent does not rubber-stamp.",
+  "Legal paper cannot promote.",
+  "Advisor ride-along is assumed, not observed. An advisor's opinion is a tip, not proof customers will pay. Write down who said it.",
   "SaaS 1.0 playbooks may be outdated. Stay current.",
   "AI never advances a journey phase without founder Advance / Iterate / Hold / Kill.",
   "Empty context with no founder update: do not invent their stage, a price, or an LTV number. Write unknown / none yet.",
@@ -114,6 +116,14 @@ export function agentTeamMaySkipUnownedStep(): false {
   return false;
 }
 
+export function legalPaperMayPromote(): false {
+  return false;
+}
+
+export function advisorRideAlongIsObserved(): false {
+  return false;
+}
+
 /**
  * A new landing page is not the bottleneck when no one has talked to customers,
  * unless the founder overrides with a written decision.
@@ -155,5 +165,15 @@ export const HOUSE_RULE_PINS = [
     id: "do-not-automate-2.8.9",
     pin: "Do not automate a step that should not exist. Automate last. An agent team is automation. Name the one bottleneck this week. Several ideas may attack that same bottleneck.",
     url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist",
+  },
+  {
+    id: "legal-paper-2.8.10",
+    pin: "Legal paper cannot promote.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-legal-paper-cannot-promote",
+  },
+  {
+    id: "advisor-ride-along-2.8.11",
+    pin: "Advisor ride-along is assumed, not observed. An advisor's opinion is a tip, not proof customers will pay. Write down who said it.",
+    url: "https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed",
   },
 ] as const;

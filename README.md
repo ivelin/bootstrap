@@ -164,6 +164,12 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 **v2.8.12 — founder checkpoints (QC / Bind / Clock / Alpha)**  
 Additive pack. Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. No tenth phase. No third clock. No schema bump. Full text: [founder checkpoints](company-os/operating-system.md#founder-checkpoints-when-human-judgment-is-the-work).
 
+**v2.8.11 — advisor ride-along is assumed, not observed**  
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. An advisor's opinion is a tip, not proof. Write down who said it. Do not delay a paying customer.
+
+**v2.8.10 — legal paper cannot promote**  
+House rule. Full text: [operating-system.md](company-os/operating-system.md#house-rule-legal-paper-cannot-promote). Same family as 2.8.6–2.8.9; do not merge. Cap table, SAFE, and lawyer emails do not prove the product works.
+
 **After proof — efficiency (fences)**  
 Resource page, not a house rule, not a version bump. Open only if fences + proof + they asked: [after-proof-efficiency.md](company-os/after-proof-efficiency.md).
 

@@ -88,7 +88,9 @@ This is a Day 0 / Path 1 question. It is **not** a house rule and **not** a thir
    House rule: [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote).  
    House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote).  
    House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).  
-   House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist).
+   House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist).  
+   House rule: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote).  
+   House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed).
 
 7. **Build evaluation-first when you build.**  
    Spec success criteria and a harness before (or with) the implementation — not after a big unmeasured build.
@@ -1135,7 +1137,36 @@ Teaching pictures, not extra law: the company only moves as fast as its weakest 
 
 This rule is **not** a third clock, **not** Day 0 homework, and **not** an accelerate or optimize law. Factory speed is not 0→1.
 
-Same family: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+Same family: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). [Legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [Advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed).
+
+### House rule: legal paper cannot promote
+
+Someone saying you must finish the cap table, a SAFE, or a lawyer email thread before anyone has used or paid is asking for **paperwork**, not proof the product works. Same family as [a security program cannot promote](#house-rule-a-security-program-cannot-promote).
+
+**Meaning.** Real proof = someone used the product, paid, came back, or referred a friend. Legal paperwork (cap table, SAFE, lawyer emails) does not prove the product works and does not move you to the next stage by itself.
+
+| | Do this | Not this |
+|--|---------|----------|
+| **Paper later** | The founder points at [starter legal templates](#starter-legal-templates). They get one stranger through the happy path this week. File the paper on the side. | A lawyer emails that the SAFE is signed. Nobody has tried the product. The founder treats the signed paper as proof strangers can try the product. |
+| **Stay put** | The paper gets filed. The company stays at the stage the product evidence supports. One stranger still finishes the product. | The week's only activity is lawyer emails. The founder still says the company moved to the next stage because the cap table is clean or a SAFE is signed. |
+
+Same family: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). [A security program cannot promote](#house-rule-a-security-program-cannot-promote).
+
+### House rule: advisor ride-along is assumed, not observed
+
+Someone saying an advisor's promise of exclusivity, or an Office Hours tip about price, proves customers will pay is mixing up a **tip** with real proof. Same family as a spoken yes: talk is not a sale.
+
+**Meaning.** Real proof = someone used the product, paid, came back, or referred a friend. An advisor's opinion or an Office Hours tip is a tip — not proof customers will pay. A promise of exclusivity is not that either. Do not delay a customer who wants to pay just to keep an advisor happy or "exclusive."
+
+| | Do this | Not this |
+|--|---------|----------|
+| **Paying customer first** | The advisor is helpful. A prospect asks to pay. The founder ships the pilot. Any exclusivity promise waits until there is a real reason. | An advisor says "don't take customers yet — stay exclusive to my introductions." A real prospect then asks to pay and start. The founder delays or turns them down so the advisor stays happy. The prospect's ask is the real signal; the advisor's exclusivity talk is only an opinion. |
+| **Write who said it** | In Office Hours someone says "founders hate paying $X for this." The founder writes "Person N said this in Office Hours" and treats it as that person's opinion. Discovery still looks for a named buyer who acts. | In Office Hours someone says "founders hate paying $X for this." The board treats that tip as proof of what customers will pay and moves on. No named buyer ever said they would pay. A room tip is not a sale. |
+| **Stay put** | Advisor notes stay in the notes. The company stays put until someone uses the product, pays, comes back, or refers a friend. | The week's only activity is advisor meetings, lawyer emails, or exclusivity talk. The founder still says the company moved to the next stage. Talk is not proof someone used or paid. |
+
+**Implement.** Write down who said what. Check that first before you write exclusivity language. A week of only lawyer emails and advisor meetings = stay put. A named person who wants to pay can move you.
+
+Same family: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
 ---
 
@@ -1360,6 +1391,8 @@ Every company should maintain its own list. Starter prompts:
 - A security or compliance program as proof — see [a security program cannot promote](#house-rule-a-security-program-cannot-promote)  
 - A handful survey as optimal price, a CAC/LTV model at 0→1 as proof, or last decade's SaaS playbook as the aim — see [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed)  
 - Automating the playbook, or an agent team to skip a step with no named owner — see [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist)  
+- Cap table, SAFE, or lawyer emails as proof the product works — see [legal paper cannot promote](#house-rule-legal-paper-cannot-promote)  
+- An advisor says stay exclusive, then a prospect asks to pay, and the founder delays them — see [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed)  
 - Commissioning custom legal agreements before revenue — see [starter legal templates](#starter-legal-templates)
 
 ---
@@ -1413,7 +1446,7 @@ Accuracy numbers perish with the model checkpoint. Mechanism findings last until
 - Bisbee et al., 2024, *Political Analysis*. Task: silicon sampling / prompt variance and drift. Finding: too-tight variance and same-prompt drift make a pass unusable.
 - Brand, Israeli, and Ngwe, HBS 23-062 rev. 2026, §3.3. Task: willingness-to-pay and cross-category fine-tune (laptop → tablet). Finding: direct dollar WTP from GPT was useless; fine-tune failed on a new category. They still used conjoint with prices in the profile and reported $. They did not write “never produce a dollar” or “one condition change.”
 
-Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused); [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote); [a security program cannot promote](#house-rule-a-security-program-cannot-promote); [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist).
+Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused); [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote); [a security program cannot promote](#house-rule-a-security-program-cannot-promote); [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist); [legal paper cannot promote](#house-rule-legal-paper-cannot-promote); [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed).
 
 ## Changelog (high level)
 
@@ -1438,6 +1471,8 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.7 | House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). Same family as 2.8.6; do not merge. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): preview plugin [`plugin/`](../plugin/) — skills hyperlink this pack; hosted MCP is a read adapter only, not mentee-ready boards, not a marketplace. |
 | 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. SaaS 1.0 playbooks may be outdated; stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.9 | House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck. [Several ideas are allowed](#core-beliefs) (2.8.5) still stands. Not Day 0 homework. Not a third clock. Not an accelerate or optimize law. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.10 | House rule: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). Same family as 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; do not merge. Cap table, SAFE, and lawyer emails do not prove the product works. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.11 | House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. An advisor's opinion is a tip, not proof. Write down who said it. Do not delay a paying customer. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.12 | Additive pack: [founder checkpoints](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha). Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. Founder-facing speech uses the [plain lines](#how-to-say-this); desk labels stay in traces. No tenth phase. No third clock. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---

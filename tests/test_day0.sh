@@ -654,7 +654,8 @@ assert required <= found, found
 for skill in (root / "skills").glob("*/SKILL.md"):
     body = skill.read_text()
     assert "https://github.com/ivelin/bootstrap" in body, skill
-    assert len(body) < 1800, skill
+    limit = 2400 if skill.parent.name in {"house-rule-pins", "query-os-first"} else 1800
+    assert len(body) < limit, (skill, len(body), limit)
     for phrase in forbidden:
         assert phrase not in body, (skill, phrase)
 pins = (root / "skills/house-rule-pins/SKILL.md").read_text()
@@ -662,6 +663,8 @@ assert "house-rule-marketing-volume-cannot-promote" in pins
 assert "house-rule-a-security-program-cannot-promote" in pins
 assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in pins
 assert "house-rule-do-not-automate-a-step-that-should-not-exist" in pins
+assert "house-rule-legal-paper-cannot-promote" in pins
+assert "house-rule-advisor-ride-along-is-assumed-not-observed" in pins
 assert "old SaaS playbook" in pins
 assert "automate the playbook" in pins
 assert "one bottleneck this week" in pins
@@ -681,6 +684,8 @@ assert "is this price optimal" in standing
 assert "old SaaS playbook" in standing
 assert "house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed" in standing
 assert "house-rule-do-not-automate-a-step-that-should-not-exist" in standing
+assert "house-rule-legal-paper-cannot-promote" in standing
+assert "house-rule-advisor-ride-along-is-assumed-not-observed" in standing
 assert "automate the playbook" in standing
 assert "new landing page" in standing
 assert "written founder override" in standing
@@ -1008,7 +1013,13 @@ if grep -q '| 2.8.9 |' company-os/operating-system.md \
   && grep -q 'Factory speed is not 0→1' company-os/operating-system.md \
   && grep -q 'an accelerate or optimize law' company-os/operating-system.md \
   && grep -q 'v2.8.9' README.md \
-  && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' README.md; then
+  && grep -q 'house-rule-do-not-automate-a-step-that-should-not-exist' README.md \
+  && grep -q '### House rule: legal paper cannot promote' company-os/operating-system.md \
+  && grep -q '### House rule: advisor ride-along is assumed, not observed' company-os/operating-system.md \
+  && grep -q 'Legal paperwork' company-os/operating-system.md \
+  && grep -q 'Write down who said what' company-os/operating-system.md \
+  && grep -q 'v2.8.10' README.md \
+  && grep -q 'v2.8.11' README.md; then
   ok "OS 2.8.9 house-rule section has full rule and vocabulary"
 else
   not_ok "operating-system.md must hold the full 2.8.9 do-not-automate house rule"

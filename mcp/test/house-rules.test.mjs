@@ -15,6 +15,8 @@ import {
   emptyContextMayInventPriceOrLtv,
   playbookMayBeAutomatedWithoutNamedOwner,
   agentTeamMaySkipUnownedStep,
+  legalPaperMayPromote,
+  advisorRideAlongIsObserved,
   newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers,
 } from "../dist/house-rules.js";
 import { PHASE_GATES, STAGE_GATES } from "../dist/gates.js";
@@ -41,6 +43,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(blob, /Name the one bottleneck this week and work that/);
     assert.match(blob, /Several ideas may attack that same bottleneck/);
     assert.match(blob, /fun side quest dressed as the bottleneck/);
+    assert.match(blob, /Legal paper cannot promote/);
+    assert.match(blob, /Advisor ride-along is assumed, not observed/);
     assert.match(blob, /SaaS 1\.0 playbooks may be outdated/);
     assert.match(blob, /Stay current/);
     assert.match(blob, /do not invent their stage/i);
@@ -53,6 +57,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.match(pins, /house-rule-a-security-program-cannot-promote/);
     assert.match(pins, /house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed/);
     assert.match(pins, /house-rule-do-not-automate-a-step-that-should-not-exist/);
+    assert.match(pins, /house-rule-legal-paper-cannot-promote/);
+    assert.match(pins, /house-rule-advisor-ride-along-is-assumed-not-observed/);
   });
 
   it("observed wins a clash; spoken yes / synthetic cannot promote", () => {
@@ -79,6 +85,8 @@ describe("OS house rules (adapter reminders)", () => {
     assert.equal(emptyContextMayInventPriceOrLtv(), false);
     assert.equal(playbookMayBeAutomatedWithoutNamedOwner(), false);
     assert.equal(agentTeamMaySkipUnownedStep(), false);
+    assert.equal(legalPaperMayPromote(), false);
+    assert.equal(advisorRideAlongIsObserved(), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(false), false);
     assert.equal(newLandingPageMayBeBottleneckWhenNoOneHasTalkedToCustomers(true), true);
