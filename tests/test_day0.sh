@@ -1186,6 +1186,14 @@ if grep -q 'Do not lead with QC' company-os/ai-instructions.md; then
 else
   not_ok "ai-instructions must say Do not lead with QC"
 fi
+if grep -q 'Core Belief 4' company-os/ai-instructions.md \
+  && grep -q 'named human at a knowledge boundary' company-os/ai-instructions.md \
+  && grep -q 'operating-system.md#core-beliefs' company-os/ai-instructions.md \
+  && ! grep -q 'You stay in control' company-os/ai-instructions.md; then
+  ok "ai-instructions pins Core Belief 4; essay stays in the OS"
+else
+  not_ok "ai-instructions must pin Core Belief 4 to #core-beliefs without copying the essay"
+fi
 
 # --- no instance secrets (hard contribution rule) ---
 if grep -q 'No instance secrets in this template (hard)' AGENTS.md \
