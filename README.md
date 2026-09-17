@@ -13,7 +13,7 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 
 ---
 
-## Mental model (two minutes)
+## Mental model (blueprint vs weekly loop)
 
 ```text
 BLUEPRINT (how to decide)              LIVE RUNTIME (how to learn every week)
@@ -37,7 +37,7 @@ company-os/operating-system.md         company-os/live-runtime.md
 | [`company-os/live-runtime.md`](company-os/live-runtime.md) | **Live OS shape** — durable state + 7-stage loop + eval harness ideas |
 | [`company-os/ready-for-human-eyes.md`](company-os/ready-for-human-eyes.md) | **Ship gate checklist** — cold URL + happy path before external product-test asks |
 | [`company-os/ai-instructions.md`](company-os/ai-instructions.md) | Thin enforcement layer — paste into `AGENTS.md` / Cursor / Claude / Grok |
-| [`company-os/first-hour.md`](company-os/first-hour.md) | **Day 0** — thesis, ≥3 ICPs, first “Where are we?” (chat or instance files) |
+| [`company-os/first-hour.md`](company-os/first-hour.md) | **Day 0 (~60 minutes)** — thesis, ≥3 ICPs, first “Where are we?” (chat or instance files). The two-minute figure is the snapshot *read*, not this hour. |
 | [`templates/`](templates/) | Blank files to copy into *your* company repo when you instantiate |
 | [`examples/`](examples/) | Pointers to public live instances (illustration only) |
 | [`.grok/workflows/`](.grok/workflows/) | Optional Grok Build workflows (path 2) — company-operating-loop, user-research, ready-for-human-eyes |
@@ -63,7 +63,7 @@ Apply process and control to MY startup only.
 Do not import any other company's product thesis or market.
 ```
 
-Then Day 0 — thesis, ≥3 customer groups, first “Where are we?”: [`company-os/first-hour.md`](company-os/first-hour.md). Chat is enough. Lifestyle / small good business, or swinging for the fences? [Day 0](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
+Then Day 0 (~60 minutes) — thesis, ≥3 customer groups, first “Where are we?”: [`company-os/first-hour.md`](company-os/first-hour.md). Chat plus a weekly ritual is enough. Lifestyle / small good business, or swinging for the fences? [Day 0](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 
 ### 2. Instantiate files (when you want them in your repo)
 
@@ -101,7 +101,7 @@ Optional (path 2). From this repo:
 
 That copies `templates/` into the target and merges [`company-os/ai-instructions.md`](company-os/ai-instructions.md) into the instance `AGENTS.md`. If present, optional Grok Build workflows also copy to `.grok/workflows/`. You can run them with `grok` by name without making install the only front door.
 
-Then do **first hour**: [`company-os/first-hour.md`](company-os/first-hour.md) (also copied to `docs/company-os/first-hour.md` in the target). Fill thesis, ≥3 ICP scorecards, first “Where are we?” — *your* company only.
+Then do **Day 0 (~60 minutes)**: [`company-os/first-hour.md`](company-os/first-hour.md) (also copied to `docs/company-os/first-hour.md` in the target). Fill thesis, ≥3 ICP scorecards, first “Where are we?” — *your* company only. The two-minute figure is the snapshot *read*, not this hour.
 
 **Manual copy:** if you cannot run the script, use the copy map in [`templates/README.md`](templates/README.md) and paste the fenced block from [`company-os/ai-instructions.md`](company-os/ai-instructions.md) into the instance `AGENTS.md`.
 

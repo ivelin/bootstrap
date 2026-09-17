@@ -946,6 +946,58 @@ if grep -q 'Write the thesis (~20 minutes)' "$fh" \
 else
   not_ok "Day 0 must stay thesis / ≥3 groups / one snapshot (~60 minutes)"
 fi
+if grep -q '~60 minutes' company-os/first-hour.md \
+  && grep -q 'takes to \*\*read\*\*' company-os/first-hour.md \
+  && grep -q 'Path 1 is chat plus a weekly' company-os/first-hour.md \
+  && grep -q '~60 minutes' README.md \
+  && grep -q 'Mental model (blueprint vs weekly loop)' README.md \
+  && ! grep -q 'Mental model (two minutes)' README.md \
+  && ! grep -qi 'control plane' company-os/first-hour.md \
+    plugin/skills/first-hour/SKILL.md \
+    plugin/skills/path-1-default/SKILL.md \
+  && grep -q '60 minutes' plugin/skills/first-hour/SKILL.md \
+  && grep -q 'snapshot \*read\*' plugin/skills/first-hour/SKILL.md \
+  && grep -q '60 minutes' plugin/skills/path-1-default/SKILL.md; then
+  ok "first-hour duration is ~60 minutes; snapshot is a two-minute read; Day 0/Path 1 copy does not say control plane"
+else
+  not_ok "first-hour must stay ~60 minutes; two-minute figure is the read; do not call Day 0 / Path 1 a control plane"
+fi
+if grep -q 'SoR index' company-os/first-hour.md \
+  && grep -q 'Play may not hold' company-os/first-hour.md \
+  && grep -q 'observed use' company-os/first-hour.md \
+  && grep -q 'finding it is the first chore' company-os/first-hour.md \
+  && grep -q 'Do not buy a new category' company-os/first-hour.md \
+  && grep -q 'Not exceptions' company-os/first-hour.md \
+  && grep -q 'Advice filter' company-os/first-hour.md \
+  && grep -q '### SoR / buy vs build / advice (not this hour)' company-os/first-hour.md \
+  && ! grep -q '## Standing rules (not this hour)' company-os/first-hour.md \
+  && grep -q 'this company this week' company-os/first-hour.md \
+  && grep -q 'Do not add a tool' company-os/first-hour.md \
+  && grep -q 'SoR index' templates/applied-here.md \
+  && grep -q 'Live site' templates/applied-here.md \
+  && grep -q 'Main git repo' templates/applied-here.md \
+  && grep -q 'One working folder' templates/applied-here.md \
+  && grep -q 'Where leads live' templates/applied-here.md \
+  && grep -q 'Play may not hold' templates/applied-here.md \
+  && grep -q 'first chore' templates/applied-here.md \
+  && grep -q 'SoR vs Play' plugin/skills/query-os-first/SKILL.md \
+  && grep -q 'buy vs build' plugin/skills/query-os-first/SKILL.md \
+  && grep -q 'advice filter' plugin/skills/query-os-first/SKILL.md \
+  && grep -q 'SoR vs Play' plugin/skills/first-hour/SKILL.md \
+  && grep -q 'SoR vs Play' plugin/skills/path-1-default/SKILL.md \
+  && ! grep -q 'Do not buy a new category' plugin/skills/*/SKILL.md \
+  && ! grep -q 'Four starters' plugin/skills/*/SKILL.md \
+  && ! grep -q 'six talks' plugin/skills/*/SKILL.md \
+  && grep -q 'advice pile' plugin/skills/query-os-first/SKILL.md \
+  && grep -qi 'until then chat is enough' company-os/first-hour.md \
+  && grep -q 'Where the company lives / instantiate' plugin/skills/query-os-first/SKILL.md \
+  && ! grep -E 'advice pile / buy a CRM.*[Gg]it URL' plugin/skills/query-os-first/SKILL.md \
+  && ! grep -q 'workspace-architecture' company-os/first-hour.md \
+    templates/applied-here.md plugin/skills/*/SKILL.md; then
+  ok "SoR / buy-vs-build / advice-filter pins live in first-hour and applied-here; skills only point"
+else
+  not_ok "first-hour + applied-here must hold SoR / buy-vs-build / advice-filter pins; skills must not reprint"
+fi
 # Done when (Day 0 homework) must not grow the standing rules.
 done_when=$(sed -n '/^## Done when$/,/^## After this hour$/p' "$fh")
 if ! printf '%s\n' "$done_when" | grep -q 'bootstrap-os-mcp.vercel.app' \

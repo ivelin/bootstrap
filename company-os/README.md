@@ -8,7 +8,7 @@ This folder is the **Bootstrap OS** blueprint and runtime shape. It is not any o
 | [`live-runtime.md`](live-runtime.md) | Live OS shape — durable state + 7-stage loop |
 | [`ready-for-human-eyes.md`](ready-for-human-eyes.md) | Ship gate checklist before external product-test asks |
 | [`ai-instructions.md`](ai-instructions.md) | Thin always-on rules for your main AI tool |
-| [`first-hour.md`](first-hour.md) | Day 0 — thesis, lifestyle or fences, ≥3 customer groups, first “Where are we?” |
+| [`first-hour.md`](first-hour.md) | Day 0 (~60 minutes) — thesis, lifestyle or fences, ≥3 customer groups, first “Where are we?”. The two-minute figure is the snapshot *read*, not the hour. |
 | [`after-proof-efficiency.md`](after-proof-efficiency.md) | After proof — five instruments (fences + they asked). Not Day 0. |
 
 **Blank instance files:** [`../templates/`](../templates/)  
