@@ -37,6 +37,7 @@ export const HOSTED_PRE_ALLOWLIST_TOOL_NAMES = ["accept_invite"] as const;
 export const HOSTED_GATED_JOURNEY_TOOL_NAMES = [
   "get_journey",
   "bootstrap_where_are_we",
+  "create_idea",
   "put_journey",
   "post_comment",
   "subscribe_board",

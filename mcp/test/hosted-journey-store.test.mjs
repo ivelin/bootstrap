@@ -53,6 +53,23 @@ describe("hosted membership journey store", () => {
       expandMeetingDoc: true,
     });
     assert.equal(expanded.ideas[0].comments[0].body, "note");
+    const created = await store.createIdea(ivelin, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      founderYes: true,
+    });
+    assert.equal(created.ok, true);
+    assert.equal(created.ideas[0].slug, "second-bet");
+    assert.equal(created.ideas[0].clocks.currentGate, "hold");
+    const missing = await store.putJourney(ivelin, {
+      companySlug: "alpha",
+      ideaSlug: "not-a-row",
+      why: "no",
+      founderYes: true,
+    });
+    assert.equal(missing.ok, false);
+    const both = await store.getJourney(ivelin, { companySlug: "alpha" });
+    assert.deepEqual(both.ideas.map((i) => i.slug).sort(), ["default", "second-bet"]);
   });
 
   it("createJourneyStore is null off production; supabase rpc failures stay closed", async () => {

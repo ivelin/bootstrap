@@ -50,6 +50,7 @@ import {
   TOOL_ACCEPT_INVITE,
   TOOL_GET_JOURNEY,
   TOOL_INVITE_MEMBER,
+  TOOL_CREATE_IDEA,
   TOOL_POST_COMMENT,
   TOOL_PUT_JOURNEY,
   TOOL_LIST_COMPANIES,
@@ -819,6 +820,49 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             companySlug: parsed.companySlug,
             ideaSlug: parsed.ideaSlug,
             expandMeetingDoc: input.expand === "meeting_doc",
+          }),
+        );
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "create_idea",
+    TOOL_CREATE_IDEA,
+    {
+      company: z.string().optional().describe("Company (team) name. Uses the active company if omitted."),
+      idea: z.string().describe("New idea slug under that company. Letters, numbers, hyphen, underscore."),
+      name: z.string().optional().describe("Human label. Defaults to the slug."),
+      founderYes: z
+        .boolean()
+        .describe("True only after an explicit founder yes in their agent chat"),
+      why: z.string().optional().describe("Short why this is a separate 0-1 bet"),
+      client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
+    },
+    async (input) => {
+      const store = storeOf();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      const parsed = companyOf({ company: input.company, idea: input.idea });
+      if (!parsed.companySlug) {
+        return err("Say which company, or call bootstrap_use_company first.");
+      }
+      if (!parsed.ideaSlug) {
+        return err("Say the new idea slug.");
+      }
+      try {
+        return text(
+          await store.createIdea(actor, {
+            companySlug: parsed.companySlug,
+            ideaSlug: parsed.ideaSlug,
+            name: input.name,
+            founderYes: input.founderYes,
+            why: input.why,
+            client: input.client,
           }),
         );
       } catch (e) {

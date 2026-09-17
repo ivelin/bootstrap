@@ -68,6 +68,17 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     return result;
   }
 
+  async createIdea(
+    actor: JourneyActor,
+    input: Parameters<JourneyStore["createIdea"]>[1],
+  ): Promise<unknown> {
+    if (!this.held(actor, input.companySlug)) {
+      return { ok: false, error: "company not visible" };
+    }
+    this.inner.ensureCompanyForMember(input.companySlug, actor);
+    return this.inner.createIdea(actor, input);
+  }
+
   async putJourney(
     actor: JourneyActor,
     input: Parameters<JourneyStore["putJourney"]>[1],
@@ -176,6 +187,28 @@ export class SupabaseJourneyStore implements JourneyStore {
     const hit = await this.rpc("bootstrap_os_get_journey", {
       p_company: query.companySlug,
       p_idea: query.ideaSlug ?? null,
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    return hit.raw;
+  }
+
+  async createIdea(
+    _actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug: string;
+      name?: string;
+      founderYes: boolean;
+      why?: string;
+      client?: string;
+    },
+  ): Promise<unknown> {
+    const hit = await this.rpc("bootstrap_os_create_idea", {
+      p_company: input.companySlug,
+      p_idea: input.ideaSlug,
+      p_name: input.name ?? null,
+      p_founder_yes: input.founderYes,
+      p_why: input.why ?? null,
     });
     if ("error" in hit) return { ok: false, error: hit.error };
     return hit.raw;

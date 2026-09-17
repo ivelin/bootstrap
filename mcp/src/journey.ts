@@ -194,6 +194,16 @@ export function normalizeSlug(raw: string): string {
   return raw.trim().toLowerCase().replace(/\s+/g, "");
 }
 
+/** Same shape as company labels. New 0-1 boards use create_idea; put_journey does not invent a slug. */
+export const IDEA_SLUG_RE = /^[a-z0-9][a-z0-9_-]{0,31}$/;
+export const IDEA_NOT_FOUND_WRITE = "idea not found; call create_idea first";
+export const IDEA_NOT_FOUND_COMMENT = "idea not found; call create_idea first";
+export const IDEA_ALREADY_EXISTS = "idea already exists";
+
+export function isIdeaSlug(raw: string): boolean {
+  return IDEA_SLUG_RE.test(normalizeSlug(raw));
+}
+
 /** "CoreHaul" or "CoreHaul / last-mile" — company vs idea, not a composite key. */
 export function parseJourneyQuery(input: {
   q?: string;
@@ -545,6 +555,17 @@ export type JourneyStore = {
     actor: JourneyActor,
     query: { companySlug?: string; ideaSlug?: string; expandMeetingDoc?: boolean },
   ): Promise<unknown>;
+  createIdea(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug: string;
+      name?: string;
+      founderYes: boolean;
+      why?: string;
+      client?: string;
+    },
+  ): Promise<unknown>;
   putJourney(
     actor: JourneyActor,
     input: {
@@ -745,6 +766,59 @@ export class MemoryJourneyStore implements JourneyStore {
     };
   }
 
+  async createIdea(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug: string;
+      name?: string;
+      founderYes: boolean;
+      why?: string;
+      client?: string;
+    },
+  ): Promise<unknown> {
+    if (!actor.authenticated || !actor.principal) {
+      return forbidden("unauthenticated");
+    }
+    if (!input.founderYes) {
+      return forbidden("founder yes required in the agent chat — not a form, not mail");
+    }
+    if (!isIdeaSlug(input.ideaSlug)) {
+      return forbidden("invalid idea slug");
+    }
+    const company = this.companyBySlug(input.companySlug);
+    if (!company || !canWriteJourney(this.acl, actor, company.id)) {
+      return forbidden("founder or founder-authorized only");
+    }
+    const slug = normalizeSlug(input.ideaSlug);
+    if (this.ideasFor(company.id, slug).length > 0) {
+      return forbidden(IDEA_ALREADY_EXISTS);
+    }
+    const idea: IdeaRow = {
+      id: this.nextId("id"),
+      companyId: company.id,
+      slug,
+      name: input.name?.trim() || slug,
+      journeyPhase: 1,
+      loopStage: 1,
+      currentGate: "hold",
+      scoreboard: defaultScoreboard(),
+    };
+    this.ideas.push(idea);
+    this.emitAudit({
+      companyId: company.id,
+      ideaId: idea.id,
+      who: actor.principal,
+      client: input.client?.trim() || "create_idea",
+      whatChanged: {
+        via: "create_idea",
+        idea: slug,
+        why: input.why?.trim() || "new 0-1 board",
+      },
+    });
+    return this.getJourney(actor, { companySlug: company.slug, ideaSlug: slug });
+  }
+
   async putJourney(
     actor: JourneyActor,
     input: {
@@ -773,7 +847,7 @@ export class MemoryJourneyStore implements JourneyStore {
     }
     const ideas = this.ideasFor(company.id, input.ideaSlug);
     if (ideas.length !== 1) {
-      return notFound("exactly one idea required to write");
+      return notFound(IDEA_NOT_FOUND_WRITE);
     }
     const idea = ideas[0];
     let nextScoreboard: Scoreboard = { ...idea.scoreboard };
@@ -901,7 +975,7 @@ export class MemoryJourneyStore implements JourneyStore {
     }
     const ideas = this.ideasFor(company.id, input.ideaSlug);
     if (ideas.length !== 1) {
-      return notFound("exactly one idea required to comment");
+      return notFound(IDEA_NOT_FOUND_COMMENT);
     }
     const idea = ideas[0];
     const before = {

@@ -83,6 +83,7 @@ async function main() {
     }
     assert.ok(names.length >= 15, `expected full tool surface, got ${names.length}`);
     assert.ok(!names.includes("get_journey"), "stdio must not lift hosted journey tools");
+    assert.ok(!names.includes("create_idea"));
     assert.ok(!names.includes("put_journey"));
     assert.ok(!names.includes("post_comment"));
     assert.ok(!names.includes("subscribe_board"));

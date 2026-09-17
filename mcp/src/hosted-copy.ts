@@ -11,7 +11,7 @@ When the user says where are we, show the company board, show company X ideas, s
 3. Answer only from the payload. Include visualFlow mermaid so the client can render the journey in whatever style the user prefers. Also clocks, snapshot, lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners.
 4. The bottleneck and open questions are the honest next work. Do not invent a task list, log rows, or a later phase. Do not use GitHub as the board.
 
-put_journey writes bottleneck or Advance/Iterate/Hold/Kill (founder yes in this chat). post_comment never moves clocks.
+create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks.
 
 This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
 If the user is not signed in, tell them to sign in to Bootstrap OS and ask again.`;
@@ -42,8 +42,11 @@ export const NOTE_NOT_SIGNED_IN = "You're not signed in to Bootstrap OS.";
 export const TOOL_GET_JOURNEY =
   "Where are we — the company board and ideas under it (separate boards). Use when the user says where are we, show the company board, show company X ideas, show my idea board, or similar. Returns clocks, snapshot, visualFlow mermaid for the client to render in its own style, decision log (lastTransitions, comments, audit), bottleneck (constraintThisWeek), open questions, and owners. Omit idea for every idea under the company. Uses the active company if already chosen. Do not invent a stage or log rows. Do not use GitHub as the board.";
 
+export const TOOL_CREATE_IDEA =
+  "Start a new 0-1 idea board under a company this login can open. Empty clocks (phase 1, loop 1, hold). Several ideas are allowed; each idea is its own board. Needs an explicit founder yes in this chat. Then put_journey writes that idea.";
+
 export const TOOL_PUT_JOURNEY =
-  "Update the shared 0-1 board for an idea (phase, gate, bottleneck this week). Phase or gate change needs an explicit founder yes in this chat.";
+  "Update an existing 0-1 idea board (phase, gate, bottleneck this week). New slugs: create_idea first. Phase or gate change needs an explicit founder yes in this chat.";
 
 export const TOOL_POST_COMMENT =
   "Comment on an idea. Comments never move phase or gate.";

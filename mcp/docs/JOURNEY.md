@@ -52,7 +52,8 @@ No PII dump. Same shape for webhook and the email contract row:
 | Tool | Who | Notes |
 |------|-----|--------|
 | `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. Surfaces `constraint_this_week` and ACL `owners`. |
-| `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb including `constraint_this_week`. One founder yes in chat. |
+| `create_idea` | founder + founder-authorized | New 0-1 board under a held company. Empty clocks (1 / 1 / hold). Founder yes in chat. Does not invent stage. |
+| `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb including `constraint_this_week` on an **existing** idea. Missing slug → `idea not found; call create_idea first`. One founder yes in chat. |
 | `post_comment` | advisors | Side table. Never a gate. |
 | `subscribe_board` | founder + founder-authorized | Grant webhook (+ email opt-in enqueue) to an ACL member. |
 | `unsubscribe_board` | founder + founder-authorized | Remove a subscriber. |
