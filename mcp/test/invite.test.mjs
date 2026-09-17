@@ -97,7 +97,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.match(invite, /DraftExternalMessage/);
     assert.match(invite, /who invited/);
     assert.match(invite, /Bill/);
-    assert.match(invite, /zk0/);
+    assert.match(invite, /alpha/);
     assert.match(invite, /mail/i);
     assert.match(invite, /QR/);
     assert.match(invite, /SMS/);
@@ -213,9 +213,9 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
   it("normalizes email/label and refuses a label the inviter does not hold", () => {
     assert.equal(normalizeInviteEmail("Bill@Example.TEST"), "bill@example.test");
     assert.equal(normalizeInviteEmail("not-an-email"), null);
-    assert.equal(normalizeCompanyLabel("Zk0"), "zk0");
+    assert.equal(normalizeCompanyLabel("Alpha"), "alpha");
     assert.equal(normalizeCompanyLabel("../etc"), null);
-    assert.deepEqual(decideInviteCreate(["pirin", "zk0"], "zk0"), { ok: true });
+    assert.deepEqual(decideInviteCreate(["charlie", "alpha"], "alpha"), { ok: true });
     assert.deepEqual(decideInviteCreate(["alpha"], "bravo"), { ok: false, reason: "label_not_held" });
   });
 
@@ -223,7 +223,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     const base = {
       id: "inv-1",
       inviteeEmail: "bill@example.test",
-      companyLabel: "zk0",
+      companyLabel: "alpha",
       invitedByMenteeId: "mentee-ivelin",
       invitedByEmail: IVELIN_SEED_EMAIL,
       tokenHash: "abc",
@@ -278,7 +278,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.deepEqual(decideInviteVerify({ now: Date.now(), invite: base }), {
       ok: true,
       invitee_email: "bill@example.test",
-      company_label: "zk0",
+      company_label: "alpha",
       inviter_email: IVELIN_SEED_EMAIL,
     });
   });
@@ -287,7 +287,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     const card = buildAcceptCard({
       fromEmail: IVELIN_SEED_EMAIL,
       toEmail: "bill@example.test",
-      companyWorkspace: "zk0",
+      companyWorkspace: "alpha",
       inviteToken: "inv_once_only_fixture_token_xx",
       expiresAt: "2030-01-01T00:00:00.000Z",
     });
@@ -295,7 +295,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.equal(card.shape, "DraftExternalMessage");
     assert.equal(card.from.email, IVELIN_SEED_EMAIL);
     assert.equal(card.to.email, "bill@example.test");
-    assert.equal(card.companyWorkspace, "zk0");
+    assert.equal(card.companyWorkspace, "alpha");
     assert.equal(card.action, "Accept");
     assert.equal(card.tool, "accept_invite");
     assert.match(card.note, /Login URL is the universal path/);
@@ -306,7 +306,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     const auth = buildSignupAuthCard({
       inviterEmail: IVELIN_SEED_EMAIL,
       toEmail: "bill@example.test",
-      companyWorkspace: "zk0",
+      companyWorkspace: "alpha",
       inviteToken: "inv_once_only_fixture_token_xx",
       expiresAt: "2030-01-01T00:00:00.000Z",
     });
@@ -325,11 +325,11 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.equal(inviteEmailOutboxPayload(card).mailFrom, INVITE_MAIL_FROM);
   });
 
-  it("memory store: Ivelin invites Bill to zk0; Bill accepts; A cannot invite to bravo", async () => {
+  it("memory store: Ivelin invites Bill to alpha; Bill accepts; A cannot invite to bravo", async () => {
     const store = ivelinStore();
     const invited = await store.inviteMember(
       { email: IVELIN_SEED_EMAIL, labels: [...IVELIN_SEED_LABELS] },
-      { email: "Bill@Example.TEST", companyLabel: "zk0" },
+      { email: "Bill@Example.TEST", companyLabel: "alpha" },
     );
     assert.equal(invited.ok, true);
     if (!invited.ok) return;
@@ -343,7 +343,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.deepEqual(preview, {
       ok: true,
       invitee_email: "bill@example.test",
-      company_label: "zk0",
+      company_label: "alpha",
       inviter_email: IVELIN_SEED_EMAIL,
     });
     assert.deepEqual(await store.verifyInvite("inv_not_a_real_invite_token_xx"), { ok: false });
@@ -369,7 +369,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     assert.equal(accepted.ok, true);
     if (!accepted.ok) return;
     assert.equal(accepted.email, "bill@example.test");
-    assert.deepEqual(accepted.labels, ["zk0"]);
+    assert.deepEqual(accepted.labels, ["alpha"]);
     assert.equal(store.menteeByEmail("bill@example.test")?.authUserId, "s-bill");
 
     const replay = await store.acceptInvite(
@@ -388,19 +388,19 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     };
     const ivelin = { email: IVELIN_SEED_EMAIL, labels: [...IVELIN_SEED_LABELS] };
 
-    const first = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "zk0" });
+    const first = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "charlie" });
     assert.equal(first.ok, true);
     if (!first.ok) return;
     const firstToken = first.card.inviteToken;
 
     const pendingOther = await store.inviteMember(ivelin, {
       email: actorA.email,
-      companyLabel: "totbox",
+      companyLabel: "bravo",
     });
     assert.equal(pendingOther.ok, true);
     if (!pendingOther.ok) return;
 
-    const rotated = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "zk0" });
+    const rotated = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "charlie" });
     assert.equal(rotated.ok, true);
     if (!rotated.ok) return;
     assert.notEqual(rotated.card.inviteToken, firstToken);
@@ -410,19 +410,18 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
     const accepted = await store.acceptInvite(actorA, rotated.card.inviteToken);
     assert.equal(accepted.ok, true);
     if (!accepted.ok) return;
-    assert.deepEqual(accepted.labels, ["alpha", "zk0"]);
+    assert.deepEqual(accepted.labels, ["alpha", "charlie"]);
     assert.equal(store.menteeByEmail(actorA.email)?.authUserId, actorA.sub);
     assert.ok(!accepted.labels.includes("bravo"));
-    assert.ok(!accepted.labels.includes("totbox"));
 
-    const again = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "zk0" });
+    const again = await store.inviteMember(ivelin, { email: actorA.email, companyLabel: "charlie" });
     assert.deepEqual(again, { ok: false, reason: "already_member" });
     assert.match(inviteFailMessage("already_member"), /already on this company workspace/);
 
-    const totbox = await store.acceptInvite(actorA, pendingOther.card.inviteToken);
-    assert.equal(totbox.ok, true);
-    if (!totbox.ok) return;
-    assert.deepEqual(totbox.labels, ["alpha", "totbox", "zk0"]);
+    const bravo = await store.acceptInvite(actorA, pendingOther.card.inviteToken);
+    assert.equal(bravo.ok, true);
+    if (!bravo.ok) return;
+    assert.deepEqual(bravo.labels, ["alpha", "bravo", "charlie"]);
   });
 
   it("invite_store_unset is missing env/client only; failed RPC keeps status+body", async () => {
@@ -521,7 +520,7 @@ describe("invite + accept (memory, never prod)", { concurrency: false }, () => {
       };
       const invited = await store.inviteMember(
         { email: IVELIN_SEED_EMAIL },
-        { email: "bill@example.test", companyLabel: "zk0" },
+        { email: "bill@example.test", companyLabel: "alpha" },
       );
       assert.equal(invited.ok, false);
       if (invited.ok) return;

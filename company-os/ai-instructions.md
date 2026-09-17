@@ -15,7 +15,7 @@
 
 **Customize:** Add *your* current focus / thin-slice goal in a short “Current focus” line if you want. Keep the hard rules. Do not paste another company’s market as your focus by default.
 
-**Template policy:** If this file is vendored into a product monorepo, do not silently change these hard rules without founder approval — see root README template change policy.
+**Template policy:** If this file is vendored into a product monorepo, do not silently change these hard rules without founder approval — see root README template change policy. Never put a real company name, thesis, beachhead, scores, or other instance secrets into the portable template. Fixtures use fictional `alpha` / `bravo` / `charlie`.
 
 ---
 

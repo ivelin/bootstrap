@@ -22,7 +22,7 @@ Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is h
            │
      ┌─────┼─────┐
      ▼     ▼     ▼
-   pirin  zk0  tokbox   ← isolated instances under BOOTSTRAP_DATA_ROOT
+   alpha  bravo  charlie   ← isolated instances under BOOTSTRAP_DATA_ROOT
 ```
 
 | Path | Role |
@@ -31,7 +31,7 @@ Same state as markdown: `company-state.json` + `where-are-we.py`. Isolation is h
 | `…/registry.json` | Active company + catalog |
 | `…/instances/<companyId>/` | That company's state + traces only |
 
-Product code (pirin app, zk0, …) stays in its own repo. Point the agent at this connector once.
+Product code stays in its own repo. Point the agent at this connector once.
 
 ---
 
@@ -110,7 +110,7 @@ export BOOTSTRAP_DATA_ROOT=$HOME/.bootstrap-os  # optional; this is the default
 
 Then in the agent:
 
-1. `bootstrap_init_company` — `companyId: "pirin"` (and zk0, tokbox, …)
+1. `bootstrap_init_company` — `companyId: "alpha"` (and bravo, charlie, …)
 2. `bootstrap_use_company` — switch when the conversation is about another idea
 3. `bootstrap_where_are_we` / `bootstrap_next_evidence` — always on the **active** company
 
@@ -183,7 +183,7 @@ Never deploy this adapter to `v0-pirin-ai-founder-studio` or any pirin.ai host.
 | Writes / init / use-company | Founder-owned files under `BOOTSTRAP_DATA_ROOT` | **Not on the host.** Path 3 only. |
 | Replaces Path 1? | No | No |
 | Replaces Path 3? | This is Path 3 | No |
-| Ivelin first account | Local instances if he inits them | Can list three **labels** (`pirin`, `zk0`, `totbox`) after allowlist invite + login. First user is a SQL insert — [`HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later mentees: in-chat [`INVITE.md`](docs/INVITE.md). No boards uploaded. |
+| First-user fixture | Local instances if they init them | Can list three **labels** (`alpha`, `bravo`, `charlie`) after allowlist invite + login. First user is a SQL insert — [`HOSTED_IDENTITY.md`](docs/HOSTED_IDENTITY.md#first-user-rebuild-from-github). Later members: in-chat [`INVITE.md`](docs/INVITE.md). Template seed is fictional. |
 
 ---
 

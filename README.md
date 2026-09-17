@@ -146,6 +146,7 @@ Treat promotion into this template as rare, deliberate work — not a continuous
 - Copying a beachhead market, MCP stack, or pricing into the blueprint “because we use them”  
 - Silent template edits inside product PRs without template approval  
 - Moving sand: a rewrite that makes last month’s snapshot unreadable  
+- **Instance secrets in the template** — specific company names, theses, scores, decision traces, local paths, or other confidential instance data in `company-os/`, `mcp/` fixtures/migrations, plugin, skills, or tests. Fixtures are fictional (`alpha` / `bravo` / `charlie`). CI smell test: `mcp/test/no-instance-secrets.test.mjs`.  
 
 ---
 

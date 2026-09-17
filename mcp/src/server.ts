@@ -292,7 +292,7 @@ function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext
     "bootstrap_use_company",
     TOOL_USE_COMPANY,
     {
-      company: z.string().optional().describe("Company name, for example zk0"),
+      company: z.string().optional().describe("Company name, for example alpha"),
       companyId: z.string().optional().describe("Same as company"),
     },
     async ({ company, companyId }) => {
@@ -330,7 +330,7 @@ function registerInviteTools(server: McpServer, ctx: HostedRequestContext) {
     TOOL_INVITE_MEMBER,
     {
       email: z.string().describe("Invitee email. Must match their sign-in email when they accept."),
-      company: z.string().optional().describe("Company to invite them to, for example zk0"),
+      company: z.string().optional().describe("Company to invite them to, for example alpha"),
       companyLabel: z.string().optional().describe("Same as company"),
     },
     async ({ email, company, companyLabel }) => {
@@ -428,7 +428,7 @@ function registerWriteTools(server: McpServer) {
     {
       companyId: z
         .string()
-        .describe("Stable id/slug, e.g. pirin, zk0, tokbox"),
+        .describe("Stable id/slug, e.g. alpha, bravo, charlie"),
       displayName: z.string().optional().describe("Human label"),
       hypothesis: z.string().optional().describe("One-sentence thesis (subject to evidence)"),
       instanceRoot: z
@@ -763,7 +763,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
         .string()
         .optional()
         .describe("Company name, or company / idea. Company is the team; idea is one 0-1 bet under it."),
-      company: z.string().optional().describe("Company (team) name, for example zk0"),
+      company: z.string().optional().describe("Company (team) name, for example alpha"),
       idea: z.string().optional().describe("One idea under that company. Omit for every idea."),
       expand: z
         .enum(["snapshot", "meeting_doc"])
@@ -799,7 +799,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
     TOOL_GET_JOURNEY,
     {
       q: z.string().optional().describe("Company name, or company / idea. Company is the team; idea is one 0-1 bet under it."),
-      company: z.string().optional().describe("Company (team) name, for example zk0"),
+      company: z.string().optional().describe("Company (team) name, for example alpha"),
       idea: z.string().optional().describe("One idea under that company. Omit for every idea."),
       expand: z.enum(["snapshot", "meeting_doc"]).optional(),
     },

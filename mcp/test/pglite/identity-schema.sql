@@ -35,15 +35,15 @@ CREATE POLICY labels_select_own ON bootstrap_company_labels
 INSERT INTO bootstrap_mcp_mentees (id, email, auth_user_id) VALUES
   ('mentee-a', 'mentee-a@example.test', '11111111-1111-1111-1111-111111111111'),
   ('mentee-b', 'mentee-b@example.test', '22222222-2222-2222-2222-222222222222'),
-  ('mentee-ivelin', 'ivelin@pirin.ai', '33333333-3333-3333-3333-333333333333'),
+  ('mentee-ivelin', 'founder@example.test', '33333333-3333-3333-3333-333333333333'),
   ('mentee-first', 'first@example.test', NULL);
 
 INSERT INTO bootstrap_company_labels (id, mentee_id, label) VALUES
   ('la', 'mentee-a', 'alpha'),
   ('lb', 'mentee-b', 'bravo'),
-  ('li1', 'mentee-ivelin', 'pirin'),
-  ('li2', 'mentee-ivelin', 'zk0'),
-  ('li3', 'mentee-ivelin', 'totbox'),
+  ('li1', 'mentee-ivelin', 'charlie'),
+  ('li2', 'mentee-ivelin', 'alpha'),
+  ('li3', 'mentee-ivelin', 'bravo'),
   ('lf', 'mentee-first', 'beachhead');
 
 -- Mirrors SQL bootstrap_mcp_my_labels: fail-closed unless a mentee row exists.

@@ -180,7 +180,7 @@ describe("hosted identity (resource server, gated)", () => {
     await assertGatedUnauthorized(
       await rawRpc(
         "tools/call",
-        { name: "invite_member", arguments: { email: "bill@example.test", companyLabel: "zk0" } },
+        { name: "invite_member", arguments: { email: "bill@example.test", companyLabel: "alpha" } },
         51,
       ),
     );
@@ -189,14 +189,13 @@ describe("hosted identity (resource server, gated)", () => {
     );
   });
 
-  it("logged-in Ivelin fixture whoami sees pirin, zk0, totbox only", async () => {
+  it("logged-in Ivelin fixture whoami sees charlie, alpha, bravo only", async () => {
     setIdentityStoreForTests(ivelinMemoryFixture(IVELIN_TOKEN));
     const who = parseTool(
       await rpc("tools/call", { name: "bootstrap_whoami", arguments: {} }, 6, IVELIN_TOKEN),
     );
     assert.equal(who.authenticated, true);
     assert.equal(who.email, IVELIN_SEED_EMAIL);
-    assert.deepEqual(who.labels, ["pirin", "totbox", "zk0"]);
     assert.deepEqual(who.companies, [...IVELIN_SEED_LABELS]);
     assert.deepEqual(who.labels, [...IVELIN_SEED_LABELS]);
     const blob = JSON.stringify(who);
@@ -219,9 +218,9 @@ describe("hosted identity (resource server, gated)", () => {
     assert.equal(who.authenticated, true);
     assert.equal(who.email, "other@example.test");
     assert.deepEqual(who.labels, ["secret-other"]);
-    assert.ok(!who.labels.includes("pirin"));
-    assert.ok(!who.labels.includes("zk0"));
-    assert.ok(!who.labels.includes("totbox"));
+    assert.ok(!who.labels.includes("charlie"));
+    assert.ok(!who.labels.includes("alpha"));
+    assert.ok(!who.labels.includes("bravo"));
   });
 
   it("labels RPC fail-closed: invited authenticates; uninvited is not_invited", () => {

@@ -35,13 +35,13 @@ const FEATURES = {
   "invite-member": () =>
     driveNamedTest(
       "invite-member",
-      "P1 invite_member: Ivelin invites Bill to zk0",
+      "P1 invite_member: Ivelin invites Bill to alpha",
       "test/e2e-roleplay-matrix.test.mjs",
     ),
   "accept-invite-claim": () =>
     driveNamedTest(
       "accept-invite-claim",
-      "P2 accept_invite: Bill lands on zk0",
+      "P2 accept_invite: Bill lands on alpha",
       "test/e2e-roleplay-matrix.test.mjs",
     ),
   "invite-signup-login-url": () =>

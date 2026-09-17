@@ -28,11 +28,11 @@ Preconditions:
 - Drive P2 (and P4 when proving second workspace) on PGlite.
 
 - **Empty accept.** Cookie-less `accept_invite` on the helper is HTTP 401. `accept_invite` is pre-allowlist: a valid JWT that is still `not_invited` may proceed; missing/short token must not.
-- **Claim.** Run `node .cursor/skills/verify-bootstrap/scripts/verify-bootstrap.mjs drive accept-invite-claim`. That is `cd mcp && node --test --test-name-pattern "P2 accept_invite: Bill lands on zk0" test/e2e-roleplay-matrix.test.mjs`.
-- **Success.** `ok: true`, `email` is `bill@example.test`, `labels` is `["zk0"]`.
-- **Whoami.** Same Bill Bearer: `authenticated: true`, `email` Bill, `labels` `["zk0"]`, no `alpha` / `pirin`.
+- **Claim.** Run `node .cursor/skills/verify-bootstrap/scripts/verify-bootstrap.mjs drive accept-invite-claim`. That is `cd mcp && node --test --test-name-pattern "P2 accept_invite: Bill lands on alpha" test/e2e-roleplay-matrix.test.mjs`.
+- **Success.** `ok: true`, `email` is `bill@example.test`, `labels` is `["alpha"]`.
+- **Whoami.** Same Bill Bearer: `authenticated: true`, `email` Bill, `labels` `["alpha"]`, no `bravo` / `charlie`.
 - **Rejects.** Mismatch, bad token, expired, and replay each return a tool error matching `/Invite rejected/` and do not print other companies' labels.
-- **Second workspace (optional same run).** `P4 existing user second workspace` in the same file: mentee-a (`alpha`) accepts `zk0` → whoami `["alpha", "zk0"]`; re-invite → `already on this company workspace`; mentee-b stays `["bravo"]`.
+- **Second workspace (optional same run).** `P4 existing user second workspace` in the same file: mentee-a (`alpha`) accepts `charlie` → whoami `["alpha", "charlie"]`; re-invite → `already on this company workspace`; mentee-b stays `["bravo"]`.
 - **Proof.** `artifacts/accept-invite-claim/proof.json` exit `0` and TAP showing Bill's whoami labels.
 
 ## Gotchas

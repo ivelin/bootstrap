@@ -64,19 +64,17 @@ describe("PGlite identity RLS (isolated, never prod)", () => {
     assert.deepEqual(await menteeEmailsFor(""), []);
     assert.deepEqual(await labelsFor(""), []);
     const ivelin = await labelsFor("33333333-3333-3333-3333-333333333333");
-    assert.deepEqual(ivelin, ["pirin", "totbox", "zk0"]);
-    assert.ok(!ivelin.includes("alpha"));
-    assert.ok(!ivelin.includes("bravo"));
+    assert.deepEqual(ivelin, ["alpha", "bravo", "charlie"]);
   });
 
   it("fail-closed labels RPC: invited JWT shape authenticates; uninvited does not", async () => {
     await db.exec("RESET ROLE");
     await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
-    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'founder@example.test', false)");
     const invited = (await db.query("SELECT bootstrap_mcp_my_labels() AS body")).rows[0].body;
     assert.equal(invited.authenticated, true);
-    assert.equal(invited.email, "ivelin@pirin.ai");
-    assert.deepEqual(invited.labels, ["pirin", "totbox", "zk0"]);
+    assert.equal(invited.email, "founder@example.test");
+    assert.deepEqual(invited.labels, ["alpha", "bravo", "charlie"]);
 
     await db.exec("SELECT set_config('app.auth_uid', '99999999-9999-9999-9999-999999999999', false)");
     await db.exec("SELECT set_config('app.auth_email', 'stranger@example.test', false)");
@@ -84,7 +82,7 @@ describe("PGlite identity RLS (isolated, never prod)", () => {
     assert.equal(uninvited.authenticated, false);
     assert.equal(uninvited.reason, "not_invited");
     assert.deepEqual(uninvited.labels, []);
-    assert.ok(!JSON.stringify(uninvited).includes("pirin"));
+    assert.ok(!JSON.stringify(uninvited).includes("charlie"));
   });
 
   it("email-only first-user SQL insert then OAuth binds auth_user_id", async () => {
@@ -101,7 +99,7 @@ describe("PGlite identity RLS (isolated, never prod)", () => {
     assert.equal(bound.auth_user_id, "44444444-4444-4444-4444-444444444444");
   });
 
-  it("invite_member SQL RPC: unqualified label is 42702; qualified label invites zk0", async () => {
+  it("invite_member SQL RPC: unqualified label is 42702; qualified label invites alpha", async () => {
     await db.exec("RESET ROLE");
     await db.exec(`
 CREATE OR REPLACE FUNCTION bootstrap_mcp_invite_member_ambiguous(p_email text, p_company_label text)
@@ -112,7 +110,7 @@ DECLARE
   inviter_id text;
   label text;
 BEGIN
-  SELECT id INTO inviter_id FROM bootstrap_mcp_mentees WHERE email = 'ivelin@pirin.ai';
+  SELECT id INTO inviter_id FROM bootstrap_mcp_mentees WHERE email = 'founder@example.test';
   label := lower(p_company_label);
   IF NOT EXISTS (
     SELECT 1 FROM bootstrap_company_labels
@@ -126,8 +124,8 @@ $$;
 `);
     try {
       await db.query("SELECT bootstrap_mcp_invite_member_ambiguous($1, $2) AS body", [
-        "ivelin@zk0.bot",
-        "zk0",
+        "member@example.test",
+        "alpha",
       ]);
       assert.fail("ambiguous label = label must raise 42702");
     } catch (e) {
@@ -136,17 +134,17 @@ $$;
     }
 
     await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
-    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'founder@example.test', false)");
     const invited = (
       await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
-        "ivelin@zk0.bot",
-        "zk0",
+        "member@example.test",
+        "alpha",
       ])
     ).rows[0].body;
     assert.equal(invited.ok, true, JSON.stringify(invited));
     assert.equal(invited.card.card, "accept_invite");
-    assert.equal(invited.card.companyWorkspace, "zk0");
-    assert.equal(invited.card.to.email, "ivelin@zk0.bot");
+    assert.equal(invited.card.companyWorkspace, "alpha");
+    assert.equal(invited.card.to.email, "member@example.test");
     assert.equal(invited.authCard.card, "invite_signup");
     assert.equal(invited.queuedMail.from, "bootstrap@pirin.ai");
     assert.match(invited.card.inviteToken, /^inv_/);
@@ -198,11 +196,11 @@ $$;
     assert.equal(qualified.length, 48);
 
     await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
-    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'founder@example.test', false)");
     const invited = (
       await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
         "bill@example.test",
-        "zk0",
+        "alpha",
       ])
     ).rows[0].body;
     assert.equal(invited.ok, true, JSON.stringify(invited));
@@ -216,7 +214,7 @@ $$;
     await db.query(
       `INSERT INTO bootstrap_mcp_invites
         (id, invitee_email, company_label, invited_by_mentee_id, invited_by_email, token_hash, expires_at)
-       VALUES ('inv-hidden', 'hidden-invitee@example.test', 'zk0', 'mentee-ivelin', 'ivelin@pirin.ai', 'hash-hidden', now() + interval '1 day')`,
+       VALUES ('inv-hidden', 'hidden-invitee@example.test', 'alpha', 'mentee-ivelin', 'founder@example.test', 'hash-hidden', now() + interval '1 day')`,
     );
     const hiddenInvites = await asReader(
       "33333333-3333-3333-3333-333333333333",
@@ -233,11 +231,11 @@ $$;
   it("verify_invite: pending ok; opaque fail; mentee_reader cannot execute", async () => {
     await db.exec("RESET ROLE");
     await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
-    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'founder@example.test', false)");
     const invited = (
       await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
-        "ivelin@zk0.bot",
-        "zk0",
+        "member@example.test",
+        "alpha",
       ])
     ).rows[0].body;
     const token = invited.card.inviteToken;
@@ -245,9 +243,9 @@ $$;
       .body;
     assert.deepEqual(ok, {
       ok: true,
-      invitee_email: "ivelin@zk0.bot",
-      company_label: "zk0",
-      inviter_email: "ivelin@pirin.ai",
+      invitee_email: "member@example.test",
+      company_label: "alpha",
+      inviter_email: "founder@example.test",
     });
     const bad = (await db.query("SELECT bootstrap_mcp_verify_invite($1) AS body", [
       "inv_not_a_real_invite_token_xx",
@@ -277,12 +275,12 @@ $$;
   it("existing user second workspace + already_member + pending unique", async () => {
     await db.exec("RESET ROLE");
     await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
-    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'founder@example.test', false)");
 
     const self = (
       await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
-        "ivelin@pirin.ai",
-        "zk0",
+        "founder@example.test",
+        "alpha",
       ])
     ).rows[0].body;
     assert.deepEqual(self, { ok: false, reason: "already_member" });
@@ -290,7 +288,7 @@ $$;
     const invited = (
       await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
         "mentee-a@example.test",
-        "zk0",
+        "charlie",
       ])
     ).rows[0].body;
     assert.equal(invited.ok, true, JSON.stringify(invited));
@@ -299,7 +297,7 @@ $$;
     const rotated = (
       await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
         "mentee-a@example.test",
-        "zk0",
+        "charlie",
       ])
     ).rows[0].body;
     assert.equal(rotated.ok, true, JSON.stringify(rotated));
@@ -308,7 +306,7 @@ $$;
     const pendingCount = (
       await db.query(
         `SELECT count(*)::int AS n FROM bootstrap_mcp_invites
-         WHERE invitee_email = 'mentee-a@example.test' AND company_label = 'zk0' AND accepted_at IS NULL`,
+         WHERE invitee_email = 'mentee-a@example.test' AND company_label = 'charlie' AND accepted_at IS NULL`,
       )
     ).rows[0].n;
     assert.equal(pendingCount, 1);
@@ -319,14 +317,14 @@ $$;
       await db.query("SELECT bootstrap_mcp_accept_invite($1) AS body", [rotated.card.inviteToken])
     ).rows[0].body;
     assert.equal(accepted.ok, true, JSON.stringify(accepted));
-    assert.deepEqual(accepted.labels, ["alpha", "zk0"]);
+    assert.deepEqual(accepted.labels, ["alpha", "charlie"]);
 
     await db.exec("SELECT set_config('app.auth_uid', '33333333-3333-3333-3333-333333333333', false)");
-    await db.exec("SELECT set_config('app.auth_email', 'ivelin@pirin.ai', false)");
+    await db.exec("SELECT set_config('app.auth_email', 'founder@example.test', false)");
     const again = (
       await db.query("SELECT bootstrap_mcp_invite_member($1, $2) AS body", [
         "mentee-a@example.test",
-        "zk0",
+        "charlie",
       ])
     ).rows[0].body;
     assert.deepEqual(again, { ok: false, reason: "already_member" });

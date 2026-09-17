@@ -123,7 +123,7 @@ A valid pirin.ai JWT alone must **not** grant hosted MCP access. There is **no l
 On a rebuild (empty project / Cos applying migrations — **never from a PR cloud agent**):
 
 1. Apply identity migrations: `mcp/supabase/migrations/20260829_bootstrap_mcp_identity.sql`, `mcp/supabase/migrations/20260909_bootstrap_mcp_fail_closed_invite.sql`, `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_accept.sql`, then `mcp/supabase/migrations/20260910_bootstrap_mcp_invite_qualify_label.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_pgcrypto_search_path.sql`, then `mcp/supabase/migrations/20260911_bootstrap_mcp_invite_verify_email_outbox.sql`, then `mcp/supabase/migrations/20260912_bootstrap_mcp_invite_existing_member.sql` (CREATE OR REPLACE `bootstrap_mcp_invite_member` — existing user, second workspace, `already_member`, pending unique). PR CI uses `mcp/test/pglite/identity-schema.sql` — do **not** apply that fixture to prod.
-2. Insert the first user. The identity migration already seeds `ivelin@pirin.ai` + labels `pirin`, `zk0`, `totbox`. Additional first-user SQL uses the same shape:
+2. Insert the first user. The identity migration seeds a **fictional** template row (`founder@example.test` + labels `alpha`, `bravo`, `charlie`) so clones and PGlite never contain live instance names. Production first-user is a Cos-only SQL insert of the live maintainer (never committed as those emails or labels). Additional first-user SQL uses the same shape:
 
 ```sql
 INSERT INTO public.bootstrap_mcp_mentees (email)
@@ -132,7 +132,7 @@ VALUES (lower('founder@example.com'));
 INSERT INTO public.bootstrap_company_labels (mentee_id, label)
 SELECT m.id, x.label
 FROM public.bootstrap_mcp_mentees m
-CROSS JOIN (VALUES ('pirin')) AS x(label)
+CROSS JOIN (VALUES ('alpha')) AS x(label)
 WHERE m.email = lower('founder@example.com');
 ```
 

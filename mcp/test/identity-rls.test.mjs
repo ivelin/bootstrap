@@ -53,10 +53,10 @@ describe("RLS: one mentee cannot read another", () => {
     assert.doesNotMatch(sql, /CREATE POLICY[\s\S]{0,200}USING\s*\(\s*true\s*\)/i);
     assert.doesNotMatch(sql, /journeyPhase|BOOTSTRAP_DATA_ROOT|company_state\.json/);
     assert.doesNotMatch(sql, /CREATE TABLE[\s\S]{0,80}company_state/i);
-    assert.match(sql, /ivelin@pirin\.ai/);
-    assert.match(sql, /'pirin'/);
-    assert.match(sql, /'zk0'/);
-    assert.match(sql, /'totbox'/);
+    assert.match(sql, /founder@example\.test/);
+    assert.match(sql, /'charlie'/);
+    assert.match(sql, /'alpha'/);
+    assert.match(sql, /'bravo'/);
     assert.match(sql, /SET search_path = public, extensions/);
     assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_my_labels\(\) TO authenticated/);
     assert.match(sql, /GRANT EXECUTE ON FUNCTION public\.bootstrap_mcp_mint_token\(\) TO authenticated/);

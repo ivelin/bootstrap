@@ -35,26 +35,26 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
     const url = inviteSignupUrl("inv_fixture_token_xxxxxxxx");
     assert.equal(url, "https://pirin.ai/bootstrap-os/login?invite=inv_fixture_token_xxxxxxxx");
     assert.doesNotMatch(url, /ivelin@|cos@/);
-    assert.throws(() => assertInviteMailFrom("ivelin@pirin.ai"), /bootstrap@pirin\.ai/);
+    assert.throws(() => assertInviteMailFrom("founder@example.test"), /bootstrap@pirin\.ai/);
     assert.throws(() => assertInviteMailFrom("cos@pirin.ai"), /bootstrap@pirin\.ai/);
     assert.doesNotThrow(() => assertInviteMailFrom(INVITE_MAIL_FROM));
   });
 
   it("body names inviter, invitee, workspace, token, URL, QR", () => {
     const mail = buildInviteMail({
-      inviterEmail: "ivelin@pirin.ai",
-      inviteeEmail: "ivelin@zk0.bot",
-      companyWorkspace: "zk0",
+      inviterEmail: "founder@example.test",
+      inviteeEmail: "member@example.test",
+      companyWorkspace: "alpha",
       inviteToken: "inv_fixture_token_xxxxxxxx",
       expiresAt: "2030-01-01T00:00:00.000Z",
     });
     assert.equal(mail.from, INVITE_MAIL_FROM);
-    assert.equal(mail.to, "ivelin@zk0.bot");
-    assert.match(mail.subject, /ivelin@pirin\.ai/);
-    assert.match(mail.subject, /zk0/);
-    assert.match(mail.text, /Who invited: ivelin@pirin\.ai/);
-    assert.match(mail.text, /Invitee email: ivelin@zk0\.bot/);
-    assert.match(mail.text, /Company workspace: zk0/);
+    assert.equal(mail.to, "member@example.test");
+    assert.match(mail.subject, /founder@example\.test/);
+    assert.match(mail.subject, /alpha/);
+    assert.match(mail.text, /Who invited: founder@example\.test/);
+    assert.match(mail.text, /Invitee email: member@example\.test/);
+    assert.match(mail.text, /Company workspace: alpha/);
     assert.match(mail.text, /Invite token: inv_fixture_token_xxxxxxxx/);
     assert.match(mail.text, /Signup URL: https:\/\/pirin\.ai\/bootstrap-os\/login\?invite=inv_fixture_token_xxxxxxxx/);
     assert.match(mail.text, /QR payload \(same as signup URL\)/);
@@ -80,9 +80,9 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
     setInviteMailSinkForTests((m) => seen.push(m));
     deliverInviteMailDryRun(
       buildInviteMail({
-        inviterEmail: "ivelin@pirin.ai",
+        inviterEmail: "founder@example.test",
         inviteeEmail: "bill@example.test",
-        companyWorkspace: "zk0",
+        companyWorkspace: "alpha",
         inviteToken: "inv_fixture_token_xxxxxxxx",
         expiresAt: "2030-01-01T00:00:00.000Z",
       }),
@@ -95,7 +95,7 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
     assert.match(src, /Never blast prod mail/);
   });
 
-  it("production POSTs pirin invite-mail webhook; preview never", async () => {
+  it("production POSTs charlie invite-mail webhook; preview never", async () => {
     assert.equal(shouldPostPirinInviteMail({}), false);
     assert.equal(shouldPostPirinInviteMail({ VERCEL_ENV: "preview", BOOTSTRAP_INVITE_MAIL_SECRET: "s" }), false);
     assert.equal(shouldPostPirinInviteMail({ VERCEL_ENV: "production" }), false);
@@ -106,9 +106,9 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
 
     const skipped = await notifyPirinInviteMail(
       {
-        inviteeEmail: "ivelin@zk0.bot",
-        invitedByEmail: "ivelin@pirin.ai",
-        companyLabel: "zk0",
+        inviteeEmail: "member@example.test",
+        invitedByEmail: "founder@example.test",
+        companyLabel: "alpha",
         inviteToken: "inv_fixture_token_xxxxxxxx",
       },
       { VERCEL_ENV: "preview", BOOTSTRAP_INVITE_MAIL_SECRET: "s" },
@@ -121,9 +121,9 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
     const hits = [];
     const posted = await notifyPirinInviteMail(
       {
-        inviteeEmail: "ivelin@zk0.bot",
-        invitedByEmail: "ivelin@pirin.ai",
-        companyLabel: "zk0",
+        inviteeEmail: "member@example.test",
+        invitedByEmail: "founder@example.test",
+        companyLabel: "alpha",
         inviteToken: "inv_fixture_token_xxxxxxxx",
       },
       { VERCEL_ENV: "production", BOOTSTRAP_INVITE_MAIL_SECRET: "s" },
@@ -136,7 +136,7 @@ describe("invite mail contract (never prod Resend)", { concurrency: false }, () 
     assert.equal(hits.length, 1);
     assert.equal(hits[0].url, "https://www.pirin.ai/api/bootstrap-os/invite-mail");
     assert.equal(hits[0].auth, "Bearer s");
-    assert.match(hits[0].body, /ivelin@zk0.bot/);
+    assert.match(hits[0].body, /member@example.test/);
     assert.match(hits[0].body, /inv_fixture_token_xxxxxxxx/);
   });
 });
