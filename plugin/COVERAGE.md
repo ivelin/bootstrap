@@ -88,6 +88,7 @@ Company and idea are separate. Write after a gate / founder yes. The weekly cons
 | A3 | Agent empty-context | `query-os-first` + `when-to-write` | Do not invent their stage. unknown / none yet. | File lock + `emptyContextMayInventStage()===false` |
 | A4 | Agent spoken-yes refuse | `query-os-first` + pins | Verbal maybe is not GTM. Refuse. Cite OS. | File lock + `spokenYesMayPromote()===false` |
 | A5 | Agent names “new landing page” as weekly constraint, no customer talks | `when-to-write` | Refuse unless founder writes an override. Do not rubber-stamp. | File lock + `mayWriteConstraintThisWeek` |
+| A6 | Agent writes a slug that is not a row | `create_idea` then `put_journey` | Missing idea is not a write. New 0-1 bet is create_idea (empty hold). | File lock + journey-tools |
 
 ## After First Hour visitor matrix
 

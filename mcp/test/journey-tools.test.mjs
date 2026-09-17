@@ -108,6 +108,78 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(commentsMayMutateGate(), false);
   });
 
+  it("create_idea starts an empty board; put_journey does not invent a missing slug", async () => {
+    const store = fixtureJourneyStore();
+    const founder = bearer("founder-core@example.test");
+    const advisor = bearer("advisor-cos@example.test");
+    const dyeFounder = bearer("founder-dye@example.test");
+
+    const noYes = await store.createIdea(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "second-bet",
+      founderYes: false,
+    });
+    assert.equal(noYes.ok, false);
+
+    const advisorCreate = await store.createIdea(advisor, {
+      companySlug: "corehaul",
+      ideaSlug: "second-bet",
+      founderYes: true,
+    });
+    assert.equal(advisorCreate.ok, false);
+
+    const cross = await store.createIdea(dyeFounder, {
+      companySlug: "corehaul",
+      ideaSlug: "second-bet",
+      founderYes: true,
+    });
+    assert.equal(cross.ok, false);
+
+    const badSlug = await store.createIdea(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "../etc",
+      founderYes: true,
+    });
+    assert.equal(badSlug.ok, false);
+
+    const created = await store.createIdea(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "second-bet",
+      name: "Second bet",
+      founderYes: true,
+      why: "separate 0-1 board",
+    });
+    assert.equal(created.ok, true);
+    assert.equal(created.ideas.length, 1);
+    assert.equal(created.ideas[0].slug, "second-bet");
+    assert.equal(created.ideas[0].name, "Second bet");
+    assert.equal(created.ideas[0].clocks.journeyPhase, 1);
+    assert.equal(created.ideas[0].clocks.loopStage, 1);
+    assert.equal(created.ideas[0].clocks.currentGate, "hold");
+
+    const dup = await store.createIdea(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "second-bet",
+      founderYes: true,
+    });
+    assert.equal(dup.ok, false);
+    assert.match(String(dup.error), /already exists/);
+
+    const missing = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "not-a-row",
+      why: "write missing",
+      founderYes: true,
+      currentGate: "hold",
+    });
+    assert.equal(missing.ok, false);
+    assert.match(String(missing.error), /create_idea first/);
+
+    const board = await store.getJourney(founder, { companySlug: "corehaul" });
+    assert.ok(board.ideas.some((i) => i.slug === "second-bet"));
+    assert.ok(board.ideas.some((i) => i.slug === "corehaul"));
+  });
+
   it("put_journey is founder+yes; advisor comments cannot mutate gates", async () => {
     const store = fixtureJourneyStore();
     const founder = bearer("founder-core@example.test");
