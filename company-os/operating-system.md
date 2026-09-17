@@ -1,8 +1,8 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.9  
-**Last Updated:** 2026-09-02  
+**Version:** 2.8.12  
+**Last Updated:** 2026-09-17  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -633,6 +633,63 @@ The system should surface moments where your judgment is especially valuable:
 - Declaring that something has enough proof to grow (or enough weakness to kill)
 - Choosing which **monetization path** to test next
 - Setting or changing the **autonomy posture** (how much the system may do alone)
+- Opening or clearing a [founder checkpoint](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha)
+
+Most loop work can be delegated. These moments cannot. They do not add a tenth phase or a third clock.
+
+### Founder checkpoints (when human judgment is the work)
+
+Optional until you have the situation. Absent checkpoints means the company runs as it did on 2.8.9. Existing journey instances keep their phase, loop stage, and gate.
+
+Two jobs get confused. Keep them apart.
+
+**Trains.** Quality control when the bots cannot meet a human bar. Nothing creative. Better evals. Bugs out of the way. One path may Hold while the rest of the company keeps moving.
+
+**Bets.** Occasionally the founder must take a contrarian position the system would call unreasonable or typical-to-avoid. High reward versus the risk, on a named horizon. If the judgment is right, the company can move ahead of the pack. If it is wrong, it can sink. That is why founders keep an order of magnitude more equity than any employee. Write the bet. Do not hide it in chat.
+
+Four kinds. Do not invent a fifth on day one.
+
+| Kind | When | What the founder does | What the system does |
+|------|------|------------------------|----------------------|
+| **QC** | This path is below human standard | Name the path. Clear only when the eval is honest | **Path-local Hold.** Other paths keep moving. Ready for human eyes stays the ship gate for external product-test asks |
+| **Bind** | Sign, send, file, or spend that binds the company | Clear the draft, or refuse | Draft only. No live-send, no silent file |
+| **Clock** | A date that will pass without the founder | Act, delegate to a *named* human, or write why it can slip | Surface the date. Do not let it expire in silence |
+| **Alpha** | Founder rejects the default recommendation | Write the five fields below | Record the bet. Do not “fix” it back to typical |
+
+**QC Hold is not journey Hold.** Journey Hold waits the whole board. QC Hold waits one path. A broken checkout does not freeze customer conversations.
+
+**Alpha — five fields, or it is not an Alpha.**
+
+1. **Bet** — the claim, in one sentence.
+2. **Horizon** — by when this must be right or wrong.
+3. **Falsifier** — what you will accept as proof you were wrong.
+4. **Cap** — time or money you will spend to learn. No open-ended crusade.
+5. **Default rec** — what the system recommended, that you are rejecting.
+
+One open Alpha per idea unless the founder writes why two. Later mark the outcome: right / wrong / still open. A vague hunch is not Alpha. [Contrarian Insight as Edge](#contrarian-insight-as-edge) is how you *form* the view. The checkpoint is how you *bind* it to a date and a cap.
+
+**Human Expert Brief** (when you hand a checkpoint to a named human): decision, evidence, assumptions, risk, the ask. Optional override line if the founder rejects the default rec. Name the person. A role title is not a person.
+
+Soft moments stay soft: weekly snapshot, ranking challenge, “what should I decide today?” Those do not open a checkpoint.
+
+Do not store another company’s deal, cap, or private instrument in this template. Instrument class only (sign, file, date, bet).
+
+### How to say this
+
+Desk labels (QC, Bind, Clock, Alpha) are for traces. They are not how you talk to a founder.
+
+Speak in the founder's words when a founder-voice profile exists. If none exists yet, use these lines. Short. Calm. No acronyms. No pep talk. No "you should have known."
+
+| Desk label | What the founder hears |
+|------------|------------------------|
+| QC | This path is not ready for a real person yet. We hold this path and write a better test. Other work can continue. |
+| Bind | This would sign, send, or spend in the company's name. I will draft it. You decide whether it goes out. |
+| Clock | There is a date that will pass. Someone with a name needs to act, or you write why it can wait. |
+| Alpha | You want to go against what I would usually recommend. Write the claim, by when you will know, what would prove you wrong, and how much time or money you will spend to learn. |
+
+If the founder already has a way of saying the same thing, use that. Update the skill. Do not correct their language into house jargon.
+
+Never open a checkpoint by announcing the desk label first.
 
 ### Autonomy postures (how much the system may do alone)
 
@@ -913,7 +970,7 @@ Add channels only when the core loop already works and evidence supports expansi
 
 ### Human high-stakes gate
 
-Escalate to the human when stuck or when the decision is high-stakes (money, irreversible actions, PII, legal). Default to dry-run / draft until approval when harm is possible.
+Escalate to the human when stuck or when the decision is high-stakes (money, irreversible actions, PII, legal). Default to dry-run / draft until approval when harm is possible. Prefer a typed [founder checkpoint](#founder-checkpoints-when-human-judgment-is-the-work) (QC / Bind / Clock / Alpha) over a vague “please review.”
 
 ---
 
@@ -1380,6 +1437,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.7 | House rule: [a security program cannot promote](#house-rule-a-security-program-cannot-promote). Same family as 2.8.6; do not merge. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). Resource pointer (not a house rule): preview plugin [`plugin/`](../plugin/) — skills hyperlink this pack; hosted MCP is a read adapter only, not mentee-ready boards, not a marketplace. |
 | 2.8.8 | House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). Same family as 2.8.6 / 2.8.7; do not merge. SaaS 1.0 playbooks may be outdated; stay current; do not guide to where the puck has been. Day 0 / Path 1 question (not a house rule; not a third clock): [lifestyle or swinging for the fences](#day-0-lifestyle-or-swinging-for-the-fences). Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.9 | House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist). Same family as 2.8.6 / 2.8.7 / 2.8.8; do not merge. Every requirement has a person's name. Delete the step before you simplify it. Automate last. An agent team is automation. Name the one bottleneck this week and work that. Several ideas may attack that same bottleneck. [Several ideas are allowed](#core-beliefs) (2.8.5) still stands. Not Day 0 homework. Not a third clock. Not an accelerate or optimize law. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.12 | Additive pack: [founder checkpoints](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha). Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. Founder-facing speech uses the [plain lines](#how-to-say-this); desk labels stay in traces. No tenth phase. No third clock. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 

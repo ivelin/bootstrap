@@ -17,6 +17,8 @@ Choice:
 Expected outcome:
 Actual outcome (fill later):
 Next review:
+Checkpoint kind (optional: qc | bind | clock | alpha | none):
+If Alpha — bet / horizon / falsifier / cap / default rec:
 ```
 
 What / why / observed / next — if it is not written down, the company did not learn it.

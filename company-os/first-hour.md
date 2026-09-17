@@ -127,6 +127,12 @@ When someone names a new landing page as the bottleneck, and no one has talked t
 
 House rule: [do not automate a step that should not exist](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist).
 
+When a path is not ready for a real person, or you want to go against the usual advice:
+
+> Hold that path and write a better test. Other work can continue. If I am betting against the usual advice, I write the claim, the date, what would prove me wrong, and how much I will spend to learn.
+
+[Founder checkpoints](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#founder-checkpoints-when-human-judgment-is-the-work). Optional until you have the situation. Not this hour. A founder checkpoint, not a new clock. Talk in the founder's words. Desk labels stay in the notes.
+
 ---
 
 *You supply the insight. AI supplies the speed.*

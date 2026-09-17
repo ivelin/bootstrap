@@ -982,7 +982,7 @@ fi
 
 # --- v) OS 2.8.9: do not automate a step that should not exist ---
 # Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
-if grep -q '^\*\*Version:\*\* 2.8.9' company-os/operating-system.md \
+if grep -q '| 2.8.9 |' company-os/operating-system.md \
   && grep -q '### House rule: do not automate a step that should not exist' company-os/operating-system.md \
   && grep -q 'Do not speed up or automate a step that should not exist' company-os/operating-system.md \
   && grep -q "Every requirement has a person's name" company-os/operating-system.md \
@@ -1076,6 +1076,52 @@ if grep -q 'Do not automate visitor matrix' plugin/README.md \
   ok "plugin README and COVERAGE name the do-not-automate visitor matrix"
 else
   not_ok "plugin README and COVERAGE must name the do-not-automate visitor matrix"
+fi
+
+# --- z) OS 2.8.12: founder checkpoints (QC / Bind / Clock / Alpha) ---
+# Additive pack. Optional until useful. Absent = 2.8.9 behavior.
+# Not Day 0 homework. No tenth phase. No third clock. No schema bump.
+if grep -q '### Founder checkpoints (when human judgment is the work)' company-os/operating-system.md \
+  && grep -q 'QC Hold is not journey Hold' company-os/operating-system.md \
+  && grep -q 'Alpha — five fields' company-os/operating-system.md \
+  && grep -q 'Path-local Hold' company-os/operating-system.md \
+  && grep -q '2.8.12' company-os/operating-system.md \
+  && grep -q 'v2.8.12' README.md \
+  && grep -q 'QC Hold is path-local' company-os/live-runtime.md \
+  && grep -q 'founder checkpoints: QC / Bind / Clock / Alpha' company-os/ai-instructions.md \
+  && grep -q 'five Alpha fields' company-os/ai-instructions.md \
+  && grep -q 'founder checkpoint, not a new clock' company-os/first-hour.md \
+  && grep -q 'Checkpoint kind' templates/traces/decisions/TEMPLATE.md \
+  && grep -q 'If Alpha' templates/traces/decisions/TEMPLATE.md \
+  && grep -q 'OS_VERSION = "2.8.12"' mcp/src/constants.ts; then
+  ok "OS 2.8.12 founder-checkpoints pack is pinned"
+else
+  not_ok "2.8.12 founder-checkpoints strings must exist in OS, runtime, pins, and tests"
+fi
+done_when=$(sed -n '/^## Done when$/,/^## After this hour$/p' company-os/first-hour.md)
+if ! printf '%s\n' "$done_when" | grep -q 'founder checkpoint' \
+  && ! printf '%s\n' "$done_when" | grep -q 'Alpha' \
+  && ! printf '%s\n' "$done_when" | grep -q 'QC Hold'; then
+  ok "2.8.12 founder checkpoints are not Day 0 Done when homework"
+else
+  not_ok "do not put founder checkpoint / Alpha / QC Hold in the Day 0 Done when checklist"
+fi
+if grep -q 'How to say this' company-os/operating-system.md \
+  && grep -q 'What the founder hears' company-os/operating-system.md; then
+  ok "OS 2.8.12 How to say this is pinned"
+else
+  not_ok "OS must have How to say this and What the founder hears"
+fi
+if ! grep -q 'QC holds' company-os/first-hour.md \
+  && ! grep -q 'Alpha is a written' company-os/first-hour.md; then
+  ok "first-hour quote does not use QC holds / Alpha is a written"
+else
+  not_ok "first-hour quote must not contain QC holds or Alpha is a written"
+fi
+if grep -q 'Do not lead with QC' company-os/ai-instructions.md; then
+  ok "ai-instructions does not lead checkpoints with desk labels"
+else
+  not_ok "ai-instructions must say Do not lead with QC"
 fi
 
 printf '\n%d passed, %d failed\n' "$pass" "$fail"
