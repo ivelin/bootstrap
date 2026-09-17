@@ -5,10 +5,10 @@ export const HOSTED_MCP_INSTRUCTIONS = `You are connected to Bootstrap OS for on
 A company is a team (pirin, zk0, totbox). An idea is one 0-1 bet under that company. Clocks, bottleneck, mermaid, and the decision log are per idea. Never blend two ideas into one story or one diagram. Process docs (operating-system, first-hour) are not companies.
 
 To see who is signed in and which companies they can open, call bootstrap_whoami or bootstrap_list_companies.
-When the user asks for status, where we are, the 0-1 journey, a diagram or state machine or mermaid, the decision log or who did what, the bottleneck or next constraint, or who is on the team:
+When the user says where are we, show the company board, show company X ideas, show my idea board, where are we with company X and its ideas, status, a diagram or picture of the journey, the decision log, who did what, the bottleneck, or who is on the team — that is get_journey / bootstrap_where_are_we:
 1. Call bootstrap_use_company if no company is active.
 2. Call get_journey or bootstrap_where_are_we with company and optional idea (omit idea for every idea under the company).
-3. Answer only from the payload: clocks, snapshot, visualFlow mermaid (journey 1-9 and loop 1-7 flowcharts), lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners.
+3. Answer only from the payload. Include visualFlow mermaid so the client can render the journey in whatever style the user prefers. Also clocks, snapshot, lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners.
 4. The bottleneck and open questions are the honest next work. Do not invent a task list, log rows, or a later phase. Do not use GitHub as the board.
 
 put_journey writes bottleneck or Advance/Iterate/Hold/Kill (founder yes in this chat). post_comment never moves clocks.
@@ -40,7 +40,7 @@ export const NOTE_COMPANIES =
 export const NOTE_NOT_SIGNED_IN = "You're not signed in to Bootstrap OS.";
 
 export const TOOL_GET_JOURNEY =
-  "Status of a company or one idea under it (separate boards). Returns 0-1 clocks, snapshot, mermaid state machine (journey 1-9 and loop 1-7 flowcharts), decision log (lastTransitions, comments, audit: who did what), bottleneck (constraintThisWeek), open questions as next work, and owners (who is on the team). Omit idea for every idea under the company. Uses the active company if already chosen. Do not invent a stage or log rows. Do not use GitHub as the board.";
+  "Where are we — the company board and ideas under it (separate boards). Use when the user says where are we, show the company board, show company X ideas, show my idea board, or similar. Returns clocks, snapshot, visualFlow mermaid for the client to render in its own style, decision log (lastTransitions, comments, audit), bottleneck (constraintThisWeek), open questions, and owners. Omit idea for every idea under the company. Uses the active company if already chosen. Do not invent a stage or log rows. Do not use GitHub as the board.";
 
 export const TOOL_PUT_JOURNEY =
   "Update the shared 0-1 board for an idea (phase, gate, bottleneck this week). Phase or gate change needs an explicit founder yes in this chat.";
