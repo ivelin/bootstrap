@@ -8,10 +8,10 @@ To see who is signed in and which companies they can open, call bootstrap_whoami
 When the user says where are we, show the company board, show company X ideas, show my idea board, where are we with company X and its ideas, status, a diagram or picture of the journey, the decision log, who did what, the bottleneck, or who is on the team — that is get_journey / bootstrap_where_are_we:
 1. Call bootstrap_use_company if no company is active.
 2. Call get_journey or bootstrap_where_are_we with company and optional idea (omit idea for every idea under the company).
-3. Answer only from the payload. Include visualFlow mermaid so the client can render the journey in whatever style the user prefers. Also clocks, snapshot, lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners.
+3. Answer only from the payload. Include visualFlow mermaid so the client can render the journey in whatever style the user prefers. Also clocks, snapshot, lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners, and portfolio (Impact/Evidence/Leverage on live ideas — never invent missing scores).
 4. The bottleneck and open questions are the honest next work. Do not invent a task list, log rows, or a later phase. Do not use GitHub as the board.
 
-create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks. enable_board_watch turns on board updates for Bill after invite. If they ask for the decision log over time or to rebuild clocks at a past point, call list_provenance (same access as get_journey).
+create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks. enable_board_watch turns on board updates for Bill after invite. If they ask for the decision log over time or to rebuild clocks at a past point, call list_provenance (same access as get_journey). Weekly portfolio labels are put_portfolio_score (impact, evidence, leverage 1–5). Scores never Advance or Kill. Single-idea boards skip ranking.
 
 This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
 If the user is not signed in, tell them to sign in to Bootstrap OS and ask again.`;
@@ -40,7 +40,7 @@ export const NOTE_COMPANIES =
 export const NOTE_NOT_SIGNED_IN = "You're not signed in to Bootstrap OS.";
 
 export const TOOL_GET_JOURNEY =
-  "Where are we — the company board and ideas under it (separate boards). Use when the user says where are we, show the company board, show company X ideas, show my idea board, or similar. Returns clocks, snapshot, visualFlow mermaid for the client to render in its own style, decision log (lastTransitions, comments, audit), bottleneck (constraintThisWeek), open questions, and owners. Omit idea for every idea under the company. Uses the active company if already chosen. Do not invent a stage or log rows. Do not use GitHub as the board.";
+  "Where are we — the company board and ideas under it (separate boards). Use when the user says where are we, show the company board, show company X ideas, show my idea board, or similar. Returns clocks, snapshot, visualFlow mermaid for the client to render in its own style, decision log (lastTransitions, comments, audit), bottleneck (constraintThisWeek), open questions, owners, and portfolio scores (impact/evidence/leverage on live ideas; ranked by impact+evidence+leverage when two or more live ideas exist). Omit idea for every idea under the company. Uses the active company if already chosen. Do not invent a stage, log rows, or missing scores. Do not use GitHub as the board.";
 
 export const TOOL_CREATE_IDEA =
   "Start a new 0-1 idea board under a company this login can open. Empty clocks (phase 1, loop 1, hold). Several ideas are allowed; each idea is its own board. Needs an explicit founder yes in this chat. Then put_journey writes that idea.";
@@ -56,6 +56,9 @@ export const TOOL_ENABLE_BOARD_WATCH =
 
 export const TOOL_LIST_PROVENANCE =
   "Decision log over time — audit before/after plus gate events so you can rebuild clocks and scoreboard at a point in range. Same access as get_journey.";
+
+export const TOOL_PUT_PORTFOLIO_SCORE =
+  "Weekly Impact / Evidence / Leverage labels (integers 1–5) on one live idea. Applies when the company has two or more live (non-kill) ideas; otherwise skips. Founder yes in this chat. Scores are labels — they never Advance or Kill. Same write ACL as put_journey.";
 
 export const NOTE_OS_INFO_HOSTED =
   "Process docs, house rules, and a shared 0-1 board per company you can open.";

@@ -18,6 +18,7 @@ import {
   digestMayInventStage,
   preferenceMayNameConstraint,
   preferWebhookOverPoll,
+  portfolioScoreMayPromote,
   scoreboardMayCarryOwner,
 } from "../dist/journey.js";
 import { HOSTED_GATED_JOURNEY_TOOL_NAMES } from "../dist/constants.js";
@@ -58,7 +59,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(write, /judge-only/);
     assert.match(write, /do not invent their stage/);
     assert.match(write, /Spoken yes cannot promote/);
-    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers|enable_board_watch|list_provenance/);
+    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers|enable_board_watch|list_provenance|put_portfolio_score/);
     assert.doesNotMatch(write, /bootstrap_os\.|SELECT |PGlite/);
     assert.ok(write.length < 2000);
     assert.ok(write.includes(HOSTED));
@@ -113,6 +114,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.equal(digestMayInventStage(), false);
     assert.equal(digestMayAdvanceGate(), false);
     assert.equal(scoreboardMayCarryOwner(), false);
+    assert.equal(portfolioScoreMayPromote(), false);
     assert.equal(preferWebhookOverPoll(), true);
     assert.equal(preferenceMayNameConstraint(), false);
     assert.equal(agentMayRubberStampConstraint(), false);
@@ -128,7 +130,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     }
     assert.match(write, /no one has talked to customers/);
     assert.match(coverage, /mayWriteConstraintThisWeek/);
-    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers|enable_board_watch|list_provenance/);
+    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers|enable_board_watch|list_provenance|put_portfolio_score/);
   });
 
   it("no FAST mentee names or emails in public markdown; no Ivelin session claimed", () => {
@@ -153,6 +155,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
       "list_subscribers",
       "enable_board_watch",
       "list_provenance",
+      "put_portfolio_score",
     ]);
     const journeyDoc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "JOURNEY.md"), "utf8");
     assert.match(journeyDoc, /Hard rule — invite-only company boards/);

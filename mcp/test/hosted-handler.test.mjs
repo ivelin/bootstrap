@@ -230,6 +230,11 @@ describe("Vercel fetch handler (hosted-read)", () => {
       [53, "list_subscribers", { company: "corehaul" }],
       [54, "enable_board_watch", { company: "corehaul" }],
       [55, "list_provenance", { company: "corehaul" }],
+      [
+        56,
+        "put_portfolio_score",
+        { company: "corehaul", idea: "corehaul", impact: 3, evidence: 3, leverage: 3, founderYes: true },
+      ],
     ]) {
       const notify = await handleHostedReadFetch(
         new Request("https://preview.example/mcp", {

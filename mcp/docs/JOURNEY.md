@@ -24,7 +24,7 @@ Allowlist in SQL, fail closed. Token `email` (fallback `sub`) → ACL. No FAST c
 
 Ivelin HARD (via Bootstrap Bill): company board/data access is invite-only. There is no room for cross-company leaks.
 
-| Principal | `get_journey` / `put_journey` / `post_comment` / `subscribe_*` / `list_*` / labels |
+| Principal | `get_journey` / `put_journey` / `put_portfolio_score` / `post_comment` / `subscribe_*` / `list_*` / labels |
 |-----------|-----------------------------------------------------------------------------------|
 | Unauthenticated or non-invited | Fail closed: HTTP **401/403 or empty**. Never another company's rows. |
 | Invited to company A only | May see A. Must **not** see company B (or any other) data, labels, comments, audit, scoreboard, owners, subscribers beyond ACL. |
@@ -34,7 +34,9 @@ Hosted membership is `bootstrap_os_held_label` → `bootstrap_company_labels` (s
 
 Append-only `audit_events` hang off company + optional idea (ACL is company-level). Who, when, which client, what changed. Inserts only — no update/delete policies. `put_journey`, `post_comment`, ACL, and subscribe/unsubscribe emit a row. Advisors may read audit for companies they can `get_journey`. They cannot write audit except via those tools.
 
-Provenance is audit `what_changed` before/after (clocks + full scoreboard) plus first-class `gate_events`. `list_provenance` rebuilds the board at any point in range. Every Advance/Iterate/Hold/Kill stores short `whatChanged` + `whatWereNotDoing` (optional `evidenceLinks`). Kill REQUIRES a postmortem on the scoreboard (`why` + `lessonsLearned` + `actionableInsights`); silent kill is rejected; killed ideas stay readable; `get_journey` surfaces ☠ Killed cards from stored fields only. Subscriber audit omits `webhookUrl` — the live URL stays on ACL’d `list_subscribers` only, never in append-only provenance. Cos applies `20260921_bootstrap_os_list_provenance.sql` on pirin.ai — not from this PR. Not in this slice: weekly Impact/Evidence/Leverage 1–5 portfolio scoring.
+Provenance is audit `what_changed` before/after (clocks + full scoreboard) plus first-class `gate_events`. `list_provenance` rebuilds the board at any point in range. Every Advance/Iterate/Hold/Kill stores short `whatChanged` + `whatWereNotDoing` (optional `evidenceLinks`). Kill REQUIRES a postmortem on the scoreboard (`why` + `lessonsLearned` + `actionableInsights`); silent kill is rejected; killed ideas stay readable; `get_journey` surfaces ☠ Killed cards from stored fields only. Subscriber audit omits `webhookUrl` — the live URL stays on ACL’d `list_subscribers` only, never in append-only provenance. Cos applies `20260921_bootstrap_os_list_provenance.sql` on pirin.ai — not from this PR.
+
+Weekly portfolio scores live on the idea scoreboard as `portfolioScore: { impact, evidence, leverage, scoredAt?, scoredBy? }`. Each axis is an integer 1–5. Plain-founder meaning: **impact** = if this works, how much does it change the beachhead; **evidence** = how much of that is observed, not hoped; **leverage** = how much this team can uniquely do from here. Applies when a company has **two or more live (non-kill) ideas**. Rank = `impact + evidence + leverage` (higher first; slug tie-break). Unscored live ideas stay in `portfolio.unscored` — never invent a number on read. Killed ideas stay off the live rank (still readable on kill cards). Scores are founder/advisor labels. They cannot Advance, Iterate, Hold, or Kill. Write: `put_portfolio_score` (or `put_journey.portfolioScore`). Single-idea boards skip with that reason. Score-only writes do not fire board-subscriber notify. Cos applies `20260922_bootstrap_os_portfolio_score.sql` on pirin.ai — not from this PR. No cron, no Resend, no webhook teaching in this slice.
 
 `board_subscribers` hang off the company (optional idea). After ACL: only people who already have access may be subscribed. Team members (employees, advisors, co-founders, investors, bots) receive only if they already have access. On `put_journey` / `post_comment` / `gate_events`, emit audit then fire the webhook to subscribers who may still read that row. Email is **enqueue-only** — Resend lives on pirin.ai. This repo does not send mail.
 
@@ -71,7 +73,7 @@ Cos sets Vercel secrets **once** on `bootstrap-os-mcp` production: `BOOTSTRAP_BO
 
 | Tool | Who | Notes |
 |------|-----|--------|
-| `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. Surfaces `constraint_this_week` and ACL `owners`. |
+| `get_journey` | founder / advisor on the allowlist | Company query → every idea. Company/idea → one idea. Surfaces `constraint_this_week`, ACL `owners`, stored `portfolioScore` on live ideas, and `portfolio` ranked by impact+evidence+leverage when ≥2 live ideas. Never invents missing scores. |
 | `create_idea` | founder + founder-authorized | New 0-1 board under a held company. Empty clocks (1 / 1 / hold). Founder yes in chat. Does not invent stage. |
 | `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb including `constraint_this_week` and scoreboard (hypothesis, open questions) on an **existing** idea. Missing slug → `idea not found; call create_idea first`. One founder yes in chat. |
 | `post_comment` | advisors | Side table. Never a gate. |
@@ -80,6 +82,7 @@ Cos sets Vercel secrets **once** on `bootstrap-os-mcp` production: `BOOTSTRAP_BO
 | `list_subscribers` | anyone who may `get_journey` | Company the caller can read. |
 | `enable_board_watch` | founder + founder-authorized | Turn on board updates for Bill. Reads Cos-set Vercel env (URL + principal). Founders never paste a URL. |
 | `list_provenance` | anyone who may `get_journey` | Ordered audit + gate events with before/after. Invite-only / held_label fail-closed. |
+| `put_portfolio_score` | founder + founder-authorized | Weekly Impact/Evidence/Leverage 1–5 on one live idea. Skip if fewer than two live ideas. Never changes clocks or gates. |
 
 HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Cookie-less handshake on the invite-only collab host is also 401. Path 1 founders use GitHub + local — they are not told to connect this host.
 

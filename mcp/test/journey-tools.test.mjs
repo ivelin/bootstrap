@@ -10,6 +10,10 @@ import {
   JOURNEY_FIXTURE,
   JOURNEY_DIGEST_CONTRACT,
   MemoryJourneyStore,
+  PORTFOLIO_KILLED_OUT,
+  PORTFOLIO_RANK_FORMULA,
+  PORTFOLIO_SCORE_OUT_OF_RANGE,
+  PORTFOLIO_SKIP_NEED_TWO_LIVE,
   commentsMayMutateGate,
   defaultScoreboard,
   digestMayAdvanceGate,
@@ -18,6 +22,10 @@ import {
   LANDING_PAGE_CONSTRAINT_REFUSE,
   agentMayRubberStampConstraint,
   mayWriteConstraintThisWeek,
+  normalizePortfolioScore,
+  portfolioScoreMayPromote,
+  portfolioScoreOf,
+  portfolioViewOf,
   preferenceMayNameConstraint,
   preferWebhookOverPoll,
   scoreboardMayCarryOwner,
@@ -687,5 +695,243 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(hidden.ok, false);
     const hiddenKilled = await store.listKilledIdeas(dye, { companySlug: "corehaul" });
     assert.equal(hiddenKilled.ok, false);
+  });
+
+  it("portfolio scores are 1–5 labels; never invent; never promote; rank live ideas only", async () => {
+    assert.equal(portfolioScoreMayPromote(), false);
+    assert.equal(normalizePortfolioScore({ impact: 0, evidence: 3, leverage: 3 }).ok, false);
+    assert.equal(normalizePortfolioScore({ impact: 6, evidence: 3, leverage: 3 }).ok, false);
+    assert.equal(normalizePortfolioScore({ impact: 3.5, evidence: 3, leverage: 3 }).ok, false);
+    assert.equal(normalizePortfolioScore({ impact: 3, evidence: 3 }).ok, false);
+    assert.match(normalizePortfolioScore({ impact: 9, evidence: 1, leverage: 1 }).error, /1–5/);
+    assert.equal(PORTFOLIO_SCORE_OUT_OF_RANGE.includes("1–5"), true);
+
+    const unscored = {
+      id: "idea-alpha-a",
+      companyId: "co-alpha",
+      slug: "bet-a",
+      name: "bet-a",
+      journeyPhase: 1,
+      loopStage: 1,
+      currentGate: "hold",
+      scoreboard: defaultScoreboard(),
+    };
+    assert.equal(portfolioScoreOf(unscored), undefined);
+    assert.equal(portfolioViewOf([unscored]).applies, false);
+    assert.equal(portfolioViewOf([unscored]).reason, PORTFOLIO_SKIP_NEED_TWO_LIVE);
+
+    const store = new MemoryJourneyStore(
+      [
+        { id: "co-alpha", slug: "alpha", label: "alpha" },
+        { id: "co-bravo", slug: "bravo", label: "bravo" },
+      ],
+      [
+        {
+          companyId: "co-alpha",
+          principal: "founder@example.test",
+          principalKind: "email",
+          role: "founder",
+        },
+        {
+          companyId: "co-bravo",
+          principal: "founder-bravo@example.test",
+          principalKind: "email",
+          role: "founder",
+        },
+        {
+          companyId: "co-alpha",
+          principal: "advisor@example.test",
+          principalKind: "email",
+          role: "advisor",
+        },
+      ],
+      [
+        {
+          id: "idea-alpha-default",
+          companyId: "co-alpha",
+          slug: "default",
+          name: "alpha",
+          journeyPhase: 1,
+          loopStage: 1,
+          currentGate: "hold",
+          scoreboard: defaultScoreboard(),
+        },
+        {
+          id: "idea-bravo-default",
+          companyId: "co-bravo",
+          slug: "default",
+          name: "bravo",
+          journeyPhase: 1,
+          loopStage: 1,
+          currentGate: "hold",
+          scoreboard: defaultScoreboard(),
+        },
+      ],
+      [],
+      [],
+    );
+    const founder = bearer("founder@example.test");
+    const advisor = bearer("advisor@example.test");
+    const bravo = bearer("founder-bravo@example.test");
+
+    const skip = await store.putPortfolioScore(founder, {
+      companySlug: "alpha",
+      ideaSlug: "default",
+      impact: 4,
+      evidence: 3,
+      leverage: 5,
+      founderYes: true,
+    });
+    assert.equal(skip.ok, true);
+    assert.equal(skip.skipped, true);
+    assert.equal(skip.reason, PORTFOLIO_SKIP_NEED_TWO_LIVE);
+    const one = await store.getJourney(founder, { companySlug: "alpha" });
+    assert.equal(one.portfolio.applies, false);
+    assert.equal(one.ideas[0].portfolioScore, undefined);
+    assert.equal(one.ideas[0].scoreboard.portfolioScore, undefined);
+
+    const created = await store.createIdea(founder, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      founderYes: true,
+      why: "second live idea",
+    });
+    assert.equal(created.ok, true);
+
+    const badRange = await store.putPortfolioScore(founder, {
+      companySlug: "alpha",
+      ideaSlug: "default",
+      impact: 9,
+      evidence: 3,
+      leverage: 3,
+      founderYes: true,
+    });
+    assert.equal(badRange.ok, false);
+    assert.match(String(badRange.error), /1–5/);
+
+    const advisorWrite = await store.putPortfolioScore(advisor, {
+      companySlug: "alpha",
+      ideaSlug: "default",
+      impact: 3,
+      evidence: 3,
+      leverage: 3,
+      founderYes: true,
+    });
+    assert.equal(advisorWrite.ok, false);
+
+    const noYes = await store.putPortfolioScore(founder, {
+      companySlug: "alpha",
+      ideaSlug: "default",
+      impact: 3,
+      evidence: 3,
+      leverage: 3,
+      founderYes: false,
+    });
+    assert.equal(noYes.ok, false);
+
+    const first = await store.putPortfolioScore(founder, {
+      companySlug: "alpha",
+      ideaSlug: "default",
+      impact: 5,
+      evidence: 4,
+      leverage: 3,
+      founderYes: true,
+    });
+    assert.equal(first.ok, true);
+    assert.equal(first.skipped, false);
+    assert.equal(first.idea.clocks.currentGate, "hold");
+    assert.deepEqual(
+      { ...first.idea.portfolioScore, scoredAt: undefined, scoredBy: undefined },
+      { impact: 5, evidence: 4, leverage: 3, scoredAt: undefined, scoredBy: undefined },
+    );
+    assert.equal(first.idea.portfolioScore.scoredBy, "founder@example.test");
+    assert.equal(first.audit.whatChanged.via, "put_portfolio_score");
+    assert.equal(first.audit.whatChanged.before.scoreboard.portfolioScore, undefined);
+    assert.equal(first.audit.whatChanged.after.scoreboard.portfolioScore.impact, 5);
+    assert.equal(first.notify, undefined);
+
+    const second = await store.putPortfolioScore(founder, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      impact: 2,
+      evidence: 2,
+      leverage: 2,
+      founderYes: true,
+    });
+    assert.equal(second.ok, true);
+    assert.equal(second.portfolio.applies, true);
+    assert.equal(second.portfolio.formula, PORTFOLIO_RANK_FORMULA);
+    assert.deepEqual(
+      second.portfolio.ranked.map((row) => row.slug),
+      ["default", "second-bet"],
+    );
+    assert.equal(second.portfolio.ranked[0].total, 12);
+    assert.equal(second.portfolio.ranked[1].total, 6);
+    assert.deepEqual(second.portfolio.unscored, []);
+
+    const viaPut = await store.putJourney(founder, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      why: "relabel",
+      founderYes: true,
+      portfolioScore: { impact: 1, evidence: 1, leverage: 1 },
+    });
+    assert.equal(viaPut.ok, true);
+    assert.equal(viaPut.idea.portfolioScore.impact, 1);
+    assert.equal(viaPut.idea.clocks.currentGate, "hold");
+
+    const invalidBoard = await store.putJourney(founder, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      why: "bad score",
+      founderYes: true,
+      scoreboard: { schema_version: 1, portfolioScore: { impact: 0, evidence: 3, leverage: 3 } },
+    });
+    assert.equal(invalidBoard.ok, false);
+
+    const killed = await store.putJourney(founder, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      currentGate: "kill",
+      why: "retire the weaker bet",
+      founderYes: true,
+      gateEnrichment: GATE_ENR,
+      killPostmortem: {
+        lessonsLearned: "buyers already have a workaround",
+        actionableInsights: "next bet starts from an observed paid workaround",
+      },
+    });
+    assert.equal(killed.ok, true);
+    const afterKill = await store.getJourney(founder, { companySlug: "alpha" });
+    assert.equal(afterKill.portfolio.applies, false);
+    assert.equal(afterKill.portfolio.ranked.length, 0);
+    const live = afterKill.ideas.find((i) => i.slug === "default");
+    const dead = afterKill.ideas.find((i) => i.slug === "second-bet");
+    assert.ok(live.portfolioScore);
+    assert.equal(dead.killed, true);
+
+    const scoreKilled = await store.putPortfolioScore(founder, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      impact: 5,
+      evidence: 5,
+      leverage: 5,
+      founderYes: true,
+    });
+    assert.equal(scoreKilled.ok, false);
+    assert.equal(scoreKilled.error, PORTFOLIO_KILLED_OUT);
+
+    const leak = await store.putPortfolioScore(bravo, {
+      companySlug: "alpha",
+      ideaSlug: "default",
+      impact: 5,
+      evidence: 5,
+      leverage: 5,
+      founderYes: true,
+    });
+    assert.equal(leak.ok, false);
+    const hiddenBoard = await store.getJourney(bravo, { companySlug: "alpha" });
+    assert.equal(hiddenBoard.ok, false);
+    assert.doesNotMatch(JSON.stringify(hiddenBoard), /portfolioScore|impact/);
   });
 });

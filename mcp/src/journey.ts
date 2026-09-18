@@ -49,6 +49,17 @@ export type Scoreboard = {
   gateEnrichment?: GateEnrichment;
   /** Kill postmortem. Required on kill. Never invent on read. */
   killPostmortem?: KillPostmortem;
+  /** Founder/advisor weekly labels. Never invent on read. Never auto-promote. */
+  portfolioScore?: PortfolioScore;
+};
+
+/** Weekly Impact / Evidence / Leverage labels. Integers 1–5. OS never auto-promotes. */
+export type PortfolioScore = {
+  impact: number;
+  evidence: number;
+  leverage: number;
+  scoredAt?: string;
+  scoredBy?: string;
 };
 
 /** Short all-gate enrichment. why lives on the gate event. */
@@ -68,6 +79,131 @@ export type KillPostmortem = {
 
 export const GATE_ENRICHMENT_TEXT_MAX = 280;
 export const EVIDENCE_LINKS_MAX = 8;
+export const PORTFOLIO_SCORE_MIN = 1;
+export const PORTFOLIO_SCORE_MAX = 5;
+export const PORTFOLIO_RANK_FORMULA = "impact + evidence + leverage";
+export const PORTFOLIO_SCORE_OUT_OF_RANGE =
+  "impact, evidence, and leverage must be integers 1–5";
+export const PORTFOLIO_SKIP_NEED_TWO_LIVE =
+  "portfolio scoring applies when two or more live (non-kill) ideas are on the board";
+export const PORTFOLIO_KILLED_OUT =
+  "killed ideas are out of the live portfolio";
+
+/** Scores are labels. They cannot Advance, Iterate, Hold, or Kill. */
+export function portfolioScoreMayPromote(): false {
+  return false;
+}
+
+export function isPortfolioAxis(n: unknown): n is number {
+  return typeof n === "number" && Number.isInteger(n) && n >= PORTFOLIO_SCORE_MIN && n <= PORTFOLIO_SCORE_MAX;
+}
+
+export function normalizePortfolioScore(
+  raw: unknown,
+  meta?: { scoredAt?: string; scoredBy?: string },
+): { ok: true; value: PortfolioScore } | { ok: false; error: string } {
+  const src =
+    raw && typeof raw === "object" && !Array.isArray(raw)
+      ? ((raw as { portfolioScore?: unknown }).portfolioScore &&
+        typeof (raw as { portfolioScore?: unknown }).portfolioScore === "object"
+          ? ((raw as { portfolioScore: Record<string, unknown> }).portfolioScore)
+          : (raw as Record<string, unknown>))
+      : {};
+  if (!isPortfolioAxis(src.impact) || !isPortfolioAxis(src.evidence) || !isPortfolioAxis(src.leverage)) {
+    return { ok: false, error: PORTFOLIO_SCORE_OUT_OF_RANGE };
+  }
+  const scoredAtRaw = meta?.scoredAt ?? src.scoredAt;
+  const scoredByRaw = meta?.scoredBy ?? src.scoredBy;
+  const scoredAt =
+    typeof scoredAtRaw === "string" && scoredAtRaw.trim() ? scoredAtRaw.trim() : undefined;
+  const scoredBy =
+    typeof scoredByRaw === "string" && scoredByRaw.trim() ? scoredByRaw.trim() : undefined;
+  return {
+    ok: true,
+    value: {
+      impact: src.impact,
+      evidence: src.evidence,
+      leverage: src.leverage,
+      ...(scoredAt ? { scoredAt } : {}),
+      ...(scoredBy ? { scoredBy } : {}),
+    },
+  };
+}
+
+/** Never invent a score on read. Missing or invalid → undefined. */
+export function portfolioScoreOf(idea: IdeaRow): PortfolioScore | undefined {
+  if (idea.scoreboard.portfolioScore == null) return undefined;
+  const hit = normalizePortfolioScore(idea.scoreboard.portfolioScore);
+  return hit.ok ? hit.value : undefined;
+}
+
+export function portfolioTotal(score: PortfolioScore): number {
+  return score.impact + score.evidence + score.leverage;
+}
+
+export function isLiveIdea(idea: Pick<IdeaRow, "currentGate">): boolean {
+  return idea.currentGate !== "kill";
+}
+
+export type PortfolioRankRow = {
+  slug: string;
+  name: string;
+  impact: number;
+  evidence: number;
+  leverage: number;
+  total: number;
+  scoredAt?: string;
+  scoredBy?: string;
+};
+
+export type PortfolioView = {
+  applies: boolean;
+  reason?: string;
+  formula: typeof PORTFOLIO_RANK_FORMULA;
+  ranked: PortfolioRankRow[];
+  unscored: Array<{ slug: string; name: string }>;
+};
+
+/** Live ideas only. Rank = impact + evidence + leverage. Never invent missing scores. */
+export function portfolioViewOf(ideas: IdeaRow[]): PortfolioView {
+  const live = ideas.filter(isLiveIdea);
+  if (live.length < 2) {
+    return {
+      applies: false,
+      reason: PORTFOLIO_SKIP_NEED_TWO_LIVE,
+      formula: PORTFOLIO_RANK_FORMULA,
+      ranked: [],
+      unscored: [],
+    };
+  }
+  const ranked: PortfolioRankRow[] = [];
+  const unscored: Array<{ slug: string; name: string }> = [];
+  for (const idea of live) {
+    const score = portfolioScoreOf(idea);
+    if (!score) {
+      unscored.push({ slug: idea.slug, name: idea.name });
+      continue;
+    }
+    ranked.push({
+      slug: idea.slug,
+      name: idea.name,
+      impact: score.impact,
+      evidence: score.evidence,
+      leverage: score.leverage,
+      total: portfolioTotal(score),
+      ...(score.scoredAt ? { scoredAt: score.scoredAt } : {}),
+      ...(score.scoredBy ? { scoredBy: score.scoredBy } : {}),
+    });
+  }
+  ranked.sort((a, b) => b.total - a.total || a.slug.localeCompare(b.slug));
+  unscored.sort((a, b) => a.slug.localeCompare(b.slug));
+  return {
+    applies: true,
+    formula: PORTFOLIO_RANK_FORMULA,
+    ranked,
+    unscored,
+  };
+}
 
 export type BoardClocksSnapshot = {
   journeyPhase: number;
@@ -634,6 +770,8 @@ export type JourneyIdeaPayload = {
   constraintThisWeek: string;
   constraintChallenge?: string;
   scoreboard: Scoreboard;
+  /** Stored weekly labels only. Never invented on read. */
+  portfolioScore?: PortfolioScore;
   gateEnrichment?: GateEnrichment;
   killed?: boolean;
   killPostmortem?: KillPostmortem;
@@ -677,6 +815,10 @@ export function ideaPayload(
     visualFlow: visualFlowMermaid(idea, lastTransitions),
     snapshot: twoMinuteSnapshot(company, idea, lastTransitions, owners),
   };
+  const storedScore = portfolioScoreOf(idea);
+  if (storedScore) {
+    payload.portfolioScore = storedScore;
+  }
   if (idea.scoreboard.gateEnrichment) {
     payload.gateEnrichment = idea.scoreboard.gateEnrichment;
   }
@@ -731,6 +873,19 @@ export type JourneyStore = {
       client?: string;
       gateEnrichment?: GateEnrichment;
       killPostmortem?: Omit<KillPostmortem, "why"> & { why?: string };
+      portfolioScore?: PortfolioScore;
+    },
+  ): Promise<unknown>;
+  putPortfolioScore(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      impact: number;
+      evidence: number;
+      leverage: number;
+      founderYes: boolean;
+      client?: string;
     },
   ): Promise<unknown>;
   listProvenance(
@@ -904,12 +1059,14 @@ export class MemoryJourneyStore implements JourneyStore {
       return notFound("idea not visible");
     }
     const owners = ownersFromAcl(this.acl, company.id);
+    const allIdeas = this.ideasFor(company.id);
     return {
       ok: true,
       company: { slug: company.slug, label: company.label },
       owners,
       acl: companyAclView(this.acl, company.id),
       digest: JOURNEY_DIGEST_CONTRACT,
+      portfolio: portfolioViewOf(allIdeas),
       ideas: ideas.map((idea) =>
         ideaPayload(
           company,
@@ -921,7 +1078,7 @@ export class MemoryJourneyStore implements JourneyStore {
         ),
       ),
       audit: this.auditFor(company.id, query.ideaSlug ? ideas[0]?.id : undefined),
-      note: `Same payload for team / advisor / board / investor prep. Views are generated. Owner comes from ACL — do not invent. Prefer webhook notify over polling. Comments never mutate gates or Advance. constraint_this_week is the honest biggest bottleneck, not a fun side quest. ${CONSTRAINT_TEACHING_PICTURE} Audit is append-only. Not ~/.bootstrap-os.`,
+      note: `Same payload for team / advisor / board / investor prep. Views are generated. Owner comes from ACL — do not invent. Prefer webhook notify over polling. Comments never mutate gates or Advance. constraint_this_week is the honest biggest bottleneck, not a fun side quest. ${CONSTRAINT_TEACHING_PICTURE} Audit is append-only. Portfolio scores are founder/advisor labels — they cannot Advance or Kill. Not ~/.bootstrap-os.`,
     };
   }
 
@@ -997,6 +1154,7 @@ export class MemoryJourneyStore implements JourneyStore {
       client?: string;
       gateEnrichment?: GateEnrichment;
       killPostmortem?: Omit<KillPostmortem, "why"> & { why?: string };
+      portfolioScore?: PortfolioScore;
     },
   ): Promise<unknown> {
     if (!actor.authenticated || !actor.principal) {
@@ -1024,11 +1182,15 @@ export class MemoryJourneyStore implements JourneyStore {
       if (!fromBoard.ok) {
         return forbidden(fromBoard.error);
       }
+      const incoming = stripInventedOwnerFields(input.scoreboard);
       nextScoreboard = {
-        ...stripInventedOwnerFields(input.scoreboard),
+        ...incoming,
         schema_version: input.scoreboard.schema_version ?? SCOREBOARD_SCHEMA_VERSION,
         constraint_this_week: fromBoard.value,
       };
+      if (!("portfolioScore" in incoming) && idea.scoreboard.portfolioScore) {
+        nextScoreboard.portfolioScore = idea.scoreboard.portfolioScore;
+      }
     }
     if (input.constraintThisWeek !== undefined) {
       const normalized = normalizeConstraintThisWeek(input.constraintThisWeek);
@@ -1073,6 +1235,40 @@ export class MemoryJourneyStore implements JourneyStore {
       if (!killPm.ok) return forbidden(killPm.error);
       nextScoreboard = { ...nextScoreboard, killPostmortem: killPm.value };
     }
+    const incomingScore = input.portfolioScore ?? input.scoreboard?.portfolioScore;
+    let portfolioSkip: string | undefined;
+    if (incomingScore !== undefined) {
+      const scored = normalizePortfolioScore(incomingScore);
+      if (!scored.ok) {
+        return forbidden(scored.error);
+      }
+      const proposedGate = input.currentGate ?? idea.currentGate;
+      const liveCount = this.ideasFor(company.id).filter((row) => {
+        if (row.id === idea.id) return proposedGate !== "kill";
+        return isLiveIdea(row);
+      }).length;
+      if (proposedGate === "kill") {
+        if (idea.scoreboard.portfolioScore) {
+          nextScoreboard.portfolioScore = idea.scoreboard.portfolioScore;
+        } else {
+          delete nextScoreboard.portfolioScore;
+        }
+        portfolioSkip = PORTFOLIO_KILLED_OUT;
+      } else if (liveCount < 2) {
+        if (idea.scoreboard.portfolioScore) {
+          nextScoreboard.portfolioScore = idea.scoreboard.portfolioScore;
+        } else {
+          delete nextScoreboard.portfolioScore;
+        }
+        portfolioSkip = PORTFOLIO_SKIP_NEED_TWO_LIVE;
+      } else {
+        nextScoreboard.portfolioScore = {
+          ...scored.value,
+          scoredAt: new Date().toISOString(),
+          scoredBy: actor.principal,
+        };
+      }
+    }
     if (input.journeyPhase !== undefined) {
       if (!isJourneyPhase(input.journeyPhase)) {
         return forbidden("journey_phase is a strict enum 1-9");
@@ -1096,6 +1292,7 @@ export class MemoryJourneyStore implements JourneyStore {
       input.constraintThisWeek !== undefined ||
       input.gateEnrichment ||
       input.killPostmortem ||
+      incomingScore !== undefined ||
       clocksChanged
     ) {
       idea.scoreboard = nextScoreboard;
@@ -1153,8 +1350,101 @@ export class MemoryJourneyStore implements JourneyStore {
         false,
         ownersFromAcl(this.acl, company.id),
       ),
+      portfolio: portfolioViewOf(this.ideasFor(company.id)),
+      ...(portfolioSkip ? { portfolioSkip } : {}),
       audit,
       notify,
+    };
+  }
+
+  async putPortfolioScore(
+    actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      impact: number;
+      evidence: number;
+      leverage: number;
+      founderYes: boolean;
+      client?: string;
+    },
+  ): Promise<unknown> {
+    if (!actor.authenticated || !actor.principal) {
+      return forbidden("unauthenticated");
+    }
+    if (!input.founderYes) {
+      return forbidden("founder yes required in the agent chat — not a form, not mail");
+    }
+    const company = this.companyBySlug(input.companySlug);
+    if (!company || !canWriteJourney(this.acl, actor, company.id)) {
+      return forbidden("founder or founder-authorized only");
+    }
+    const ideas = this.ideasFor(company.id, input.ideaSlug);
+    if (ideas.length !== 1) {
+      return notFound(IDEA_NOT_FOUND_WRITE);
+    }
+    const idea = ideas[0];
+    const scored = normalizePortfolioScore({
+      impact: input.impact,
+      evidence: input.evidence,
+      leverage: input.leverage,
+    });
+    if (!scored.ok) {
+      return forbidden(scored.error);
+    }
+    if (!isLiveIdea(idea)) {
+      return forbidden(PORTFOLIO_KILLED_OUT);
+    }
+    const liveCount = this.ideasFor(company.id).filter(isLiveIdea).length;
+    if (liveCount < 2) {
+      return {
+        ok: true,
+        skipped: true,
+        reason: PORTFOLIO_SKIP_NEED_TWO_LIVE,
+        company: { slug: company.slug, label: company.label },
+        portfolio: portfolioViewOf(this.ideasFor(company.id)),
+      };
+    }
+    const before = ideaBoardSnapshot(idea);
+    const gate = idea.currentGate;
+    idea.scoreboard = {
+      ...idea.scoreboard,
+      portfolioScore: {
+        ...scored.value,
+        scoredAt: new Date().toISOString(),
+        scoredBy: actor.principal,
+      },
+    };
+    if (idea.currentGate !== gate) {
+      return forbidden("portfolio scores cannot change the gate");
+    }
+    const audit = this.emitAudit({
+      companyId: company.id,
+      ideaId: idea.id,
+      who: actor.principal,
+      client: input.client?.trim() || "put_portfolio_score",
+      whatChanged: {
+        op: "put_portfolio_score",
+        via: "put_portfolio_score",
+        before,
+        after: ideaBoardSnapshot(idea),
+      },
+    });
+    return {
+      ok: true,
+      skipped: false,
+      company: { slug: company.slug, label: company.label },
+      owners: ownersFromAcl(this.acl, company.id),
+      idea: ideaPayload(
+        company,
+        idea,
+        this.events,
+        this.comments,
+        false,
+        ownersFromAcl(this.acl, company.id),
+      ),
+      portfolio: portfolioViewOf(this.ideasFor(company.id)),
+      audit,
     };
   }
 
