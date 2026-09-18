@@ -1,11 +1,11 @@
 ---
 name: house-rule-pins
-description: Pin published OS house rules by link. Use for spoken yes / GTM, volume, a security program, a second idea, optimal price, handful WTP, 0-1 LTV/CAC, old SaaS playbook, automate the playbook, an agent team to skip a step with no named owner, or a new landing page as the bottleneck.
+description: Pin published OS house rules by link. Use for spoken yes / GTM, volume, a security program, a second idea, optimal price, handful WTP, 0-1 LTV/CAC, old SaaS playbook, automate the playbook, an agent team to skip a step with no named owner, a new landing page, BANT, MEDDIC, MEDDPICC, listed price, or unpaid trial.
 ---
 
 # House-rule pins
 
-When to use: GTM; spoken yes; volume; security program; second idea; optimal price; handful WTP; LTV/CAC at 0-1; old SaaS playbook; automate the playbook; agent team to skip a step with no named owner; one bottleneck this week; fun side quest; new landing page.
+When to use: GTM; spoken yes; volume; security program; second idea; optimal price; handful WTP; LTV/CAC at 0-1; old SaaS playbook; automate the playbook; agent team with no named owner; one bottleneck this week; fun side quest; new landing page; BANT; MEDDIC; MEDDPICC; listed price; unpaid trial.
 
 Full text lives in the OS. Refuse. Cite the link.
 
