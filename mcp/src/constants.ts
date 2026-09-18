@@ -1,7 +1,7 @@
 /** Portable journey + loop labels (aligned to company-os v2.8.12). */
 
 export const OS_VERSION = "2.8.12";
-export const MCP_VERSION = "0.3.4";
+export const MCP_VERSION = "0.3.5";
 
 /** Published constitution. Hosted read adapter fetches from here; do not embed copies. */
 export const PUBLISHED_REPO = "https://github.com/ivelin/bootstrap";
@@ -15,6 +15,7 @@ export const HOSTED_READ_TOOL_NAMES = [
   "bootstrap_get_ai_instructions",
   "bootstrap_reference_clocks",
   "bootstrap_house_rule_pins",
+  "bootstrap_support",
 ] as const;
 
 /** Resource-server gated identity. Unauthenticated calls return HTTP 401 + WWW-Authenticate. */

@@ -18,6 +18,8 @@ When the user says where are we, show the company board, show company X ideas, s
 
 create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks. enable_board_watch turns on board updates for Bill after invite. If they ask for the decision log over time or to rebuild clocks at a past point, call list_provenance (same access as get_journey). Weekly portfolio labels are put_portfolio_score (impact, evidence, leverage 1–5, required short why). Scores never Advance or Kill. Single-idea boards skip ranking.
 
+Feedback and support for Bootstrap OS hosted MCP: email bootstrap@pirin.ai. Include the company, what you tried, and the error text. A human reads it — this is not an auto-fix. Call bootstrap_support for the same howto.
+
 This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
 If the user is not signed in, tell them to sign in to Bootstrap OS and ask again.
 ${HOSTED_BILL_GROK_LINE}`;
@@ -86,6 +88,19 @@ export const TOOL_PUT_PORTFOLIO_SCORE =
 
 export const NOTE_OS_INFO_HOSTED =
   "Process docs, house rules, and a shared 0-1 board per company you can open."
+
+/** Same mailbox as Bill / public feedback and invite From. Inbound howto only — MCP does not send mail. */
+export const SUPPORT_EMAIL = "bootstrap@pirin.ai";
+
+export const TOOL_SUPPORT =
+  "How to send feedback or ask for help with Bootstrap OS hosted MCP. Email bootstrap@pirin.ai. Returns what to include. Human-routed, not an auto-fix.";
+
+export const SUPPORT_HOWTO = {
+  email: SUPPORT_EMAIL,
+  include: ["company", "what you tried", "error text"],
+  routed: "human-routed, not auto-fix",
+  note: "Email bootstrap@pirin.ai for Bootstrap OS hosted MCP feedback and support. Include the company, what you tried, and the error text. A human reads it — this is not an auto-fix. Do not send customer lists or secrets.",
+} as const;
 
 export const NOTE_INVITE_SENT =
   "They'll get an email at that address. They must sign in as that email, then accept the invite in their chat. You can also send them the sign-in link."
