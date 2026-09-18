@@ -1,6 +1,8 @@
 # Bootstrap OS
 
-**Portable Company Operating System for solo founders in the 0→1 journey.**
+**Portable company operating system for solo founders in the 0→1 journey.**
+
+Not the Bootstrap CSS / UI framework ([getbootstrap.com](https://getbootstrap.com)). This repo is process and control for a company: two clocks, founder gates, honest evidence.
 
 Use this repo as the **source of truth** for process and control. Point your AI here and apply what fits *your* startup. Instantiate blank files in *your* product repo only when you want them — fill only *your* thesis, customer groups, scores, and open questions.
 
@@ -10,6 +12,8 @@ Use this repo as the **source of truth** for process and control. Point your AI 
 | **License** | Apache-2.0 |
 | **Audience** | Independent solo founders; mentors (Founder Institute, SCORE, …); AI helpers |
 | **Maintainer** | [Ivelin Ivanov](https://github.com/ivelin) · [Pirin.ai](https://pirin.ai) |
+| **Install** | [pirin.ai/bootstrap-os](https://pirin.ai/bootstrap-os) |
+| **Canonical repo** | [github.com/ivelin/bootstrapos](https://github.com/ivelin/bootstrapos) |
 
 ---
 
@@ -57,13 +61,17 @@ Compatible paths. Start at **1**. Later rungs are opt-in. Several ideas are allo
 No copy, no script, no CLI, no MCP. Use what applies to *your* startup immediately.
 
 ```text
-Take the Bootstrap OS from https://github.com/ivelin/bootstrap
+Take the Bootstrap OS from https://github.com/ivelin/bootstrapos
 (company-os/operating-system.md + live-runtime.md + ai-instructions.md).
+Bootstrap OS is a company operating system for solo 0-1 founders.
+It is not the Bootstrap CSS framework.
 Apply process and control to MY startup only.
 Do not import any other company's product thesis or market.
 ```
 
 Then Day 0 (~60 minutes) — thesis, ≥3 customer groups, first “Where are we?”: [`company-os/first-hour.md`](company-os/first-hour.md). Chat plus a weekly ritual is enough. Lifestyle / small good business, or swinging for the fences? [Day 0](company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
+
+Hands-on page: [Install Bootstrap OS](https://pirin.ai/bootstrap-os).
 
 ### 2. Instantiate files (when you want them in your repo)
 
@@ -85,7 +93,7 @@ One stdio connector, many `companyId`s: [`mcp/README.md`](mcp/README.md). MCP ne
 
 A **preview** plugin lives in [`plugin/`](plugin/): thin skills that hyperlink this repo, plus an optional Streamable HTTP **read** adapter in [`mcp/`](mcp/). Team Import from Repo only — not a public catalog submit. It is not a second front door. Path 1 stays default.
 
-The hosted slice is invite-only collab: OS info, docs, house-rule pins. Pin `https://mcp.bootstrap.pirin.ai/mcp` 401s the handshake. Free docs are GitHub + [install-os](https://pirin.ai/install-os) + local — not a hosted MCP connector. The Vercel production Host is the same 401, not a silent 200 alias. Gated whoami + labels return 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login); login is `/bootstrap-os/login` (Web Builder; not this repo). Contract: [`mcp/docs/HOSTED_IDENTITY.md`](mcp/docs/HOSTED_IDENTITY.md). Markdown on GitHub remains the constitution. Founder `company-state` stays on path 3 local stdio — not on a shared server.
+The hosted slice is invite-only collab: OS info, docs, house-rule pins. Pin `https://mcp.bootstrap.pirin.ai/mcp` 401s the handshake. Free docs are GitHub + [install-os](https://pirin.ai/bootstrap-os) + local — not a hosted MCP connector. The Vercel production Host is the same 401, not a silent 200 alias. Gated whoami + labels return 401 + `WWW-Authenticate` to this MCP origin RFC 9728 (`authorization_servers` = pirin.ai login); login is `/bootstrap-os/login` (Web Builder; not this repo). Contract: [`mcp/docs/HOSTED_IDENTITY.md`](mcp/docs/HOSTED_IDENTITY.md). Markdown on GitHub remains the constitution. Founder `company-state` stays on path 3 local stdio — not on a shared server.
 
 There is a **preview** git-branch read adapter on `*.vercel.app` (not mentee-ready boards, not a public catalog submit, not pirin.ai, not a Path 1 pin). `plugin/mcp.json` pins the collab host; `${BOOTSTRAP_MCP_URL}` can override. No day-one SaaS boards. Do not use `mcp.pirin.ai` (dead).
 
@@ -214,7 +222,7 @@ Light synthetic product sandbox + real interest tests before heavy build.
 ## Related
 
 - Insights (plain-language guides): [pirin.ai/insights](https://pirin.ai/insights) — search “Bootstrap OS”  
-- Hands-on install: [Install Bootstrap OS intensive](https://pirin.ai/install-os)  
+- Hands-on install: [Install Bootstrap OS](https://pirin.ai/bootstrap-os)  
 - Public live instances (illustration only): see [`examples/`](examples/)
 - Optional local MCP (path 3): [`mcp/README.md`](mcp/README.md)
 - Preview plugin (team Import from Repo only — not a public catalog submit): [`plugin/`](plugin/)

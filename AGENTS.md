@@ -5,7 +5,7 @@ This repository is the **portable Bootstrap OS template** only.
 1. Prefer editing instance examples under product repos or (path 3) MCP data-root instances, not this template, unless the founder explicitly approved a **template** change.
 2. Never add a filled product thesis, beachhead market, or company scores into `company-os/` — those belong in consumer instances (`docs/company-os/applied-here.md`, `company/state/`, or `BOOTSTRAP_DATA_ROOT/instances/<id>/`).
 3. When helping a founder adopt the OS, present the Day-0 order from [README.md](README.md#how-to-use-this-pick-one):
-   - **Path 1 — Point an AI** at https://github.com/ivelin/bootstrap — no install. Default front door.
+   - **Path 1 — Point an AI** at https://github.com/ivelin/bootstrapos — no install. Default front door.
    - **Path 2 — Optional instance/CLI** (`./scripts/install-instance.sh`) + optional `.grok/workflows`.
    - **Path 3 — Optional local MCP** under [`mcp/`](mcp/) when they run several ideas — one connector, isolated instances. Do not require MCP or install.
    - **Path 4 — Preview only.** [`plugin/`](plugin/) + HTTP read adapter. Invite-only collab pin `https://mcp.bootstrap.pirin.ai/mcp` (handshake 401). Free docs = GitHub + install-os + local — not a hosted MCP connector. Git-branch previews on `*.vercel.app` (same 401 as collab, not a silent 200 alias, not a pin). Contract: [`mcp/docs/HOSTED_IDENTITY.md`](mcp/docs/HOSTED_IDENTITY.md). Not mentee-ready boards. No public catalog submit (team Import from Repo only). Not pirin.ai. Path 1 stays the front door.
