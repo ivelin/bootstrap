@@ -1233,6 +1233,27 @@ else
   not_ok "do not put unpaid weeks / Buyer class / Customer type / BANT / MEDDIC in the Day 0 Done when checklist"
 fi
 
+# --- w) Bootstrap Bill install docs (invite-only; not Path 1) ---
+bill=docs/install-bill.md
+if [ -s "$bill" ] \
+  && grep -Fq 'https://x.ai/bot/NfURVcmf2bx9QyoljkJ7Y' "$bill" \
+  && grep -Fq 'https://mcp.bootstrap.pirin.ai/mcp' "$bill" \
+  && grep -Fq 'https://pirin.ai/bootstrap-os/login' "$bill" \
+  && grep -Fq 'https://github.com/ivelin/bootstrapos' "$bill" \
+  && grep -Fq 'https://pirin.ai/bootstrap-os' "$bill" \
+  && grep -Fq 'bootstrap@pirin.ai' "$bill" \
+  && grep -q 'Poll is the safety net' "$bill" \
+  && grep -q 'Push comes after Cos grants' "$bill" \
+  && grep -q 'not.*Path 1' "$bill" \
+  && ! grep -q 'vercel.app' "$bill" \
+  && ! grep -q 'mcp.pirin.ai' "$bill" \
+  && grep -q 'docs/install-bill.md' README.md \
+  && grep -q 'That is not Path 1' README.md; then
+  ok "Bill install docs lock the live URL, invite MCP + login, Path 1 split, weekly poll/push, and feedback"
+else
+  not_ok "docs/install-bill.md must ship the live Bill URL, invite-only MCP + login (not Path 1), weekly poll/push, and bootstrap@pirin.ai — no vercel.app or mcp.pirin.ai"
+fi
+
 # --- no instance secrets (hard contribution rule) ---
 if grep -q 'No instance secrets in this template (hard)' AGENTS.md \
   && grep -q 'Instance secrets in the template' README.md \
