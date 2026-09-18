@@ -97,6 +97,8 @@ The hosted slice is invite-only collab: OS info, docs, house-rule pins. Pin `htt
 
 There is a **preview** git-branch read adapter on `*.vercel.app` (not mentee-ready boards, not a public catalog submit, not pirin.ai, not a Path 1 pin). `plugin/mcp.json` pins the collab host; `${BOOTSTRAP_MCP_URL}` can override. No day-one SaaS boards. Do not use `mcp.pirin.ai` (dead).
 
+Invited founders who want Bill: [Install Bootstrap Bill](docs/install-bill.md). That is not Path 1.
+
 ---
 
 ## Install in your company
@@ -222,7 +224,8 @@ Light synthetic product sandbox + real interest tests before heavy build.
 ## Related
 
 - Insights (plain-language guides): [pirin.ai/insights](https://pirin.ai/insights) — search “Bootstrap OS”  
-- Hands-on install: [Install Bootstrap OS](https://pirin.ai/bootstrap-os)  
+- Hands-on install: [Install Bootstrap OS](https://pirin.ai/bootstrap-os)
+- Invite-only: [Install Bootstrap Bill](docs/install-bill.md)  
 - Public live instances (illustration only): see [`examples/`](examples/)
 - Optional local MCP (path 3): [`mcp/README.md`](mcp/README.md)
 - Preview plugin (team Import from Repo only — not a public catalog submit): [`plugin/`](plugin/)
