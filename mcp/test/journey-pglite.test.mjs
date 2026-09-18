@@ -59,8 +59,15 @@ describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, ()
     assert.match(createSql, /bootstrap_os_create_idea/);
     assert.match(createSql, /idea not found; call create_idea first/);
     assert.match(createSql, /p_scoreboard/);
+    assert.match(createSql, /v_slug/);
     assert.match(createSql, /Fictional template labels only/);
     assert.doesNotMatch(createSql, /supabase\.co/);
+    const disambig = fs.readFileSync(
+      path.join(__dirname, "..", "supabase", "migrations", "20260919_bootstrap_os_create_idea_disambiguate_slug.sql"),
+      "utf8",
+    );
+    assert.match(disambig, /v_slug/);
+    assert.match(disambig, /42702/);
   });
 
   it("seed is one default idea per company", async () => {
