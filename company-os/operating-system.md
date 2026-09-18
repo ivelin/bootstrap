@@ -1171,32 +1171,55 @@ Same family: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote
 
 ### House rule: unpaid weeks cannot promote
 
-Someone saying you must keep working for a company after the first conversation, unpaid, because the buying cycle is long, is asking for **free custom work** — not proof the group will pay. Same family as a spoken yes and [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed): talk is not a sale. The first conversation is free. The next working session is paid, or you stop.
+Someone asking you to keep working for a company that has not paid, so the deal can close later, is asking for free work. That is not proof they will pay. Same family as [legal paper cannot promote](#house-rule-legal-paper-cannot-promote) and a spoken yes cannot promote.
 
-**Meaning.** Real proof = someone used the product, paid, came back, or referred a friend. Unpaid weeks after the first talk cannot promote a group. A filled BANT or MEDDIC list is still stated interest. It cannot promote. A long buying cycle is not free custom work. Customer type lives on the existing group card (consumer / small business / mid-market / enterprise). That type sets expected time to a first paid yes and a follow-up cue. One product. Not a second company. Not a second way of selling.
+**Meaning.** The first conversation is free. After that, time you spend doing work for that company needs a named paid offer, or a written job with a date the work stops. A long buying process is normal for a large company. A long buying process is not free custom work.
 
-**Who buys.** Write the type on the group card you already have. The cue is how you follow up — not a sales course and not a second motion.
+**Who buys.** Write the customer type on the existing customer-group card. It tells you how long a paid yes usually takes, and which follow-up questions to ask next. It does not create a second product or a second way of selling.
 
-| Customer type | Who decides | Time to a first paid yes | Follow-up cue |
-|---------------|-------------|--------------------------|---------------|
-| Consumer | The person using it | Same day to a few weeks | Listed price |
-| Small business | Owner or one buyer | Days to a few months | BANT |
-| Mid-market | A named buyer plus a process | Weeks to a few quarters | MEDDIC |
-| Enterprise | A committee; paper and competition | Months | MEDDPICC |
+| Type | Who usually decides | Time to a first paid yes | Follow-up cue |
+|------|---------------------|--------------------------|---------------|
+| **Consumer** | One person, paying for themselves | Days to a few weeks | Listed price. They buy or they do not. |
+| **Small business** | The owner or a small team | Weeks to a couple of months | BANT (see words below) |
+| **Mid-market** | A department. A few people must agree | About one to three months | MEDDIC (see words below) |
+| **Enterprise** | Many people. Purchasing, legal, often a security review | Several months, sometimes a year | MEDDPICC (see words below) |
 
-This rule **applies** after the first conversation with a live prospect, when they ask for more unpaid work. It does **not** apply on Day 0 (thesis, ≥3 groups, one snapshot). It is **not** a tenth phase, **not** a third clock, and **not** a sales course.
+Rank is still test priority. A slow enterprise group is not automatically the best group to work this week.
 
-Three examples, not extra law:
+**Words used here.** These letters are a follow-up cue after the first conversation, for that customer type only. They are not Day 0 homework and not a second way of selling. Look them up when that type is live. Do not run all four methods on every group. Use these meanings only. Do not invent other expansions.
+
+- Listed price — they buy the published offer or they do not.
+- BANT — Budget (is there money), Authority (can this person say yes), Need (do they have the problem now), Timeline (when do they need it).
+- MEDDIC — Metrics (what number makes this worth buying), Economic buyer (who owns the money), Decision criteria (how they will judge you), Decision process (the steps to a yes), Identify pain (the problem in their words), Champion (the person inside who wants this to happen).
+- MEDDPICC — the same six, plus Paper process (purchasing, legal, security review) and Competition (including building it themselves or doing nothing).
+
+A filled BANT or MEDDIC list is still stated interest. It cannot promote the group. They have to pay and stay.
+
+**When this rule applies.** You already had a first conversation with a real person. They now want work from you: a custom plan, a build on their files, extra sessions, sitting with their team, or an unpaid trial.
+
+**When this rule does not apply.**
+- Day 0 (thesis, at least three customer groups, one snapshot).
+- Ranking groups before you have talked to anyone.
+- The first conversation itself.
+- Building your own product.
+- Public writing.
+- Waiting while their purchasing process runs, as long as you are not producing custom work for them during the wait.
 
 | | Do this | Not this |
 |--|---------|----------|
-| **Pay or stop** | After the first talk, a prospect asks for a custom build "to evaluate." The founder names a first paid offer or stops. Unpaid work after the first talk is written on the card. | Six unpaid working sessions while the BANT list is still empty. The founder treats the hours as proof the group will pay. |
-| **Stated list is not a sale** | A mid-market contact fills MEDDIC fields. The founder writes that as stated interest and keeps promote on hold. | A filled MEDDIC sheet is treated as proof the group will pay. The board moves on. No one has paid. |
-| **Long cycle is not free work** | An enterprise contact says the committee needs a quarter. The founder writes expected time to a first paid yes and the MEDDPICC cue. The next working session is still paid, or they stop. Snapshot ritual: unpaid work on live prospects (name + weeks unpaid + last paid offer + stop date, or none this week). | Months of unpaid custom work because "enterprise takes time." Unpaid weeks on live prospects have no stop date. |
+| **First talk** | Take the first conversation. Learn if they have the problem and who decides. | Treat the first call as a promise to start unpaid work. |
+| **Next session** | Price the next working session. A small paid trial, a paid setup, or a written job with a stop date. | A second unpaid working session so they can "see it first." |
+| **Long cycle** | Send the price of a small first slice. Work other groups while they buy. | Spend the months of their process writing custom documents for free. |
 
-This rule is **not** Day 0 homework, **not** a tenth phase, and **not** a sales course.
+A shop owner likes the first call and asks you to set up her three stores next week. That setup is paid, or you stop and talk to other owners.
 
-Same family: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). [Legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+An operations lead at a large company has a good first call. Purchasing will take four months. You send the price of a small paid trial they can run while purchasing works. You do not spend those four months writing custom reports for free.
+
+A person tries your consumer app. They pay the listed price or they do not. There is no second unpaid strategy workshop.
+
+This rule is **not** Day 0 homework, **not** a tenth phase, **not** a third clock, and **not** a sales course.
+
+Same family: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
 ---
 
