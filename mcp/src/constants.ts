@@ -43,6 +43,7 @@ export const HOSTED_GATED_JOURNEY_TOOL_NAMES = [
   "subscribe_board",
   "unsubscribe_board",
   "list_subscribers",
+  "enable_board_watch",
 ] as const;
 
 /** Resource-server gated tools. Unauthenticated calls return HTTP 401 + WWW-Authenticate. */

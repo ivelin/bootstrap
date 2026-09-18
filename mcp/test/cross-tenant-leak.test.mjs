@@ -370,7 +370,7 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
                   }
                 : name === "unsubscribe_board"
                   ? { company: "bravo", principal: EMAIL_B, principalKind: "email" }
-                  : name === "list_subscribers"
+                  : name === "list_subscribers" || name === "enable_board_watch"
                     ? { company: "bravo" }
                     : { q: "bravo" },
       ]),
@@ -438,6 +438,7 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
       ],
       ["unsubscribe_board", { company: "bravo", principal: EMAIL_B, principalKind: "email" }],
       ["list_subscribers", { company: "bravo" }],
+      ["enable_board_watch", { company: "bravo" }],
     ];
 
     for (const [name, args] of probes) {
@@ -566,6 +567,7 @@ describe("cross-tenant invite-only CI gate (memory ACL + webhook)", () => {
       ["put_journey", { company: "delta", why: "leak", founderYes: true }],
       ["post_comment", { company: "delta", body: "leak" }],
       ["list_subscribers", { company: "delta" }],
+      ["enable_board_watch", { company: "delta" }],
       [
         "subscribe_board",
         {

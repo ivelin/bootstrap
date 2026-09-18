@@ -1242,16 +1242,20 @@ if [ -s "$bill" ] \
   && grep -Fq 'https://github.com/ivelin/bootstrapos' "$bill" \
   && grep -Fq 'https://pirin.ai/bootstrap-os' "$bill" \
   && grep -Fq 'bootstrap@pirin.ai' "$bill" \
-  && grep -q 'Poll is the safety net' "$bill" \
-  && grep -q 'Push comes after Cos grants' "$bill" \
+  && grep -q 'Bill checks your board weekly' "$bill" \
+  && grep -q 'Bill watches the board when Cos turns it on' "$bill" \
+  && grep -q 'board updates' "$bill" \
   && grep -q 'not.*Path 1' "$bill" \
+  && ! grep -qi 'webhook' "$bill" \
+  && ! grep -q 'subscribe_board' "$bill" \
+  && ! grep -qi 'grokbot' "$bill" \
   && ! grep -q 'vercel.app' "$bill" \
   && ! grep -q 'mcp.pirin.ai' "$bill" \
   && grep -q 'docs/install-bill.md' README.md \
   && grep -q 'That is not Path 1' README.md; then
-  ok "Bill install docs lock the live URL, invite MCP + login, Path 1 split, weekly poll/push, and feedback"
+  ok "Bill install docs lock the live URL, invite MCP + login, Path 1 split, weekly board watch, and feedback"
 else
-  not_ok "docs/install-bill.md must ship the live Bill URL, invite-only MCP + login (not Path 1), weekly poll/push, and bootstrap@pirin.ai — no vercel.app or mcp.pirin.ai"
+  not_ok "docs/install-bill.md must ship the live Bill URL, invite-only MCP + login (not Path 1), weekly board watch, and bootstrap@pirin.ai — no webhook / subscribe_board / vercel.app or mcp.pirin.ai"
 fi
 
 # --- no instance secrets (hard contribution rule) ---

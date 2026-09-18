@@ -58,7 +58,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     assert.match(write, /judge-only/);
     assert.match(write, /do not invent their stage/);
     assert.match(write, /Spoken yes cannot promote/);
-    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers/);
+    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers|enable_board_watch/);
     assert.doesNotMatch(write, /bootstrap_os\.|SELECT |PGlite/);
     assert.ok(write.length < 2000);
     assert.ok(write.includes(HOSTED));
@@ -128,7 +128,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
     }
     assert.match(write, /no one has talked to customers/);
     assert.match(coverage, /mayWriteConstraintThisWeek/);
-    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers/);
+    assert.doesNotMatch(write, /get_journey|put_journey|post_comment|subscribe_board|unsubscribe_board|list_subscribers|enable_board_watch/);
   });
 
   it("no FAST mentee names or emails in public markdown; no Ivelin session claimed", () => {
@@ -151,6 +151,7 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
       "subscribe_board",
       "unsubscribe_board",
       "list_subscribers",
+      "enable_board_watch",
     ]);
     const journeyDoc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "JOURNEY.md"), "utf8");
     assert.match(journeyDoc, /Hard rule — invite-only company boards/);

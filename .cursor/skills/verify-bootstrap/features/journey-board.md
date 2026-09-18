@@ -8,13 +8,13 @@ On this draft branch the hosted adapter also lists gated journey board tools. A 
 - `board-company` `get_journey` with a company slug returns every idea for that company.
 - `board-idea` company + idea returns one idea.
 - `board-constraint` response surfaces `constraint_this_week` and ACL `owners` (not a free-text owner).
-- `board-subscribe` `subscribe_board` / `list_subscribers` / `unsubscribe_board` grant and remove webhook notify for an ACL principal.
+- `board-subscribe` `enable_board_watch` turns on board updates for Bill (Cos-set env). `subscribe_board` / `list_subscribers` / `unsubscribe_board` remain Cos / adapter furniture.
 - `board-comments` `post_comment` never advances a gate.
 
 ## How to get to it (user POV)
 
 - Authenticated MCP client on this branch's hosted adapter calls `get_journey` with `company` (and optional `idea` or `q` like `CoreHaul / last-mile`).
-- Founder-authorized client calls `subscribe_board` with `company`, `principal`, `principalKind`, `webhookUrl`.
+- Founder-authorized client calls `enable_board_watch` with `company` (optional `idea`) after invite. Cos sets the watch secrets; founders never paste a URL.
 - Anyone who may `get_journey` can `list_subscribers` for that company.
 - Path 1 founders on GitHub are not told to connect this host.
 

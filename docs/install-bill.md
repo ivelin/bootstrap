@@ -28,11 +28,9 @@ That is the default front door. Bill is extra, and only with an invite.
 
 ## 3. Weekly board watch
 
-Bill watches the board every week.
+Bill checks your board weekly.
 
-**Poll is the safety net.** Bill can still ask where the board stands if a ping does not arrive.
-
-**Push comes after Cos grants it.** Until then, poll is enough.
+Bill watches the board when Cos turns it on. Those board updates stay in the background.
 
 ## 4. Feedback
 
