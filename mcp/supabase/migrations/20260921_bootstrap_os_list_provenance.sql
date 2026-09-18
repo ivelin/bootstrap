@@ -2,7 +2,6 @@
 -- All-gate enrichment: why + whatChanged + whatWereNotDoing; optional evidenceLinks.
 -- Kill REQUIRES postmortem: why + lessonsLearned + actionableInsights. Reject silent kill.
 -- Killed ideas stay readable. Never invent a postmortem on read.
--- Not in this file: weekly Impact/Evidence/Leverage 1–5 portfolio scoring.
 -- Cos applies on supabase-pirin-ai. PR agents: PGlite / file lock only.
 -- Do not migrate/seed/live-probe supabase-pirin-ai from a PR cloud agent.
 
