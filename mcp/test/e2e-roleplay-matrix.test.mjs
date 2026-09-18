@@ -238,6 +238,8 @@ describe("E2E role-play matrix (PGlite, never prod)", { concurrency: false }, ()
     assert.match(e2e, /use_company/);
     assert.match(e2e, /P7/);
     assert.match(e2e, /Where are we/);
+    assert.match(e2e, /R8/);
+    assert.match(e2e, /cross-tenant-leak\.test\.mjs/);
     assert.match(e2e, /verify_invite/);
     assert.match(e2e, /bootstrap@pirin\.ai/);
     assert.match(e2e, /No prod Resend/);

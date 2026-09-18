@@ -15,6 +15,7 @@
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
 | **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Path 1 alias stays open; collab-host handshake + gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
 | **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation; P1–P4 invite/accept; **P5–P6** membership; **P7 where are we**. No prod mail. PGlite only. |
+| **Invite-only company boards (cross-tenant)** | `cross-tenant-leak.test.mjs` | Unauthenticated / stranger / invited-to-A-only must not see B via journey + label tools (`q=`, typo, idea slug, webhook, list). HTTP 401/403 or empty. PGlite `held_label`. Fictional `alpha` / `bravo` / `charlie` / `delta` only. Fail the pipeline on any leak. |
 | **Line coverage ≥ 80%** | `npm run test:coverage` | Node 22 `node --test` coverage on `dist/`. Lines ≥ 80. Not a substitute for the role-play matrix. |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 
@@ -37,6 +38,7 @@ cd mcp && npm ci && npm run ci
 9. **No instance secrets in the template.** Specific company names, theses, scores, decision traces, and local paths stay out of OS / MCP fixtures / evals. Fictional `alpha` / `bravo` / `charlie` + `founder@example.test` only. Smell test: `test/no-instance-secrets.test.mjs`.
 10. **create_idea** starts a new 0-1 board. `put_journey` does not invent a missing slug. Cos applies `20260918_bootstrap_os_create_idea.sql` on the live project — not from a PR agent.
 11. **Board subscribers** persist via `public.bootstrap_os_subscribe_board` / `unsubscribe_board` / `list_subscribers` / `change_acl`. Material writes POST the JOURNEY.md webhook payload. Cos applies `20260920_bootstrap_os_board_subscribers.sql` on supabase-pirin-ai — not from a PR agent. Email stays enqueue-only.
+12. **Invite-only company boards.** Unauthenticated, non-invited, or invited-to-A-only principals must not receive company B rows (labels, comments, audit, scoreboard, owners, subscribers). Fail closed (401/403 or empty). CI gate: `test/cross-tenant-leak.test.mjs`.
 
 ## Manual (before ready-for-review)
 
