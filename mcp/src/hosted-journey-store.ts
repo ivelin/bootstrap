@@ -6,6 +6,11 @@
 import { hostedProdIdentityAllowed } from "./identity.js";
 import type { JourneyActor } from "./journey-auth.js";
 import {
+  parseWebhookDeliveries,
+  postBoardWebhookDeliveries,
+  type BoardNotifyEventType,
+} from "./journey-notify.js";
+import {
   MemoryJourneyStore,
   normalizeSlug,
   type GateDecision,
@@ -230,9 +235,10 @@ export class SupabaseJourneyStore implements JourneyStore {
       client?: string;
     },
   ): Promise<unknown> {
+    const idea = input.ideaSlug ?? "default";
     const hit = await this.rpc("bootstrap_os_put_journey", {
       p_company: input.companySlug,
-      p_idea: input.ideaSlug ?? "default",
+      p_idea: idea,
       p_journey_phase: input.journeyPhase ?? null,
       p_loop_stage: input.loopStage ?? null,
       p_current_gate: input.currentGate ?? null,
@@ -243,6 +249,11 @@ export class SupabaseJourneyStore implements JourneyStore {
       p_founder_written_decision: input.founderWrittenDecision ?? null,
     });
     if ("error" in hit) return { ok: false, error: hit.error };
+    await this.fireWebhooksAfterWrite(hit.raw, {
+      company: input.companySlug,
+      idea,
+      event: "put_journey",
+    });
     return hit.raw;
   }
 
@@ -250,26 +261,121 @@ export class SupabaseJourneyStore implements JourneyStore {
     _actor: JourneyActor,
     input: { companySlug: string; ideaSlug?: string; body: string; client?: string },
   ): Promise<unknown> {
+    const idea = input.ideaSlug ?? "default";
     const hit = await this.rpc("bootstrap_os_post_comment", {
       p_company: input.companySlug,
-      p_idea: input.ideaSlug ?? "default",
+      p_idea: idea,
       p_body: input.body,
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    await this.fireWebhooksAfterWrite(hit.raw, {
+      company: input.companySlug,
+      idea,
+      event: "post_comment",
+    });
+    return hit.raw;
+  }
+
+  async changeAcl(
+    _actor: JourneyActor,
+    input: {
+      companySlug: string;
+      principal: string;
+      principalKind: "email" | "sub";
+      role: "founder" | "founder_authorized" | "advisor";
+      op: "grant" | "revoke";
+      client?: string;
+    },
+  ) {
+    const hit = await this.rpc("bootstrap_os_change_acl", {
+      p_company: input.companySlug,
+      p_principal: input.principal,
+      p_principal_kind: input.principalKind,
+      p_role: input.role,
+      p_op: input.op,
     });
     if ("error" in hit) return { ok: false, error: hit.error };
     return hit.raw;
   }
 
-  async changeAcl() {
-    return { ok: false, error: "not in this slice" };
+  async subscribeBoard(
+    _actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      principal: string;
+      principalKind: "email" | "sub";
+      webhookUrl: string;
+      emailOptIn?: boolean;
+    },
+  ) {
+    const hit = await this.rpc("bootstrap_os_subscribe_board", {
+      p_company: input.companySlug,
+      p_idea: input.ideaSlug ?? null,
+      p_principal: input.principal,
+      p_principal_kind: input.principalKind,
+      p_webhook_url: input.webhookUrl,
+      p_email_opt_in: Boolean(input.emailOptIn),
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    return hit.raw;
   }
-  async subscribeBoard() {
-    return { ok: false, error: "not in this slice" };
+
+  async unsubscribeBoard(
+    _actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      principal: string;
+      principalKind: "email" | "sub";
+    },
+  ) {
+    const hit = await this.rpc("bootstrap_os_unsubscribe_board", {
+      p_company: input.companySlug,
+      p_idea: input.ideaSlug ?? null,
+      p_principal: input.principal,
+      p_principal_kind: input.principalKind,
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    return hit.raw;
   }
-  async unsubscribeBoard() {
-    return { ok: false, error: "not in this slice" };
+
+  async listSubscribers(
+    _actor: JourneyActor,
+    input: { companySlug: string },
+  ) {
+    const hit = await this.rpc("bootstrap_os_list_subscribers", {
+      p_company: input.companySlug,
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    return hit.raw;
   }
-  async listSubscribers() {
-    return { ok: false, error: "not in this slice" };
+
+  private async fireWebhooksAfterWrite(
+    raw: unknown,
+    query: { company: string; idea: string; event: BoardNotifyEventType },
+  ): Promise<void> {
+    try {
+      let deliveries = parseWebhookDeliveries(raw);
+      if (
+        deliveries.length === 0 &&
+        raw &&
+        typeof raw === "object" &&
+        (raw as { ok?: boolean }).ok === true
+      ) {
+        const extra = await this.rpc("bootstrap_os_list_webhook_deliveries_for_event", {
+          p_company: query.company,
+          p_idea: query.idea,
+          p_event: query.event,
+        });
+        if (!("error" in extra)) {
+          deliveries = parseWebhookDeliveries(extra.raw);
+        }
+      }
+      await postBoardWebhookDeliveries(deliveries);
+    } catch {
+      // Delivery failure must not mutate board state.
+    }
   }
 }
 

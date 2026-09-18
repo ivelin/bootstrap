@@ -36,6 +36,7 @@ cd mcp && npm ci && npm run ci
 8. Same state furniture: instance gets `company-state.json` + `where-are-we.py` (and schema). Hosted read adapter is preview only — no founder state on a shared server.
 9. **No instance secrets in the template.** Specific company names, theses, scores, decision traces, and local paths stay out of OS / MCP fixtures / evals. Fictional `alpha` / `bravo` / `charlie` + `founder@example.test` only. Smell test: `test/no-instance-secrets.test.mjs`.
 10. **create_idea** starts a new 0-1 board. `put_journey` does not invent a missing slug. Cos applies `20260918_bootstrap_os_create_idea.sql` on the live project — not from a PR agent.
+11. **Board subscribers** persist via `public.bootstrap_os_subscribe_board` / `unsubscribe_board` / `list_subscribers` / `change_acl`. Material writes POST the JOURNEY.md webhook payload. Cos applies `20260920_bootstrap_os_board_subscribers.sql` on supabase-pirin-ai — not from a PR agent. Email stays enqueue-only.
 
 ## Manual (before ready-for-review)
 

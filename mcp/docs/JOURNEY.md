@@ -47,6 +47,8 @@ No PII dump. Same shape for webhook and the email contract row:
 
 `event` is `put_journey` | `post_comment` | `gate_event`. `idea` is null for company-only events. `who` is the actor already on the ACL. `summary` is ≤80 characters.
 
+After Cos applies `20260920_bootstrap_os_board_subscribers.sql`, production MCP POSTs this JSON to each eligible subscriber https URL on a successful `put_journey` / `post_comment` (and `gate_event` when that is the write). Delivery failure does not roll back the board. Email stays enqueue-only — Resend lives on pirin.ai.
+
 ## Tools (gated; public OS tools stay listed after auth on the collab host)
 
 | Tool | Who | Notes |

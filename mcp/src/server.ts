@@ -960,7 +960,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
 
   server.tool(
     "subscribe_board",
-    "Grant a webhook (and optional email enqueue) to an ACL member on a company board. Founder or founder-authorized. Gated. Not the production pin. Email is not sent from this host.",
+    "Grant a webhook (and optional email enqueue) to an ACL member on a company board. Founder or founder-authorized. Gated. Production pin after Cos applies subscriber SQL. Email is not sent from this host.",
     {
       company: z.string().describe("Company slug"),
       idea: z.string().optional().describe("Optional idea scope. Omit for the whole company."),
