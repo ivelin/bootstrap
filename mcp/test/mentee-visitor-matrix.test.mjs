@@ -109,6 +109,9 @@ describe("merge-gate visitor matrix (CoS smell-test)", () => {
     assert.match(identity, /Collab \/ Grok \/ whoami/);
     assert.match(identity, /undeclared deploy-only/);
     assert.match(identity, /E2E_ROLEPLAY\.md/);
+    assert.match(identity, /Hard rule — invite-only company boards/);
+    assert.match(identity, /cross-tenant-leak\.test\.mjs/);
+    assert.match(identity, /never another company's rows/i);
     const e2e = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "E2E_ROLEPLAY.md"), "utf8");
     assert.match(e2e, /invite_member/);
     assert.match(e2e, /accept_invite/);

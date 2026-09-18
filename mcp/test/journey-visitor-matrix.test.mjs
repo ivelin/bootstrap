@@ -152,5 +152,10 @@ describe("0-1 journey visitor matrix (CoS smell-test)", () => {
       "unsubscribe_board",
       "list_subscribers",
     ]);
+    const journeyDoc = fs.readFileSync(path.join(REPO_ROOT, "mcp", "docs", "JOURNEY.md"), "utf8");
+    assert.match(journeyDoc, /Hard rule — invite-only company boards/);
+    assert.match(journeyDoc, /cross-tenant-leak\.test\.mjs/);
+    assert.match(journeyDoc, /never another company's rows/i);
+    assert.match(journeyDoc, /bootstrap_os_held_label|bootstrap_company_labels/);
   });
 });
