@@ -188,7 +188,7 @@ BEGIN
       )
     ))
   );
-  -- Score-only writes skip subscriber notify (no weekly spam; no webhook teaching).
+  -- Score-only writes skip subscriber notify. Weekly poll may read scores later.
   IF COALESCE(NULLIF(current_setting('app.skip_board_notify', true), ''), '') <> 'true'
      AND via <> 'put_portfolio_score' THEN
     PERFORM bootstrap_os.enqueue_board_notify(

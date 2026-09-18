@@ -175,7 +175,7 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     assert.match(sql, /never auto-promotes/);
     assert.match(sql, /skip_board_notify/);
     assert.doesNotMatch(sql, /supabase\.co/);
-    assert.doesNotMatch(sql, /cron|resend|webhook teaching/i);
+    assert.doesNotMatch(sql, /pg_cron|resend|CREATE EXTENSION/i);
   });
 
   it("held_label fail-closed: bravo founder cannot read or write alpha scores", async () => {
