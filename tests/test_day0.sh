@@ -1210,6 +1210,10 @@ if grep -q '### House rule: unpaid weeks cannot promote' company-os/operating-sy
   && grep -q 'MEDDIC' company-os/operating-system.md \
   && grep -q 'MEDDPICC' company-os/operating-system.md \
   && grep -q 'Listed price' company-os/operating-system.md \
+  && grep -q 'Words used here' company-os/operating-system.md \
+  && grep -q 'Budget (is there money)' company-os/operating-system.md \
+  && grep -q 'When this rule does not apply' company-os/operating-system.md \
+  && grep -q 'Waiting while their purchasing process runs' company-os/operating-system.md \
   && grep -q 'house-rule-unpaid-weeks-cannot-promote' company-os/first-hour.md \
   && grep -q 'house-rule-unpaid-weeks-cannot-promote' company-os/ai-instructions.md \
   && grep -q 'OS_VERSION = "2.8.12"' mcp/src/constants.ts \
