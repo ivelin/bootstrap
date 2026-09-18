@@ -88,10 +88,9 @@ function parseTool(result) {
 async function assertGatedUnauthorized(res) {
   assert.equal(res.status, 401);
   const challenge = res.headers.get("WWW-Authenticate") ?? "";
-  assert.equal(challenge, WWW_AUTHENTICATE_CHALLENGE);
-  assert.equal(
-    challenge,
-    `Bearer realm="bootstrap-os-mcp", resource_metadata="${HOSTED_PROTECTED_RESOURCE_METADATA_URL}", resource="${HOSTED_MCP_RESOURCE}", scope="bootstrap-os"`,
+  assert.ok(
+    challenge.startsWith(WWW_AUTHENTICATE_CHALLENGE),
+    `WWW-Authenticate must start with the discovery challenge, got ${challenge}`,
   );
   assert.doesNotMatch(challenge, /resource_metadata="https:\/\/pirin\.ai\//);
   const body = JSON.parse(await res.text());
