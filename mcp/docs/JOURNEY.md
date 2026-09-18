@@ -32,7 +32,9 @@ Ivelin HARD (via Bootstrap Bill): company board/data access is invite-only. Ther
 
 Hosted membership is `bootstrap_os_held_label` → `bootstrap_company_labels` (same companies as whoami). Journey table RLS is company ACL. Both fail closed. CI must attempt cross-tenant reads/writes and **fail the pipeline on any leak**: [`../test/cross-tenant-leak.test.mjs`](../test/cross-tenant-leak.test.mjs). Identity pin: [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md).
 
-Append-only `audit_events` hang off company + optional idea (ACL is company-level). Who, when, which client, what changed. Inserts only — no update/delete policies. `put_journey`, `post_comment`, and ACL changes emit a row. Advisors may read audit for companies they can `get_journey`. They cannot write audit except via those tools.
+Append-only `audit_events` hang off company + optional idea (ACL is company-level). Who, when, which client, what changed. Inserts only — no update/delete policies. `put_journey`, `post_comment`, ACL, and subscribe/unsubscribe emit a row. Advisors may read audit for companies they can `get_journey`. They cannot write audit except via those tools.
+
+Provenance is audit `what_changed` before/after (clocks + full scoreboard) plus first-class `gate_events`. `list_provenance` rebuilds the board at any point in range. Every Advance/Iterate/Hold/Kill stores short `whatChanged` + `whatWereNotDoing` (optional `evidenceLinks`). Kill REQUIRES a postmortem on the scoreboard (`why` + `lessonsLearned` + `actionableInsights`); silent kill is rejected; killed ideas stay readable; `get_journey` surfaces ☠ Killed cards from stored fields only. Cos applies `20260921_bootstrap_os_list_provenance.sql` on pirin.ai — not from this PR. Not in this slice: weekly Impact/Evidence/Leverage 1–5 portfolio scoring.
 
 `board_subscribers` hang off the company (optional idea). After ACL: only people who already have access may be subscribed. Team members (employees, advisors, co-founders, investors, bots) receive only if they already have access. On `put_journey` / `post_comment` / `gate_events`, emit audit then fire the webhook to subscribers who may still read that row. Email is **enqueue-only** — Resend lives on pirin.ai. This repo does not send mail.
 
@@ -77,6 +79,7 @@ Cos sets Vercel secrets **once** on `bootstrap-os-mcp` production: `BOOTSTRAP_BO
 | `unsubscribe_board` | founder + founder-authorized | Remove a subscriber. |
 | `list_subscribers` | anyone who may `get_journey` | Company the caller can read. |
 | `enable_board_watch` | founder + founder-authorized | Turn on board updates for Bill. Reads Cos-set Vercel env (URL + principal). Founders never paste a URL. |
+| `list_provenance` | anyone who may `get_journey` | Ordered audit + gate events with before/after. Invite-only / held_label fail-closed. |
 
 HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Cookie-less handshake on the invite-only collab host is also 401. Path 1 founders use GitHub + local — they are not told to connect this host.
 

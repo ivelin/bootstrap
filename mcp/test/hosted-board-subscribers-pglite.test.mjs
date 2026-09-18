@@ -24,6 +24,13 @@ const SUBSCRIBERS_SQL = path.join(
   "migrations",
   "20260920_bootstrap_os_board_subscribers.sql",
 );
+const PROVENANCE_SQL = path.join(
+  __dirname,
+  "..",
+  "supabase",
+  "migrations",
+  "20260921_bootstrap_os_list_provenance.sql",
+);
 
 const HARNESS = `
 DO $$ BEGIN
@@ -131,6 +138,7 @@ describe("PGlite hosted board subscriber RPCs (isolated, never prod)", { concurr
     await db.exec(journeySql);
     await db.exec(STUBS);
     await db.exec(fs.readFileSync(SUBSCRIBERS_SQL, "utf8"));
+    await db.exec(fs.readFileSync(PROVENANCE_SQL, "utf8"));
     await db.exec(SEED);
   });
 
@@ -213,7 +221,24 @@ describe("PGlite hosted board subscriber RPCs (isolated, never prod)", { concurr
       await asJwt(
         { email: "founder@example.test" },
         "SELECT public.bootstrap_os_put_journey($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) AS body",
-        ["alpha", "default", "founder yes", true, 2, null, "hold", null, null, null],
+        [
+          "alpha",
+          "default",
+          "founder yes",
+          true,
+          2,
+          null,
+          "hold",
+          null,
+          null,
+          {
+            schema_version: 1,
+            gateEnrichment: {
+              whatChanged: "phase 2 hold",
+              whatWereNotDoing: "not a landing-page side quest",
+            },
+          },
+        ],
       )
     )[0].body;
     assert.equal(wrote.ok, true);
@@ -294,7 +319,24 @@ describe("PGlite hosted board subscriber RPCs (isolated, never prod)", { concurr
       await asJwt(
         { email: "founder@example.test" },
         "SELECT public.bootstrap_os_put_journey($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) AS body",
-        ["alpha", "default", "after revoke", true, null, 2, null, null, null, null],
+        [
+          "alpha",
+          "default",
+          "after revoke",
+          true,
+          null,
+          2,
+          null,
+          null,
+          null,
+          {
+            schema_version: 1,
+            gateEnrichment: {
+              whatChanged: "loop 2 after revoke",
+              whatWereNotDoing: "not re-granting the advisor",
+            },
+          },
+        ],
       )
     )[0].body;
     assert.equal(afterRevoke.ok, true);

@@ -23,6 +23,11 @@ import {
   scoreboardMayCarryOwner,
 } from "../dist/journey.js";
 
+const GATE_ENR = {
+  whatChanged: "moved the clocks",
+  whatWereNotDoing: "not a landing-page side quest",
+};
+
 function bearer(email, sub) {
   return actorFromAuthorizationHeader(
     `Bearer ${syntheticAccessToken({ email, sub })}`,
@@ -224,6 +229,7 @@ describe("journey views + tools (memory store)", () => {
       },
       why: "founder yes in chat",
       founderYes: true,
+      gateEnrichment: GATE_ENR,
     });
     assert.equal(ok.ok, true);
     assert.equal(ok.idea.clocks.journeyPhase, 2);
@@ -275,6 +281,7 @@ describe("journey views + tools (memory store)", () => {
       why: "founder yes",
       founderYes: true,
       client: "cursor-agent",
+      gateEnrichment: GATE_ENR,
     });
     await store.postComment(advisor, {
       companySlug: "corehaul",
@@ -479,6 +486,7 @@ describe("journey views + tools (memory store)", () => {
       journeyPhase: 2,
       why: "founder yes",
       founderYes: true,
+      gateEnrichment: GATE_ENR,
     });
     assert.equal(wrote.ok, true);
     assert.equal(wrote.notify.webhook, 1);
@@ -512,6 +520,7 @@ describe("journey views + tools (memory store)", () => {
       loopStage: 2,
       why: "after revoke",
       founderYes: true,
+      gateEnrichment: GATE_ENR,
     });
     assert.equal(afterRevoke.notify.webhook, 0);
   });
@@ -557,5 +566,114 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(digestMayAdvanceGate(), false);
     assert.equal(preferWebhookOverPoll(), true);
     assert.equal(commentsMayMutateGate(), false);
+  });
+
+  it("list_provenance rebuilds clocks/scoreboard; kill requires postmortem and stays readable", async () => {
+    const store = fixtureJourneyStore();
+    const founder = bearer("founder-core@example.test");
+    const dye = bearer("founder-dye@example.test");
+
+    const silent = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      currentGate: "kill",
+      why: "did not work",
+      founderYes: true,
+      gateEnrichment: GATE_ENR,
+    });
+    assert.equal(silent.ok, false);
+    assert.match(String(silent.error), /lessonsLearned and actionableInsights/);
+
+    const noGateNote = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      currentGate: "hold",
+      why: "still holding",
+      founderYes: true,
+    });
+    assert.equal(noGateNote.ok, false);
+    assert.match(String(noGateNote.error), /whatChanged and whatWereNotDoing/);
+
+    const held = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      currentGate: "hold",
+      constraintThisWeek: "talk to two operators",
+      why: "hold while we talk",
+      founderYes: true,
+      gateEnrichment: GATE_ENR,
+    });
+    assert.equal(held.ok, true);
+    assert.equal(held.audit.whatChanged.before.clocks.currentGate, "hold");
+    assert.equal(held.audit.whatChanged.after.scoreboard.constraint_this_week, "talk to two operators");
+    assert.equal(held.audit.whatChanged.whatChanged, GATE_ENR.whatChanged);
+    assert.equal(held.audit.whatChanged.whatWereNotDoing, GATE_ENR.whatWereNotDoing);
+
+    const created = await store.createIdea(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "retired-bet",
+      founderYes: true,
+      why: "second 0-1 board",
+    });
+    assert.equal(created.ok, true);
+
+    const killed = await store.putJourney(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "retired-bet",
+      currentGate: "kill",
+      why: "no one would pay for the slice",
+      founderYes: true,
+      gateEnrichment: {
+        whatChanged: "retired the bet",
+        whatWereNotDoing: "not retrying the same pitch",
+        evidenceLinks: ["https://docs.example.test/retired-bet"],
+      },
+      killPostmortem: {
+        lessonsLearned: "operators already have a dispatcher they trust",
+        actionableInsights: "next bet must start from an observed paid workaround",
+        evidenceLinks: ["https://docs.example.test/retired-bet"],
+      },
+    });
+    assert.equal(killed.ok, true);
+    assert.equal(killed.idea.killed, true);
+    assert.equal(killed.idea.killPostmortem.lessonsLearned, "operators already have a dispatcher they trust");
+    assert.equal(
+      killed.idea.killPostmortem.actionableInsights,
+      "next bet must start from an observed paid workaround",
+    );
+    assert.match(killed.idea.killedCard, /☠ Killed — operators already have a dispatcher they trust/);
+    assert.equal(killed.audit.whatChanged.after.clocks.currentGate, "kill");
+    assert.equal(killed.audit.whatChanged.lessonsLearned, "operators already have a dispatcher they trust");
+
+    const board = await store.getJourney(founder, { companySlug: "corehaul" });
+    const retired = board.ideas.find((i) => i.slug === "retired-bet");
+    assert.ok(retired);
+    assert.equal(retired.clocks.currentGate, "kill");
+    assert.equal(retired.killedCard, killed.idea.killedCard);
+    assert.match(retired.snapshot, /☠ Killed — operators already have a dispatcher they trust/);
+
+    const listed = await store.listKilledIdeas(founder, { companySlug: "corehaul" });
+    assert.equal(listed.ok, true);
+    assert.equal(listed.ideas.length, 1);
+    assert.equal(listed.ideas[0].slug, "retired-bet");
+    assert.equal(listed.ideas[0].killPostmortem.lessonsLearned, retired.killPostmortem.lessonsLearned);
+
+    const prov = await store.listProvenance(founder, {
+      companySlug: "corehaul",
+      ideaSlug: "retired-bet",
+    });
+    assert.equal(prov.ok, true);
+    assert.ok(prov.events.some((e) => e.kind === "audit" && e.whatChanged?.after?.clocks?.currentGate === "kill"));
+    assert.ok(prov.gateEvents.some((e) => e.action === "kill" && e.why === "no one would pay for the slice"));
+    const lastAfter = [...prov.events]
+      .reverse()
+      .find((e) => e.kind === "audit" && e.whatChanged?.after?.clocks);
+    assert.equal(lastAfter.whatChanged.after.clocks.currentGate, "kill");
+    assert.equal(
+      lastAfter.whatChanged.after.scoreboard.killPostmortem.lessonsLearned,
+      "operators already have a dispatcher they trust",
+    );
+
+    const hidden = await store.listProvenance(dye, { companySlug: "corehaul" });
+    assert.equal(hidden.ok, false);
+    const hiddenKilled = await store.listKilledIdeas(dye, { companySlug: "corehaul" });
+    assert.equal(hiddenKilled.ok, false);
   });
 });

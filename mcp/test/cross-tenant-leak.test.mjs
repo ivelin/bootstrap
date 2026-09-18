@@ -370,7 +370,9 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
                   }
                 : name === "unsubscribe_board"
                   ? { company: "bravo", principal: EMAIL_B, principalKind: "email" }
-                  : name === "list_subscribers" || name === "enable_board_watch"
+                  : name === "list_subscribers" ||
+                      name === "enable_board_watch" ||
+                      name === "list_provenance"
                     ? { company: "bravo" }
                     : { q: "bravo" },
       ]),
@@ -439,6 +441,7 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
       ["unsubscribe_board", { company: "bravo", principal: EMAIL_B, principalKind: "email" }],
       ["list_subscribers", { company: "bravo" }],
       ["enable_board_watch", { company: "bravo" }],
+      ["list_provenance", { company: "bravo" }],
     ];
 
     for (const [name, args] of probes) {
@@ -467,6 +470,8 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
         principalKind: "email",
       }),
       store.listSubscribers(actorA, { companySlug: "bravo" }),
+      store.listProvenance(actorA, { companySlug: "bravo" }),
+      store.listKilledIdeas(actorA, { companySlug: "bravo" }),
       store.changeAcl(actorA, {
         companySlug: "bravo",
         principal: EMAIL_A,
@@ -568,6 +573,7 @@ describe("cross-tenant invite-only CI gate (memory ACL + webhook)", () => {
       ["post_comment", { company: "delta", body: "leak" }],
       ["list_subscribers", { company: "delta" }],
       ["enable_board_watch", { company: "delta" }],
+      ["list_provenance", { company: "delta" }],
       [
         "subscribe_board",
         {

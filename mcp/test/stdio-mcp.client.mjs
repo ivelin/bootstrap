@@ -90,6 +90,7 @@ async function main() {
     assert.ok(!names.includes("unsubscribe_board"));
     assert.ok(!names.includes("list_subscribers"));
     assert.ok(!names.includes("enable_board_watch"));
+    assert.ok(!names.includes("list_provenance"));
 
     const info = await call(client, "bootstrap_os_info");
     assert.equal(info.mcpVersion, "0.3.4");

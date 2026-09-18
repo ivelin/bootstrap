@@ -54,6 +54,7 @@ import {
   TOOL_CREATE_IDEA,
   TOOL_POST_COMMENT,
   TOOL_ENABLE_BOARD_WATCH,
+  TOOL_LIST_PROVENANCE,
   TOOL_PUT_JOURNEY,
   TOOL_LIST_COMPANIES,
   TOOL_LIST_COMPANY_LABELS_ALIAS,
@@ -901,6 +902,22 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
           "Written founder override after a challenge. Required to name “new landing page” as the constraint when no one has talked to customers. founderYes alone is not a rubber-stamp.",
         ),
       client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
+      gateEnrichment: z
+        .object({
+          whatChanged: z.string().max(280),
+          whatWereNotDoing: z.string().max(280),
+          evidenceLinks: z.array(z.string()).max(8).optional(),
+        })
+        .optional()
+        .describe("Required on Advance/Iterate/Hold/Kill. Short what-changed and what-we're-not-doing."),
+      killPostmortem: z
+        .object({
+          lessonsLearned: z.string().max(280),
+          actionableInsights: z.string().max(280),
+          evidenceLinks: z.array(z.string()).max(8).optional(),
+        })
+        .optional()
+        .describe("Required on kill. why + lessonsLearned + actionableInsights. Silent kill is rejected."),
     },
     async (input) => {
       const store = storeOf();
@@ -922,6 +939,8 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             founderYes: input.founderYes,
             founderWrittenDecision: input.founderWrittenDecision,
             client: input.client,
+            gateEnrichment: input.gateEnrichment,
+            killPostmortem: input.killPostmortem,
           }),
         );
       } catch (e) {
@@ -1041,6 +1060,40 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       }
       try {
         return text(await store.listSubscribers(actor, { companySlug: input.company }));
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "list_provenance",
+    TOOL_LIST_PROVENANCE,
+    {
+      company: z.string().optional().describe("Company slug. Uses the active company if omitted."),
+      idea: z.string().optional().describe("Optional idea. Omit for every idea under the company."),
+      from: z.string().optional().describe("Inclusive start timestamp (ISO)."),
+      to: z.string().optional().describe("Inclusive end timestamp (ISO)."),
+    },
+    async (input) => {
+      const store = storeOf();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err(NOTE_NOT_SIGNED_IN);
+      }
+      const parsed = companyOf({ company: input.company, idea: input.idea });
+      if (!parsed.companySlug) {
+        return err("Say which company, or call bootstrap_use_company first.");
+      }
+      try {
+        return text(
+          await store.listProvenance(actor, {
+            companySlug: parsed.companySlug,
+            ideaSlug: parsed.ideaSlug,
+            from: input.from,
+            to: input.to,
+          }),
+        );
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));
       }
