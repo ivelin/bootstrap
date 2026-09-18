@@ -4,4 +4,4 @@ Filled applications of Bootstrap OS live in **consumer product repos**, not in t
 
 Do not add named companies, theses, scores, or decision traces here. The pattern is `docs/company-os/` (or `company/state/`) inside the product repo.
 
-**Template source of truth remains this repo:** [ivelin/bootstrap](https://github.com/ivelin/bootstrap).
+**Template source of truth remains this repo:** [ivelin/bootstrapos](https://github.com/ivelin/bootstrapos).
