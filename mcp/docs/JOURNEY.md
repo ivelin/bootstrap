@@ -20,6 +20,18 @@ Seed slugs exist **only** in the PGlite fixture: `dyeconverter`, `corehaul`. One
 
 Allowlist in SQL, fail closed. Token `email` (fallback `sub`) → ACL. No FAST claim on the JWT.
 
+## Hard rule — invite-only company boards
+
+Ivelin HARD (via Bootstrap Bill): company board/data access is invite-only. There is no room for cross-company leaks.
+
+| Principal | `get_journey` / `put_journey` / `post_comment` / `subscribe_*` / `list_*` / labels |
+|-----------|-----------------------------------------------------------------------------------|
+| Unauthenticated or non-invited | Fail closed: HTTP **401/403 or empty**. Never another company's rows. |
+| Invited to company A only | May see A. Must **not** see company B (or any other) data, labels, comments, audit, scoreboard, owners, subscribers beyond ACL. |
+| Multi-membership | Only companies on their invite / `bootstrap_company_labels` / ACL list. No bleed via `q=`, company slug typos, idea slug, webhook, or list endpoints. |
+
+Hosted membership is `bootstrap_os_held_label` → `bootstrap_company_labels` (same companies as whoami). Journey table RLS is company ACL. Both fail closed. CI must attempt cross-tenant reads/writes and **fail the pipeline on any leak**: [`../test/cross-tenant-leak.test.mjs`](../test/cross-tenant-leak.test.mjs). Identity pin: [`HOSTED_IDENTITY.md`](HOSTED_IDENTITY.md).
+
 Append-only `audit_events` hang off company + optional idea (ACL is company-level). Who, when, which client, what changed. Inserts only — no update/delete policies. `put_journey`, `post_comment`, and ACL changes emit a row. Advisors may read audit for companies they can `get_journey`. They cannot write audit except via those tools.
 
 `board_subscribers` hang off the company (optional idea). After ACL: only people who already have access may be subscribed. Team members (employees, advisors, co-founders, investors, bots) receive only if they already have access. On `put_journey` / `post_comment` / `gate_events`, emit audit then fire the webhook to subscribers who may still read that row. Email is **enqueue-only** — Resend lives on pirin.ai. This repo does not send mail.
