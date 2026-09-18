@@ -40,27 +40,37 @@ export class HostedMembershipJourneyStore implements JourneyStore {
   }
 
   actorOnAllowlist(actor: JourneyActor): boolean {
-    return this.labelsFor(actor).length > 0;
+    return Boolean(actor.authenticated && actor.principal && this.labelsFor(actor).length > 0);
   }
 
   private held(actor: JourneyActor, slug: string): boolean {
     return this.labelsFor(actor).includes(normalizeSlug(slug));
   }
 
+  /** Invite-only: unauthenticated or a label the actor does not hold — never another company's rows. */
+  private denyUnlessHeld(
+    actor: JourneyActor,
+    slug: string | undefined,
+  ): { ok: false; error: string } | null {
+    if (!actor.authenticated || !actor.principal) {
+      return { ok: false, error: "unauthenticated" };
+    }
+    if (!slug) {
+      return { ok: false, error: "company required" };
+    }
+    if (!this.held(actor, slug)) {
+      return { ok: false, error: "company not visible" };
+    }
+    return null;
+  }
+
   async getJourney(
     actor: JourneyActor,
     query: { companySlug?: string; ideaSlug?: string; expandMeetingDoc?: boolean },
   ): Promise<unknown> {
-    if (!actor.authenticated || !actor.principal) {
-      return { ok: false, error: "unauthenticated" };
-    }
-    if (!query.companySlug) {
-      return { ok: false, error: "company required" };
-    }
-    const slug = normalizeSlug(query.companySlug);
-    if (!this.held(actor, slug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, query.companySlug);
+    if (denied) return denied;
+    const slug = normalizeSlug(query.companySlug!);
     this.inner.ensureCompanyForMember(slug, actor);
     const result = (await this.inner.getJourney(actor, { ...query, companySlug: slug })) as {
       ok?: boolean;
@@ -77,9 +87,8 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     actor: JourneyActor,
     input: Parameters<JourneyStore["createIdea"]>[1],
   ): Promise<unknown> {
-    if (!this.held(actor, input.companySlug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
     this.inner.ensureCompanyForMember(input.companySlug, actor);
     return this.inner.createIdea(actor, input);
   }
@@ -88,9 +97,8 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     actor: JourneyActor,
     input: Parameters<JourneyStore["putJourney"]>[1],
   ): Promise<unknown> {
-    if (!this.held(actor, input.companySlug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
     this.inner.ensureCompanyForMember(input.companySlug, actor);
     return this.inner.putJourney(actor, {
       ...input,
@@ -102,25 +110,22 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     actor: JourneyActor,
     input: Parameters<JourneyStore["postComment"]>[1],
   ): Promise<unknown> {
-    if (!this.held(actor, input.companySlug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
     this.inner.ensureCompanyForMember(input.companySlug, actor);
     return this.inner.postComment(actor, { ...input, ideaSlug: input.ideaSlug || "default" });
   }
 
   async changeAcl(actor: JourneyActor, input: Parameters<JourneyStore["changeAcl"]>[1]) {
-    if (!this.held(actor, input.companySlug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
     this.inner.ensureCompanyForMember(input.companySlug, actor);
     return this.inner.changeAcl(actor, input);
   }
 
   async subscribeBoard(actor: JourneyActor, input: Parameters<JourneyStore["subscribeBoard"]>[1]) {
-    if (!this.held(actor, input.companySlug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
     this.inner.ensureCompanyForMember(input.companySlug, actor);
     return this.inner.subscribeBoard(actor, input);
   }
@@ -129,9 +134,8 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     actor: JourneyActor,
     input: Parameters<JourneyStore["unsubscribeBoard"]>[1],
   ) {
-    if (!this.held(actor, input.companySlug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
     return this.inner.unsubscribeBoard(actor, input);
   }
 
@@ -139,9 +143,8 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     actor: JourneyActor,
     input: Parameters<JourneyStore["listSubscribers"]>[1],
   ) {
-    if (!this.held(actor, input.companySlug)) {
-      return { ok: false, error: "company not visible" };
-    }
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
     this.inner.ensureCompanyForMember(input.companySlug, actor);
     return this.inner.listSubscribers(actor, input);
   }
