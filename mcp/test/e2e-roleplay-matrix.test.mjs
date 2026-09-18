@@ -160,7 +160,11 @@ async function rawRpc(method, params, token, extraHeaders = {}) {
 
 async function assertGated401(res, reason) {
   assert.equal(res.status, 401);
-  assert.equal(res.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+  const challenge = res.headers.get("WWW-Authenticate") ?? "";
+  assert.ok(challenge.startsWith(WWW_AUTHENTICATE_CHALLENGE));
+  if (challenge !== WWW_AUTHENTICATE_CHALLENGE) {
+    assert.match(challenge, /error="invalid_token"/);
+  }
   const body = JSON.parse(await res.text());
   assert.equal(body.error, "invalid_token");
   if (reason) assert.equal(body.reason, reason);

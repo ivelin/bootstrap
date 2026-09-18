@@ -97,6 +97,21 @@ describe("Vercel fetch handler (hosted-read)", () => {
     );
     assert.equal(alias.status, 401);
     assert.equal(alias.headers.get("WWW-Authenticate"), WWW_AUTHENTICATE_CHALLENGE);
+    assert.doesNotMatch(WWW_AUTHENTICATE_CHALLENGE, /error="invalid_token"/);
+
+    const stale = await handleHostedReadFetch(
+      new Request(HOSTED_MCP_RESOURCE, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          Authorization: "Bearer eyJhbGciOiJub25lIn0.e30.x",
+        },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 9, method: "tools/call", params: { name: "bootstrap_whoami" } }),
+      }),
+    );
+    assert.equal(stale.status, 401);
+    assert.match(stale.headers.get("WWW-Authenticate") || "", /error="invalid_token"/);
   });
 
   afterEach(() => {

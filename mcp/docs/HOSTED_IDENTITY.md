@@ -98,7 +98,7 @@ Hold-preview RFC 8414 document (`VERCEL_ENV=preview`) — live www.pirin.ai:
   "token_endpoint": "https://www.pirin.ai/oauth/token",
   "registration_endpoint": "https://www.pirin.ai/oauth/register",
   "response_types_supported": ["code"],
-  "grant_types_supported": ["authorization_code"],
+  "grant_types_supported": ["authorization_code", "refresh_token"],
   "code_challenge_methods_supported": ["S256"],
   "token_endpoint_auth_methods_supported": ["none"],
   "scopes_supported": ["bootstrap-os", "openid", "profile", "email"],

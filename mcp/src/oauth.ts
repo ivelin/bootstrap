@@ -20,7 +20,7 @@ export const PIRIN_AUTHORIZATION_SERVER_METADATA = {
   token_endpoint: `${PIRIN_OAUTH_ORIGIN}/oauth/token`,
   registration_endpoint: `${PIRIN_OAUTH_ORIGIN}/oauth/register`,
   response_types_supported: ["code"],
-  grant_types_supported: ["authorization_code"],
+  grant_types_supported: ["authorization_code", "refresh_token"],
   code_challenge_methods_supported: ["S256"],
   token_endpoint_auth_methods_supported: ["none"],
   scopes_supported: ["bootstrap-os", "openid", "profile", "email"],
@@ -208,8 +208,13 @@ export function authorizationServerMetadataDocument(_req?: Request): typeof PIRI
 export function wwwAuthenticateChallengeFor(
   metadataUrl: string,
   resourceUrl: string = HOSTED_MCP_RESOURCE,
+  error?: "invalid_token",
 ): string {
-  return `Bearer realm="bootstrap-os-mcp", resource_metadata="${metadataUrl}", resource="${resourceUrl}", scope="bootstrap-os"`;
+  const base = `Bearer realm="bootstrap-os-mcp", resource_metadata="${metadataUrl}", resource="${resourceUrl}", scope="bootstrap-os"`;
+  if (error === "invalid_token") {
+    return `${base}, error="invalid_token", error_description="The access token expired or is invalid"`;
+  }
+  return base;
 }
 
 /** Production / main default challenge (no env, not a Vercel preview). */
@@ -219,7 +224,13 @@ export const WWW_AUTHENTICATE_CHALLENGE = wwwAuthenticateChallengeFor(
 );
 
 export function wwwAuthenticateChallenge(req?: Request): string {
-  return wwwAuthenticateChallengeFor(protectedResourceMetadataUrl(req), hostedMcpResource(req));
+  const auth = req?.headers.get("authorization") || "";
+  const presented = /^Bearer\s+\S+/i.test(auth);
+  return wwwAuthenticateChallengeFor(
+    protectedResourceMetadataUrl(req),
+    hostedMcpResource(req),
+    presented ? "invalid_token" : undefined,
+  );
 }
 
 export function protectedResourceMetadataDocument(req?: Request): {
