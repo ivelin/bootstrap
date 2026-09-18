@@ -14,7 +14,9 @@ import {
   MemoryJourneyStore,
   normalizeSlug,
   type GateDecision,
+  type GateEnrichment,
   type JourneyStore,
+  type KillPostmortem,
   type Scoreboard,
 } from "./journey.js";
 
@@ -148,6 +150,26 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     this.inner.ensureCompanyForMember(input.companySlug, actor);
     return this.inner.listSubscribers(actor, input);
   }
+
+  async listProvenance(
+    actor: JourneyActor,
+    query: Parameters<JourneyStore["listProvenance"]>[1],
+  ) {
+    const denied = this.denyUnlessHeld(actor, query.companySlug);
+    if (denied) return denied;
+    this.inner.ensureCompanyForMember(query.companySlug, actor);
+    return this.inner.listProvenance(actor, query);
+  }
+
+  async listKilledIdeas(
+    actor: JourneyActor,
+    query: Parameters<JourneyStore["listKilledIdeas"]>[1],
+  ) {
+    const denied = this.denyUnlessHeld(actor, query.companySlug);
+    if (denied) return denied;
+    this.inner.ensureCompanyForMember(query.companySlug, actor);
+    return this.inner.listKilledIdeas(actor, query);
+  }
 }
 
 export class SupabaseJourneyStore implements JourneyStore {
@@ -236,9 +258,18 @@ export class SupabaseJourneyStore implements JourneyStore {
       founderYes: boolean;
       founderWrittenDecision?: string;
       client?: string;
+      gateEnrichment?: GateEnrichment;
+      killPostmortem?: Omit<KillPostmortem, "why"> & { why?: string };
     },
   ): Promise<unknown> {
     const idea = input.ideaSlug ?? "default";
+    const scoreboard = {
+      ...(input.scoreboard ?? {}),
+      ...(input.gateEnrichment ? { gateEnrichment: input.gateEnrichment } : {}),
+      ...(input.killPostmortem
+        ? { killPostmortem: { why: input.why, ...input.killPostmortem } }
+        : {}),
+    };
     const hit = await this.rpc("bootstrap_os_put_journey", {
       p_company: input.companySlug,
       p_idea: idea,
@@ -246,7 +277,7 @@ export class SupabaseJourneyStore implements JourneyStore {
       p_loop_stage: input.loopStage ?? null,
       p_current_gate: input.currentGate ?? null,
       p_constraint: input.constraintThisWeek ?? null,
-      p_scoreboard: input.scoreboard ?? null,
+      p_scoreboard: Object.keys(scoreboard).length ? scoreboard : null,
       p_why: input.why,
       p_founder_yes: input.founderYes,
       p_founder_written_decision: input.founderWrittenDecision ?? null,
@@ -349,6 +380,31 @@ export class SupabaseJourneyStore implements JourneyStore {
   ) {
     const hit = await this.rpc("bootstrap_os_list_subscribers", {
       p_company: input.companySlug,
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    return hit.raw;
+  }
+
+  async listProvenance(
+    _actor: JourneyActor,
+    query: { companySlug: string; ideaSlug?: string; from?: string; to?: string },
+  ) {
+    const hit = await this.rpc("bootstrap_os_list_provenance", {
+      p_company: query.companySlug,
+      p_idea: query.ideaSlug ?? null,
+      p_from: query.from ?? null,
+      p_to: query.to ?? null,
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    return hit.raw;
+  }
+
+  async listKilledIdeas(
+    _actor: JourneyActor,
+    query: { companySlug: string },
+  ) {
+    const hit = await this.rpc("bootstrap_os_list_killed_ideas", {
+      p_company: query.companySlug,
     });
     if ("error" in hit) return { ok: false, error: hit.error };
     return hit.raw;

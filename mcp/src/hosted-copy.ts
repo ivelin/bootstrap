@@ -11,7 +11,7 @@ When the user says where are we, show the company board, show company X ideas, s
 3. Answer only from the payload. Include visualFlow mermaid so the client can render the journey in whatever style the user prefers. Also clocks, snapshot, lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners.
 4. The bottleneck and open questions are the honest next work. Do not invent a task list, log rows, or a later phase. Do not use GitHub as the board.
 
-create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks. enable_board_watch turns on board updates for Bill after invite.
+create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks. enable_board_watch turns on board updates for Bill after invite. If they ask for the decision log over time or to rebuild clocks at a past point, call list_provenance (same access as get_journey).
 
 This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
 If the user is not signed in, tell them to sign in to Bootstrap OS and ask again.`;
@@ -46,13 +46,16 @@ export const TOOL_CREATE_IDEA =
   "Start a new 0-1 idea board under a company this login can open. Empty clocks (phase 1, loop 1, hold). Several ideas are allowed; each idea is its own board. Needs an explicit founder yes in this chat. Then put_journey writes that idea.";
 
 export const TOOL_PUT_JOURNEY =
-  "Update an existing 0-1 idea board (phase, gate, bottleneck this week). New slugs: create_idea first. Phase or gate change needs an explicit founder yes in this chat.";
+  "Update an existing 0-1 idea board (phase, gate, bottleneck this week). New slugs: create_idea first. Phase or gate change needs an explicit founder yes, why, whatChanged, and whatWereNotDoing. Kill also requires a postmortem: lessonsLearned and actionableInsights.";
 
 export const TOOL_POST_COMMENT =
   "Comment on an idea. Comments never move phase or gate.";
 
 export const TOOL_ENABLE_BOARD_WATCH =
   "Turn on board updates for Bill. Founder or founder-authorized. Gated.";
+
+export const TOOL_LIST_PROVENANCE =
+  "Decision log over time — audit before/after plus gate events so you can rebuild clocks and scoreboard at a point in range. Same access as get_journey.";
 
 export const NOTE_OS_INFO_HOSTED =
   "Process docs, house rules, and a shared 0-1 board per company you can open.";

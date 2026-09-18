@@ -24,6 +24,7 @@ describe("hosted membership journey store", () => {
     assert.doesNotMatch(src, /not in this slice/);
     assert.match(src, /bootstrap_os_subscribe_board/);
     assert.match(src, /bootstrap_os_change_acl/);
+    assert.match(src, /bootstrap_os_list_provenance/);
     assert.match(src, /fireWebhooksAfterWrite/);
   });
 
@@ -53,6 +54,10 @@ describe("hosted membership journey store", () => {
           founderYes: true,
           currentGate: "hold",
           constraintThisWeek: "talk",
+          gateEnrichment: {
+            whatChanged: "named this week's bottleneck",
+            whatWereNotDoing: "not a landing-page side quest",
+          },
         })
       ).ok,
       true,

@@ -45,7 +45,137 @@ export type Scoreboard = {
   /** Observed talks, not preference. Used to judge a landing-page side quest. */
   customerConversations?: number;
   talkedToCustomers?: boolean;
+  /** All-gate short enrichment. Not a novel. */
+  gateEnrichment?: GateEnrichment;
+  /** Kill postmortem. Required on kill. Never invent on read. */
+  killPostmortem?: KillPostmortem;
 };
+
+/** Short all-gate enrichment. why lives on the gate event. */
+export type GateEnrichment = {
+  whatChanged: string;
+  whatWereNotDoing: string;
+  evidenceLinks?: string[];
+};
+
+/** Kill REQUIRES this. Silent kill is rejected. */
+export type KillPostmortem = {
+  why: string;
+  lessonsLearned: string;
+  actionableInsights: string;
+  evidenceLinks?: string[];
+};
+
+export const GATE_ENRICHMENT_TEXT_MAX = 280;
+export const EVIDENCE_LINKS_MAX = 8;
+
+export type BoardClocksSnapshot = {
+  journeyPhase: number;
+  loopStage: number;
+  currentGate: GateDecision;
+};
+
+export type BoardSnapshot = {
+  clocks: BoardClocksSnapshot;
+  scoreboard: Scoreboard;
+};
+
+export function ideaBoardSnapshot(idea: IdeaRow): BoardSnapshot {
+  return {
+    clocks: {
+      journeyPhase: idea.journeyPhase,
+      loopStage: idea.loopStage,
+      currentGate: idea.currentGate,
+    },
+    scoreboard: { ...idea.scoreboard },
+  };
+}
+
+function normalizeEvidenceLinks(raw: unknown): string[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const links = raw
+    .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+    .map((item) => item.trim().slice(0, 2048))
+    .slice(0, EVIDENCE_LINKS_MAX);
+  return links.length ? links : undefined;
+}
+
+function shortRequired(value: unknown, field: string): { ok: true; value: string } | { ok: false; error: string } {
+  if (typeof value !== "string" || !value.trim()) {
+    return { ok: false, error: `${field} required` };
+  }
+  return { ok: true, value: value.trim().slice(0, GATE_ENRICHMENT_TEXT_MAX) };
+}
+
+export function normalizeGateEnrichment(
+  raw: unknown,
+): { ok: true; value: GateEnrichment } | { ok: false; error: string } {
+  const src =
+    raw && typeof raw === "object" && !Array.isArray(raw)
+      ? ((raw as { gateEnrichment?: unknown }).gateEnrichment &&
+        typeof (raw as { gateEnrichment?: unknown }).gateEnrichment === "object"
+          ? ((raw as { gateEnrichment: Record<string, unknown> }).gateEnrichment)
+          : (raw as Record<string, unknown>))
+      : {};
+  const changed = shortRequired(src.whatChanged, "whatChanged");
+  if (!changed.ok) return { ok: false, error: "gate requires whatChanged and whatWereNotDoing" };
+  const notDoing = shortRequired(src.whatWereNotDoing, "whatWereNotDoing");
+  if (!notDoing.ok) return { ok: false, error: "gate requires whatChanged and whatWereNotDoing" };
+  const evidenceLinks = normalizeEvidenceLinks(src.evidenceLinks);
+  return {
+    ok: true,
+    value: {
+      whatChanged: changed.value,
+      whatWereNotDoing: notDoing.value,
+      ...(evidenceLinks ? { evidenceLinks } : {}),
+    },
+  };
+}
+
+export function normalizeKillPostmortem(
+  raw: unknown,
+  why: string,
+): { ok: true; value: KillPostmortem } | { ok: false; error: string } {
+  const src =
+    raw && typeof raw === "object" && !Array.isArray(raw)
+      ? ((raw as { killPostmortem?: unknown }).killPostmortem &&
+        typeof (raw as { killPostmortem?: unknown }).killPostmortem === "object"
+          ? ((raw as { killPostmortem: Record<string, unknown> }).killPostmortem)
+          : (raw as Record<string, unknown>))
+      : {};
+  const whyNorm = shortRequired(src.why ?? why, "why");
+  const learned = shortRequired(src.lessonsLearned, "lessonsLearned");
+  const insights = shortRequired(src.actionableInsights, "actionableInsights");
+  if (!whyNorm.ok || !learned.ok || !insights.ok) {
+    return { ok: false, error: "kill requires lessonsLearned and actionableInsights" };
+  }
+  const evidenceLinks = normalizeEvidenceLinks(
+    src.evidenceLinks ??
+      (raw && typeof raw === "object"
+        ? (raw as { gateEnrichment?: { evidenceLinks?: unknown } }).gateEnrichment?.evidenceLinks
+        : undefined),
+  );
+  return {
+    ok: true,
+    value: {
+      why: whyNorm.value,
+      lessonsLearned: learned.value,
+      actionableInsights: insights.value,
+      ...(evidenceLinks ? { evidenceLinks } : {}),
+    },
+  };
+}
+
+export function killPostmortemOf(idea: IdeaRow): KillPostmortem | undefined {
+  const hit = normalizeKillPostmortem(idea.scoreboard.killPostmortem ?? idea.scoreboard, "");
+  return hit.ok ? hit.value : undefined;
+}
+
+export function killedCardOf(idea: IdeaRow): string | undefined {
+  if (idea.currentGate !== "kill") return undefined;
+  const postmortem = killPostmortemOf(idea);
+  return postmortem ? `☠ Killed — ${postmortem.lessonsLearned}` : "☠ Killed";
+}
 
 export type CompanyRow = {
   id: string;
@@ -416,6 +546,7 @@ export function twoMinuteSnapshot(
     `Journey: ${idea.journeyPhase} ${JOURNEY_PHASES[idea.journeyPhase]} of 9`,
     `Loop: ${idea.loopStage} ${LOOP_STAGES[idea.loopStage]} of 7`,
     `Gate: ${idea.currentGate}`,
+    idea.currentGate === "kill" ? killedCardOf(idea) : undefined,
     last
       ? `Last transition: ${last.action} by ${last.who} at ${last.at} — ${last.why}`
       : "Last transition: none yet",
@@ -503,6 +634,11 @@ export type JourneyIdeaPayload = {
   constraintThisWeek: string;
   constraintChallenge?: string;
   scoreboard: Scoreboard;
+  gateEnrichment?: GateEnrichment;
+  killed?: boolean;
+  killPostmortem?: KillPostmortem;
+  killedCard?: string;
+  killedDecision?: { who: string; at: string; why: string };
   lastTransitions: GateEventRow[];
   visualFlow: string;
   snapshot: string;
@@ -541,6 +677,19 @@ export function ideaPayload(
     visualFlow: visualFlowMermaid(idea, lastTransitions),
     snapshot: twoMinuteSnapshot(company, idea, lastTransitions, owners),
   };
+  if (idea.scoreboard.gateEnrichment) {
+    payload.gateEnrichment = idea.scoreboard.gateEnrichment;
+  }
+  if (idea.currentGate === "kill") {
+    payload.killed = true;
+    const postmortem = killPostmortemOf(idea);
+    if (postmortem) payload.killPostmortem = postmortem;
+    payload.killedCard = killedCardOf(idea);
+    const lastKill = lastTransitions.filter((e) => e.action === "kill").at(-1);
+    if (lastKill) {
+      payload.killedDecision = { who: lastKill.who, at: lastKill.at, why: lastKill.why };
+    }
+  }
   if (expandMeetingDoc) {
     payload.meetingDoc = meetingDocView(company, idea, lastTransitions, ideaComments, owners);
     payload.comments = ideaComments;
@@ -580,7 +729,17 @@ export type JourneyStore = {
       founderYes: boolean;
       founderWrittenDecision?: string;
       client?: string;
+      gateEnrichment?: GateEnrichment;
+      killPostmortem?: Omit<KillPostmortem, "why"> & { why?: string };
     },
+  ): Promise<unknown>;
+  listProvenance(
+    actor: JourneyActor,
+    query: { companySlug: string; ideaSlug?: string; from?: string; to?: string },
+  ): Promise<unknown>;
+  listKilledIdeas(
+    actor: JourneyActor,
+    query: { companySlug: string },
   ): Promise<unknown>;
   postComment(
     actor: JourneyActor,
@@ -811,9 +970,12 @@ export class MemoryJourneyStore implements JourneyStore {
       who: actor.principal,
       client: input.client?.trim() || "create_idea",
       whatChanged: {
+        op: "create_idea",
         via: "create_idea",
         idea: slug,
         why: input.why?.trim() || "new 0-1 board",
+        before: null,
+        after: ideaBoardSnapshot(idea),
       },
     });
     return this.getJourney(actor, { companySlug: company.slug, ideaSlug: slug });
@@ -833,6 +995,8 @@ export class MemoryJourneyStore implements JourneyStore {
       founderYes: boolean;
       founderWrittenDecision?: string;
       client?: string;
+      gateEnrichment?: GateEnrichment;
+      killPostmortem?: Omit<KillPostmortem, "why"> & { why?: string };
     },
   ): Promise<unknown> {
     if (!actor.authenticated || !actor.principal) {
@@ -840,6 +1004,9 @@ export class MemoryJourneyStore implements JourneyStore {
     }
     if (!input.founderYes) {
       return forbidden("founder yes required in the agent chat — not a form, not mail");
+    }
+    if (!input.why.trim()) {
+      return forbidden("why required");
     }
     const company = this.companyBySlug(input.companySlug);
     if (!company || !canWriteJourney(this.acl, actor, company.id)) {
@@ -850,6 +1017,7 @@ export class MemoryJourneyStore implements JourneyStore {
       return notFound(IDEA_NOT_FOUND_WRITE);
     }
     const idea = ideas[0];
+    const before = ideaBoardSnapshot(idea);
     let nextScoreboard: Scoreboard = { ...idea.scoreboard };
     if (input.scoreboard) {
       const fromBoard = normalizeConstraintThisWeek(input.scoreboard.constraint_this_week);
@@ -885,6 +1053,26 @@ export class MemoryJourneyStore implements JourneyStore {
     if (!constraintGate.ok) {
       return forbidden(constraintGate.error);
     }
+    const clocksChanged =
+      input.journeyPhase !== undefined ||
+      input.loopStage !== undefined ||
+      input.currentGate !== undefined;
+    if (clocksChanged) {
+      const gateRaw = input.gateEnrichment ?? nextScoreboard.gateEnrichment ?? nextScoreboard;
+      const gateEnr = normalizeGateEnrichment(gateRaw);
+      if (!gateEnr.ok) return forbidden(gateEnr.error);
+      nextScoreboard = { ...nextScoreboard, gateEnrichment: gateEnr.value };
+    }
+    if (input.currentGate === "kill") {
+      const killRaw = {
+        ...(nextScoreboard.killPostmortem ?? {}),
+        ...(input.killPostmortem ?? {}),
+        gateEnrichment: nextScoreboard.gateEnrichment,
+      };
+      const killPm = normalizeKillPostmortem(killRaw, input.why);
+      if (!killPm.ok) return forbidden(killPm.error);
+      nextScoreboard = { ...nextScoreboard, killPostmortem: killPm.value };
+    }
     if (input.journeyPhase !== undefined) {
       if (!isJourneyPhase(input.journeyPhase)) {
         return forbidden("journey_phase is a strict enum 1-9");
@@ -903,13 +1091,15 @@ export class MemoryJourneyStore implements JourneyStore {
       }
       idea.currentGate = input.currentGate;
     }
-    if (input.scoreboard || input.constraintThisWeek !== undefined) {
+    if (
+      input.scoreboard ||
+      input.constraintThisWeek !== undefined ||
+      input.gateEnrichment ||
+      input.killPostmortem ||
+      clocksChanged
+    ) {
       idea.scoreboard = nextScoreboard;
     }
-    const clocksChanged =
-      input.journeyPhase !== undefined ||
-      input.loopStage !== undefined ||
-      input.currentGate !== undefined;
     if (clocksChanged) {
       this.events.push({
         id: this.nextId("ge"),
@@ -926,13 +1116,22 @@ export class MemoryJourneyStore implements JourneyStore {
       who: actor.principal,
       client: input.client?.trim() || "put_journey",
       whatChanged: {
+        op: "put_journey",
         via: "put_journey",
         journeyPhase: idea.journeyPhase,
         loopStage: idea.loopStage,
         currentGate: idea.currentGate,
         constraint_this_week: constraintThisWeekOf(idea),
         why: input.why,
+        gate: idea.currentGate,
+        whatChanged: idea.scoreboard.gateEnrichment?.whatChanged,
+        whatWereNotDoing: idea.scoreboard.gateEnrichment?.whatWereNotDoing,
+        evidenceLinks: idea.scoreboard.gateEnrichment?.evidenceLinks,
+        lessonsLearned: idea.scoreboard.killPostmortem?.lessonsLearned,
+        actionableInsights: idea.scoreboard.killPostmortem?.actionableInsights,
         founderWrittenDecision: input.founderWrittenDecision?.trim() || undefined,
+        before,
+        after: ideaBoardSnapshot(idea),
       },
     });
     const notify = this.fireBoardNotify({
@@ -978,11 +1177,8 @@ export class MemoryJourneyStore implements JourneyStore {
       return notFound(IDEA_NOT_FOUND_COMMENT);
     }
     const idea = ideas[0];
-    const before = {
-      journeyPhase: idea.journeyPhase,
-      loopStage: idea.loopStage,
-      currentGate: idea.currentGate,
-    };
+    const snap = ideaBoardSnapshot(idea);
+    const before = snap.clocks;
     this.comments.push({
       id: this.nextId("c"),
       ideaId: idea.id,
@@ -996,7 +1192,13 @@ export class MemoryJourneyStore implements JourneyStore {
       ideaId: idea.id,
       who: actor.principal,
       client: input.client?.trim() || "post_comment",
-      whatChanged: { via: "post_comment", commentId: comment.id },
+      whatChanged: {
+        op: "post_comment",
+        via: "post_comment",
+        commentId: comment.id,
+        before: snap,
+        after: snap,
+      },
     });
     const notify = this.fireBoardNotify({
       company,
@@ -1035,6 +1237,15 @@ export class MemoryJourneyStore implements JourneyStore {
     }
     const principal =
       input.principalKind === "email" ? input.principal.trim().toLowerCase() : input.principal.trim();
+    const existing = this.acl.find(
+      (row) =>
+        row.companyId === company.id &&
+        row.principal === principal &&
+        row.principalKind === input.principalKind,
+    );
+    const beforeAcl = existing
+      ? { principal: existing.principal, principalKind: existing.principalKind, role: existing.role }
+      : null;
     if (input.op === "grant") {
       const exists = this.acl.some(
         (row) =>
@@ -1070,6 +1281,11 @@ export class MemoryJourneyStore implements JourneyStore {
         op: input.op,
         principalKind: input.principalKind,
         role: input.role,
+        before: beforeAcl,
+        after:
+          input.op === "revoke"
+            ? null
+            : { principal, principalKind: input.principalKind, role: input.role },
       },
     });
     return { ok: true, audit };
@@ -1150,6 +1366,24 @@ export class MemoryJourneyStore implements JourneyStore {
         emailOptIn: Boolean(input.emailOptIn),
         createdBy: actor.principal,
       });
+      this.emitAudit({
+        companyId: company.id,
+        ideaId,
+        who: actor.principal,
+        client: "subscribe_board",
+        whatChanged: {
+          op: "INSERT",
+          via: "subscribe_board",
+          // webhookUrl stays on list_subscribers. Do not archive it in provenance.
+          before: null,
+          after: {
+            principal,
+            principalKind: input.principalKind,
+            emailOptIn: Boolean(input.emailOptIn),
+            ideaId,
+          },
+        },
+      });
     }
     return {
       ok: true,
@@ -1187,7 +1421,15 @@ export class MemoryJourneyStore implements JourneyStore {
       if (ideas.length !== 1) return notFound("idea not visible");
       ideaId = ideas[0].id;
     }
-    const before = this.subscribers.length;
+    const existing = this.subscribers.find((row) =>
+      sameSubscriberScope(row, {
+        companyId: company.id,
+        ideaId,
+        principal,
+        principalKind: input.principalKind,
+      }),
+    );
+    const beforeCount = this.subscribers.length;
     this.subscribers = this.subscribers.filter(
       (row) =>
         !sameSubscriberScope(row, {
@@ -1197,7 +1439,122 @@ export class MemoryJourneyStore implements JourneyStore {
           principalKind: input.principalKind,
         }),
     );
-    return { ok: true, removed: before - this.subscribers.length };
+    const removed = beforeCount - this.subscribers.length;
+    if (existing && removed > 0) {
+      this.emitAudit({
+        companyId: company.id,
+        ideaId,
+        who: actor.principal,
+        client: "unsubscribe_board",
+        whatChanged: {
+          op: "DELETE",
+          via: "unsubscribe_board",
+          before: {
+            principal: existing.principal,
+            principalKind: existing.principalKind,
+            emailOptIn: existing.emailOptIn,
+            ideaId: existing.ideaId,
+          },
+          after: null,
+        },
+      });
+    }
+    return { ok: true, removed };
+  }
+
+  async listProvenance(
+    actor: JourneyActor,
+    query: { companySlug: string; ideaSlug?: string; from?: string; to?: string },
+  ): Promise<unknown> {
+    if (!actor.authenticated || !actor.principal) {
+      return forbidden("unauthenticated");
+    }
+    const company = this.companyBySlug(query.companySlug);
+    if (!company || !canReadCompany(this.acl, actor, company.id)) {
+      return notFound("company not visible");
+    }
+    const ideas = this.ideasFor(company.id, query.ideaSlug);
+    if (query.ideaSlug && ideas.length === 0) {
+      return notFound("idea not visible");
+    }
+    const ideaId = query.ideaSlug ? ideas[0]?.id : undefined;
+    const fromMs = query.from ? Date.parse(query.from) : Number.NaN;
+    const toMs = query.to ? Date.parse(query.to) : Number.NaN;
+    const inRange = (iso: string) => {
+      const t = Date.parse(iso);
+      if (Number.isFinite(fromMs) && t < fromMs) return false;
+      if (Number.isFinite(toMs) && t > toMs) return false;
+      return true;
+    };
+    const slugOf = (id: string | null) =>
+      id ? (this.ideas.find((row) => row.id === id)?.slug ?? null) : null;
+    const audit = this.audit
+      .filter((row) => {
+        if (row.companyId !== company.id) return false;
+        if (ideaId && row.ideaId !== ideaId) return false;
+        return inRange(row.at);
+      })
+      .map((row) => ({
+        at: row.at,
+        who: row.who,
+        client: row.client,
+        ideaSlug: slugOf(row.ideaId),
+        whatChanged: row.whatChanged,
+      }));
+    const gateEvents = this.events
+      .filter((row) => {
+        const idea = this.ideas.find((i) => i.id === row.ideaId);
+        if (!idea || idea.companyId !== company.id) return false;
+        if (ideaId && row.ideaId !== ideaId) return false;
+        return inRange(row.at);
+      })
+      .map((row) => ({
+        at: row.at,
+        who: row.who,
+        action: row.action,
+        why: row.why,
+        ideaSlug: slugOf(row.ideaId),
+      }));
+    const events = [
+      ...audit.map((row) => ({ kind: "audit" as const, ...row })),
+      ...gateEvents.map((row) => ({ kind: "gate" as const, ...row })),
+    ].sort((a, b) => a.at.localeCompare(b.at) || a.kind.localeCompare(b.kind));
+    return {
+      ok: true,
+      company: { slug: company.slug, label: company.label },
+      idea: query.ideaSlug ? normalizeSlug(query.ideaSlug) : null,
+      events,
+      audit,
+      gateEvents,
+    };
+  }
+
+  async listKilledIdeas(
+    actor: JourneyActor,
+    query: { companySlug: string },
+  ): Promise<unknown> {
+    const board = (await this.getJourney(actor, { companySlug: query.companySlug })) as {
+      ok?: boolean;
+      error?: string;
+      company?: { slug: string; label: string };
+      ideas?: JourneyIdeaPayload[];
+    };
+    if (!board.ok) return board;
+    return {
+      ok: true,
+      company: board.company,
+      ideas: (board.ideas ?? [])
+        .filter((idea) => idea.clocks.currentGate === "kill")
+        .map((idea) => ({
+          slug: idea.slug,
+          name: idea.name,
+          clocks: idea.clocks,
+          gateEnrichment: idea.gateEnrichment,
+          killPostmortem: idea.killPostmortem,
+          killedCard: idea.killedCard,
+          killedDecision: idea.killedDecision,
+        })),
+    };
   }
 
   async listSubscribers(
