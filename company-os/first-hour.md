@@ -143,6 +143,12 @@ When someone treats an advisor's promise of exclusivity or an Office Hours tip a
 
 House rule: [advisor ride-along is assumed, not observed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed).
 
+When someone keeps designing for a logo that will not pay, or embeds unpaid so the deal can close later:
+
+> Unpaid weeks cannot promote. First conversation is free. After that, a named paid SKU or a job ticket with a stop date — or park the logo.
+
+House rule: [unpaid weeks cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-unpaid-weeks-cannot-promote).
+
 ### SoR / buy vs build / advice (not this hour)
 
 Not Day 0 homework. The hour stays thesis, ≥3 groups, one snapshot.
