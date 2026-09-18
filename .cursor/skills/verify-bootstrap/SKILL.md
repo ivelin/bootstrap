@@ -71,7 +71,7 @@ Stable handles (use these, not coordinates):
 
 - Routes: `/health`, `/mcp`, `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server`
 - JSON-RPC methods: `initialize`, `tools/list`, `tools/call`
-- Tool names: `bootstrap_whoami`, `bootstrap_list_company_labels`, `invite_member` (`email`, `companyLabel`), `accept_invite` (`token`), `get_journey` (`company` / `idea` / `q`), `subscribe_board`, `unsubscribe_board`, `list_subscribers`
+- Tool names: `bootstrap_whoami`, `bootstrap_list_company_labels`, `invite_member` (`email`, `companyLabel`), `accept_invite` (`token`), `get_journey` (`company` / `idea` / `q`), `enable_board_watch`, `subscribe_board`, `unsubscribe_board`, `list_subscribers`
 - Card fields: `card: "accept_invite"` + `action: "Accept"`; `card: "invite_signup"` + `action: "Sign in or create account"`; `signupUrl` query `invite=`
 - Challenge: `WWW-Authenticate: Bearer realm="bootstrap-os-mcp", resource_metadata="https://mcp.bootstrap.pirin.ai/.well-known/oauth-protected-resource", resource="https://mcp.bootstrap.pirin.ai/mcp", scope="bootstrap-os"`
 

@@ -10,6 +10,7 @@ import {
   PUBLISHED_REPO,
   type DocKey,
 } from "./constants.js";
+import { enableBoardWatch } from "./board-watch.js";
 import { parseJourneyQuery, resolveJourneyStore } from "./journey.js";
 import { loadOsDoc, loadOsDocList, resolveDocsBaseUrl, resolveDocsSource } from "./docs.js";
 import {
@@ -52,6 +53,7 @@ import {
   TOOL_INVITE_MEMBER,
   TOOL_CREATE_IDEA,
   TOOL_POST_COMMENT,
+  TOOL_ENABLE_BOARD_WATCH,
   TOOL_PUT_JOURNEY,
   TOOL_LIST_COMPANIES,
   TOOL_LIST_COMPANY_LABELS_ALIAS,
@@ -1039,6 +1041,32 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       }
       try {
         return text(await store.listSubscribers(actor, { companySlug: input.company }));
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "enable_board_watch",
+    TOOL_ENABLE_BOARD_WATCH,
+    {
+      company: z.string().describe("Company slug"),
+      idea: z.string().optional().describe("Optional idea. Omit for the whole company."),
+    },
+    async (input) => {
+      const store = storeOf();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      try {
+        return text(
+          await enableBoardWatch(store, actor, {
+            companySlug: input.company,
+            ideaSlug: input.idea,
+          }),
+        );
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));
       }

@@ -9,7 +9,7 @@ import {
   HOSTED_GATED_IDENTITY_TOOL_NAMES,
   HOSTED_GATED_JOURNEY_TOOL_NAMES,
 } from "../dist/constants.js";
-import { HOSTED_MCP_INSTRUCTIONS, TOOL_GET_JOURNEY } from "../dist/hosted-copy.js";
+import { HOSTED_MCP_INSTRUCTIONS, TOOL_ENABLE_BOARD_WATCH, TOOL_GET_JOURNEY } from "../dist/hosted-copy.js";
 import { HostedMembershipJourneyStore } from "../dist/hosted-journey-store.js";
 import { clearHostedCompanyContextForTests } from "../dist/hosted-company-context.js";
 import {
@@ -132,6 +132,11 @@ describe("hosted access layer (one login, many companies)", () => {
     assert.match(String(companyParam?.description ?? ""), /team/i);
     assert.match(String(ideaParam?.description ?? ""), /idea/i);
     assert.doesNotMatch(JSON.stringify(journey.inputSchema), /CoreHaul/);
+    const watch = listed.result.tools.find((t) => t.name === "enable_board_watch");
+    assert.ok(watch);
+    assert.equal(watch.description, TOOL_ENABLE_BOARD_WATCH);
+    assert.match(watch.description, /Turn on board updates for Bill/);
+    assert.doesNotMatch(watch.description, /webhook|subscribe_board|https URL/i);
   });
 
   it("whoami and list_companies return companies for the seed user", async () => {

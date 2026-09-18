@@ -3,7 +3,7 @@
  * Used by the Vercel function entry and the optional local HTTP helper.
  * Does not listen on 127.0.0.1. Does not host founder company-state.
  *
- * Journey tools (get/put/comment + board notify) are gated on this branch.
+ * Journey tools (get/put/comment + board notify + enable_board_watch) are gated on this branch.
  * Public OS tools stay listed after auth on the invite-only collab host. Pin: oauth.ts / HOSTED_IDENTITY.md.
  */
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";

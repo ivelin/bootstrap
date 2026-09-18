@@ -61,6 +61,10 @@ No PII dump. Same shape for webhook and the email contract row:
 
 After Cos applies `20260920_bootstrap_os_board_subscribers.sql`, production MCP POSTs this JSON to each eligible subscriber https URL on a successful `put_journey` / `post_comment` (and `gate_event` when that is the write). Delivery failure does not roll back the board. Email stays enqueue-only — Resend lives on pirin.ai.
 
+### Board watch (Bill)
+
+Cos sets Vercel secrets **once** on `bootstrap-os-mcp` production: `BOOTSTRAP_BOARD_WATCH_URL` (https), `BOOTSTRAP_BOARD_WATCH_PRINCIPAL` (email), optional `BOOTSTRAP_BOARD_WATCH_PRINCIPAL_KIND` (`email`|`sub`, default `email`). Do not print those values. Agents call `enable_board_watch` after invite. Founders never paste URLs. Unset or non-https env fail closed as `{ ok: false, error: "board_watch_unset" }`. Auto-subscribe on `accept_invite` is a later slice.
+
 ## Tools (gated; public OS tools stay listed after auth on the collab host)
 
 | Tool | Who | Notes |
@@ -69,9 +73,10 @@ After Cos applies `20260920_bootstrap_os_board_subscribers.sql`, production MCP 
 | `create_idea` | founder + founder-authorized | New 0-1 board under a held company. Empty clocks (1 / 1 / hold). Founder yes in chat. Does not invent stage. |
 | `put_journey` | founder + founder-authorized | Overwrite clocks/jsonb including `constraint_this_week` and scoreboard (hypothesis, open questions) on an **existing** idea. Missing slug → `idea not found; call create_idea first`. One founder yes in chat. |
 | `post_comment` | advisors | Side table. Never a gate. |
-| `subscribe_board` | founder + founder-authorized | Grant webhook (+ email opt-in enqueue) to an ACL member. |
+| `subscribe_board` | founder + founder-authorized | Grant webhook (+ email opt-in enqueue) to an ACL member. Cos / adapter furniture — not the founder path. |
 | `unsubscribe_board` | founder + founder-authorized | Remove a subscriber. |
 | `list_subscribers` | anyone who may `get_journey` | Company the caller can read. |
+| `enable_board_watch` | founder + founder-authorized | Turn on board updates for Bill. Reads Cos-set Vercel env (URL + principal). Founders never paste a URL. |
 
 HTTP 401 + `WWW-Authenticate: Bearer … resource_metadata=…` on gated `tools/call` without a token. Cookie-less handshake on the invite-only collab host is also 401. Path 1 founders use GitHub + local — they are not told to connect this host.
 

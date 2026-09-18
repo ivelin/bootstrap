@@ -27,9 +27,14 @@ describe("Bootstrap Bill install docs", () => {
     assert.ok(body.includes(PATH1_REPO), "free Path 1 GitHub");
     assert.ok(body.includes(PATH1_INSTALL), "free Path 1 install page");
     assert.match(body, /bootstrap@pirin\.ai/);
-    assert.match(body, /Poll is the safety net/);
-    assert.match(body, /Push comes after Cos grants/);
+    assert.match(body, /Bill checks your board weekly/);
+    assert.match(body, /Bill watches the board when Cos turns it on/);
+    assert.match(body, /board updates/);
     assert.match(body, /not.*Path 1/i);
+    assert.doesNotMatch(body, /webhook/i);
+    assert.doesNotMatch(body, /subscribe_board/);
+    assert.doesNotMatch(body, /grokbot/i);
+    assert.doesNotMatch(body, /https URL paste|paste an? https/i);
     assert.doesNotMatch(body, /vercel\.app/);
     assert.doesNotMatch(body, /mcp\.pirin\.ai/);
     assert.match(readme, /docs\/install-bill\.md/);
