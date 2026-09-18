@@ -89,6 +89,15 @@ describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, ()
     assert.match(provenance, /actionableInsights/);
     assert.match(provenance, /Do not migrate\/seed\/live-probe supabase-pirin-ai/);
     assert.doesNotMatch(provenance, /supabase\.co/);
+    const portfolio = fs.readFileSync(
+      path.join(__dirname, "..", "supabase", "migrations", "20260922_bootstrap_os_portfolio_score.sql"),
+      "utf8",
+    );
+    assert.match(portfolio, /bootstrap_os_put_portfolio_score/);
+    assert.match(portfolio, /portfolioScore/);
+    assert.match(portfolio, /why required/);
+    assert.match(portfolio, /Do not migrate\/seed\/live-probe supabase-pirin-ai/);
+    assert.doesNotMatch(portfolio, /supabase\.co/);
   });
 
   it("seed is one default idea per company", async () => {

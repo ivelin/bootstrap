@@ -55,6 +55,7 @@ import {
   TOOL_POST_COMMENT,
   TOOL_ENABLE_BOARD_WATCH,
   TOOL_LIST_PROVENANCE,
+  TOOL_PUT_PORTFOLIO_SCORE,
   TOOL_PUT_JOURNEY,
   TOOL_LIST_COMPANIES,
   TOOL_LIST_COMPANY_LABELS_ALIAS,
@@ -918,6 +919,17 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
         })
         .optional()
         .describe("Required on kill. why + lessonsLearned + actionableInsights. Silent kill is rejected."),
+      portfolioScore: z
+        .object({
+          impact: z.number().int().min(1).max(5),
+          evidence: z.number().int().min(1).max(5),
+          leverage: z.number().int().min(1).max(5),
+          why: z.string().min(1).max(280).describe("Short why for this week's labels. Required."),
+        })
+        .optional()
+        .describe(
+          "Weekly Impact/Evidence/Leverage labels (1–5) plus required short why. Prefer put_portfolio_score. Does not Advance or Kill. Skipped on single-idea or killed boards.",
+        ),
     },
     async (input) => {
       const store = storeOf();
@@ -941,6 +953,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             client: input.client,
             gateEnrichment: input.gateEnrichment,
             killPostmortem: input.killPostmortem,
+            portfolioScore: input.portfolioScore,
           }),
         );
       } catch (e) {
@@ -1060,6 +1073,64 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
       }
       try {
         return text(await store.listSubscribers(actor, { companySlug: input.company }));
+      } catch (e) {
+        return err(e instanceof Error ? e.message : String(e));
+      }
+    },
+  );
+
+  server.tool(
+    "put_portfolio_score",
+    TOOL_PUT_PORTFOLIO_SCORE,
+    {
+      company: z.string().optional().describe("Company slug. Uses the active company if omitted."),
+      idea: z.string().optional().describe("Idea slug. Default idea if omitted."),
+      impact: z.number().int().min(1).max(5).describe("If this works, how much does it change the beachhead? 1–5."),
+      evidence: z
+        .number()
+        .int()
+        .min(1)
+        .max(5)
+        .describe("How much of that is observed (not hoped)? 1–5."),
+      leverage: z
+        .number()
+        .int()
+        .min(1)
+        .max(5)
+        .describe("How much can this team uniquely do from here? 1–5."),
+      why: z
+        .string()
+        .min(1)
+        .max(280)
+        .describe("Short why for this week's labels. Required. Stored on portfolioScore and audit before/after."),
+      founderYes: z
+        .boolean()
+        .describe("True only after an explicit founder yes in their agent chat"),
+      client: z.string().optional().describe("Which client wrote. Stored on the audit row."),
+    },
+    async (input) => {
+      const store = storeOf();
+      const actor = ctx.actor;
+      if (!store || !actor?.authenticated) {
+        return err("Gated. Founder or founder-authorized token required.");
+      }
+      const parsed = companyOf({ company: input.company, idea: input.idea });
+      if (!parsed.companySlug) {
+        return err("Say which company, or call bootstrap_use_company first.");
+      }
+      try {
+        return text(
+          await store.putPortfolioScore(actor, {
+            companySlug: parsed.companySlug,
+            ideaSlug: parsed.ideaSlug,
+            impact: input.impact,
+            evidence: input.evidence,
+            leverage: input.leverage,
+            why: input.why,
+            founderYes: input.founderYes,
+            client: input.client,
+          }),
+        );
       } catch (e) {
         return err(e instanceof Error ? e.message : String(e));
       }

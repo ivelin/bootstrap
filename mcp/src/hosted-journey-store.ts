@@ -17,6 +17,7 @@ import {
   type GateEnrichment,
   type JourneyStore,
   type KillPostmortem,
+  type PortfolioScore,
   type Scoreboard,
 } from "./journey.js";
 
@@ -151,6 +152,19 @@ export class HostedMembershipJourneyStore implements JourneyStore {
     return this.inner.listSubscribers(actor, input);
   }
 
+  async putPortfolioScore(
+    actor: JourneyActor,
+    input: Parameters<JourneyStore["putPortfolioScore"]>[1],
+  ) {
+    const denied = this.denyUnlessHeld(actor, input.companySlug);
+    if (denied) return denied;
+    this.inner.ensureCompanyForMember(input.companySlug, actor);
+    return this.inner.putPortfolioScore(actor, {
+      ...input,
+      ideaSlug: input.ideaSlug || "default",
+    });
+  }
+
   async listProvenance(
     actor: JourneyActor,
     query: Parameters<JourneyStore["listProvenance"]>[1],
@@ -260,6 +274,7 @@ export class SupabaseJourneyStore implements JourneyStore {
       client?: string;
       gateEnrichment?: GateEnrichment;
       killPostmortem?: Omit<KillPostmortem, "why"> & { why?: string };
+      portfolioScore?: PortfolioScore;
     },
   ): Promise<unknown> {
     const idea = input.ideaSlug ?? "default";
@@ -269,6 +284,7 @@ export class SupabaseJourneyStore implements JourneyStore {
       ...(input.killPostmortem
         ? { killPostmortem: { why: input.why, ...input.killPostmortem } }
         : {}),
+      ...(input.portfolioScore ? { portfolioScore: input.portfolioScore } : {}),
     };
     const hit = await this.rpc("bootstrap_os_put_journey", {
       p_company: input.companySlug,
@@ -380,6 +396,32 @@ export class SupabaseJourneyStore implements JourneyStore {
   ) {
     const hit = await this.rpc("bootstrap_os_list_subscribers", {
       p_company: input.companySlug,
+    });
+    if ("error" in hit) return { ok: false, error: hit.error };
+    return hit.raw;
+  }
+
+  async putPortfolioScore(
+    _actor: JourneyActor,
+    input: {
+      companySlug: string;
+      ideaSlug?: string;
+      impact: number;
+      evidence: number;
+      leverage: number;
+      why: string;
+      founderYes: boolean;
+      client?: string;
+    },
+  ) {
+    const hit = await this.rpc("bootstrap_os_put_portfolio_score", {
+      p_company: input.companySlug,
+      p_idea: input.ideaSlug ?? "default",
+      p_impact: input.impact,
+      p_evidence: input.evidence,
+      p_leverage: input.leverage,
+      p_why: input.why,
+      p_founder_yes: input.founderYes,
     });
     if ("error" in hit) return { ok: false, error: hit.error };
     return hit.raw;

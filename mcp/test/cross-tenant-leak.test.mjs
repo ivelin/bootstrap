@@ -374,6 +374,16 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
                       name === "enable_board_watch" ||
                       name === "list_provenance"
                     ? { company: "bravo" }
+                    : name === "put_portfolio_score"
+                      ? {
+                          company: "bravo",
+                          idea: "default",
+                          impact: 3,
+                          evidence: 3,
+                          leverage: 3,
+                          why: "cross-tenant probe",
+                          founderYes: true,
+                        }
                     : { q: "bravo" },
       ]),
       ...HOSTED_GATED_IDENTITY_TOOL_NAMES.map((name) => [
@@ -442,6 +452,10 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
       ["list_subscribers", { company: "bravo" }],
       ["enable_board_watch", { company: "bravo" }],
       ["list_provenance", { company: "bravo" }],
+      [
+        "put_portfolio_score",
+        { company: "bravo", idea: "default", impact: 3, evidence: 3, leverage: 3, why: "cross-tenant probe", founderYes: true },
+      ],
     ];
 
     for (const [name, args] of probes) {
@@ -471,6 +485,15 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
       }),
       store.listSubscribers(actorA, { companySlug: "bravo" }),
       store.listProvenance(actorA, { companySlug: "bravo" }),
+      store.putPortfolioScore(actorA, {
+        companySlug: "bravo",
+        ideaSlug: "default",
+        impact: 3,
+        evidence: 3,
+        leverage: 3,
+        why: "cross-tenant probe",
+        founderYes: true,
+      }),
       store.listKilledIdeas(actorA, { companySlug: "bravo" }),
       store.changeAcl(actorA, {
         companySlug: "bravo",
@@ -574,6 +597,10 @@ describe("cross-tenant invite-only CI gate (memory ACL + webhook)", () => {
       ["list_subscribers", { company: "delta" }],
       ["enable_board_watch", { company: "delta" }],
       ["list_provenance", { company: "delta" }],
+      [
+        "put_portfolio_score",
+        { company: "delta", idea: "default", impact: 3, evidence: 3, leverage: 3, why: "cross-tenant probe", founderYes: true },
+      ],
       [
         "subscribe_board",
         {
