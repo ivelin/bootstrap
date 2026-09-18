@@ -9,7 +9,12 @@ import {
   HOSTED_GATED_IDENTITY_TOOL_NAMES,
   HOSTED_GATED_JOURNEY_TOOL_NAMES,
 } from "../dist/constants.js";
-import { HOSTED_MCP_INSTRUCTIONS, TOOL_ENABLE_BOARD_WATCH, TOOL_GET_JOURNEY } from "../dist/hosted-copy.js";
+import {
+  HOSTED_BILL_GROK_LINE,
+  hostedInstructionsForClient,
+  TOOL_ENABLE_BOARD_WATCH,
+  TOOL_GET_JOURNEY,
+} from "../dist/hosted-copy.js";
 import { HostedMembershipJourneyStore } from "../dist/hosted-journey-store.js";
 import { clearHostedCompanyContextForTests } from "../dist/hosted-company-context.js";
 import {
@@ -83,7 +88,9 @@ describe("hosted access layer (one login, many companies)", () => {
     assert.match(instructions, /user-bootstrap-os-mcp/);
     assert.doesNotMatch(instructions, /swim/i);
     assert.doesNotMatch(instructions, /Path 3|WWW-Authenticate|Bearer|mentee/i);
-    assert.equal(instructions, HOSTED_MCP_INSTRUCTIONS);
+    assert.doesNotMatch(instructions, /x\.ai\/bot/);
+    assert.ok(!instructions.includes(HOSTED_BILL_GROK_LINE));
+    assert.equal(instructions, hostedInstructionsForClient({ clientName: "access-layer" }));
   });
 
   it("hosted tool descriptions stay in founder English", async () => {

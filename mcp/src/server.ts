@@ -43,7 +43,7 @@ import {
   setActiveCompany,
 } from "./hosted-company-context.js";
 import {
-  HOSTED_MCP_INSTRUCTIONS,
+  hostedInstructionsForClient,
   NOTE_COMPANIES,
   NOTE_INVITE_SENT,
   NOTE_NOT_SIGNED_IN,
@@ -1207,7 +1207,9 @@ export function createBootstrapServer(
       name: "bootstrap-os",
       version: MCP_VERSION,
     },
-    surface === "hosted-read" ? { instructions: HOSTED_MCP_INSTRUCTIONS } : undefined,
+    surface === "hosted-read"
+      ? { instructions: hostedInstructionsForClient(hosted?.clientHint ?? {}) }
+      : undefined,
   );
   registerReadTools(server, surface, hosted);
   if (surface === "hosted-read") {
