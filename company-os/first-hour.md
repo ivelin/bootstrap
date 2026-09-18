@@ -143,9 +143,9 @@ When someone treats an advisor's promise of exclusivity or an Office Hours tip a
 
 House rule: [advisor ride-along is assumed, not observed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed).
 
-When someone keeps designing for a logo that will not pay, or embeds unpaid so the deal can close later:
+When a company or person asks for more work after the first conversation, and they have not paid for that next session:
 
-> Unpaid weeks cannot promote. First conversation is free. After that, a named paid SKU or a job ticket with a stop date — or park the logo.
+> The first conversation is free. The next working session is paid, or you stop. A long buying cycle is not a reason to keep working for free.
 
 House rule: [unpaid weeks cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-unpaid-weeks-cannot-promote).
 
