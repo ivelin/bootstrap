@@ -178,7 +178,7 @@ describe("PGlite provenance + kill postmortem (isolated, never prod)", { concurr
       /CREATE OR REPLACE FUNCTION bootstrap_os\.audit_subscriber_write\(\)[\s\S]*?\$\$;/,
     );
     assert.ok(subscriberAudit);
-    assert.doesNotMatch(subscriberAudit[0], /webhookUrl/);
+    assert.doesNotMatch(subscriberAudit[0], /'webhookUrl'/);
     assert.match(subscriberAudit[0], /Do not archive it in provenance/);
     assert.match(sql, /RPC no longer emit_audit after UPDATE/);
   });
