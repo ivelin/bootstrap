@@ -1200,7 +1200,7 @@ fi
 # Cards hold Customer type / First paid offer / Unpaid work fields. OS holds the Who-buys table.
 if grep -q '### House rule: unpaid weeks cannot promote' company-os/operating-system.md \
   && grep -q '| 2.8.13 |' company-os/operating-system.md \
-  && grep -F '**Version:** 2.8.13' company-os/operating-system.md \
+  && grep -Fq '**Version:** 2.8.13' company-os/operating-system.md \
   && grep -q 'Customer type (consumer / small business / mid-market / enterprise' templates/research/icps/TEMPLATE.md \
   && grep -q 'First paid offer' templates/research/icps/TEMPLATE.md \
   && grep -q 'Unpaid work after the first talk' templates/research/icps/TEMPLATE.md \
