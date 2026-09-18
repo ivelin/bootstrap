@@ -93,6 +93,24 @@ describe("hosted MCP support escape hatch", () => {
     assert.ok(!HOSTED_GATED_TOOL_NAMES.includes("bootstrap_support"));
   });
 
+  it("bootstrap_support is pointer-only — never send or enqueue mail", () => {
+    const serverSrc = fs.readFileSync(SERVER_SRC, "utf8");
+    const start = serverSrc.indexOf('server.tool("bootstrap_support"');
+    assert.ok(start >= 0, "bootstrap_support must be registered");
+    const end = serverSrc.indexOf("\n}", start);
+    const handler = serverSrc.slice(start, end + 2);
+    assert.match(handler, /text\(SUPPORT_HOWTO\)/);
+    assert.doesNotMatch(
+      handler,
+      /deliverInviteMail|notifyPirin|enqueue|queuedMail|outbox|resend|smtp|sendEmail|mailFrom/i,
+    );
+    assert.deepEqual(Object.keys(SUPPORT_HOWTO).sort(), ["email", "include", "note", "routed"]);
+    assert.equal(SUPPORT_HOWTO.email, "bootstrap@pirin.ai");
+    assert.ok(!("from" in SUPPORT_HOWTO));
+    assert.ok(!("mailFrom" in SUPPORT_HOWTO));
+    assert.ok(!("queuedMail" in SUPPORT_HOWTO));
+  });
+
   it("bootstrap_os_info and bootstrap_support return the address + what to include + human-routed", async () => {
     const listed = await rpc("tools/list", {}, 2);
     const names = listed.result.tools.map((t) => t.name);
