@@ -58,6 +58,8 @@ export type PortfolioScore = {
   impact: number;
   evidence: number;
   leverage: number;
+  /** Required on write (≤280). Never invent on read. */
+  why?: string;
   scoredAt?: string;
   scoredBy?: string;
 };
@@ -88,6 +90,9 @@ export const PORTFOLIO_SKIP_NEED_TWO_LIVE =
   "portfolio scoring applies when two or more live (non-kill) ideas are on the board";
 export const PORTFOLIO_KILLED_OUT =
   "killed ideas are out of the live portfolio";
+export const PORTFOLIO_WHY_MAX = 280;
+export const PORTFOLIO_WHY_REQUIRED = "why required";
+export const PORTFOLIO_WHY_TOO_LONG = `why is short text (${PORTFOLIO_WHY_MAX})`;
 
 /** Scores are labels. They cannot Advance, Iterate, Hold, or Kill. */
 export function portfolioScoreMayPromote(): false {
@@ -98,9 +103,22 @@ export function isPortfolioAxis(n: unknown): n is number {
   return typeof n === "number" && Number.isInteger(n) && n >= PORTFOLIO_SCORE_MIN && n <= PORTFOLIO_SCORE_MAX;
 }
 
+export function normalizePortfolioWhy(
+  raw: unknown,
+): { ok: true; value: string } | { ok: false; error: string } {
+  if (typeof raw !== "string" || !raw.trim()) {
+    return { ok: false, error: PORTFOLIO_WHY_REQUIRED };
+  }
+  const trimmed = raw.trim();
+  if (trimmed.length > PORTFOLIO_WHY_MAX) {
+    return { ok: false, error: PORTFOLIO_WHY_TOO_LONG };
+  }
+  return { ok: true, value: trimmed };
+}
+
 export function normalizePortfolioScore(
   raw: unknown,
-  meta?: { scoredAt?: string; scoredBy?: string },
+  meta?: { scoredAt?: string; scoredBy?: string; why?: string; requireWhy?: boolean },
 ): { ok: true; value: PortfolioScore } | { ok: false; error: string } {
   const src =
     raw && typeof raw === "object" && !Array.isArray(raw)
@@ -111,6 +129,16 @@ export function normalizePortfolioScore(
       : {};
   if (!isPortfolioAxis(src.impact) || !isPortfolioAxis(src.evidence) || !isPortfolioAxis(src.leverage)) {
     return { ok: false, error: PORTFOLIO_SCORE_OUT_OF_RANGE };
+  }
+  const requireWhy = meta?.requireWhy !== false;
+  const whyRaw = meta?.why ?? src.why;
+  let why = "";
+  if (requireWhy) {
+    const whyNorm = normalizePortfolioWhy(whyRaw);
+    if (!whyNorm.ok) return whyNorm;
+    why = whyNorm.value;
+  } else if (typeof whyRaw === "string" && whyRaw.trim()) {
+    why = whyRaw.trim().slice(0, PORTFOLIO_WHY_MAX);
   }
   const scoredAtRaw = meta?.scoredAt ?? src.scoredAt;
   const scoredByRaw = meta?.scoredBy ?? src.scoredBy;
@@ -124,16 +152,17 @@ export function normalizePortfolioScore(
       impact: src.impact,
       evidence: src.evidence,
       leverage: src.leverage,
+      ...(why ? { why } : {}),
       ...(scoredAt ? { scoredAt } : {}),
       ...(scoredBy ? { scoredBy } : {}),
     },
   };
 }
 
-/** Never invent a score on read. Missing or invalid → undefined. */
+/** Never invent a score on read. Missing or invalid axes → undefined. Do not invent why. */
 export function portfolioScoreOf(idea: IdeaRow): PortfolioScore | undefined {
   if (idea.scoreboard.portfolioScore == null) return undefined;
-  const hit = normalizePortfolioScore(idea.scoreboard.portfolioScore);
+  const hit = normalizePortfolioScore(idea.scoreboard.portfolioScore, { requireWhy: false });
   return hit.ok ? hit.value : undefined;
 }
 
@@ -152,6 +181,7 @@ export type PortfolioRankRow = {
   evidence: number;
   leverage: number;
   total: number;
+  why?: string;
   scoredAt?: string;
   scoredBy?: string;
 };
@@ -191,6 +221,7 @@ export function portfolioViewOf(ideas: IdeaRow[]): PortfolioView {
       evidence: score.evidence,
       leverage: score.leverage,
       total: portfolioTotal(score),
+      ...(score.why ? { why: score.why } : {}),
       ...(score.scoredAt ? { scoredAt: score.scoredAt } : {}),
       ...(score.scoredBy ? { scoredBy: score.scoredBy } : {}),
     });
@@ -884,6 +915,7 @@ export type JourneyStore = {
       impact: number;
       evidence: number;
       leverage: number;
+      why: string;
       founderYes: boolean;
       client?: string;
     },
@@ -1365,6 +1397,7 @@ export class MemoryJourneyStore implements JourneyStore {
       impact: number;
       evidence: number;
       leverage: number;
+      why: string;
       founderYes: boolean;
       client?: string;
     },
@@ -1384,11 +1417,15 @@ export class MemoryJourneyStore implements JourneyStore {
       return notFound(IDEA_NOT_FOUND_WRITE);
     }
     const idea = ideas[0];
-    const scored = normalizePortfolioScore({
-      impact: input.impact,
-      evidence: input.evidence,
-      leverage: input.leverage,
-    });
+    const scored = normalizePortfolioScore(
+      {
+        impact: input.impact,
+        evidence: input.evidence,
+        leverage: input.leverage,
+        why: input.why,
+      },
+      { why: input.why, requireWhy: true },
+    );
     if (!scored.ok) {
       return forbidden(scored.error);
     }
@@ -1426,6 +1463,7 @@ export class MemoryJourneyStore implements JourneyStore {
       whatChanged: {
         op: "put_portfolio_score",
         via: "put_portfolio_score",
+        why: scored.value.why,
         before,
         after: ideaBoardSnapshot(idea),
       },

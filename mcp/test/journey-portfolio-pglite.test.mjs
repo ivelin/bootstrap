@@ -173,6 +173,8 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     assert.match(sql, /leverage/);
     assert.match(sql, /impact \+ evidence \+ leverage/);
     assert.match(sql, /never auto-promotes/);
+    assert.match(sql, /why required/);
+    assert.match(sql, /p_why/);
     assert.match(sql, /skip_board_notify/);
     assert.doesNotMatch(sql, /supabase\.co/);
     assert.doesNotMatch(sql, /pg_cron|resend|CREATE EXTENSION/i);
@@ -182,8 +184,8 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     const hidden = (
       await asJwt(
         { email: "founder-bravo@example.test" },
-        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6) AS body",
-        ["alpha", "default", 5, 5, 5, true],
+        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6,$7) AS body",
+        ["alpha", "default", 5, 5, 5, "stolen score", true],
       )
     )[0].body;
     assert.equal(hidden.ok, false);
@@ -206,11 +208,21 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
   });
 
   it("single-idea skip; out of range reject; two live ideas rank; killed out; no invent; no gate change", async () => {
+    const noWhy = (
+      await asJwt(
+        { email: "founder@example.test" },
+        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6,$7) AS body",
+        ["alpha", "default", 4, 3, 5, "", true],
+      )
+    )[0].body;
+    assert.equal(noWhy.ok, false);
+    assert.match(String(noWhy.error), /why required/);
+
     const skip = (
       await asJwt(
         { email: "founder@example.test" },
-        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6) AS body",
-        ["alpha", "default", 4, 3, 5, true],
+        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6,$7) AS body",
+        ["alpha", "default", 4, 3, 5, "need a second live idea before ranking", true],
       )
     )[0].body;
     assert.equal(skip.ok, true);
@@ -232,8 +244,8 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     const bad = (
       await asJwt(
         { email: "founder@example.test" },
-        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6) AS body",
-        ["alpha", "default", 9, 3, 3, true],
+        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6,$7) AS body",
+        ["alpha", "default", 9, 3, 3, "out of range", true],
       )
     )[0].body;
     assert.equal(bad.ok, false);
@@ -251,8 +263,8 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     const first = (
       await asJwt(
         { email: "founder@example.test" },
-        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6) AS body",
-        ["alpha", "default", 5, 4, 3, true],
+        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6,$7) AS body",
+        ["alpha", "default", 5, 4, 3, "operators already pay for a dispatcher", true],
       )
     )[0].body;
     assert.equal(first.ok, true);
@@ -262,12 +274,13 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     assert.equal(scored.portfolioScore.impact, 5);
     assert.equal(scored.portfolioScore.evidence, 4);
     assert.equal(scored.portfolioScore.leverage, 3);
+    assert.equal(scored.portfolioScore.why, "operators already pay for a dispatcher");
 
     const second = (
       await asJwt(
         { email: "founder@example.test" },
-        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6) AS body",
-        ["alpha", "second-bet", 2, 2, 2, true],
+        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6,$7) AS body",
+        ["alpha", "second-bet", 2, 2, 2, "weaker observed pull", true],
       )
     )[0].body;
     assert.equal(second.ok, true);
@@ -279,6 +292,28 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     );
     assert.equal(second.portfolio.ranked[0].total, 12);
     assert.equal(second.portfolio.ranked[1].total, 6);
+    assert.equal(second.portfolio.ranked[0].why, "operators already pay for a dispatcher");
+
+    const missingWhy = (
+      await asJwt(
+        { email: "founder@example.test" },
+        "SELECT public.bootstrap_os_put_journey($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) AS body",
+        [
+          "alpha",
+          "second-bet",
+          "relabel",
+          true,
+          null,
+          null,
+          null,
+          null,
+          null,
+          { schema_version: 1, portfolioScore: { impact: 2, evidence: 2, leverage: 2 } },
+        ],
+      )
+    )[0].body;
+    assert.equal(missingWhy.ok, false);
+    assert.match(String(missingWhy.error), /why required/);
 
     const invalidPut = (
       await asJwt(
@@ -327,8 +362,8 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     const scoreKilled = (
       await asJwt(
         { email: "founder@example.test" },
-        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6) AS body",
-        ["alpha", "second-bet", 5, 5, 5, true],
+        "SELECT public.bootstrap_os_put_portfolio_score($1,$2,$3,$4,$5,$6,$7) AS body",
+        ["alpha", "second-bet", 5, 5, 5, "killed bets stay off the live rank", true],
       )
     )[0].body;
     assert.equal(scoreKilled.ok, false);
@@ -343,8 +378,9 @@ describe("PGlite portfolio scores (isolated, never prod)", { concurrency: false 
     );
     assert.ok(audit.rows.length >= 1);
     assert.equal(audit.rows[0].what_changed.via, "put_portfolio_score");
+    assert.equal(audit.rows[0].what_changed.why, "operators already pay for a dispatcher");
     assert.ok(audit.rows[0].what_changed.before);
-    assert.ok(audit.rows[0].what_changed.after.scoreboard.portfolioScore);
+    assert.equal(audit.rows[0].what_changed.after.scoreboard.portfolioScore.why, "operators already pay for a dispatcher");
 
     const outbox = await db.query(
       `SELECT count(*)::int AS n

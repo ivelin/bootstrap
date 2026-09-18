@@ -1,5 +1,6 @@
 -- Weekly Impact / Evidence / Leverage portfolio scores on scoreboard jsonb.
 -- Thin: no new table. Reconstructible via audit before/after.
+-- Write requires short why (≤280). Stored on portfolioScore and audit what_changed.
 -- Scores are founder/advisor labels. OS never auto-promotes / Advance / Kill.
 -- Rank live ideas by (impact + evidence + leverage). Never invent on read.
 -- Cos applies on supabase-pirin-ai. PR agents: PGlite / file lock only.
@@ -40,6 +41,7 @@ BEGIN
     'impact', impact,
     'evidence', evidence,
     'leverage', leverage,
+    'why', left(nullif(trim(coalesce(src->>'why', '')), ''), 280),
     'scoredAt', nullif(trim(coalesce(src->>'scoredAt', '')), ''),
     'scoredBy', nullif(trim(coalesce(src->>'scoredBy', '')), '')
   ));
@@ -51,9 +53,23 @@ RETURNS text
 LANGUAGE plpgsql
 IMMUTABLE
 AS $$
+DECLARE
+  src jsonb;
+  why text;
 BEGIN
   IF bootstrap_os.read_portfolio_score(p_raw) IS NULL THEN
     RETURN 'impact, evidence, and leverage must be integers 1–5';
+  END IF;
+  src := p_raw;
+  IF src ? 'portfolioScore' AND jsonb_typeof(src->'portfolioScore') = 'object' THEN
+    src := src->'portfolioScore';
+  END IF;
+  why := nullif(trim(coalesce(src->>'why', '')), '');
+  IF why IS NULL THEN
+    RETURN 'why required';
+  END IF;
+  IF char_length(why) > 280 THEN
+    RETURN 'why is short text (280)';
   END IF;
   RETURN NULL;
 END;
@@ -74,10 +90,14 @@ BEGIN
   IF src IS NULL THEN
     RETURN NULL;
   END IF;
+  IF nullif(trim(coalesce(src->>'why', '')), '') IS NULL THEN
+    RETURN NULL;
+  END IF;
   RETURN jsonb_strip_nulls(jsonb_build_object(
     'impact', (src->>'impact')::int,
     'evidence', (src->>'evidence')::int,
     'leverage', (src->>'leverage')::int,
+    'why', coalesce(src->>'why', ''),
     'scoredAt', coalesce(
       nullif(trim(coalesce(to_char(p_scored_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'), '')), ''),
       src->>'scoredAt'
@@ -122,6 +142,7 @@ BEGIN
       'evidence', (s->>'evidence')::int,
       'leverage', (s->>'leverage')::int,
       'total', (s->>'impact')::int + (s->>'evidence')::int + (s->>'leverage')::int,
+      'why', s->>'why',
       'scoredAt', s->>'scoredAt',
       'scoredBy', s->>'scoredBy'
     )) AS row_score
@@ -325,7 +346,7 @@ BEGIN
       IF incoming_score IS NOT NULL
          AND jsonb_typeof(incoming_score) = 'object'
          AND bootstrap_os.portfolio_score_error(incoming_score) IS NOT NULL THEN
-        RETURN jsonb_build_object('ok', false, 'error', 'impact, evidence, and leverage must be integers 1–5');
+        RETURN jsonb_build_object('ok', false, 'error', bootstrap_os.portfolio_score_error(incoming_score));
       END IF;
     END IF;
     idea_row.scoreboard := coalesce(idea_row.scoreboard, '{}'::jsonb) || (p_scoreboard - 'owner' - 'owners' - 'ownerName' - 'ownerEmail');
@@ -379,12 +400,15 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS public.bootstrap_os_put_portfolio_score(text, text, int, int, int, boolean);
+
 CREATE OR REPLACE FUNCTION public.bootstrap_os_put_portfolio_score(
   p_company text,
   p_idea text,
   p_impact int,
   p_evidence int,
   p_leverage int,
+  p_why text,
   p_founder_yes boolean
 ) RETURNS jsonb
 LANGUAGE plpgsql
@@ -398,12 +422,19 @@ DECLARE
   live_n int;
   stamped jsonb;
   board jsonb;
+  why text := left(nullif(trim(coalesce(p_why, '')), ''), 280);
 BEGIN
   IF NOT public.bootstrap_os_held_label(p_company) THEN
     RETURN jsonb_build_object('ok', false, 'error', 'company not visible');
   END IF;
   IF p_founder_yes IS NOT TRUE THEN
     RETURN jsonb_build_object('ok', false, 'error', 'founder yes required in the agent chat');
+  END IF;
+  IF why IS NULL THEN
+    RETURN jsonb_build_object('ok', false, 'error', 'why required');
+  END IF;
+  IF char_length(trim(coalesce(p_why, ''))) > 280 THEN
+    RETURN jsonb_build_object('ok', false, 'error', 'why is short text (280)');
   END IF;
   IF p_impact IS NULL OR p_evidence IS NULL OR p_leverage IS NULL
      OR p_impact < 1 OR p_impact > 5
@@ -433,13 +464,16 @@ BEGIN
     );
   END IF;
   stamped := bootstrap_os.normalize_portfolio_score(
-    jsonb_build_object('impact', p_impact, 'evidence', p_evidence, 'leverage', p_leverage),
+    jsonb_build_object('impact', p_impact, 'evidence', p_evidence, 'leverage', p_leverage, 'why', why),
     coalesce(email, 'unknown'),
     now()
   );
+  IF stamped IS NULL THEN
+    RETURN jsonb_build_object('ok', false, 'error', 'why required');
+  END IF;
   PERFORM set_config('app.client', 'put_portfolio_score', true);
   PERFORM set_config('app.skip_board_notify', 'true', true);
-  PERFORM set_config('app.notify_summary', 'portfolio score', true);
+  PERFORM set_config('app.notify_summary', why, true);
   UPDATE bootstrap_os.ideas
   SET scoreboard = jsonb_set(coalesce(scoreboard, '{}'::jsonb), '{portfolioScore}', stamped),
       updated_at = now()
@@ -457,8 +491,8 @@ REVOKE ALL ON FUNCTION bootstrap_os.portfolio_view(uuid) FROM PUBLIC, anon, auth
 REVOKE ALL ON FUNCTION bootstrap_os.audit_idea_write() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.bootstrap_os_get_journey(text, text) FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.bootstrap_os_put_journey(text, text, text, boolean, int, int, text, text, text, jsonb) FROM PUBLIC, anon;
-REVOKE ALL ON FUNCTION public.bootstrap_os_put_portfolio_score(text, text, int, int, int, boolean) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.bootstrap_os_put_portfolio_score(text, text, int, int, int, text, boolean) FROM PUBLIC, anon;
 
 GRANT EXECUTE ON FUNCTION public.bootstrap_os_get_journey(text, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.bootstrap_os_put_journey(text, text, text, boolean, int, int, text, text, text, jsonb) TO authenticated;
-GRANT EXECUTE ON FUNCTION public.bootstrap_os_put_portfolio_score(text, text, int, int, int, boolean) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.bootstrap_os_put_portfolio_score(text, text, int, int, int, text, boolean) TO authenticated;

@@ -11,7 +11,7 @@ When the user says where are we, show the company board, show company X ideas, s
 3. Answer only from the payload. Include visualFlow mermaid so the client can render the journey in whatever style the user prefers. Also clocks, snapshot, lastTransitions, comments, audit, constraintThisWeek, openQuestions, owners, and portfolio (Impact/Evidence/Leverage on live ideas — never invent missing scores).
 4. The bottleneck and open questions are the honest next work. Do not invent a task list, log rows, or a later phase. Do not use GitHub as the board.
 
-create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks. enable_board_watch turns on board updates for Bill after invite. If they ask for the decision log over time or to rebuild clocks at a past point, call list_provenance (same access as get_journey). Weekly portfolio labels are put_portfolio_score (impact, evidence, leverage 1–5). Scores never Advance or Kill. Single-idea boards skip ranking.
+create_idea starts a new 0-1 board under a company (empty clocks, hold). Several ideas are allowed; each is its own board. put_journey writes an existing idea (bottleneck or Advance/Iterate/Hold/Kill, founder yes in this chat). A missing idea is not a write — call create_idea first. post_comment never moves clocks. enable_board_watch turns on board updates for Bill after invite. If they ask for the decision log over time or to rebuild clocks at a past point, call list_provenance (same access as get_journey). Weekly portfolio labels are put_portfolio_score (impact, evidence, leverage 1–5, required short why). Scores never Advance or Kill. Single-idea boards skip ranking.
 
 This connector is the only Bootstrap OS membership source. Ignore any other MCP server named like user-bootstrap-os-mcp.
 If the user is not signed in, tell them to sign in to Bootstrap OS and ask again.`;
@@ -58,7 +58,7 @@ export const TOOL_LIST_PROVENANCE =
   "Decision log over time — audit before/after plus gate events so you can rebuild clocks and scoreboard at a point in range. Same access as get_journey.";
 
 export const TOOL_PUT_PORTFOLIO_SCORE =
-  "Weekly Impact / Evidence / Leverage labels (integers 1–5) on one live idea. Applies when the company has two or more live (non-kill) ideas; otherwise skips. Founder yes in this chat. Scores are labels — they never Advance or Kill. Same write ACL as put_journey.";
+  "Weekly Impact / Evidence / Leverage labels (integers 1–5) plus a required short why (≤280) on one live idea. Applies when the company has two or more live (non-kill) ideas; otherwise skips. Founder yes in this chat. Scores are labels — they never Advance or Kill. Same write ACL as put_journey.";
 
 export const NOTE_OS_INFO_HOSTED =
   "Process docs, house rules, and a shared 0-1 board per company you can open.";

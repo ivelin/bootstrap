@@ -14,6 +14,8 @@ import {
   PORTFOLIO_RANK_FORMULA,
   PORTFOLIO_SCORE_OUT_OF_RANGE,
   PORTFOLIO_SKIP_NEED_TWO_LIVE,
+  PORTFOLIO_WHY_REQUIRED,
+  PORTFOLIO_WHY_TOO_LONG,
   commentsMayMutateGate,
   defaultScoreboard,
   digestMayAdvanceGate,
@@ -703,7 +705,13 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(normalizePortfolioScore({ impact: 6, evidence: 3, leverage: 3 }).ok, false);
     assert.equal(normalizePortfolioScore({ impact: 3.5, evidence: 3, leverage: 3 }).ok, false);
     assert.equal(normalizePortfolioScore({ impact: 3, evidence: 3 }).ok, false);
-    assert.match(normalizePortfolioScore({ impact: 9, evidence: 1, leverage: 1 }).error, /1–5/);
+    assert.equal(normalizePortfolioScore({ impact: 3, evidence: 3, leverage: 3 }).ok, false);
+    assert.equal(normalizePortfolioScore({ impact: 3, evidence: 3, leverage: 3 }).error, PORTFOLIO_WHY_REQUIRED);
+    assert.equal(
+      normalizePortfolioScore({ impact: 3, evidence: 3, leverage: 3, why: "x".repeat(281) }).error,
+      PORTFOLIO_WHY_TOO_LONG,
+    );
+    assert.match(normalizePortfolioScore({ impact: 9, evidence: 1, leverage: 1, why: "out of range" }).error, /1–5/);
     assert.equal(PORTFOLIO_SCORE_OUT_OF_RANGE.includes("1–5"), true);
 
     const unscored = {
@@ -774,12 +782,25 @@ describe("journey views + tools (memory store)", () => {
     const advisor = bearer("advisor@example.test");
     const bravo = bearer("founder-bravo@example.test");
 
+    const skipNoWhy = await store.putPortfolioScore(founder, {
+      companySlug: "alpha",
+      ideaSlug: "default",
+      impact: 4,
+      evidence: 3,
+      leverage: 5,
+      why: "",
+      founderYes: true,
+    });
+    assert.equal(skipNoWhy.ok, false);
+    assert.equal(skipNoWhy.error, PORTFOLIO_WHY_REQUIRED);
+
     const skip = await store.putPortfolioScore(founder, {
       companySlug: "alpha",
       ideaSlug: "default",
       impact: 4,
       evidence: 3,
       leverage: 5,
+      why: "need a second live idea before ranking",
       founderYes: true,
     });
     assert.equal(skip.ok, true);
@@ -804,6 +825,7 @@ describe("journey views + tools (memory store)", () => {
       impact: 9,
       evidence: 3,
       leverage: 3,
+      why: "out of range",
       founderYes: true,
     });
     assert.equal(badRange.ok, false);
@@ -815,6 +837,7 @@ describe("journey views + tools (memory store)", () => {
       impact: 3,
       evidence: 3,
       leverage: 3,
+      why: "advisor cannot label",
       founderYes: true,
     });
     assert.equal(advisorWrite.ok, false);
@@ -825,6 +848,7 @@ describe("journey views + tools (memory store)", () => {
       impact: 3,
       evidence: 3,
       leverage: 3,
+      why: "no founder yes",
       founderYes: false,
     });
     assert.equal(noYes.ok, false);
@@ -835,6 +859,7 @@ describe("journey views + tools (memory store)", () => {
       impact: 5,
       evidence: 4,
       leverage: 3,
+      why: "operators already pay for a dispatcher",
       founderYes: true,
     });
     assert.equal(first.ok, true);
@@ -842,12 +867,21 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(first.idea.clocks.currentGate, "hold");
     assert.deepEqual(
       { ...first.idea.portfolioScore, scoredAt: undefined, scoredBy: undefined },
-      { impact: 5, evidence: 4, leverage: 3, scoredAt: undefined, scoredBy: undefined },
+      {
+        impact: 5,
+        evidence: 4,
+        leverage: 3,
+        why: "operators already pay for a dispatcher",
+        scoredAt: undefined,
+        scoredBy: undefined,
+      },
     );
     assert.equal(first.idea.portfolioScore.scoredBy, "founder@example.test");
     assert.equal(first.audit.whatChanged.via, "put_portfolio_score");
+    assert.equal(first.audit.whatChanged.why, "operators already pay for a dispatcher");
     assert.equal(first.audit.whatChanged.before.scoreboard.portfolioScore, undefined);
     assert.equal(first.audit.whatChanged.after.scoreboard.portfolioScore.impact, 5);
+    assert.equal(first.audit.whatChanged.after.scoreboard.portfolioScore.why, "operators already pay for a dispatcher");
     assert.equal(first.notify, undefined);
 
     const second = await store.putPortfolioScore(founder, {
@@ -856,6 +890,7 @@ describe("journey views + tools (memory store)", () => {
       impact: 2,
       evidence: 2,
       leverage: 2,
+      why: "weaker observed pull",
       founderYes: true,
     });
     assert.equal(second.ok, true);
@@ -868,17 +903,30 @@ describe("journey views + tools (memory store)", () => {
     assert.equal(second.portfolio.ranked[0].total, 12);
     assert.equal(second.portfolio.ranked[1].total, 6);
     assert.deepEqual(second.portfolio.unscored, []);
+    assert.equal(second.portfolio.ranked[0].why, "operators already pay for a dispatcher");
 
-    const viaPut = await store.putJourney(founder, {
+    const missingWhy = await store.putJourney(founder, {
       companySlug: "alpha",
       ideaSlug: "second-bet",
       why: "relabel",
       founderYes: true,
       portfolioScore: { impact: 1, evidence: 1, leverage: 1 },
     });
+    assert.equal(missingWhy.ok, false);
+    assert.equal(missingWhy.error, PORTFOLIO_WHY_REQUIRED);
+
+    const viaPut = await store.putJourney(founder, {
+      companySlug: "alpha",
+      ideaSlug: "second-bet",
+      why: "relabel",
+      founderYes: true,
+      portfolioScore: { impact: 1, evidence: 1, leverage: 1, why: "relabel after a weaker week" },
+    });
     assert.equal(viaPut.ok, true);
     assert.equal(viaPut.idea.portfolioScore.impact, 1);
+    assert.equal(viaPut.idea.portfolioScore.why, "relabel after a weaker week");
     assert.equal(viaPut.idea.clocks.currentGate, "hold");
+    assert.equal(viaPut.audit.whatChanged.after.scoreboard.portfolioScore.why, "relabel after a weaker week");
 
     const invalidBoard = await store.putJourney(founder, {
       companySlug: "alpha",
@@ -916,6 +964,7 @@ describe("journey views + tools (memory store)", () => {
       impact: 5,
       evidence: 5,
       leverage: 5,
+      why: "killed bets stay off the live rank",
       founderYes: true,
     });
     assert.equal(scoreKilled.ok, false);
@@ -927,6 +976,7 @@ describe("journey views + tools (memory store)", () => {
       impact: 5,
       evidence: 5,
       leverage: 5,
+      why: "cross-tenant leak",
       founderYes: true,
     });
     assert.equal(leak.ok, false);

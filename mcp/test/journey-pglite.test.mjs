@@ -95,6 +95,7 @@ describe("PGlite journey RLS (isolated, never prod)", { concurrency: false }, ()
     );
     assert.match(portfolio, /bootstrap_os_put_portfolio_score/);
     assert.match(portfolio, /portfolioScore/);
+    assert.match(portfolio, /why required/);
     assert.match(portfolio, /Do not migrate\/seed\/live-probe supabase-pirin-ai/);
     assert.doesNotMatch(portfolio, /supabase\.co/);
   });

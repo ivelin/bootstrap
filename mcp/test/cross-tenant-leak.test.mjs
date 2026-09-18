@@ -381,6 +381,7 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
                           impact: 3,
                           evidence: 3,
                           leverage: 3,
+                          why: "cross-tenant probe",
                           founderYes: true,
                         }
                     : { q: "bravo" },
@@ -453,7 +454,7 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
       ["list_provenance", { company: "bravo" }],
       [
         "put_portfolio_score",
-        { company: "bravo", idea: "default", impact: 3, evidence: 3, leverage: 3, founderYes: true },
+        { company: "bravo", idea: "default", impact: 3, evidence: 3, leverage: 3, why: "cross-tenant probe", founderYes: true },
       ],
     ];
 
@@ -490,6 +491,7 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
         impact: 3,
         evidence: 3,
         leverage: 3,
+        why: "cross-tenant probe",
         founderYes: true,
       }),
       store.listKilledIdeas(actorA, { companySlug: "bravo" }),
@@ -597,7 +599,7 @@ describe("cross-tenant invite-only CI gate (memory ACL + webhook)", () => {
       ["list_provenance", { company: "delta" }],
       [
         "put_portfolio_score",
-        { company: "delta", idea: "default", impact: 3, evidence: 3, leverage: 3, founderYes: true },
+        { company: "delta", idea: "default", impact: 3, evidence: 3, leverage: 3, why: "cross-tenant probe", founderYes: true },
       ],
       [
         "subscribe_board",

@@ -233,7 +233,15 @@ describe("Vercel fetch handler (hosted-read)", () => {
       [
         56,
         "put_portfolio_score",
-        { company: "corehaul", idea: "corehaul", impact: 3, evidence: 3, leverage: 3, founderYes: true },
+        {
+          company: "corehaul",
+          idea: "corehaul",
+          impact: 3,
+          evidence: 3,
+          leverage: 3,
+          why: "stranger probe",
+          founderYes: true,
+        },
       ],
     ]) {
       const notify = await handleHostedReadFetch(

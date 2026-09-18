@@ -924,10 +924,11 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
           impact: z.number().int().min(1).max(5),
           evidence: z.number().int().min(1).max(5),
           leverage: z.number().int().min(1).max(5),
+          why: z.string().min(1).max(280).describe("Short why for this week's labels. Required."),
         })
         .optional()
         .describe(
-          "Weekly Impact/Evidence/Leverage labels (1–5). Prefer put_portfolio_score. Does not Advance or Kill. Skipped on single-idea or killed boards.",
+          "Weekly Impact/Evidence/Leverage labels (1–5) plus required short why. Prefer put_portfolio_score. Does not Advance or Kill. Skipped on single-idea or killed boards.",
         ),
     },
     async (input) => {
@@ -1097,6 +1098,11 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
         .min(1)
         .max(5)
         .describe("How much can this team uniquely do from here? 1–5."),
+      why: z
+        .string()
+        .min(1)
+        .max(280)
+        .describe("Short why for this week's labels. Required. Stored on portfolioScore and audit before/after."),
       founderYes: z
         .boolean()
         .describe("True only after an explicit founder yes in their agent chat"),
@@ -1120,6 +1126,7 @@ function registerJourneyTools(server: McpServer, ctx: HostedRequestContext) {
             impact: input.impact,
             evidence: input.evidence,
             leverage: input.leverage,
+            why: input.why,
             founderYes: input.founderYes,
             client: input.client,
           }),

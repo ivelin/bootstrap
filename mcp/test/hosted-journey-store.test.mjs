@@ -26,6 +26,7 @@ describe("hosted membership journey store", () => {
     assert.match(src, /bootstrap_os_change_acl/);
     assert.match(src, /bootstrap_os_list_provenance/);
     assert.match(src, /bootstrap_os_put_portfolio_score/);
+    assert.match(src, /p_why: input.why/);
     assert.match(src, /fireWebhooksAfterWrite/);
   });
 

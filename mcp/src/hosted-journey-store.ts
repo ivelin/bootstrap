@@ -409,6 +409,7 @@ export class SupabaseJourneyStore implements JourneyStore {
       impact: number;
       evidence: number;
       leverage: number;
+      why: string;
       founderYes: boolean;
       client?: string;
     },
@@ -419,6 +420,7 @@ export class SupabaseJourneyStore implements JourneyStore {
       p_impact: input.impact,
       p_evidence: input.evidence,
       p_leverage: input.leverage,
+      p_why: input.why,
       p_founder_yes: input.founderYes,
     });
     if ("error" in hit) return { ok: false, error: hit.error };
