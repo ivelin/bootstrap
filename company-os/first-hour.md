@@ -143,6 +143,12 @@ When someone treats an advisor's promise of exclusivity or an Office Hours tip a
 
 House rule: [advisor ride-along is assumed, not observed](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed).
 
+When a company or person asks for more work after the first conversation, and they have not paid for that next session:
+
+> The first conversation is free. The next working session is paid, or you stop. A long buying cycle is not a reason to keep working for free.
+
+House rule: [unpaid weeks cannot promote](https://github.com/ivelin/bootstrap/blob/main/company-os/operating-system.md#house-rule-unpaid-weeks-cannot-promote).
+
 ### SoR / buy vs build / advice (not this hour)
 
 Not Day 0 homework. The hour stays thesis, ≥3 groups, one snapshot.

@@ -1195,6 +1195,44 @@ else
   not_ok "ai-instructions must pin Core Belief 4 to #core-beliefs without copying the essay"
 fi
 
+# --- z2) OS 2.8.13: unpaid weeks cannot promote ---
+# Full rule lives once in the OS section. Pins + link elsewhere. Not Day 0 homework.
+# Cards hold Customer type / First paid offer / Unpaid work fields. OS holds the Who-buys table.
+if grep -q '### House rule: unpaid weeks cannot promote' company-os/operating-system.md \
+  && grep -q '| 2.8.13 |' company-os/operating-system.md \
+  && grep -Fq '**Version:** 2.8.13' company-os/operating-system.md \
+  && grep -q 'Customer type (consumer / small business / mid-market / enterprise' templates/research/icps/TEMPLATE.md \
+  && grep -q 'First paid offer' templates/research/icps/TEMPLATE.md \
+  && grep -q 'Unpaid work after the first talk' templates/research/icps/TEMPLATE.md \
+  && grep -q 'Unpaid work on live prospects' templates/instance/snapshots/TEMPLATE.md \
+  && grep -q 'Follow-up cue' company-os/operating-system.md \
+  && grep -q 'BANT' company-os/operating-system.md \
+  && grep -q 'MEDDIC' company-os/operating-system.md \
+  && grep -q 'MEDDPICC' company-os/operating-system.md \
+  && grep -q 'Listed price' company-os/operating-system.md \
+  && grep -q 'Words used here' company-os/operating-system.md \
+  && grep -q 'Budget (is there money)' company-os/operating-system.md \
+  && grep -q 'When this rule does not apply' company-os/operating-system.md \
+  && grep -q 'Waiting while their purchasing process runs' company-os/operating-system.md \
+  && grep -q 'house-rule-unpaid-weeks-cannot-promote' company-os/first-hour.md \
+  && grep -q 'house-rule-unpaid-weeks-cannot-promote' company-os/ai-instructions.md \
+  && grep -q 'OS_VERSION = "2.8.12"' mcp/src/constants.ts \
+  && grep -q '2.8.12' company-os/operating-system.md; then
+  ok "OS 2.8.13 unpaid-weeks house-rule section has full rule, table, and card strings"
+else
+  not_ok "operating-system.md must hold the 2.8.13 unpaid-weeks house rule; cards and pins must match"
+fi
+done_when=$(sed -n '/^## Done when$/,/^## After this hour$/p' company-os/first-hour.md)
+if ! printf '%s\n' "$done_when" | grep -q 'unpaid weeks' \
+  && ! printf '%s\n' "$done_when" | grep -q 'Buyer class' \
+  && ! printf '%s\n' "$done_when" | grep -q 'Customer type' \
+  && ! printf '%s\n' "$done_when" | grep -q 'BANT' \
+  && ! printf '%s\n' "$done_when" | grep -q 'MEDDIC'; then
+  ok "2.8.13 unpaid weeks is not Day 0 Done when homework"
+else
+  not_ok "do not put unpaid weeks / Buyer class / Customer type / BANT / MEDDIC in the Day 0 Done when checklist"
+fi
+
 # --- no instance secrets (hard contribution rule) ---
 if grep -q 'No instance secrets in this template (hard)' AGENTS.md \
   && grep -q 'Instance secrets in the template' README.md \
