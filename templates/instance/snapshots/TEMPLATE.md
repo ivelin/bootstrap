@@ -55,5 +55,6 @@ LIVE LOOP (fast)   M / 7   [stage name]
 - [ ] Optional: what to automate, parallelize, or delete
 - [ ] Founder-day only if real talks happened: prep / close the call / post-talk / admin drafts
 - [ ] Optional: this snapshot can see this week’s conversations — or I wrote “none this week”
+- [ ] Unpaid weeks on live logos (name + weeks + last paid SKU + stop date, or none this week)
 
 **What this is not:** proof of demand, payment, or product–market fit.
