@@ -1,6 +1,6 @@
 # Journey board
 
-On this draft branch the hosted adapter also lists gated journey board tools. A founder or advisor with an allowlisted JWT reads `get_journey` (company or company/idea), and a founder-authorized actor may subscribe an ACL member to board notify. Cookie-less calls 401. These tools are **not** on the production pin. There is no snapshot HTML UI in this repo.
+On this draft branch the hosted adapter also lists gated journey board tools. A founder or advisor with an allowlisted JWT reads `get_journey` (company or company/idea), and a founder-authorized actor may subscribe an ACL member to board notify. Cookie-less calls 401. Tools list on the production pin after Cos applies subscriber SQL. Preview/dev never attach the live store. There is no snapshot HTML UI in this repo.
 
 ## Sub-features
 
@@ -33,7 +33,7 @@ Preconditions:
 
 ## Gotchas
 
-- Journey tools are branch/draft. Do not claim they are on `https://mcp.bootstrap.pirin.ai/mcp` until Cos merges.
+- Journey tools list on the pin after Cos applies `20260920_bootstrap_os_board_subscribers.sql`. Do not live-probe the pin from a PR agent.
 - Labels from whoami are **not** boards. `get_journey` is a different ACL.
 - Comments and digests must not invent stage or Advance.
 - Email notify is enqueue-only. Resend is pirin-ai (`verify-pirin` / Cos), not this helper.
