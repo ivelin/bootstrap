@@ -135,12 +135,13 @@ SECURITY DEFINER
 SET search_path = bootstrap_os, public
 AS $$
 BEGIN
+  -- Single put_journey audit. RPC no longer emit_audit after UPDATE.
   PERFORM bootstrap_os.emit_audit(
     NEW.company_id,
     NEW.id,
     COALESCE(bootstrap_os.actor_principal(), NEW.name),
     COALESCE(NULLIF(current_setting('app.client', true), ''), 'put_journey'),
-    jsonb_build_object(
+    jsonb_strip_nulls(jsonb_build_object(
       'via', 'put_journey',
       'op', 'put_journey',
       'journey_phase', NEW.journey_phase,
@@ -149,13 +150,18 @@ BEGIN
       'constraint_this_week', COALESCE(NEW.scoreboard->>'constraint_this_week', ''),
       'gate', NEW.current_gate,
       'why', NULLIF(current_setting('app.notify_summary', true), ''),
+      'whatChanged', NEW.scoreboard #>> '{gateEnrichment,whatChanged}',
+      'whatWereNotDoing', NEW.scoreboard #>> '{gateEnrichment,whatWereNotDoing}',
+      'evidenceLinks', NEW.scoreboard #> '{gateEnrichment,evidenceLinks}',
+      'lessonsLearned', NEW.scoreboard #>> '{killPostmortem,lessonsLearned}',
+      'actionableInsights', NEW.scoreboard #>> '{killPostmortem,actionableInsights}',
       'before', bootstrap_os.idea_board_snapshot(
         OLD.journey_phase, OLD.loop_stage, OLD.current_gate, OLD.scoreboard
       ),
       'after', bootstrap_os.idea_board_snapshot(
         NEW.journey_phase, NEW.loop_stage, NEW.current_gate, NEW.scoreboard
       )
-    )
+    ))
   );
   PERFORM bootstrap_os.enqueue_board_notify(
     NEW.company_id,
@@ -167,6 +173,12 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+
+DROP TRIGGER IF EXISTS ideas_audit_write ON bootstrap_os.ideas;
+CREATE TRIGGER ideas_audit_write
+  AFTER UPDATE ON bootstrap_os.ideas
+  FOR EACH ROW
+  EXECUTE FUNCTION bootstrap_os.audit_idea_write();
 
 CREATE OR REPLACE FUNCTION bootstrap_os.audit_comment_write()
 RETURNS trigger
@@ -268,12 +280,12 @@ BEGIN
     jsonb_build_object(
       'via', via,
       'op', TG_OP,
+      -- webhookUrl stays on list_subscribers. Do not archive it in provenance.
       'before', CASE
         WHEN TG_OP = 'INSERT' THEN NULL
         ELSE jsonb_build_object(
           'principal', OLD.principal,
           'principalKind', OLD.principal_kind,
-          'webhookUrl', OLD.webhook_url,
           'emailOptIn', OLD.email_opt_in,
           'ideaId', OLD.idea_id
         )
@@ -283,7 +295,6 @@ BEGIN
         ELSE jsonb_build_object(
           'principal', NEW.principal,
           'principalKind', NEW.principal_kind,
-          'webhookUrl', NEW.webhook_url,
           'emailOptIn', NEW.email_opt_in,
           'ideaId', NEW.idea_id
         )
@@ -450,8 +461,6 @@ DECLARE
   email text := NULLIF(lower(auth.jwt() ->> 'email'), '');
   board jsonb;
   bundle jsonb;
-  before_snap jsonb;
-  after_snap jsonb;
   gate_enr jsonb;
   kill_pm jsonb;
   need_gate boolean;
@@ -468,11 +477,9 @@ BEGIN
   IF idea_row.id IS NULL THEN
     RETURN jsonb_build_object('ok', false, 'error', 'idea not found; call create_idea first');
   END IF;
-  before_snap := bootstrap_os.idea_board_snapshot(
-    idea_row.journey_phase, idea_row.loop_stage, idea_row.current_gate, idea_row.scoreboard
-  );
   need_gate := p_current_gate IS NOT NULL OR p_journey_phase IS NOT NULL OR p_loop_stage IS NOT NULL;
-  PERFORM set_config('app.notify_summary', left(coalesce(p_why, 'board write'), 80), true);
+  PERFORM set_config('app.client', 'mcp', true);
+  PERFORM set_config('app.notify_summary', left(coalesce(p_why, 'board write'), 280), true);
   IF p_journey_phase IS NOT NULL THEN idea_row.journey_phase := p_journey_phase; END IF;
   IF p_loop_stage IS NOT NULL THEN idea_row.loop_stage := p_loop_stage; END IF;
   IF p_current_gate IS NOT NULL THEN idea_row.current_gate := p_current_gate::bootstrap_os.gate_decision; END IF;
@@ -502,23 +509,6 @@ BEGIN
     INSERT INTO bootstrap_os.gate_events (idea_id, action, why, who)
     VALUES (idea_row.id, idea_row.current_gate, p_why, coalesce(email, 'unknown'));
   END IF;
-  after_snap := bootstrap_os.idea_board_snapshot(
-    idea_row.journey_phase, idea_row.loop_stage, idea_row.current_gate, idea_row.scoreboard
-  );
-  PERFORM bootstrap_os.emit_audit(cid, idea_row.id, coalesce(email, 'unknown'), 'mcp',
-    jsonb_strip_nulls(jsonb_build_object(
-      'op', 'put_journey',
-      'via', 'put_journey',
-      'why', p_why,
-      'gate', idea_row.current_gate,
-      'whatChanged', idea_row.scoreboard #>> '{gateEnrichment,whatChanged}',
-      'whatWereNotDoing', idea_row.scoreboard #>> '{gateEnrichment,whatWereNotDoing}',
-      'evidenceLinks', idea_row.scoreboard #> '{gateEnrichment,evidenceLinks}',
-      'lessonsLearned', idea_row.scoreboard #>> '{killPostmortem,lessonsLearned}',
-      'actionableInsights', idea_row.scoreboard #>> '{killPostmortem,actionableInsights}',
-      'before', before_snap,
-      'after', after_snap
-    )));
   board := public.bootstrap_os_get_journey(p_company, idea_row.slug);
   bundle := bootstrap_os.notify_bundle(cid, idea_row.id, 'put_journey');
   RETURN board || bundle;

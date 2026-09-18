@@ -46,7 +46,7 @@ export const TOOL_CREATE_IDEA =
   "Start a new 0-1 idea board under a company this login can open. Empty clocks (phase 1, loop 1, hold). Several ideas are allowed; each idea is its own board. Needs an explicit founder yes in this chat. Then put_journey writes that idea.";
 
 export const TOOL_PUT_JOURNEY =
-  "Update an existing 0-1 idea board (phase, gate, bottleneck this week). New slugs: create_idea first. Phase or gate change needs an explicit founder yes in this chat.";
+  "Update an existing 0-1 idea board (phase, gate, bottleneck this week). New slugs: create_idea first. Phase or gate change needs an explicit founder yes, why, whatChanged, and whatWereNotDoing. Kill also requires a postmortem: lessonsLearned and actionableInsights.";
 
 export const TOOL_POST_COMMENT =
   "Comment on an idea. Comments never move phase or gate.";

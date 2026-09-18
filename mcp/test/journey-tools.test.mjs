@@ -478,8 +478,20 @@ describe("journey views + tools (memory store)", () => {
     const listed = await store.listSubscribers(advisor, { companySlug: "corehaul" });
     assert.equal(listed.ok, true);
     assert.equal(listed.subscribers.length, 1);
+    assert.equal(listed.subscribers[0].webhookUrl, "https://hooks.example.test/core");
     const hiddenList = await store.listSubscribers(dye, { companySlug: "corehaul" });
     assert.equal(hiddenList.ok, false);
+
+    const advisorBoard = await store.getJourney(advisor, { companySlug: "corehaul" });
+    assert.equal(advisorBoard.ok, true);
+    assert.doesNotMatch(JSON.stringify(advisorBoard.audit), /hooks\.example\.test|webhookUrl/);
+    const advisorProv = await store.listProvenance(advisor, { companySlug: "corehaul" });
+    assert.equal(advisorProv.ok, true);
+    assert.doesNotMatch(JSON.stringify(advisorProv), /hooks\.example\.test|webhookUrl/);
+    const subAudit = advisorBoard.audit.find((a) => a.whatChanged?.via === "subscribe_board");
+    assert.ok(subAudit);
+    assert.equal(subAudit.whatChanged.after.principal, "advisor-cos@example.test");
+    assert.equal(subAudit.whatChanged.after.webhookUrl, undefined);
 
     const wrote = await store.putJourney(founder, {
       companySlug: "corehaul",

@@ -174,6 +174,13 @@ describe("PGlite provenance + kill postmortem (isolated, never prod)", { concurr
     assert.match(sql, /whatWereNotDoing/);
     assert.doesNotMatch(sql, /supabase\.co/);
     assert.doesNotMatch(sql, /Impact\/Evidence\/Leverage/);
+    const subscriberAudit = sql.match(
+      /CREATE OR REPLACE FUNCTION bootstrap_os\.audit_subscriber_write\(\)[\s\S]*?\$\$;/,
+    );
+    assert.ok(subscriberAudit);
+    assert.doesNotMatch(subscriberAudit[0], /webhookUrl/);
+    assert.match(subscriberAudit[0], /Do not archive it in provenance/);
+    assert.match(sql, /RPC no longer emit_audit after UPDATE/);
   });
 
   it("held_label fail-closed: bravo founder cannot list alpha provenance or killed ideas", async () => {

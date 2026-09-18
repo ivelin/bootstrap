@@ -1374,11 +1374,11 @@ export class MemoryJourneyStore implements JourneyStore {
         whatChanged: {
           op: "INSERT",
           via: "subscribe_board",
+          // webhookUrl stays on list_subscribers. Do not archive it in provenance.
           before: null,
           after: {
             principal,
             principalKind: input.principalKind,
-            webhookUrl: input.webhookUrl.trim(),
             emailOptIn: Boolean(input.emailOptIn),
             ideaId,
           },
@@ -1452,7 +1452,6 @@ export class MemoryJourneyStore implements JourneyStore {
           before: {
             principal: existing.principal,
             principalKind: existing.principalKind,
-            webhookUrl: existing.webhookUrl,
             emailOptIn: existing.emailOptIn,
             ideaId: existing.ideaId,
           },

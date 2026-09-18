@@ -515,12 +515,12 @@ BEGIN
     jsonb_build_object(
       'via', via,
       'op', TG_OP,
+      -- webhookUrl stays on list_subscribers. Do not archive it in provenance.
       'before', CASE
         WHEN TG_OP = 'INSERT' THEN NULL
         ELSE jsonb_build_object(
           'principal', OLD.principal,
           'principalKind', OLD.principal_kind,
-          'webhookUrl', OLD.webhook_url,
           'emailOptIn', OLD.email_opt_in,
           'ideaId', OLD.idea_id
         )
@@ -530,7 +530,6 @@ BEGIN
         ELSE jsonb_build_object(
           'principal', NEW.principal,
           'principalKind', NEW.principal_kind,
-          'webhookUrl', NEW.webhook_url,
           'emailOptIn', NEW.email_opt_in,
           'ideaId', NEW.idea_id
         )

@@ -206,6 +206,37 @@ describe("PGlite hosted board subscriber RPCs (isolated, never prod)", { concurr
     assert.equal(listed.subscribers.length, 1);
     assert.equal(listed.subscribers[0].webhookUrl, "https://hooks.example.test/core");
 
+    const board = (
+      await asJwt(
+        { email: "advisor@example.test" },
+        "SELECT public.bootstrap_os_get_journey($1,$2) AS body",
+        ["alpha", null],
+      )
+    )[0].body;
+    assert.equal(board.ok, true);
+    assert.doesNotMatch(JSON.stringify(board.audit), /hooks\.example\.test|webhookUrl/);
+    const prov = (
+      await asJwt(
+        { email: "advisor@example.test" },
+        "SELECT public.bootstrap_os_list_provenance($1,$2,$3,$4) AS body",
+        ["alpha", null, null, null],
+      )
+    )[0].body;
+    assert.equal(prov.ok, true);
+    assert.doesNotMatch(JSON.stringify(prov), /hooks\.example\.test|webhookUrl/);
+    const subAudit = await db.query(
+      `SELECT what_changed FROM bootstrap_os.audit_events
+       WHERE what_changed->>'via' IN ('subscribe_board', 'unsubscribe_board')`,
+    );
+    assert.ok(subAudit.rows.length >= 1);
+    for (const row of subAudit.rows) {
+      const dump = JSON.stringify(row.what_changed);
+      assert.doesNotMatch(dump, /hooks\.example\.test/);
+      assert.doesNotMatch(dump, /webhookUrl/);
+      assert.equal(row.what_changed.after?.webhookUrl, undefined);
+      assert.equal(row.what_changed.before?.webhookUrl, undefined);
+    }
+
     const hidden = (
       await asJwt(
         { email: "founder-bravo@example.test" },
@@ -242,6 +273,11 @@ describe("PGlite hosted board subscriber RPCs (isolated, never prod)", { concurr
       )
     )[0].body;
     assert.equal(wrote.ok, true);
+    const putAudits = await db.query(
+      `SELECT count(*)::int AS n FROM bootstrap_os.audit_events
+       WHERE what_changed->>'via' = 'put_journey'`,
+    );
+    assert.equal(putAudits.rows[0].n, 1, "put_journey RPC must not double-emit vs audit_idea_write");
     assert.equal(wrote.notify.webhook, 1);
     assert.equal(wrote.notify.emailQueued, 1);
     assert.equal(wrote.webhookDeliveries.length, 1);
