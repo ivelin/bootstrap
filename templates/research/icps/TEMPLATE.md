@@ -13,7 +13,7 @@ Customer group:
 Seed (own customers if any; else legal adjacent traces — public forums, substitute/competitor reviews, or the founder’s prior-domain notes with no PII. Not a former employer’s private customer list. If truly none, write none yet and treat as weaker):
 Reward notes (pain, pay, reach, channel fit):
 Risk notes (reach cost, hand-holding, messiness, legal, time-to-signal):
-Customer type (consumer / small business / mid-market / enterprise — who decides and how long a yes usually takes. Cue: listed price / BANT / MEDDIC / MEDDPICC. One product, not a second company.):
+Customer type (consumer / small business / mid-market / enterprise — who decides and how long a yes usually takes. Cue: listed price / BANT (budget, authority, need, timeline) / MEDDIC / MEDDPICC. One product, not a second company.):
 Expected time to a first paid yes:
 First paid offer (the thing they asked to buy, in their words):
 Unpaid work after the first talk (first conversation free; next working session paid or stop):
