@@ -1,8 +1,8 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.12  
-**Last Updated:** 2026-09-17  
+**Version:** 2.8.13  
+**Last Updated:** 2026-09-18  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -90,7 +90,8 @@ This is a Day 0 / Path 1 question. It is **not** a house rule and **not** a thir
    House rule: [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).  
    House rule: [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist).  
    House rule: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote).  
-   House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed).
+   House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed).  
+   House rule: [unpaid weeks cannot promote](#house-rule-unpaid-weeks-cannot-promote).
 
 7. **Build evaluation-first when you build.**  
    Spec success criteria and a harness before (or with) the implementation — not after a big unmeasured build.
@@ -1166,7 +1167,36 @@ Someone saying an advisor's promise of exclusivity, or an Office Hours tip about
 
 **Implement.** Write down who said what. Check that first before you write exclusivity language. A week of only lawyer emails and advisor meetings = stay put. A named person who wants to pay can move you.
 
-Same family: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
+Same family: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed). [Unpaid weeks cannot promote](#house-rule-unpaid-weeks-cannot-promote).
+
+### House rule: unpaid weeks cannot promote
+
+Someone saying you must keep working for a company after the first conversation, unpaid, because the buying cycle is long, is asking for **free custom work** — not proof the group will pay. Same family as a spoken yes and [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed): talk is not a sale. The first conversation is free. The next working session is paid, or you stop.
+
+**Meaning.** Real proof = someone used the product, paid, came back, or referred a friend. Unpaid weeks after the first talk cannot promote a group. A filled BANT or MEDDIC list is still stated interest. It cannot promote. A long buying cycle is not free custom work. Customer type lives on the existing group card (consumer / small business / mid-market / enterprise). That type sets expected time to a first paid yes and a follow-up cue. One product. Not a second company. Not a second way of selling.
+
+**Who buys.** Write the type on the group card you already have. The cue is how you follow up — not a sales course and not a second motion.
+
+| Customer type | Who decides | Time to a first paid yes | Follow-up cue |
+|---------------|-------------|--------------------------|---------------|
+| Consumer | The person using it | Same day to a few weeks | Listed price |
+| Small business | Owner or one buyer | Days to a few months | BANT |
+| Mid-market | A named buyer plus a process | Weeks to a few quarters | MEDDIC |
+| Enterprise | A committee; paper and competition | Months | MEDDPICC |
+
+This rule **applies** after the first conversation with a live prospect, when they ask for more unpaid work. It does **not** apply on Day 0 (thesis, ≥3 groups, one snapshot). It is **not** a tenth phase, **not** a third clock, and **not** a sales course.
+
+Three examples, not extra law:
+
+| | Do this | Not this |
+|--|---------|----------|
+| **Pay or stop** | After the first talk, a prospect asks for a custom build "to evaluate." The founder names a first paid offer or stops. Unpaid work after the first talk is written on the card. | Six unpaid working sessions while the BANT list is still empty. The founder treats the hours as proof the group will pay. |
+| **Stated list is not a sale** | A mid-market contact fills MEDDIC fields. The founder writes that as stated interest and keeps promote on hold. | A filled MEDDIC sheet is treated as proof the group will pay. The board moves on. No one has paid. |
+| **Long cycle is not free work** | An enterprise contact says the committee needs a quarter. The founder writes expected time to a first paid yes and the MEDDPICC cue. The next working session is still paid, or they stop. Snapshot ritual: unpaid work on live prospects (name + weeks unpaid + last paid offer + stop date, or none this week). | Months of unpaid custom work because "enterprise takes time." Unpaid weeks on live prospects have no stop date. |
+
+This rule is **not** Day 0 homework, **not** a tenth phase, and **not** a sales course.
+
+Same family: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). [Legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
 ---
 
@@ -1393,6 +1423,7 @@ Every company should maintain its own list. Starter prompts:
 - Automating the playbook, or an agent team to skip a step with no named owner — see [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist)  
 - Cap table, SAFE, or lawyer emails as proof the product works — see [legal paper cannot promote](#house-rule-legal-paper-cannot-promote)  
 - An advisor says stay exclusive, then a prospect asks to pay, and the founder delays them — see [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed)  
+- Free work for a company after the first conversation — see [unpaid weeks cannot promote](#house-rule-unpaid-weeks-cannot-promote)
 - Commissioning custom legal agreements before revenue — see [starter legal templates](#starter-legal-templates)
 
 ---
@@ -1446,7 +1477,7 @@ Accuracy numbers perish with the model checkpoint. Mechanism findings last until
 - Bisbee et al., 2024, *Political Analysis*. Task: silicon sampling / prompt variance and drift. Finding: too-tight variance and same-prompt drift make a pass unusable.
 - Brand, Israeli, and Ngwe, HBS 23-062 rev. 2026, §3.3. Task: willingness-to-pay and cross-category fine-tune (laptop → tablet). Finding: direct dollar WTP from GPT was useless; fine-tune failed on a new category. They still used conjoint with prices in the profile and reported $. They did not write “never produce a dollar” or “one condition change.”
 
-Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused); [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote); [a security program cannot promote](#house-rule-a-security-program-cannot-promote); [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist); [legal paper cannot promote](#house-rule-legal-paper-cannot-promote); [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed).
+Everything else in the research method is adjacent literature or a **house rule**. House rules (epistemology, not a paper): observed wins a clash; a spoken yes cannot promote; do not seed from a demographic one-liner (demo-only role-play is the weak case); several ideas are allowed (each its own board; do not hide a second idea to look focused); [marketing volume cannot promote](#house-rule-marketing-volume-cannot-promote); [a security program cannot promote](#house-rule-a-security-program-cannot-promote); [there is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [do not automate a step that should not exist](#house-rule-do-not-automate-a-step-that-should-not-exist); [legal paper cannot promote](#house-rule-legal-paper-cannot-promote); [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed); [unpaid weeks cannot promote](#house-rule-unpaid-weeks-cannot-promote).
 
 ## Changelog (high level)
 
@@ -1474,6 +1505,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.10 | House rule: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). Same family as 2.8.6 / 2.8.7 / 2.8.8 / 2.8.9; do not merge. Cap table, SAFE, and lawyer emails do not prove the product works. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.11 | House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. An advisor's opinion is a tip, not proof. Write down who said it. Do not delay a paying customer. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.12 | Additive pack: [founder checkpoints](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha). Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. Founder-facing speech uses the [plain lines](#how-to-say-this); desk labels stay in traces. No tenth phase. No third clock. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.13 | House rule: [unpaid weeks cannot promote](#house-rule-unpaid-weeks-cannot-promote). Same family as 2.8.6–2.8.11; do not merge. First conversation is free. Next working session is paid or you stop. Customer type lives on the existing group card (consumer / small business / mid-market / enterprise) with a follow-up cue (listed price / BANT / MEDDIC / MEDDPICC). A long buying cycle is not free custom work. Not Day 0. Not a tenth phase. Not a sales course. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 
