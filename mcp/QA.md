@@ -15,7 +15,7 @@
 | **Mentee visitor matrix** | `test/mentee-visitor-matrix.test.mjs` | Claimed mentee-agent file surfaces (skills, README, marketplace.json) |
 | **Hosted identity + RLS** | `identity.test.mjs` + `identity-rls.test.mjs` + `identity-pglite.test.mjs` | Path 1 alias stays open; collab-host handshake + gated tools 401 + exact WWW-Authenticate; PGlite FORCE RLS (never the live project) |
 | **E2E role-play matrix** | `e2e-roleplay-matrix.test.mjs` | Empty/uninvited 401; first-user SQL insert → invited whoami; wrong/expired tokens; label isolation; P1–P4 invite/accept; **P5–P6** membership; **P7 where are we**. No prod mail. PGlite only. |
-| **Invite-only company boards (cross-tenant)** | `cross-tenant-leak.test.mjs` | Unauthenticated / stranger / invited-to-A-only must not see B via journey + label tools (`q=`, typo, idea slug, webhook, list). HTTP 401/403 or empty. PGlite `held_label` + RLS. Fail the pipeline on any leak. |
+| **Invite-only company boards (cross-tenant)** | `cross-tenant-leak.test.mjs` | Unauthenticated / stranger / invited-to-A-only must not see B via journey + label tools (`q=`, typo, idea slug, webhook, list). HTTP 401/403 or empty. PGlite `held_label`. Fictional `alpha` / `bravo` / `charlie` / `delta` only. Fail the pipeline on any leak. |
 | **Line coverage ≥ 80%** | `npm run test:coverage` | Node 22 `node --test` coverage on `dist/`. Lines ≥ 80. Not a substitute for the role-play matrix. |
 | Markdown path | CI job `markdown-path` | portable docs + state JSON valid without MCP |
 

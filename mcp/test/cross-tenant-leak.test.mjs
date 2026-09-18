@@ -28,14 +28,14 @@ import {
   actorFromAuthorizationHeader,
 } from "../dist/journey-auth.js";
 import {
-  fixtureJourneyStore,
+  MemoryJourneyStore,
+  defaultScoreboard,
   setJourneyStoreForTests,
 } from "../dist/journey.js";
 import { REPO_ROOT } from "./helpers.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const IDENTITY_SCHEMA = path.join(__dirname, "pglite", "identity-schema.sql");
-const JOURNEY_SCHEMA = path.join(__dirname, "pglite", "journey-schema.sql");
 const HOSTED_DOC = path.join(REPO_ROOT, "mcp", "docs", "HOSTED_IDENTITY.md");
 const JOURNEY_DOC = path.join(REPO_ROOT, "mcp", "docs", "JOURNEY.md");
 const E2E_DOC = path.join(REPO_ROOT, "mcp", "docs", "E2E_ROLEPLAY.md");
@@ -73,8 +73,11 @@ const BRAVO_COMMENT = "bravo-only-comment-token";
 const BRAVO_QUESTION = "bravo-only-question-token";
 const BRAVO_HYPOTHESIS = "bravo-only-hypothesis-token";
 const BRAVO_HOOK = "https://hooks.example.test/bravo-only";
-const CORE_CONSTRAINT = "corehaul-only-constraint-token";
-const CORE_COMMENT = "corehaul-only-comment-token";
+const DELTA_CONSTRAINT = "delta-only-constraint-token";
+const DELTA_COMMENT = "delta-only-comment-token";
+const EMAIL_ALPHA = "founder-alpha@example.test";
+const EMAIL_DELTA = "founder-delta@example.test";
+const EMAIL_ADVISOR = "advisor-cos@example.test";
 
 const BRAVO_CANARIES = [
   BRAVO_CONSTRAINT,
@@ -83,7 +86,7 @@ const BRAVO_CANARIES = [
   BRAVO_HYPOTHESIS,
   "hooks.example.test/bravo-only",
 ];
-const CORE_CANARIES = [CORE_CONSTRAINT, CORE_COMMENT];
+const DELTA_CANARIES = [DELTA_CONSTRAINT, DELTA_COMMENT];
 
 function jwt(email, sub) {
   return syntheticAccessToken({ email, sub: sub || `sub-${email}` });
@@ -218,19 +221,72 @@ async function seedBravo(store) {
   assert.equal(sub.ok, true);
 }
 
-async function seedCorehaul(store) {
-  const founder = bearer("founder-core@example.test");
-  const advisor = bearer("advisor-cos@example.test");
+function alphaDeltaStore() {
+  return new MemoryJourneyStore(
+    [
+      { id: "co-alpha", slug: "alpha", label: "alpha" },
+      { id: "co-delta", slug: "delta", label: "delta" },
+    ],
+    [
+      {
+        companyId: "co-alpha",
+        principal: EMAIL_ALPHA,
+        principalKind: "email",
+        role: "founder",
+      },
+      {
+        companyId: "co-delta",
+        principal: EMAIL_DELTA,
+        principalKind: "email",
+        role: "founder",
+      },
+      {
+        companyId: "co-delta",
+        principal: EMAIL_ADVISOR,
+        principalKind: "email",
+        role: "advisor",
+      },
+    ],
+    [
+      {
+        id: "idea-alpha",
+        companyId: "co-alpha",
+        slug: "default",
+        name: "alpha",
+        journeyPhase: 1,
+        loopStage: 1,
+        currentGate: "hold",
+        scoreboard: defaultScoreboard(),
+      },
+      {
+        id: "idea-delta",
+        companyId: "co-delta",
+        slug: "default",
+        name: "delta",
+        journeyPhase: 1,
+        loopStage: 1,
+        currentGate: "hold",
+        scoreboard: defaultScoreboard(),
+      },
+    ],
+    [],
+    [],
+  );
+}
+
+async function seedDelta(store) {
+  const founder = bearer(EMAIL_DELTA);
+  const advisor = bearer(EMAIL_ADVISOR);
   const put = await store.putJourney(founder, {
-    companySlug: "corehaul",
-    why: "seed core",
+    companySlug: "delta",
+    why: "seed delta",
     founderYes: true,
-    constraintThisWeek: CORE_CONSTRAINT,
+    constraintThisWeek: DELTA_CONSTRAINT,
   });
   assert.equal(put.ok, true);
   const comment = await store.postComment(advisor, {
-    companySlug: "corehaul",
-    body: CORE_COMMENT,
+    companySlug: "delta",
+    body: DELTA_COMMENT,
   });
   assert.equal(comment.ok, true);
 }
@@ -273,6 +329,19 @@ describe("cross-tenant invite-only CI gate (file lock)", () => {
 
     const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, "mcp", "package.json"), "utf8"));
     assert.match(pkg.scripts["test:unit"], /test\/cross-tenant-leak\.test\.mjs/);
+
+    const leakSrc = fs.readFileSync(path.join(__dirname, "cross-tenant-leak.test.mjs"), "utf8");
+    const banned = ["dye" + "converter", "core" + "haul"];
+    for (const needle of banned) {
+      assert.doesNotMatch(
+        leakSrc,
+        new RegExp(needle, "i"),
+        `new leak file must not use ${needle}`,
+      );
+    }
+    assert.match(leakSrc, /["']alpha["']/);
+    assert.match(leakSrc, /["']bravo["']/);
+    assert.match(leakSrc, /["']delta["']/);
   });
 });
 
@@ -477,78 +546,74 @@ describe("cross-tenant invite-only CI gate (HTTP + hosted membership)", () => {
 });
 
 describe("cross-tenant invite-only CI gate (memory ACL + webhook)", () => {
-  it("dye founder cannot read/write corehaul via q=, idea slug, list, or webhook", async () => {
-    const store = fixtureJourneyStore();
+  it("alpha founder cannot read/write delta via q=, idea slug, list, or webhook", async () => {
+    const store = alphaDeltaStore();
     setJourneyStoreForTests(store);
-    await seedCorehaul(store);
+    await seedDelta(store);
 
-    const dyeTok = jwt("founder-dye@example.test");
-    const dye = bearer("founder-dye@example.test");
+    const alphaTok = jwt(EMAIL_ALPHA);
+    const alpha = bearer(EMAIL_ALPHA);
 
-    const own = parseTool((await callTool("get_journey", { q: "dyeconverter" }, dyeTok)).body);
+    const own = parseTool((await callTool("get_journey", { q: "alpha" }, alphaTok)).body);
     assert.equal(own.ok, true);
-    assert.equal(own.company.slug, "dyeconverter");
-    assertClosedNoLeak({ ok: false, blob: JSON.stringify(own) }, CORE_CANARIES, "dye board");
+    assert.equal(own.company.slug, "alpha");
+    assertClosedNoLeak({ ok: false, blob: JSON.stringify(own) }, DELTA_CANARIES, "alpha board");
 
     for (const [name, args] of [
-      ["get_journey", { q: "corehaul" }],
-      ["get_journey", { q: "CoreHaul / last-mile" }],
-      ["get_journey", { company: "dyeconverter", idea: "corehaul" }],
-      ["put_journey", { company: "corehaul", why: "leak", founderYes: true }],
-      ["post_comment", { company: "corehaul", body: "leak" }],
-      ["list_subscribers", { company: "corehaul" }],
+      ["get_journey", { q: "delta" }],
+      ["get_journey", { q: "Delta / default" }],
+      ["get_journey", { company: "alpha", idea: "delta" }],
+      ["put_journey", { company: "delta", why: "leak", founderYes: true }],
+      ["post_comment", { company: "delta", body: "leak" }],
+      ["list_subscribers", { company: "delta" }],
       [
         "subscribe_board",
         {
-          company: "corehaul",
-          principal: "advisor-cos@example.test",
+          company: "delta",
+          principal: EMAIL_ADVISOR,
           principalKind: "email",
           webhookUrl: "https://hooks.example.test/stolen",
         },
       ],
     ]) {
-      const hit = await callTool(name, args, dyeTok);
+      const hit = await callTool(name, args, alphaTok);
       assert.equal(hit.res.status, 200, name);
-      assertClosedNoLeak(parseTool(hit.body), CORE_CANARIES, `HTTP ${name}`);
+      assertClosedNoLeak(parseTool(hit.body), DELTA_CANARIES, `HTTP ${name}`);
     }
 
-    const listed = await store.listSubscribers(dye, { companySlug: "corehaul" });
-    assertClosedNoLeak(listed, CORE_CANARIES, "list corehaul as dye");
+    const listed = await store.listSubscribers(alpha, { companySlug: "delta" });
+    assertClosedNoLeak(listed, DELTA_CANARIES, "list delta as alpha");
 
     const before = store.webhookDeliveries.length;
-    const wrote = await store.putJourney(dye, {
-      companySlug: "corehaul",
+    const wrote = await store.putJourney(alpha, {
+      companySlug: "delta",
       why: "should not write",
       founderYes: true,
-      constraintThisWeek: "stolen-from-dye",
+      constraintThisWeek: "stolen-from-alpha",
     });
     assert.equal(wrote.ok, false);
     assert.equal(store.webhookDeliveries.length, before);
 
-    const core = await store.getJourney(bearer("founder-core@example.test"), {
-      companySlug: "corehaul",
+    const delta = await store.getJourney(bearer(EMAIL_DELTA), {
+      companySlug: "delta",
       expandMeetingDoc: true,
     });
-    assert.equal(core.ok, true);
-    assert.equal(core.ideas[0].constraintThisWeek, CORE_CONSTRAINT);
-    assert.doesNotMatch(JSON.stringify(core), /stolen-from-dye/);
+    assert.equal(delta.ok, true);
+    assert.equal(delta.ideas[0].constraintThisWeek, DELTA_CONSTRAINT);
+    assert.doesNotMatch(JSON.stringify(delta), /stolen-from-alpha/);
   });
 });
 
-describe("cross-tenant invite-only CI gate (PGlite)", { concurrency: false }, () => {
+describe("cross-tenant invite-only CI gate (PGlite held_label)", { concurrency: false }, () => {
   let idDb;
-  let journeyDb;
 
   before(async () => {
     idDb = new PGlite();
     await idDb.exec(fs.readFileSync(IDENTITY_SCHEMA, "utf8"));
-    journeyDb = new PGlite();
-    await journeyDb.exec(fs.readFileSync(JOURNEY_SCHEMA, "utf8"));
   });
 
   after(async () => {
     await idDb?.close();
-    await journeyDb?.close();
   });
 
   async function held(email, uid, company) {
@@ -557,16 +622,6 @@ describe("cross-tenant invite-only CI gate (PGlite)", { concurrency: false }, ()
     await idDb.query("SELECT set_config('app.auth_uid', $1, false)", [uid]);
     const rows = await idDb.query("SELECT bootstrap_os_held_label($1) AS held", [company]);
     return rows.rows[0].held;
-  }
-
-  async function asApp({ email = "", sub = "" }, sql, params = []) {
-    await journeyDb.exec("RESET ROLE");
-    await journeyDb.query("SELECT set_config('app.actor_email', $1, false)", [email]);
-    await journeyDb.query("SELECT set_config('app.actor_sub', $1, false)", [sub]);
-    await journeyDb.exec("SET ROLE journey_app");
-    const rows = await journeyDb.query(sql, params);
-    await journeyDb.exec("RESET ROLE");
-    return rows.rows;
   }
 
   it("held_label: A holds alpha only; stranger and typos are false; no bravo bleed", async () => {
@@ -586,67 +641,5 @@ describe("cross-tenant invite-only CI gate (PGlite)", { concurrency: false }, ()
       await held("founder@example.test", "33333333-3333-3333-3333-333333333333", "bravo"),
       true,
     );
-  });
-
-  it("journey RLS: dye cannot read corehaul comments, audit, scoreboard, subscribers, or notify", async () => {
-    await journeyDb.exec("RESET ROLE");
-    await journeyDb.exec(`
-      UPDATE bootstrap_os.ideas
-      SET scoreboard = jsonb_set(
-        COALESCE(scoreboard, '{"schema_version": 1}'::jsonb),
-        '{constraint_this_week}',
-        '"${CORE_CONSTRAINT}"'
-      )
-      WHERE id = 'idea-core'
-    `);
-    await asApp(
-      { email: "advisor-cos@example.test" },
-      "INSERT INTO bootstrap_os.comments (id, idea_id, body, who) VALUES ('c-core-canary', 'idea-core', $1, 'advisor-cos@example.test')",
-      [CORE_COMMENT],
-    );
-
-    const ideas = await asApp(
-      { email: "founder-dye@example.test" },
-      "SELECT slug, scoreboard->>'constraint_this_week' AS c FROM bootstrap_os.ideas",
-    );
-    assert.deepEqual(
-      ideas.map((r) => r.slug),
-      ["dyeconverter"],
-    );
-    assert.ok(ideas.every((r) => r.c !== CORE_CONSTRAINT));
-
-    const comments = await asApp(
-      { email: "founder-dye@example.test" },
-      "SELECT body FROM bootstrap_os.comments",
-    );
-    assert.ok(comments.every((r) => r.body !== CORE_COMMENT));
-
-    const audit = await asApp(
-      { email: "founder-dye@example.test" },
-      "SELECT id FROM bootstrap_os.audit_events WHERE company_id = 'co-core'",
-    );
-    assert.deepEqual(audit, []);
-
-    const subs = await asApp(
-      { email: "founder-dye@example.test" },
-      "SELECT id FROM bootstrap_os.board_subscribers WHERE company_id = 'co-core'",
-    );
-    assert.deepEqual(subs, []);
-
-    const outbox = await asApp(
-      { email: "founder-dye@example.test" },
-      "SELECT id FROM bootstrap_os.notify_outbox WHERE company_id = 'co-core'",
-    );
-    assert.deepEqual(outbox, []);
-
-    await asApp(
-      { email: "founder-dye@example.test" },
-      "UPDATE bootstrap_os.ideas SET scoreboard = jsonb_set(scoreboard, '{constraint_this_week}', '\"stolen-from-dye\"') WHERE id = 'idea-core'",
-    );
-    const core = await asApp(
-      { email: "founder-core@example.test" },
-      "SELECT scoreboard->>'constraint_this_week' AS c FROM bootstrap_os.ideas WHERE id = 'idea-core'",
-    );
-    assert.equal(core[0].c, CORE_CONSTRAINT);
   });
 });

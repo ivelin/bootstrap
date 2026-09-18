@@ -151,7 +151,7 @@ Uninvited JWTs stay `authenticated: false` / `reason: not_invited`. Gated tools 
 | SQL file locks | `mcp/test/identity-rls.test.mjs` (no network) |
 | CTO/PM role-play matrix + draft prod synthetic SRE | [`E2E_ROLEPLAY.md`](E2E_ROLEPLAY.md) · `mcp/test/e2e-roleplay-matrix.test.mjs` |
 | Invite / accept / login-URL mail | [`INVITE.md`](INVITE.md) · `mcp/test/invite.test.mjs` + `invite-mail.test.mjs` + role-play P1–P4 + `identity-pglite.test.mjs` (SQL `invite_member` / `verify_invite`, no 42702 / no 42883; existing user second workspace; preview store refuse) |
-| **Invite-only company boards (cross-tenant)** | `mcp/test/cross-tenant-leak.test.mjs` — unauthenticated / stranger / invited-to-A-only vs B; `q=` / slug typo / idea slug / webhook / list; PGlite `held_label` + journey RLS. Fail the pipeline on any leak. |
+| **Invite-only company boards (cross-tenant)** | `mcp/test/cross-tenant-leak.test.mjs` — unauthenticated / stranger / invited-to-A-only vs B; `q=` / slug typo / idea slug / webhook / list; PGlite `held_label`. Fictional `alpha` / `bravo` / `charlie` / `delta` only. Fail the pipeline on any leak. |
 
 Do not run `preview-live.mjs` on PR cloud agents. Draft prod synthetic checks are Cos-only — same doc.
 
