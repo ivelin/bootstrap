@@ -122,6 +122,12 @@ async function main() {
 
     const info = await call(client, "bootstrap_os_info");
     assert.equal(info.surface, "hosted-read");
+    assert.equal(info.support?.email, "bootstrap@pirin.ai");
+    assert.match(String(info.support?.routed), /human-routed/i);
+    const support = await call(client, "bootstrap_support");
+    assert.equal(support.email, "bootstrap@pirin.ai");
+    assert.deepEqual(support.include, ["company", "what you tried", "error text"]);
+    assert.match(String(support.routed), /not auto-fix/i);
     assert.equal(info.docsSource, "published");
     assert.match(String(info.docsBase), /127\.0\.0\.1/);
     assert.match(JSON.stringify(info.adoptionOrder), /not mentee-ready boards/);

@@ -86,8 +86,12 @@ describe("hosted access layer (one login, many companies)", () => {
     assert.match(instructions, /owners/);
     assert.match(instructions, /constraintThisWeek|bottleneck/i);
     assert.match(instructions, /user-bootstrap-os-mcp/);
+    assert.match(instructions, /bootstrap@pirin\.ai/);
+    assert.match(instructions, /bootstrap_support/);
+    assert.match(instructions, /human-routed|human reads it/i);
     assert.doesNotMatch(instructions, /swim/i);
     assert.doesNotMatch(instructions, /Path 3|WWW-Authenticate|Bearer|mentee/i);
+    assert.doesNotMatch(instructions, /webhook|resend/i);
     assert.doesNotMatch(instructions, /x\.ai\/bot/);
     assert.ok(!instructions.includes(HOSTED_BILL_GROK_LINE));
     assert.equal(instructions, hostedInstructionsForClient({ clientName: "access-layer" }));
@@ -105,10 +109,17 @@ describe("hosted access layer (one login, many companies)", () => {
       assert.ok(!names.includes(n), `must hide ${n} without a store`);
     }
     for (const tool of tools) {
-      if (!HOSTED_GATED_IDENTITY_TOOL_NAMES.includes(tool.name) && tool.name !== "bootstrap_os_info") {
+      if (
+        !HOSTED_GATED_IDENTITY_TOOL_NAMES.includes(tool.name) &&
+        tool.name !== "bootstrap_os_info" &&
+        tool.name !== "bootstrap_support"
+      ) {
         continue;
       }
       assert.doesNotMatch(String(tool.description ?? ""), FORBIDDEN_IN_TOOL_TEXT, tool.name);
+      if (tool.name === "bootstrap_os_info" || tool.name === "bootstrap_support") {
+        assert.match(String(tool.description ?? ""), /bootstrap@pirin\.ai/);
+      }
     }
   });
 

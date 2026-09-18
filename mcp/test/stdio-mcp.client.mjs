@@ -77,6 +77,7 @@ async function main() {
       "bootstrap_refuse_external_ask_if_not_green",
       "bootstrap_get_ai_instructions",
       "bootstrap_house_rule_pins",
+      "bootstrap_support",
     ];
     for (const n of required) {
       assert.ok(names.includes(n), `missing tool ${n}`);
@@ -94,7 +95,11 @@ async function main() {
     assert.ok(!names.includes("put_portfolio_score"));
 
     const info = await call(client, "bootstrap_os_info");
-    assert.equal(info.mcpVersion, "0.3.4");
+    assert.equal(info.mcpVersion, "0.3.5");
+    assert.equal(info.support?.email, "bootstrap@pirin.ai");
+    const support = await call(client, "bootstrap_support");
+    assert.equal(support.email, "bootstrap@pirin.ai");
+    assert.match(String(support.routed), /human-routed/i);
     assert.equal(info.osVersion, "2.8.12");
     assert.equal(path.resolve(info.paths.dataRoot), path.resolve(dataRoot));
     assert.match(JSON.stringify(info.adoptionOrder), /not mentee-ready boards/);

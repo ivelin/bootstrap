@@ -48,6 +48,7 @@ import {
   NOTE_INVITE_SENT,
   NOTE_NOT_SIGNED_IN,
   NOTE_OS_INFO_HOSTED,
+  SUPPORT_HOWTO,
   TOOL_ACCEPT_INVITE,
   TOOL_GET_JOURNEY,
   TOOL_INVITE_MEMBER,
@@ -60,6 +61,7 @@ import {
   TOOL_LIST_COMPANIES,
   TOOL_LIST_COMPANY_LABELS_ALIAS,
   TOOL_USE_COMPANY,
+  TOOL_SUPPORT,
   TOOL_WHOAMI,
 } from "./hosted-copy.js";
 import { inviteFailMessage, resolveInviteStore } from "./invite.js";
@@ -123,7 +125,7 @@ function membershipPayload(
 function registerReadTools(server: McpServer, surface: McpSurface, hosted?: HostedRequestContext) {
   server.tool(
     "bootstrap_os_info",
-    "Bootstrap OS version, house rules, and how this connector works.",
+    "Bootstrap OS version, house rules, how this connector works, and how to email support at bootstrap@pirin.ai.",
     {},
     async () => {
       const common = {
@@ -145,6 +147,7 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
         houseRules: HOUSE_RULE_LINES,
         houseRulePins: HOUSE_RULE_PINS,
         marketplace: false,
+        support: SUPPORT_HOWTO,
         pluginPreview: {
           path: "plugin/",
           version: "0.1.1",
@@ -261,6 +264,8 @@ function registerReadTools(server: McpServer, surface: McpSurface, hosted?: Host
         pins: HOUSE_RULE_PINS,
       }),
   );
+
+  server.tool("bootstrap_support", TOOL_SUPPORT, {}, async () => text(SUPPORT_HOWTO));
 }
 
 function registerGatedIdentityTools(server: McpServer, ctx: HostedRequestContext) {
