@@ -113,6 +113,8 @@ The blueprint is **not** the running system. Do not confuse “we wrote the plan
 1. **Bootstrap journey (phases 1–9 below)** — slow, founder-gated “where is the company on prove-it?”  
 2. **Live loop (stages 1–7)** — fast weekly/daily cycle: research → validate → build → test → eval → real feedback → memory update → back  
 
+When speaking the board to a human, lead with the simple phase and loop names. Numbers stay in storage and in `get_journey`; use them in parentheses only if useful.
+
 You can run many loop cycles inside one journey phase. Full detail, state stores, and the stage diagram: **[`live-runtime.md`](live-runtime.md)**.
 
 The [founder-day pack](#founder-day-pack-how-the-week-actually-runs) is **not** a third clock. It is how *you* get through Tuesday (prep, close a conversation, drafts). The two clocks above still answer “where is the company?”
@@ -155,7 +157,7 @@ Any “current focus” in a real company is only a **hypothesis that has surviv
 
 ## The 9 Phases (Simple View + Formal Aliases)
 
-**Simple names are primary** (plain language).  
+**Simple names are primary** (plain language). When you say where we are, lead with these names; the `#` column is storage and reference only.  
 **Formal aliases** match common product-lifecycle language (FI decks, internal planning). They describe the **same journey**, not a second process.
 
 | # | Simple phase (primary) | Formal alias | Exit signal (simple) |
@@ -1547,7 +1549,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.11 | House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. An advisor's opinion is a tip, not proof. Write down who said it. Do not delay a paying customer. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.12 | Additive pack: [founder checkpoints](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha). Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. Founder-facing speech uses the [plain lines](#how-to-say-this); desk labels stay in traces. No tenth phase. No third clock. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.13 | House rule: [unpaid weeks cannot promote](#house-rule-unpaid-weeks-cannot-promote). Same family as 2.8.6–2.8.11; do not merge. First conversation is free. Next working session is paid or you stop. Customer type lives on the existing group card (consumer / small business / mid-market / enterprise) with a follow-up cue (listed price / BANT / MEDDIC / MEDDPICC). A long buying cycle is not free custom work. Not Day 0. Not a tenth phase. Not a sales course. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
-| 2.8.14 | Additive: [Decision methods](#decision-methods-aliases-not-a-third-clock) (IESER for this week’s company move; FIRAC for Bind-class paper). Aliases, not a third clock. Not a house rule. Not a phase rename. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.14 | Additive: [Decision methods](#decision-methods-aliases-not-a-third-clock) (IESER for this week’s company move; FIRAC for Bind-class paper). Aliases, not a third clock. Not a house rule. Not a phase rename. No schema bump. Speaking rule: lead with descriptive labels; numbers in parentheses. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 

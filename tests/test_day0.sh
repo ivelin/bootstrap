@@ -1276,6 +1276,29 @@ if ! grep -q 'IESER' company-os/first-hour.md \
 else
   not_ok "do not put IESER or FIRAC in first-hour"
 fi
+# Speaking rule folded into 2.8.14 (same PR). Labels first; numbers in parentheses.
+# Decision methods essay stays byte-stable. No 2.8.15.
+if grep -q 'When speaking the board to a human' company-os/operating-system.md \
+  && grep -q 'Speaking rule: lead with descriptive labels; numbers in parentheses' company-os/operating-system.md \
+  && grep -q 'lead with these names; the `#` column is storage' company-os/operating-system.md \
+  && grep -q 'journey phase in everyday words (number in parentheses only if useful)' company-os/ai-instructions.md \
+  && grep -q 'everyday journey-phase name + everyday loop-stage name' company-os/ai-instructions.md \
+  && grep -q 'Form thesis and list possible customer groups' company-os/first-hour.md \
+  && grep -q 'Synthetic research' company-os/first-hour.md \
+  && grep -Fq '**Current journey phase:** [name] (N / 9)' templates/applied-here.md \
+  && grep -q 'lead with descriptive labels; numbers only in parentheses' .cursor/skills/verify-bootstrap/SKILL.md \
+  && grep -q 'lead with descriptive labels; numbers only in parentheses' .cursor/skills/verify-bootstrap/features/journey-board.md \
+  && grep -q 'Spoken or rendered summary should lead with descriptive labels' mcp/src/hosted-copy.ts \
+  && grep -q 'Spoken board talk leads with descriptive labels' mcp/src/hosted-copy.ts \
+  && grep -q 'Board status spoken to humans leads with descriptive labels' mcp/docs/JOURNEY.md \
+  && grep -q 'Spoken board talk leads with descriptive labels' AGENTS.md \
+  && ! grep -q '2.8.15' company-os/operating-system.md \
+  && grep -q 'Use IESER, in this order' company-os/operating-system.md \
+  && grep -q 'Use FIRAC before anyone signs' company-os/operating-system.md; then
+  ok "2.8.14 speaking rule is pinned (labels first; Decision methods essay kept)"
+else
+  not_ok "2.8.14 speaking rule strings must exist; do not invent 2.8.15 or drop Decision methods"
+fi
 
 # --- w) Bootstrap Bill install docs (invite-only; not Path 1) ---
 bill=docs/install-bill.md

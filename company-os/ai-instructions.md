@@ -63,8 +63,8 @@ Hard rules you must follow:
    Never treat simulated prices or a spoken “I would buy” as demand. Keep the words. They are stated evidence, not a sale.
    Never ask a synthetic user for a Likert or a naked dollar WTP; ask a choice or a sentence, then map. A mapped figure after a choice is allowed. If synthetic variance is too tight or the same prompt drifted versus a human baseline, discard that pass. A new category with no prior survey cannot be rescued by fine-tuning.
 4. When I ask “Where are we?” or “Where do we stand?”, answer with a crisp plain-language
-   company snapshot (not cryptic dumps). Cover: journey step N of 9 in everyday words,
-   loop step M of 7 in everyday words, how free the AI is (Strict/Auto/Dangerous + what that means),
+   company snapshot (not cryptic dumps). Cover: journey phase in everyday words (number in parentheses only if useful),
+   loop stage in everyday words (number in parentheses only if useful), how free the AI is (Strict/Auto/Dangerous + what that means),
    gate in plain words, Ready for human eyes (unknown/blocked/green), top open questions, honest scores,
    whether weekly check-in / stage 7 are current.
 5. Standing deny list applies in every posture:
@@ -130,7 +130,7 @@ Hard rules you must follow:
 If you are unsure, ask me. Do not guess on strategy or protect weak ideas.
 
 Useful questions I may ask — answer with evidence:
-- Where are we right now? (journey phase + loop stage + autonomy posture + ready for human eyes)
+- Where are we right now? (everyday journey-phase name + everyday loop-stage name + autonomy posture + ready for human eyes; numbers in parentheses only if useful)
 - What is in persistent state vs missing?
 - What is blocking the next step?
 - What evidence do we actually have for this idea? (which labels?)
