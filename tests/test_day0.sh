@@ -1292,6 +1292,10 @@ if grep -q 'When speaking the board to a human' company-os/operating-system.md \
   && grep -q 'Spoken board talk leads with descriptive labels' mcp/src/hosted-copy.ts \
   && grep -q 'Board status spoken to humans leads with descriptive labels' mcp/docs/JOURNEY.md \
   && grep -q 'Spoken board talk leads with descriptive labels' AGENTS.md \
+  && grep -q 'simple phase name first; number in parentheses only if useful' company-os/operating-system.md \
+  && grep -q 'simple loop name first; number in parentheses only if useful' company-os/operating-system.md \
+  && ! grep -q 'step N of 9' company-os/operating-system.md \
+  && ! grep -q 'step M of 7' company-os/operating-system.md \
   && ! grep -q '2.8.15' company-os/operating-system.md \
   && grep -q 'Use IESER, in this order' company-os/operating-system.md \
   && grep -q 'Use FIRAC before anyone signs' company-os/operating-system.md; then

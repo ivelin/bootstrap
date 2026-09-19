@@ -605,8 +605,8 @@ This is how you stay in charge of the company operating system.
 
 That snapshot must include, in everyday language:
 
-- How far you are on **proving the business** (slow journey: step N of 9 + one plain sentence)
-- What the **weekly learning loop** is doing (fast loop: step M of 7 + one plain sentence)
+- How far you are on **proving the business** (slow journey: simple phase name first; number in parentheses only if useful)
+- What the **weekly learning loop** is doing (fast loop: simple loop name first; number in parentheses only if useful)
 - Whether the next gate is open, waiting for you, blocked, or ready for review — **in plain words**
 - How free the AI is (Strict / Auto / Dangerous) — **with what that means for you**
 - Top open questions or risks
