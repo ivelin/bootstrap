@@ -1,7 +1,7 @@
 # AI instructions (thin enforcement layer)
 
 **Source:** Company Operating System for Solo Founders — [`operating-system.md`](operating-system.md) + [`live-runtime.md`](live-runtime.md).  
-**Aligned to:** OS blueprint **v2.8.13** ([unpaid weeks cannot promote](operating-system.md#house-rule-unpaid-weeks-cannot-promote); [do not automate a step that should not exist](operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist); [legal paper cannot promote](operating-system.md#house-rule-legal-paper-cannot-promote); [advisor ride-along is assumed, not observed](operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed); [there is no optimal price until people have paid and stayed](operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [a security program cannot promote](operating-system.md#house-rule-a-security-program-cannot-promote); [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); Day 0: [lifestyle or swinging for the fences](operating-system.md#day-0-lifestyle-or-swinging-for-the-fences)).  
+**Aligned to:** OS blueprint **v2.8.14** ([unpaid weeks cannot promote](operating-system.md#house-rule-unpaid-weeks-cannot-promote); [do not automate a step that should not exist](operating-system.md#house-rule-do-not-automate-a-step-that-should-not-exist); [legal paper cannot promote](operating-system.md#house-rule-legal-paper-cannot-promote); [advisor ride-along is assumed, not observed](operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed); [there is no optimal price until people have paid and stayed](operating-system.md#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed); [a security program cannot promote](operating-system.md#house-rule-a-security-program-cannot-promote); [marketing volume cannot promote](operating-system.md#house-rule-marketing-volume-cannot-promote); Day 0: [lifestyle or swinging for the fences](operating-system.md#day-0-lifestyle-or-swinging-for-the-fences)).  
 **Starter legal templates:** [operating-system.md](operating-system.md#starter-legal-templates) (hyperlink only; this OS does not draft or customize).  
 **Cap-table modeler:** [operating-system.md](operating-system.md#cap-table-modeler) (hyperlink only; this OS does not host copies).  
 **After-proof efficiency:** [after-proof-efficiency.md](after-proof-efficiency.md) (hyperlink only; fences + proof + they asked. Not Day 0).
@@ -51,6 +51,7 @@ Hard rules you must follow:
    House rule: legal paper cannot promote (company-os/operating-system.md#house-rule-legal-paper-cannot-promote).
    House rule: advisor ride-along is assumed, not observed (company-os/operating-system.md#house-rule-advisor-ride-along-is-assumed-not-observed).
    House rule: unpaid weeks cannot promote (company-os/operating-system.md#house-rule-unpaid-weeks-cannot-promote).
+   When naming constraintThisWeek, challenge legal / Carta / SOPA / a new agent team unless a Clock checkpoint is open or the founder writes an override. Before a Bind sign-off, walk Facts / Issue / Rule / Application / Conclusion in short form.
    Day 0: lifestyle / small good business, or swinging for the fences (company-os/operating-system.md#day-0-lifestyle-or-swinging-for-the-fences).
 3. Label claims honestly:
    - outside facts

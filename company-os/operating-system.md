@@ -1,8 +1,8 @@
 # Company Operating System  
 ## For Solo Founders in Bootstrapping Mode
 
-**Version:** 2.8.13  
-**Last Updated:** 2026-09-18  
+**Version:** 2.8.14  
+**Last Updated:** 2026-09-19  
 **Status:** Living guideline (blueprint — not any one company’s live runtime)  
 **Audience:** Independent solo founders; mentors (e.g. Founder Institute, SCORE); AI helpers instructed to follow this system  
 **Isolation:** Portable across startups. Each company keeps its filled instance outside this template (see `../templates/applied-here.md`).  
@@ -1221,6 +1221,24 @@ This rule is **not** Day 0 homework, **not** a tenth phase, **not** a third cloc
 
 Same family: [legal paper cannot promote](#house-rule-legal-paper-cannot-promote). [There is no optimal price until people have paid and stayed](#house-rule-there-is-no-optimal-price-until-people-have-paid-and-stayed).
 
+### Decision methods (aliases, not a third clock)
+
+Two jobs. Do not mix them.
+
+**This week’s company move (growth / constraint).** Use IESER, in this order, inside the house rules that already exist: Identify the one bottleneck; Exploit it with what already exists; Subordinate everything else; Elevate (spend, hire, extra paper, extra agents) only after Exploit is exhausted; Repeat when the constraint moves. Work the named bottleneck the way 2.8.9 already requires: every requirement has a person's name; delete the step before you simplify it; automate last. Legal paper, marketing volume, a security program, unpaid weeks, and advisor tips still cannot promote a journey phase.
+
+Exploit is the live paid path or the first conversation. It is not free custom work after that talk. Elevate is guidance. It is not the growth pack. Channel spend stays behind proof.
+
+**A document that binds the company.** Use FIRAC before anyone signs, files, or wires: Facts (observed, sourced); Issue (what this instrument actually does); Rule (the controlling paper + house SOP + any live Clock); Application (this company’s facts against that rule); Conclusion (sign / change / wait). FIRAC does not apply to routine receipts or clicking a website terms box. It applies to Bind checkpoints: board consent, plan/pool/SOPA, 83(b), SAFE or priced close, and any filing that starts a statute clock.
+
+Paper still cannot advance a journey phase. Paper may be constraintThisWeek only while a Clock checkpoint is open (close date, 83(b) after exercise, customer date that expires this week). No Clock open → paper is a side file. Checkpoint kind Clock is not the same as the two clocks (journey + live loop). Do not rename either.
+
+Where-are-we / recon card (plain words, put in why):
+Bottleneck: …
+Do this week with what we have: …
+Wait / do not spend: …
+Clock open?: none | 83(b) by DATE | close DATE | customer DATE
+
 ---
 
 ## Instructions for Your Main AI Helper
@@ -1529,6 +1547,7 @@ Everything else in the research method is adjacent literature or a **house rule*
 | 2.8.11 | House rule: [advisor ride-along is assumed, not observed](#house-rule-advisor-ride-along-is-assumed-not-observed). Same family as 2.8.6–2.8.10; do not merge. An advisor's opinion is a tip, not proof. Write down who said it. Do not delay a paying customer. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.12 | Additive pack: [founder checkpoints](#founder-checkpoints-when-human-judgment-is-the-work) (QC, Bind, Clock, Alpha). Optional until useful. Absent checkpoints = 2.8.9 behavior. QC Hold is path-local; it does not freeze the journey. Alpha is a written five-field bet against the default recommendation. Founder-facing speech uses the [plain lines](#how-to-say-this); desk labels stay in traces. No tenth phase. No third clock. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 | 2.8.13 | House rule: [unpaid weeks cannot promote](#house-rule-unpaid-weeks-cannot-promote). Same family as 2.8.6–2.8.11; do not merge. First conversation is free. Next working session is paid or you stop. Customer type lives on the existing group card (consumer / small business / mid-market / enterprise) with a follow-up cue (listed price / BANT / MEDDIC / MEDDPICC). A long buying cycle is not free custom work. Not Day 0. Not a tenth phase. Not a sales course. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
+| 2.8.14 | Additive: [Decision methods](#decision-methods-aliases-not-a-third-clock) (IESER for this week’s company move; FIRAC for Bind-class paper). Aliases, not a third clock. Not a house rule. Not a phase rename. No schema bump. Writing: [Say it once. Link. No filler.](#how-this-os-may-change-stability-contract). |
 
 ---
 
